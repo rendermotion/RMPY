@@ -1,0 +1,335 @@
+global proc string stringToCharArray(string $input, int $letter){
+    string $output[] = {};
+    for($i=1;$i<=size($input);$i++){
+        $output[size($output)]= substring ($input, $i, $i);
+    }
+    
+    return $output[$letter];
+}
+
+
+global proc string[] stringToArray(string $input){
+    string $output[] = {};
+    for($i=1;$i<=size($input);$i++){
+        $output[size($output)]= substring ($input, $i, $i);
+    }
+    
+    return $output;
+}
+
+proc string RMReturnLastNumberString(string $NameString){
+    int $Size = size($NameString);
+    for ( $i=0; $i<($Size)+1; ++$i ){
+        string $NumberString = substring($NameString, 1,$Size- $i + 1);
+        if (RMIsNumber($NumberString) == false){
+            if ($i==1){
+                return ("");
+            }
+            else {
+                return (substring($NameString, 1,$Size- $i + 2));
+            }
+        }
+    }
+    return ("");
+}
+
+global proc string RMGetFromName (string $ObjName, int $flg){
+    string $words[] = {};
+    tokenize $ObjName "_" $words;
+    string $temp = "";
+    string $Tokens[]=`stringToStringArray $ObjName "_"`;
+    return $words[$flg];
+}
+global proc string RMSetFromName (string $name,int $flg,string $newToken)
+{
+    string $Tokens[] = {};
+    tokenize $name "_" $Tokens;
+    $Tokens[$flg]=$newToken;
+    //string $Tokens[]=`stringToStringArray $name "_"`;
+   // $Tokens[$flg] = $newToken;
+    return `stringArrayToString $Tokens "_"`;
+}
+
+global proc string RMRemoveFromName (string $name,string $toErrase)
+{
+    string $Tokens[] = {};
+    string $Removing[] = {$toErrase};
+    tokenize $name "_" $Tokens;
+    string $newName[]= stringArrayRemove($Removing, $Tokens);
+    //string $Tokens[]=`stringToStringArray $name "_"`;
+   // $Tokens[$flg] = $newToken;
+    return `stringArrayToString $newName "_"`;
+}
+
+global proc string RMStringPlus1 (string $NameString)
+{
+    string $res = `match "[0-9]+$" $NameString`;
+    if ($res=="")
+        {$res="0";}
+    int $value=((int)$res + 1);
+    string $result= `substitute $res $NameString ""`;
+    return ($result + (string)$value);
+}
+global proc string RMAddToName (string $OriginalName,string $Prefix)
+{
+    string $Name=`RMGetFromName $OriginalName 2`;
+    string $newName=`RMSetFromName $OriginalName 2 ($Name+$Prefix)`;
+    $newName = `RMUniqueName $newName`;
+    return $newName;
+}
+
+global proc string RMReturnStringWithoutNumber (string $NameString){
+    int $Size= size ($NameString);
+    //for ($i=1,$i<($Size),++$i)
+    for ( $i=0; $i<($Size)+1; ++$i ){
+        string $NumberString = substring($NameString, 1,$Size- $i + 1);
+        if ((RMIsNumber($NumberString)) == false){
+            return (substring($NameString, 1,$Size- $i + 1));
+        }
+        if ($i==$Size){
+            return "";
+        }
+    }
+}
+
+global proc int RMIsNumber (string $NumberString){
+    int $N=0;
+    int $Size= size($NumberString);
+    for ( $i=0; $i<($Size)+1; ++$i ){
+        if (((stringToCharArray($NumberString,$i))!="1")&&((stringToCharArray($NumberString,$i))!="2")&&((stringToCharArray($NumberString,$i))!="3")&&((stringToCharArray($NumberString,$i))!="4")&&((stringToCharArray($NumberString,$i))!="5")&&((stringToCharArray($NumberString,$i))!="6")&&((stringToCharArray($NumberString,$i))!="7")&&((stringToCharArray($NumberString,$i))!="8")&&((stringToCharArray($NumberString,$i))!="9")&&((stringToCharArray($NumberString,$i))!="0")){
+            $N=1;
+        }
+    }
+    if ($N==1){
+        return true;
+    }
+    return false;
+}
+
+
+global proc string RMUniqueName (string $NewName){
+   string $ObjectName=`RMGetFromName $NewName 2`;
+    while (`objExists $NewName`){
+        $ObjectName =`RMStringPlus1 $ObjectName`;
+        $NewName=`RMSetFromName $NewName 2 $ObjectName`;
+    }
+    return $NewName;
+}
+global proc RMRenamer(string $ListOfObjects[], string $NewName){
+    //select -r ($ListOfObjects[0]);
+    //rename ($NewName);
+    for ($i=0;$i< (size($ListOfObjects)); ++$i){
+        
+        select -r ($ListOfObjects[$i]);
+        rename (RMUniqueName ($NewName));
+    }
+}
+global proc string RMSetNameInFormat (string $CurrentName,string $Object,string $side,string $type,string $system)
+{
+            string $newname=`RMUniqueName ($Object+"_"+$side+"_"+$CurrentName+"_"+$type+"_"+$system)`;
+            rename $CurrentName $newname;
+   return $newname;
+}
+global proc int RMIsNameInFormat (string $name){
+    string $Tokens[]=`stringToStringArray $name "_"`;
+    int $TokenSize=`size $Tokens`;
+    if ($TokenSize == 5)
+        if ($Tokens[2]=="LF"||$Tokens[2]=="RH"||$Tokens[2]=="MD")
+            return true;
+    return false;
+}
+
+global proc string[] ReverseArray( string $array[] )
+{
+    string $reversedArray[];
+    int $arraySize = `size $array`;
+
+    for( $n = 0; $n < $arraySize; $n++ )
+    {
+        $reversedArray[( $arraySize - 1 - $n )] = $array[$n];
+    }
+    return $reversedArray;
+}
+global proc string RMObjNameToVar(string $name){
+    select $name;
+    string $temp[]=`ls -sl`;
+    return $temp[0];
+}
+
+global proc string RMRenameObj(string $Obj,string $type)
+{
+    string $Side="MD";
+    string $nameNoside=$Obj;
+    if (`gmatch $Obj "*Left*"`== 1)
+    {
+        $nameNoside=substituteAllString($Obj,"Left","");
+        $Side="LF";
+    }
+    if (`gmatch $Obj "*Right*"`== 1)
+    {
+        $nameNoside=substituteAllString($Obj,"Right","");
+        $Side="RH";
+    }
+    
+    string $temp[]=`stringToStringArray $nameNoside "_"`;
+   // stringArrayInsertAtIndex 1 $temp $Side;
+    stringArrayInsertAtIndex 3 $temp $type;
+    string $NewName=`stringArrayToString $temp "_"`;
+    rename $Obj $NewName;
+    return $NewName;
+}
+
+global proc string RMRenameJointHierarchy(string $Joint)
+{
+    string $child[]=`listRelatives -c $Joint`;
+    string $newName=`RMRenameObj $Joint "jnt"`;
+    for ($i in $child)
+    {
+        if (RMIgnoraShape($i)==true)
+        {
+            RMRenameJointHierarchy $i;
+        }
+    }
+    return $newName;
+}
+global proc RMSetFromSelName(string $Token, int $flag){
+    string $selection[]=`ls -sl`;
+    string $i;
+    string $NewName;
+    string $ObjectName;
+    string $PathName[];
+    int $ArraySize;
+    for ($i in $selection){
+        $PathName=`stringToStringArray $i "|"`;
+        $ArraySize=`size $PathName`;
+        $NewName = $PathName[$ArraySize-1];
+        $NewName=`RMSetFromName $NewName $flag $Token`;
+        $ObjectName = `RMGetFromName $NewName 2`;
+        while (`objExists $NewName`){
+                $ObjectName = `StringPlus1 $ObjectName`;
+                $NewName=`SetFromName $NewName 2 $ObjectName`;
+                }
+        rename  $i  $NewName;
+        }
+}
+
+global proc RMRenameOnlyOne(string $Token[],int $flag){
+int $ButtonValue;
+int $ButtonValue2;
+string $NameToken;
+switch ($flag)
+{ 
+  case 0:
+  case 2: $NameToken =`textField -q -text $Token[0]`;
+          RMSetFromSelName $NameToken $flag;
+          break;
+  case 1: $ButtonValue=`radioButtonGrp -q -sl $Token[0]`;
+          switch ($ButtonValue) {
+                 case 1: RMSetFromSelName "MD" $flag; break;
+                 case 2: RMSetFromSelName "LF" $flag; break;
+                 case 3: RMSetFromSelName "RH" $flag; break;
+                }
+  
+          break;
+              
+   case 3: $ButtonValue=`radioButtonGrp -q -sl $Token[0]`;
+          switch ($ButtonValue) {
+                        
+                        case 1: RMSetFromSelName "msh" $flag; break;
+                        case 2: RMSetFromSelName "ctr" $flag; break;
+                        case 3: RMSetFromSelName "jnt" $flag; break;
+                        case 0: $ButtonValue2=`radioButtonGrp -q -sl $Token[1]`;
+                               switch ($ButtonValue2)
+                                         {
+                                         case 1: RMSetFromSelName "utl" $flag; break;
+                                         case 2: RMSetFromSelName "ikh" $flag; break;
+                                         case 3: RMSetFromSelName "loc" $flag; break;
+                                         }                              
+                               break;
+                        }
+          break;
+    
+   case 4: $ButtonValue=`radioButtonGrp -q -sl $Token[0]`;
+          switch ($ButtonValue){
+                        case 1: RMSetFromSelName "ful" $flag;break;
+                        case 2: RMSetFromSelName "prx" $flag;break;
+                        case 3: RMSetFromSelName "IK" $flag;break;
+                        case 0: $ButtonValue2=`radioButtonGrp -q -sl $Token[1]`;
+                               switch ($ButtonValue2)
+                                         {
+                                         case 1: RMSetFromSelName "FK" $flag; break;
+                                         case 2: RMSetFromSelName "RBN" $flag; break;
+                                         case 3: RMSetFromSelName "mph" $flag; break;
+                                         }                              
+                               break;
+                        } 
+        break; 
+       }
+}
+global proc RMRenameThem (string $CharacterName, string $sideType, string $ObjectName, string $ObjectType,string $ObjectType2, string $ObjStatus, string $ObjStatus2,string $CurrentNameFlg)
+{
+    string $Name[];
+    $Name[0] =`textField -q -text $CharacterName`;
+
+    string $Name[1];
+    int $ButtonValue=`radioButtonGrp -q -sl $sideType`;
+    int $ButtonValue2;
+    switch ($ButtonValue) {
+                            case 1: $Name[1]="MD"; break;
+                            case 2: $Name[1]="LF"; break;
+                            case 3: $Name[1]="RH"; break;
+                            }
+    $Name[2]=`textField -q -tx $ObjectName`;
+
+    $ButtonValue=`radioButtonGrp -q -sl $ObjectType`;
+    switch ($ButtonValue){
+                            case 1: $Name[3]="msh"; break;
+                            case 2: $Name[3]="ctr"; break;
+                            case 3: $Name[3]="jnt"; break;
+                            case 0: $ButtonValue2=`radioButtonGrp -q -sl $ObjectType2`;
+                                   switch ($ButtonValue2)
+                                             {
+                                             case 1: $Name[3]="utl"; break;
+                                             case 2: $Name[3]="ikh"; break;
+                                             case 3: $Name[3]="loc"; break;
+                                             }                              
+                                   break;
+                            }
+    $ButtonValue=`radioButtonGrp -q -sl $ObjStatus`;
+    print $ButtonValue;
+    print "\n";
+    switch ($ButtonValue){
+                            case 1: $Name[4]="ful"; break;
+                            case 2: $Name[4]="prx"; break;
+                            case 3: $Name[4]="IK"; break;
+                            case 0: $ButtonValue2=`radioButtonGrp -q -sl $ObjStatus2`;
+                                   switch ($ButtonValue2)
+                                             {
+                                              case 1: $Name[4]="FK"; break;
+                                              case 2: $Name[4]="RBN"; break;
+                                              case 3: $Name[4]="mph"; break;
+                                             }                              
+                                  break;
+                          }
+
+    string $NewName = `stringArrayToString $Name "_"`;
+    string $Selection[]=`ls -sl`;
+    string $ObjectName=`RMGetFromName $NewName 2`;
+        for ($i in $Selection)
+        { /*Opcion Para checar el checkbox de mantube el nombre*/
+             if (`checkBox -q -v $CurrentNameFlg`==true){
+                   $ObjectName=$i;
+                   $NewName=`RMSetFromName $NewName 2 $i`;
+                   
+             }
+                 while (`objExists $NewName`){
+                        $ObjectName =`RMStringPlus1 $ObjectName`;
+                        $NewName=`RMSetFromName $NewName 2 $ObjectName`;
+                        }
+                rename  $i  $NewName;
+                $ObjectName =`RMStringPlus1 $ObjectName`;
+                $NewName=`RMSetFromName $NewName 2 $ObjectName`;
+                
+        }
+
+}

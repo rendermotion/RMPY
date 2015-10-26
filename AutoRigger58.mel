@@ -1,0 +1,2459 @@
+/*Funcion que alinea 2 objetos. La Variable $flag cambia el comportamiento de esta funcion
+flg= 1 posicion 2 orientacion 3 orientacion y posicion*/
+proc alinea (string $obj1, string $obj2,int $flag){
+    if ($flag==1 || $flag==3){
+        vector $Obj1position=`xform -ws -q -rp $obj1`;
+        xform -ws -t ($Obj1position.x) ($Obj1position.y) ($Obj1position.z) $obj2;
+    }
+    if ($flag==2 || $flag==3){
+        
+        string $rotateOrderObj1=`xform -q -rotateOrder $obj1`;
+        string $rotateOrderObj2=`xform -q -rotateOrder $obj2`;
+        
+        if ($rotateOrderObj1 != $rotateOrderObj2)
+        {
+            string $Null =`group -em`;
+            xform  -rotateOrder $rotateOrderObj1 $Null;
+            
+            vector $Obj1rotacion=`xform -q -ws -ro $obj1`;
+            
+            xform -ws -ro ($Obj1rotacion.x) ($Obj1rotacion.y) ($Obj1rotacion.z) $Null;
+            xform  -p true -rotateOrder $rotateOrderObj2 $Null;
+            
+            vector $Obj1rotacion=`xform -q -ws -ro $Null`;
+            
+            xform -ws -ro ($Obj1rotacion.x) ($Obj1rotacion.y) ($Obj1rotacion.z) $obj2;
+            print "Warning : Obj Rotation Order Mismatch on obj ";
+            print  ($obj2+" Aligning to "+ $obj1+"\n");
+            
+            delete $Null;
+        }
+        else 
+        {
+            vector $Obj1rotacion=`xform -q -ws -ro $obj1`;
+            xform -ws -ro ($Obj1rotacion.x) ($Obj1rotacion.y) ($Obj1rotacion.z) $obj2;
+        }
+    }
+}
+proc string ObjNameToVar(string $name){
+    select $name;
+    string $temp[]=`ls -sl`;
+    return $temp[0];
+}
+/*************Borra los Shape Nodes de una Linea y la vuelve un null****************************/
+proc deleteShapeNodes (string $Obj)
+{
+   string $ShapeNodes[]=`listRelatives -type "shape" $Obj`;
+   string $i;
+   for ($i in $ShapeNodes)
+       {
+        delete $i;   
+       }
+}
+/*Funcion que inserta en la herarquia un nuevo Objeto
+1 Lo inserta como padre de $Obj
+2 lo inserta como Hijo de $Obj
+*/
+proc InsertInHierarchy (string $obj,string $ObjToInsert, int $flag)
+{
+    if ($flag==1)
+    {
+        string $Parent[]=`listRelatives -parent $obj`;
+        parent $ObjToInsert $Parent[0];
+        parent $obj $ObjToInsert;
+    }
+    else{
+        string $Children[]=`removeChildren $obj`;
+        parent $ObjToInsert $obj;
+        parentArray $ObjToInsert $Children;
+    }
+}
+/*Funcion que desemparenta todos los objetos de un nodo y los regresa en un arreglo*/
+proc string[] removeChildren(string $obj1){
+    string $children[]=`listRelatives -type "transform" -children $obj1`;
+    
+    for ($i in $children)
+        {
+        parent -w $i;
+        }
+    return $children;
+}
+proc parentArray(string $parent, string $Array[]){
+    for ($i in $Array)
+        {parent $i $parent;}
+}
+/*Funcion que regresa la distancia entre dos objetos*/
+proc float distancia (string $Obj1,string $Obj2){
+    vector $p1= `xform -a -ws -q -rp $Obj1`;
+    vector $p2= `xform -a -ws -q -rp $Obj2`;
+    return ($p1 - $p2);
+}
+/**************************************************/
+/* Funciones para renombrar los Joints originales en la nomenclatura deseada.
+/********************************************/
+proc string GetFromName (string $name, int $flg)
+{
+    string $Tokens[]=`stringToStringArray $name "_"`;
+    return $Tokens[$flg];
+}
+proc string SetFromName (string $name, int $flg, string $newToken)
+{
+    string $Tokens[]=`stringToStringArray $name "_"`;
+    $Tokens[$flg]=$newToken;
+    return `stringArrayToString $Tokens "_"`;
+}
+proc string StringPlus1 (string $NameString)
+{
+    string $res = `match "[0-9]+$" $NameString`;
+    if ($res=="")
+        {$res="0";}
+    int $value=((int)$res + 1);
+    string $result= `substitute $res $NameString ""`;
+    return ($result + (string)$value);
+}
+proc string UniqueName (string $NewName)
+{
+    string $ObjectName=`GetFromName $NewName 2`;
+    while (`objExists $NewName`){
+        $ObjectName =`StringPlus1 $ObjectName`;
+        $NewName=`SetFromName $NewName 2 $ObjectName`;
+    }
+    return $NewName;
+}
+/*Funcion que Agrega Un prefijo a un nombre Existente*/
+proc string AddToName (string $OriginalName,string $Prefix)
+{
+    string $Name=`GetFromName $OriginalName 2`;
+    string $newName=`SetFromName $OriginalName 2 ($Name+$Prefix)`;
+    $newName = `UniqueName $newName`;
+    return $newName;
+}
+/* Funciones para renombrar los Joints originales en la nomenclatura deseada.*/
+proc string renameObj(string $Obj,string $type)
+{
+    string $Side="MD";
+    string $nameNoside=$Obj;
+    if (`gmatch $Obj "*Left*"`== 1)
+    {
+        $nameNoside=substituteAllString($Obj,"Left","");
+        $Side="LF";
+    }
+    if (`gmatch $Obj "*Right*"`== 1)
+    {
+        $nameNoside=substituteAllString($Obj,"Right","");
+        $Side="RH";
+    }
+    
+    string $temp[]=`stringToStringArray $nameNoside "_"`;
+    stringArrayInsertAtIndex 1 $temp $Side;
+    stringArrayInsertAtIndex 3 $temp $type;
+    string $NewName=`stringArrayToString $temp "_"`;
+    rename $Obj $NewName;
+    return $NewName;
+}
+proc string renameJointHierarchy(string $Joint)
+{
+    string $child[]=`listRelatives -c $Joint`;
+    string $newName=`renameObj $Joint "jnt"`;
+    for ($i in $child)
+    {
+        renameJointHierarchy $i;
+    }
+    return $newName;
+}
+/********************************************************************************/
+/*******************************************************************************/
+/*******************************************************************************
+Conjunto de Funciones para crear los controles En el Rigg
+*******************************************************************************/
+/*Funcion que convierte un conjunto de lineas dadas en el arreglo $shapes en una sola que es $shapes[0]*/
+proc TurnToOne(string $shapes[])
+{
+    int $sizeArray=`size $shapes`;
+    int $i;
+    for ( $i=1;$i<$sizeArray;$i++)
+    {
+        string $temp[]=`listRelatives -s -c $shapes[$i]`;
+        parent -add -shape $temp[0] $shapes[0];
+        delete $shapes[$i];
+    }
+}
+proc string creacontrol(string $obj, float $r){
+    $newName=$obj;
+    $newName=`SetFromName $newName 3 "ctr"`;
+    string $temp[]=`circle -normal 1 0 0 -r $r -name $newName`;
+    alinea $obj $temp[0] 3;
+    return $temp[0];
+}
+proc string CreateCubeLine(float $height,float $lenght,float $width,string $name)
+{
+    string $shapes[];
+    $shapes[0]=`curve -d 1 -p 0 (-$lenght/2) ($width/2) -p 0 (-$lenght/2) (-$width/2) -n $name`;
+    $shapes[1]=`curve -d 1 -p ($height) (-$lenght/2) ($width/2) -p ($height) (-$lenght/2) (-$width/2) -n ($name+"_1")`;
+    $shapes[2]=`curve -d 1 -p 0 ($lenght/2) ($width/2) -p 0 ($lenght/2) (-$width/2) -n ($name+"_2") `;
+    $shapes[3]=`curve -d 1 -p ($height) ($lenght/2) ($width/2) -p ($height) ($lenght/2) (-$width/2) -n ($name+"_3")`;
+    $shapes[4]=`curve -d 1 -p 0 (-$lenght/2) ($width/2) -p $height (-$lenght/2) ($width/2) -n ($name+"_4")`;
+    $shapes[5]=`curve -d 1 -p 0 ($lenght/2) (-$width/2) -p $height ($lenght/2) (-$width/2) -n ($name+"_5")`;
+    $shapes[6]=`curve -d 1 -p 0 (-$lenght/2) (-$width/2) -p $height (-$lenght/2) (-$width/2) -n ($name+"_6")`;
+    $shapes[7]=`curve -d 1 -p 0 ($lenght/2) ($width/2) -p $height ($lenght/2) ($width/2) -n ($name+"_7")`;
+    $shapes[8]=`curve -d 1 -p 0 (-$lenght/2) (-$width/2) -p 0 ($lenght/2) (-$width/2) -n ($name+"_8")`;
+    $shapes[9]=`curve -d 1 -p 0 (-$lenght/2) ($width/2) -p 0 ($lenght/2) ($width/2) -n ($name+"_9")`;
+    $shapes[10]=`curve -d 1 -p ($height) (-$lenght/2) (-$width/2) -p ($height) ($lenght/2) (-$width/2) -n ($name+"_10")`;
+    $shapes[11]=`curve -d 1 -p ($height) (-$lenght/2) ($width/2) -p ($height) ($lenght/2) ($width/2) -n ($name+"_11")`;
+    TurnToOne $shapes;
+    return $shapes[0];
+}
+proc float LenghtOfBone (string $Bone ){
+    string $temp[]=`listRelatives -c $Bone`;
+    if (`size $temp`!=0){
+        return `getAttr ($temp[0]+".translateX")`;
+    }
+    else
+        {return 1.0;}
+}
+proc string CreateBoxCtrl(string $bone){
+    string $temp=`ObjNameToVar $bone`;
+    string $CntlName=`SetFromName $temp 3 "ctr"`;
+    string $tempArray[]=`listRelatives -c $bone`;
+  
+    if (`size $tempArray`!=0){
+        float $Lenghtbone = `LenghtOfBone $temp`;
+        $CntlName=`CreateCubeLine $Lenghtbone ($Lenghtbone/4) ($Lenghtbone/4) $CntlName`;
+    }
+    else {
+        string $tempArray[]=`listRelatives -p $bone`;
+        float $Lenghtbone = `LenghtOfBone $tempArray[0]`;
+        $CntlName=`CreateCubeLine ($Lenghtbone/4) ($Lenghtbone/4) ($Lenghtbone/4) $CntlName`;
+    }
+    alinea $temp $CntlName 3;
+    return $CntlName;
+}
+proc connectScale(string $controler,string $joint){
+    string $MultName = $joint;
+    string $name =`GetFromName $MultName 2`;
+    string $MultName=`SetFromName $MultName 2 ($name+"MultDivide")`;
+    string $MultName=`SetFromName $MultName 4 "utl"`;
+    $MultName=`shadingNode -asUtility -name $MultName multiplyDivide`;
+    float $origVal=`getAttr ($joint + ".translateX")`;
+    setAttr ($MultName+".input2X") $origVal;
+    connectAttr -f ($controler+".scaleX") ($MultName + ".input1X");
+    connectAttr -f ($MultName + ".outputX") ($joint + ".translateX");
+}
+/***********************************************************************************************/
+/*********************************Funciones del Ribbon System***********************************/
+/***********************************************************************************************/
+proc string CreaPlano (string $Obj1,string $Obj2){
+	vector $p1= `xform -a -ws -q -t $Obj1`;
+	vector $p2= `xform -a -ws -q -t $Obj2`;
+	float $Longitud = $p1 - $p2;
+	string $newName = $Obj1;
+	string $temp1 = `GetFromName $Obj1 2`;
+	string $temp2 = `GetFromName $Obj2 2`;
+	string $Token=($temp1 + "To" + $temp2 + "Plane");
+	$newName=`SetFromName $newName 2 $Token`;
+	$newName=`SetFromName $newName 3 "msh"`;
+	$newName=`SetFromName $newName 4 "RBN"`;
+	string $plano[] = `nurbsPlane -ax 0 1 0 -p ($Longitud/2) 0 0 -w $Longitud -lr .05 -d 3 -u 8 -v 1 -ch 0 -name $newName`;
+	alinea $Obj1 $plano[0] 3;
+	return $plano[0];
+}
+proc string[] CreaRibbon (string $obj1,string $obj2){
+	vector $value1= `xform -a -ws -q -t $obj1`;
+	vector $value2= `xform -a -ws -q -t $obj2`;
+	string $plano = `CreaPlano $obj1 $obj2 `;
+	select -cl;
+	string $newName = $obj1;
+	string $temp1 = `GetFromName $obj1 2`;
+	string $temp2 = `GetFromName $obj2 2`;
+	string $MainSkeleton = $obj1;
+	float $RibbonSize=`distancia $obj1 $obj2`;
+	$MainSkeleton=`SetFromName $MainSkeleton 3 "grp"`;
+	$MainSkeleton=`SetFromName $MainSkeleton 4 "RBN"`;
+	$MainSkeleton=`SetFromName $MainSkeleton 2 ($temp1+"To"+$temp2+"RibbonSkeleton")`;
+	group -em -n $MainSkeleton;
+	
+	string $HairGroup=$obj1;
+	
+	$HairGroup =`SetFromName $HairGroup 2 ($temp1+"To"+$temp2+"HairSystem")`;
+	$HairGroup =`SetFromName $HairGroup 3 "grp"`;
+	$HairGroup =`SetFromName $HairGroup 4 "RBN"`;
+	group -em -name $HairGroup;
+	string $hsys = `createNode hairSystem`;
+	int $nfolcs=5;
+	int $flg[]={0};
+	int $n=0;
+	float $nstep= 1.0 /($nfolcs-1);
+	string $ArrayJoints[];
+	string $planoShape[]=`listRelatives -s $plano`;
+	for ($n=0;$n<$nfolcs;$n++)
+	{
+		createHairCurveNode ($hsys,$planoShape[0],($nstep*(float)$n),.5,1,0,0,0,0,"",1.0,$flg,$HairGroup,"",2);
+	}
+	string $temp[]=`listRelatives -p $hsys`;
+	delete $hsys;
+	delete $temp[0];
+	string $folcs_t[]=`listRelatives -c $HairGroup`;
+	$n=0;
+	select -cl;
+	string $newName = $obj1;
+	$newName=`SetFromName $newName 2 ($temp1+"To"+$temp2+"RibbonJoint")`;
+	$newName=`SetFromName $newName 3 "jnt"`;
+	$newName=`SetFromName $newName 4 "RBN"`;
+	int $n=0;
+	$skinedBones=$MainSkeleton;
+	$skinedBones=`SetFromName $skinedBones 2 ($temp1+"To"+$temp2+"RibbonSkinedSkeleton")`;
+	group -em -name $skinedBones;
+	alinea $obj1 $skinedBones 3;
+	select -r $skinedBones;
+	for ($i in $folcs_t)
+	{
+		string $nombre=`GetFromName $newName 2`;
+		$nombre=`StringPlus1 $nombre`;
+		$newName = `SetFromName $newName 2 $nombre`;
+		$ArrayJoints[$n]= `joint -name $newName`;
+		alinea $i $ArrayJoints[$n] 1;
+		parentConstraint $i $ArrayJoints[$n];
+		$n=$n+1;
+	}
+	string $controles[];
+	string $Locator_controles[];
+	string $Locator_LookAt[];
+	string $JNT_RBN[];
+	string $Group_RBN[];
+	string $temp[];
+	float $distancia=$value1-$value2;
+	int $iloop;
+	string $ControlName = $obj1;
+	$ControlName=`SetFromName $ControlName 3 "ctr"`;
+	$ControlName=`SetFromName $ControlName 4 "RBN"`;
+	string $LocatorName = $obj1;
+	$LocatorName=`SetFromName $LocatorName 3 "loc"`;
+	$LocatorName=`SetFromName $LocatorName 4 "RBN"`;
+	string $JointName = $obj1;
+	$JointName=`SetFromName $JointName 3 "jnt"`;
+	$JointName=`SetFromName $JointName 4 "RBN"`;
+	string $GroupName = $obj1;
+	$GroupName=`SetFromName $GroupName 3 "grp"`;
+	$GroupName=`SetFromName $GroupName 4 "RBN"`;
+	$GroupName_Controls=`SetFromName $GroupName 2 ($temp1+"To"+$temp2+"Controls")`;
+	group -em -n $GroupName_Controls;
+	alinea $obj1 $GroupName_Controls 3;
+	string $GroupName_Joints = $obj1;
+	$GroupName_Joints=`SetFromName $GroupName_Joints 3 "grp"`;
+	$GroupName_Joints=`SetFromName $GroupName_Joints 4 "RBN"`;
+	$GroupName_Joints=`SetFromName $GroupName_Joints 2 ($temp1+"To"+$temp2+"GroupJointsLookAt")`;
+	group -em -n $GroupName_Joints;
+	for ($iloop=0;$iloop<3;$iloop++)
+	{
+		$controles[$iloop]=`creacontrol $obj1 ($RibbonSize/3)`;
+		$ControlName=`SetFromName $ControlName 2 ($temp1+"To"+$temp2+"Cntrl"+string($iloop+1))`;
+		rename $controles[$iloop] $ControlName;
+		$controles[$iloop]=$ControlName;
+		$LocatorName=`SetFromName $LocatorName 2 ($temp1+"To"+$temp2+"LocatorCntrl"+string($iloop+1))`;
+		$temp = `spaceLocator -n $LocatorName`;
+		$Locator_controles[$iloop]=$temp[0];
+		alinea $obj1 $Locator_controles [$iloop] 3;
+		$LocatorName=`SetFromName $LocatorName 2 ($temp1+"To"+$temp2+"LocatorLookAt"+string($iloop+1))`;
+		$temp= `spaceLocator -n $LocatorName`;
+		$Locator_LookAt[$iloop]=$temp[0];
+		alinea $obj1 $Locator_LookAt[$iloop] 3;
+		select -cl;
+		$JointName=`SetFromName $JointName 2 ($temp1+"To"+$temp2+"JointsLookAt"+string($iloop+1))`;
+		$JNT_RBN[$iloop]=`joint -n $JointName`;
+		alinea $obj1 $JNT_RBN[$iloop] 3;
+		$GroupName=`SetFromName $GroupName 2 ($temp1+"To"+$temp2+"GroupLookAt"+string($iloop+1))`;
+		$Group_RBN[$iloop]=`group -em -n $GroupName`;
+		alinea $obj1 $Group_RBN[$iloop] 3;
+		parent $GroupName $MainSkeleton;
+		move -r -os -moveX ($distancia/2*$iloop) 0 0 $controles[$iloop];
+		move -r -os -moveX ($distancia/2*$iloop) 0 0 $Locator_controles[$iloop];
+		move -r -os -moveXYZ ($distancia/2*$iloop) 0 1 $Locator_LookAt[$iloop];
+		move -r -os -moveX ($distancia/2*$iloop) 0 0 $JNT_RBN[$iloop];
+		move -r -os -moveX ($distancia/2*$iloop) 0 0 $Group_RBN[$iloop];
+		parent $controles[$iloop] $GroupName_Controls;
+		parent $Locator_controles[$iloop] $Group_RBN[$iloop];
+		parent $Locator_LookAt[$iloop] $Group_RBN[$iloop];
+		parent $JNT_RBN[$iloop] $GroupName_Joints;
+		makeIdentity -apply true -t 1 -r 0 -s 1 -n 0 $controles[$iloop];
+		makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $JNT_RBN[$iloop];
+		/*makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Group_RBN[$iloop];
+		  makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Locator_controles[$iloop];
+		  makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Locator_LookAt[$iloop];*/
+		parentConstraint $Locator_controles[$iloop] $JNT_RBN [$iloop];
+		parentConstraint $controles[$iloop] $Group_RBN[$iloop] ;
+	}
+	aimConstraint -aim 1 0 0 -upVector 0 0 1 -wut "object" -worldUpObject $Locator_LookAt[0] $Locator_controles[1] $Locator_controles[0];
+	aimConstraint -aim 1 0 0 -upVector 0 0 1 -wut "object" -worldUpObject $Locator_LookAt[2] $Locator_controles[1] $Locator_controles[2];
+	parent $GroupName_Joints $MainSkeleton;
+	select -r $planoShape[0];
+	select -add $JNT_RBN;
+	SmoothBindSkin();
+	parent $plano $HairGroup;
+	parent $HairGroup NoScaledData;
+	parent $skinedBones Joints;
+	parent $MainSkeleton Joints;
+	string $MoveAndScaleMain=`ObjNameToVar "*Mover2_ctr*"`;
+	parent $GroupName_Controls $MoveAndScaleMain;
+	return {$skinedBones,$MainSkeleton,$GroupName_Controls};
+}
+/***********************************************************************************************/
+/***********************************************************************************************/
+/**************************IKFK Switch Functions********+++++++++++++++++++++++++++++++++++++***/
+/***********************************************************************************************/
+/***********************************************************************************************/
+proc IKFKvisibilityLink (string $Obj[],string $systemIKFK,string $Control)
+{
+	string $newName=$Control;
+	string $Name=`GetFromName $Control 2`;
+	$newName=`SetFromName $newName 2 ($Name+"Reverse")`;
+	$newName=`SetFromName $newName 4 "utl"`;
+	string $i;
+	if ($systemIKFK=="FK")
+	{
+		if (`objExists $newName`==false)
+    	{
+    	shadingNode -name $newName -asUtility reverse;
+    	connectAttr -f ($Control+".IKFKSwitch") ($newName+".inputX");
+    	}
+    	print $Obj;
+    	for ($i in $Obj)
+    		{
+    		 connectAttr -f ($newName+".outputX") ($i+".visibility");
+    		 LockAndHideAttributes ({$i}) "3333333330";
+    		}
+    	}
+    	else
+    	{
+    	for ($i in $Obj)
+    	{
+    		connectAttr -f ($Control+".IKFKSwitch") ($i+".visibility");
+    		LockAndHideAttributes ({$i}) "3333333330";
+    	}
+		
+	}
+	
+	
+}
+proc ParentLink( string $ObjIK , string $ObjFK , string $ObjJTX, string $Cntrl)
+{
+	$ObjName =`GetFromName $ObjJTX 2`;
+	string $Constraint = $ObjJTX;
+	$Constraint=`SetFromName $Constraint 2 ($ObjName+"IKSwitchConstraint")`;
+	$Constraint=`SetFromName $Constraint 3 "pcn"`;
+	$Constraint=`SetFromName $Constraint 4 "IKS"`;
+	$Constraint=`UniqueName $Constraint`;
+	$cntrlName =`GetFromName $Cntrl 2`;
+	string $ExpressionName = $Cntrl;
+	$ExpressionName=`SetFromName $ExpressionName 2 ($cntrlName+"Expression")`;
+	$ExpressionName=`SetFromName $ExpressionName 3 "exp"`;
+	$ExpressionName=`SetFromName $ExpressionName 4 "IKS"`;
+	$ExpressionName=`UniqueName $ExpressionName`;
+	string $PC[]=`parentConstraint -name $Constraint $ObjIK $ObjJTX `;
+	parentConstraint $ObjFK $ObjJTX;
+	string $TargetList[]=`parentConstraint -q -weightAliasList $PC[0]`;
+	if (!`attributeQuery -node $Cntrl -ex "IKFKSwitch"`)
+	{
+		addAttr -at "float" -ln IKFKSwitch -sn IFS -hnv 1 -hxv 1 -h 0 -k 1 -smn 0 -smx 1 $Cntrl;
+	}
+	if (!`objExists $ExpressionName`)
+	{
+		string $nodeName = `expression -s ($PC[0] + "." + $TargetList[0]+"="+$Cntrl+".IKFKSwitch;\n"+
+		$PC[0] + "." + $TargetList[1]+"=1-"+$Cntrl+".IKFKSwitch;\n") -name $ExpressionName`;
+	}
+	else 
+	{
+		string $script=`expression -q -s $ExpressionName`;
+		expression -e -s ($script + "\n" + $PC[0]+"."+$TargetList[0]+ "=" + $Cntrl + ".IKFKSwitch;\n"+
+		$PC[0]+"."+$TargetList[1]+"=1-"+$Cntrl+".IKFKSwitch;\n") $ExpressionName;
+	}
+}
+/***************************************************************************
+/**************************************************************************
+**********************Funciones para Generar el Suhi***********************
+***************************************************************************
+/**************************************************************************/
+proc string CreateCube(float $height,float $lenght,float $width,string $name)
+{ string $CreateCubeNewname[]= `polyCube -axis 1 0 0 -h $height - d $lenght -w $width -name $name`;
+$name=$CreateCubeNewname[0];
+move -r (-$height/2) 0 0 ($name+".scalePivot") ($name+".rotatePivot") ;
+move -r ($height/2) 0 0 $name ;
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $name;
+return $name;
+}
+proc Sushi (string $bone, string $mesh, int $IsRecursive)
+{
+	string $Child[]=`listRelatives -c $bone`;
+	float $d;
+	string $Cube;
+	string $i;
+	string $CopyMesh[];
+	string $MeshName = $bone;
+	$MeshName=`SetFromName $MeshName 3 "msh"`;
+	$MeshName=`SetFromName $MeshName 4 "prx"`;
+	string $GroupName = $bone;
+	$GroupName = `SetFromName $GroupName 1 "NA"`;
+	$GroupName = `SetFromName $GroupName 2 "ProxyMesh"`;
+	$GroupName = `SetFromName $GroupName 3 "grp"`;
+	$GroupName = `SetFromName $GroupName 4 "prx"`;
+	if (!`objExists $GroupName`)
+		{group -em -name $GroupName;}
+	for ($i in $Child)
+	{
+		$d=`distancia $i $bone`;
+		$MeshName=`SetFromName $MeshName 2 ($bone+"To"+$i+"Mesh")`;
+		$Cube= `CreateCube ($d) ($d*3/4) ($d*3/4) "Cube#"`;
+		alinea $bone $Cube 3;
+		$CopyMesh=`duplicate $mesh`;
+		delete -ch $CopyMesh;
+		polyBoolOp -op 3 -ch 0 -n $MeshName $Cube $CopyMesh;
+		delete -ch $MeshName;
+		parentConstraint -mo $bone $MeshName;
+		parent $MeshName $GroupName;
+	}
+	if ($IsRecursive==1)
+	{
+		for ($i in $Child)
+		{
+			Sushi $i $mesh $IsRecursive;
+		}
+	}
+}
+/**********************************************************************************
+/**********************************************************************************
+Funciones Para generar un Stretchy IK y Pole Constraint
+/**********************************************************************************/
+/**********************************************************************************/
+proc string[] CreateLineBetwenPoints (string $p1,string $p2)
+{
+	string $nameObj1=`GetFromName $p1 2`;
+	string $nameObj2=`GetFromName $p2 2`;
+	string $Cluster1=`SetFromName $p1 2 ($nameObj1+$nameObj2+"Cluster")`;
+	string $Cluster1=`SetFromName $Cluster1 3 "CLS"`;
+	string $Cluster1=`SetFromName $Cluster1 4 "RIG"`;
+	$Cluster1=`UniqueName $Cluster1`;
+	string $curve = `curve -degree 1 -p 0 0 0 -p 1 0 0`;
+	int $numCVs = `getAttr -size ($curve + ".controlPoints")`;
+	string $temp1[]=`cluster -name $Cluster1 -relative ($curve+".cv[0]") `;
+	$Cluster2=`UniqueName $Cluster1`;
+	string $temp2[]=`cluster -name $Cluster2 -relative ($curve+".cv[1]") `;
+	print $Cluster1;
+	print "\n";
+	print $Cluster2;
+	setAttr ($curve+".overrideEnabled") 1;
+	setAttr ($curve+".overrideDisplayType") 2;
+	string $POC1=`SetFromName $Cluster1 3 "POC"`;
+	string $POC2=`SetFromName $Cluster2 3 "POC"`;
+	string $nombre = `GetFromName $Cluster1 2`;
+	string $NewName =`SetFromName ($Cluster1+"Handle") 3 "HND"`;
+	string $Cluster1Handle =`rename ($Cluster1+"Handle") $NewName`;
+	string $nombre = `GetFromName $Cluster2 2`;
+	string $NewName = `SetFromName ($Cluster1+"Handle") 3 "HND"`;
+	string $Cluster2Handle =`rename ($Cluster2+"Handle") $NewName`;
+	alinea $p1 $Cluster1Handle 1;
+	alinea $p2 $Cluster2Handle 1;
+	pointConstraint -name $POC1 $p1 $Cluster1Handle;
+	pointConstraint -name $POC2 $p2 $Cluster2Handle;
+	setAttr ($Cluster1Handle+".visibility") false;
+	setAttr ($Cluster2Handle+".visibility") false;
+	string $GroupName=`SetFromName $p1 2 ($nameObj1+$nameObj2+"Data")`;
+	$GroupName=`SetFromName $GroupName 3 "grp"`;
+	$GroupName=`SetFromName $GroupName 3 "rig"`;
+    $GroupName=`UniqueName $GroupName`;
+	group -em -name $GroupName;
+	parent $Cluster1Handle $GroupName;
+	parent $Cluster2Handle $GroupName;
+	parent $GroupName NoScaledData;
+	return {$curve,$GroupName};
+}
+
+proc string GetPoleVectorPoint (string $BoneArray[]){
+  vector $P1=`xform -a -ws -q -rp $BoneArray[0]`;
+  vector $P2=`xform -a -ws -q -rp $BoneArray[1]`;
+  vector $P3=`xform -a -ws -q -rp $BoneArray[2]`;
+  vector $V1=$P2-$P1;
+  vector $V2=$P3-$P2;
+//the vector turned in to an array to the cross product operation
+  float $V1a[]={$V1.x,$V1.y,$V1.z};
+  float $V2a[]={$V2.x,$V2.y,$V2.z};
+  float $Angulo=angle($V1,$V2);
+  float $Angulo3=((rad_to_deg($Angulo)+180)/2);
+  float $Angulo=deg_to_rad($Angulo3-90);
+  float $EjeZ[]= crossProduct ($V1a,$V2a,1,1);
+  float $EjeY[]= crossProduct ($V2a,$EjeZ,1,1);  
+  float $EjeX[]= $V2a;
+  normalize $EjeX;
+  float $Y1=cos ($Angulo);
+  float $X1= - sin($Angulo);
+  float $Vy[]={$EjeY[0]*$Y1,$EjeY[1]*$Y1,$EjeY[2]*$Y1};
+  float $Vx[]={$EjeX[0]*$X1,$EjeX[1]*$X1,$EjeX[2]*$X1};
+  float $LProm=(mag ($V1) + mag ($V2))/2;//Longitud promedio
+  float $Vres[]={($Vy[0]+$Vx[0])*$LProm,($Vy[1]+$Vx[1])*$LProm,($Vy[2]+$Vx[2])*$LProm};
+  vector $PoleVector = <<$Vres[0]+$P2.x,$Vres[1]+$P2.y,$Vres[2]+$P2.z>>;
+ 	string $temp1[]=`spaceLocator`;
+ 	string $locator=$temp1[0];
+  xform -ws -t ($PoleVector.x) ($PoleVector.y) ($PoleVector.z)  $locator;
+  return $locator;
+}
+
+/*Funcion que agrega un Pole Vector a el Objeto y crea un cubo y una linea que va de el hueso medio al cubo*/
+proc string[] CreatePoleVector (string $IKHandle)
+{
+	//Obtiene el inicio y fin del IKHandle
+	string $startJoint=`ikHandle -q -sj $IKHandle`;
+	string $endJoint=`ikHandle -q -ee $IKHandle`;
+	//Selecciona el segundo joint del IK
+	select -r $startJoint;
+	string $temp[]=`pickWalk -d "down"`;
+	string $forearm=$temp[0];
+	//Crea un locator lo posiciona en la segundo joint crea en el un aim
+	//constraint que apunta al inicio del IK y su up vector es el final del IK
+    
+    string $locator = GetPoleVectorPoint ({$startJoint,$forearm,$endJoint});
+/*	string $temp1[]=`spaceLocator`;
+	string $locator=$temp1[0];
+	string $temp1[]=`spaceLocator`;
+	string $locator2=$temp1[0];
+	alinea $forearm $locator2 3;
+	float $LongitudDeHueso=`LenghtOfBone $forearm`;
+	move -r -os -moveXYZ ($LongitudDeHueso/2) 0 0 $locator2;
+	alinea $locator2 $locator 1;
+	delete $locator2;
+	aimConstraint -wut "object" $startJoint $endJoint $locator;
+*/	float $distancia = `distancia $startJoint $endJoint`;
+	//move -r -os -moveX (-$distancia/3*2) 0 0 $locator;
+	
+	
+	string $CntrlName = $IKHandle;
+	$CntrlName=`SetFromName $CntrlName 3 "ctr"`;
+	$CntrlName=`SetFromName $CntrlName 4 "rig"`;
+    $CntrlName=`AddToName $CntrlName "PoleVector"`;
+	$CntrlName=`UniqueName $CntrlName`;
+	//////////////////////////////////////////////////////////////////7
+	//Crea el Cntrl, donde Cntrl Tiene los el cubo del Pole Vector
+	$Cntrl=`CreateCubeLine ($distancia/10) ($distancia/10) ($distancia/10) $CntrlName`;
+	
+	move -r ($distancia/20) 0 0 ($Cntrl+".scalePivot") ($Cntrl+".rotatePivot");
+	move -rpr -a 0 0 0 $Cntrl;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $CntrlName;
+	string $LineCntrls[]=`CreateLineBetwenPoints $Cntrl $temp[0]`;
+	
+	alinea $locator $CntrlName 1;
+	delete $locator;
+	ikHandle -e -sol "ikRPsolver" $IKHandle;
+	string $poleVectorName=$IKHandle;
+	$poleVectorName=`SetFromName $poleVectorName 3 "pvc"`;
+	poleVectorConstraint -name $poleVectorName $CntrlName $IKHandle;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $CntrlName;
+
+	parent $LineCntrls[0] NoScaledData;
+	parent $Cntrl ScaledData;
+	
+	return ({$Cntrl,$LineCntrls[0]});
+}
+
+
+
+global proc makeIkStretchy (string $ikHandle)
+{
+	//Find the end joint where the ikHandle is located.
+	string $endJoint[];
+	$endJoint[0] = `eval ("ikHandle -q -endEffector " + $ikHandle)`;
+	select $endJoint[0];
+	$endJoint = `pickWalk -d up`;
+	$endJoint = `pickWalk -d down`;
+	//Find the start joint being affected by the ik handle.
+	string $startJoint[];
+	$startJoint[0] = `eval ("ikHandle -q -startJoint " + $ikHandle)`;
+	//Now that we know the start and end joints for the ik handle,
+	//we need to find the world space of these joints so that we can,
+	//calculate the total length of the chain.
+	//Create a vector array to store the world space coordinates of the joints.
+	vector $jointPos[];
+	//Vector between two points
+	vector $btwPointsVector = <<0,0,0>>;
+	//Create a float to store the distance between the current joint and the last one.
+	float $distBtwJoints = 0;
+	//This will store the total distance along the length of the chain.
+	float $totalDistance = 0;
+	//String variable to house current joint being queried in the while loop.
+	string $currentJoint = $startJoint[0];
+	//Counter integer used in the while loop to determine the proper index in the vector array.
+	int $counter = 0;
+	//Initial selection going into the while loop/
+	select $startJoint;
+	//Exit loop boolean
+	int $exitLoop = 0;
+	//Will loop through all the joints between the base and end by pickwalking through them.
+	//The loop stores the world space of each joint into $jointPos as it iterates over them.
+	//The while loop keeps going until the current joint equals the end joint.
+	while ($exitLoop == 0)
+	{
+		//Exit loop condition
+		if ($currentJoint == $endJoint[0])
+		{
+			$exitLoop = 1;
+		}
+		//Query the world space of the current joint.
+		$jointPos[$counter] = `joint -q -p -a $currentJoint`;
+		if ($counter != 0)
+		{
+			//Calulate the distance between this joint and the last.
+			//First compute the vector between the two points
+			$btwPointsVector = ($jointPos[$counter-1]) - ($jointPos[($counter)]);
+			//Now compute the length of the vector (the distance)
+			$distBtwJoints = mag ($btwPointsVector);
+			//Add the distance onto our total
+			$totalDistance = ($totalDistance + $distBtwJoints);
+		}
+		pickWalk -d down;
+		$sel = `ls -sl`;
+		$currentJoint = $sel[0];
+		$counter++;
+	}
+	//Now that we have the distance along the length of the chain ($totalDistance),
+	//we can use this to make the chain stretch when that distance
+	//is exceeded by the IK handle.
+	//To measure the distance from the ik handle to the start joint.
+	//Create two empty group nodes and use there translates to
+	//calculate the distance using a distanceBetween render node.
+	string $startPoint = `group -em`;
+	string $endPoint = `group -em`;
+	$startPoint = `rename $startPoint ($ikHandle + "startPoint")`;
+	$endPoint = `rename $endPoint ($ikHandle + "endPoint")`;
+	pointConstraint -offset 0 0 0 -weight 1 $startJoint[0] $startPoint;
+	pointConstraint -offset 0 0 0 -weight 1 $ikHandle $endPoint;
+	//Create a distance between render node.
+	string $distanceNode = `shadingNode -asUtility distanceBetween`;
+	//Connect the translates of the point constrained grp nodes
+	//to the point1 and point2 inputs on the distance node.
+	connectAttr -f ($startPoint + ".translate") ($distanceNode + ".point1");
+	connectAttr -f ($endPoint + ".translate") ($distanceNode + ".point2");
+	//Create a condition render node.
+	string $conditionNode = `shadingNode -asUtility condition`;
+	connectAttr -f ($distanceNode + ".distance") ($conditionNode + ".colorIfFalseR");
+	connectAttr -f ($distanceNode + ".distance") ($conditionNode + ".secondTerm");
+	//Set the condition node operation to 'greater or equal' ie, (>=)
+	setAttr ($conditionNode + ".operation") 3;
+	//Set the condition node's first term equal to the $totalDistance
+	setAttr ($conditionNode + ".firstTerm") $totalDistance;
+	//Set the condition node's colorIfTrueR equal to the $totalDistance
+	setAttr ($conditionNode + ".colorIfTrueR") $totalDistance;
+	//Create a multiply/Divide render node.
+	string $muliDivNode = `shadingNode -asUtility multiplyDivide`;
+	//Set the dividend to be the distance btw the ik handle and the start joint.
+	connectAttr -f ($conditionNode + ".outColorR") ($muliDivNode + ".input1X");
+	//Set the divisor to the total distance along the chain
+	setAttr ($muliDivNode + ".input2X") $totalDistance;
+	//Set the node operation to 'divide'
+	setAttr ($muliDivNode + ".operation") 2;
+	//Now that we have the normalized scale factor, lets plug this into the
+	//scaleX of each joint in the chain.
+	$exitLoop = 0;
+	$currentJoint = $startJoint[0];
+	select $currentJoint;
+	//The while loop keeps going until the current joint equals the end joint.
+	while ($exitLoop == 0)
+	{
+		//Connect the output of the multiply/divide node to the
+		//scale 'X' of the joints. This will cause them to stretch
+		//along their length as the distance expands.
+		connectAttr -f ($muliDivNode + ".outputX") ($currentJoint + ".scaleX");
+		//Pickwalk down to move down through the joint heirarchy.
+		pickWalk -d down;
+		$sel = `ls -sl`;
+		$currentJoint = $sel[0];
+		//Exit loop condition
+		if ($currentJoint == $endJoint[0])
+		{
+			$exitLoop = 1;
+		}
+	}
+	parent $startPoint ScaledData;
+	parent $endPoint ScaledData;
+	
+	select $ikHandle;
+}
+/***********************************************************************************/
+/*******************************************************************************
+Funciones para Editar Atributos
+***********************************************************************************/
+/***********************************************************************************/
+proc addFinguerControls (string $Object)
+{
+	addAttr -at "float" -ln MidUD -hnv 1 -hxv 1 -h 0 -k 1 -smn -10 -smx 10 $Object;
+	addAttr -at "float" -ln UD1 -hnv 1 -hxv 1 -h 0 -k 1 -smn -10 -smx 10 $Object;
+	addAttr -at "float" -ln UD2 -hnv 1 -hxv 1 -h 0 -k 1 -smn -10 -smx 10 $Object;
+	addAttr -at "float" -ln UD3 -hnv 1 -hxv 1 -h 0 -k 1 -smn -10 -smx 10 $Object;
+	addAttr -at "float" -ln MidLR -hnv 1 -hxv 1 -h 0 -k 1 -smn -10 -smx 10 $Object;
+	addAttr -at "float" -ln LR1 -hnv 1 -hxv 1 -h 0 -k 1 -smn -10 -smx 10 $Object;
+	addAttr -at "float" -ln LR2 -hnv 1 -hxv 1 -h 0 -k 1 -smn -10 -smx 10 $Object;
+	addAttr -at "float" -ln LR3 -hnv 1 -hxv 1 -h 0 -k 1 -smn -10 -smx 10 $Object;
+	addAttr -at "float" -ln MidTwist -hnv 1 -hxv 1 -h 0 -k 1 -smn -10 -smx 10 $Object;
+	addAttr -at "float" -ln Twist1 -hnv 1 -hxv 1 -h 0 -k 1 -smn -10 -smx 10 $Object;
+	addAttr -at "float" -ln Twist2 -hnv 1 -hxv 1 -h 0 -k 1 -smn -10 -smx 10 $Object;
+	addAttr -at "float" -ln Twist3 -hnv 1 -hxv 1 -h 0 -k 1 -smn -10 -smx 10 $Object;
+	addAttr -at "enum" -k on -ln Secondary -en "Off:On:" $Object;
+}
+proc addPalmControls(string $Object)
+{
+	addAttr -at "float" -ln PalmBend -hnv 1 -hxv 1 -h 0 -k 1 -smn -10 -smx 10 $Object;
+	addAttr -at "float" -ln PalmCup -hnv 1 -hxv 1 -h 0 -k 1 -smn -10 -smx 10 $Object;
+	addAttr -at "float" -ln Spread -hnv 1 -hxv 1 -h 0 -k 1 -smn -10 -smx 10 $Object;
+	addAttr -at "float" -ln Twist -hnv 1 -hxv 1 -h 0 -k 1 -smn -10 -smx 10 $Object;
+}
+
+proc addFeetControls(string $Object)
+{
+	addAttr -at "float" -ln Twist -hnv 1 -hxv 1 -h 0 -k 1 -smn -180 -smx 180 $Object;
+	//addAttr -at "float" -ln UpperLegScale  -h 0 -k 1 $Object;
+	//addAttr -at "float" -ln LowerLegScale  -h 0 -k 1 $Object;
+	addAttr -at "float" -ln ToePivot -hnv 1 -hxv 1 -h 0 -k 1 -smn -10 -smx 10 $Object;
+	addAttr -at "float" -ln ToePivotSide -hnv 1 -hxv 1 -h 0 -k 1 -smn -10 -smx 10 $Object;
+	addAttr -at "float" -ln ToeLift -hnv 1 -hxv 1 -h 0 -k 1 -smn -10 -smx 10 $Object;
+	addAttr -at "float" -ln BallPivot -hnv 1 -hxv 1 -h 0 -k 1 -smn -10 -smx 10 $Object;
+	addAttr -at "float" -ln HeelPivot -hnv 1 -hxv 1 -h 0 -k 1 -smn -10 -smx 10 $Object;
+	addAttr -at "float" -ln Tilt -hnv 1 -hxv 1 -h 0 -k 1 -smn -10 -smx 10 $Object;
+	addAttr -at "enum" -k on -ln AttachTo -en "WORLD:COG:" $Object;
+}
+
+proc AddVisibilityControls(string $Object)
+{
+    addAttr -at "enum" -k on -ln BodyControls -en "Off:On:" $Object;   
+    addAttr -at "enum" -k on -ln ToonyControls -en "Off:On:" $Object;       
+    addAttr -at "enum" -k on -ln FaceControls -en "Off:On:" $Object;
+    addAttr -at "enum" -k on -ln Resolution -en "Off:On:" $Object;   
+    addAttr -at "enum" -k on -ln MeshAs -en "Reference:Normal:" $Object;
+    addAttr -at "enum" -k on -ln AttachTo -en "HighRes:FacialRes:LowRes:" $Object;
+    
+}
+
+
+/*Funcion que esconde Atributos */
+proc LockAndHideAttributes(string $obj[],string $BitArray)
+{
+	string $BitArray;
+	string $i;
+	if (`sizeBytes $BitArray` == 10)
+	{
+		for ($i in $obj)
+		{
+			//Position
+			if (`substring $BitArray 1 1`==0)
+				setAttr -k off -l on ($i+".translateX");
+			else
+				if (`substring $BitArray 1 1`==1)
+					setAttr -k on -l off ($i+".translateX");
+			if (`substring $BitArray 2 2`==0)
+				setAttr -k off -l on ($i+".translateY");
+			else
+				if (`substring $BitArray 2 2`==1)
+					setAttr -k on -l off ($i+".translateY");
+			if (`substring $BitArray 3 3`==0)
+				setAttr -k off -l on ($i+".translateZ");
+			else
+				if (`substring $BitArray 3 3`==1)
+					setAttr -k on -l off ($i+".translateZ");
+			//Rotation
+			if (`substring $BitArray 4 4`==0)
+				setAttr -k off -l on ($i+".rotateX");
+			else
+				if (`substring $BitArray 4 4`==1)
+					setAttr -k on -l off ($i+".rotateX");
+			if (`substring $BitArray 5 5`==0)
+				setAttr -k off -l on ($i+".rotateY");
+			else
+				if (`substring $BitArray 5 5`==1)
+					setAttr -k on -l off ($i+".rotateY");
+			if (`substring $BitArray 6 6`==0)
+				setAttr -k off -l on ($i+".rotateZ");
+			else
+				if (`substring $BitArray 6 6`==1)
+					setAttr -k on -l off ($i+".rotateZ");
+			//Scale
+			if (`substring $BitArray 7 7`=="0")
+				setAttr -k off -l on ($i+".scaleX");
+			else
+				if (`substring $BitArray 7 7`==1)
+					setAttr -k on -l off ($i+".scaleX");
+			if (`substring $BitArray 8 8`=="0")
+				setAttr -k off -l on ($i+".scaleY");
+			else
+				if (`substring $BitArray 8 8`==1)
+					setAttr -k on -l off ($i+".scaleY");
+			if (`substring $BitArray 9 9`=="0")
+				setAttr -k off -l on ($i+".scaleZ");
+			else
+				if (`substring $BitArray 9 9`==1)
+					setAttr -k on -l off ($i+".scaleZ");
+			//Visibility
+			if (`substring $BitArray 10 10`=="0")
+				setAttr -k off -l on ($i+".visibility");
+			else
+				if (`substring $BitArray 10 10`==1)
+					setAttr -k on -l off ($i+".visibility");
+		}
+	}
+}
+/*******************************************************************************/
+/*******************************************************************************
+Funciones para conectar parametros
+********************************************************************************/
+/*******************************************************************************/
+proc ConnectWithLimits (string $AttrDriver, string $AttrDriven, float $minDriver,float $maxDriver,float $minDriven,float $maxDriven,float $ZeroValue)
+{
+	setDrivenKeyframe -cd $AttrDriver -driverValue $maxDriver -value $maxDriven $AttrDriven;
+	setDrivenKeyframe -cd $AttrDriver -driverValue 0 -value $ZeroValue $AttrDriven;
+	setDrivenKeyframe -cd $AttrDriver -driverValue $minDriver -value $minDriven $AttrDriven;
+}
+/**********************************************************************************
+Funcion que liga La rotacion de una herarquia un objeto a otro
+/**********************************************************************************/
+proc int linkHerarchyRotation(string $BoneStart, string $BoneEnd, string $Cntrl,int $X,int $Y,int $Z)
+{
+	string $hijos[] = `listRelatives -c $BoneStart`;
+	print "Entre a Funcion \n";
+	int $n=0;
+	string $i;
+	if ($BoneStart==$BoneEnd){
+		$n=1;
+		print "Sali";
+	}
+	else 
+	{
+		for ($i in $hijos)
+		{
+			if (`isInHierarchy $i $BoneEnd` == 1)
+			{
+				print ("ligue "+$BoneStart+"\n") ;
+				if ($X==1)
+					{connectAttr ($Cntrl + ".rotateX") ($BoneStart+".rotateX");}
+				if ($Y==1)
+					{connectAttr ($Cntrl + ".rotateY") ($BoneStart+".rotateY");}
+				if ($Z==1)
+					{connectAttr ($Cntrl + ".rotateZ") ($BoneStart+".rotateZ");}
+				linkHerarchyRotation ($i,$BoneEnd,$Cntrl,$X,$Y,$Z);
+				$n=1;
+			}
+		}
+	}
+	return $n;
+}
+proc int isInHierarchy(string $Obj1,string $Obj2){
+	string $hijos[] = `listRelatives -c $Obj1`;
+	int $n=0;
+	string $i;
+	if ($Obj1==$Obj2)
+		{$n=1;}
+	else
+	{
+		for ($i in $hijos)
+		{
+			$n=(`isInHierarchy $i $Obj2` || $n);
+		}
+	}
+	return $n;
+}
+/*********************************************************************************************************************/
+/*********************************************************************************************************************/
+/************************************RECONSTRUYE HERARQUIA **************************************************************/
+/*********************************************************************************************************************/
+/*********************************************************************************************************************/
+/*************************************************************************************/
+proc SetSkeleton(){
+    
+    //Identifica y Selecciona los Objetos principales de la herarquia
+	string $hips=`ObjNameToVar "*Hips_jnt"`;
+	string $leftUpLeg=`ObjNameToVar "*LF_UpLeg_jnt"`;
+	string $rightUpLeg=`ObjNameToVar "*RH_UpLeg_jnt"`;
+	string $leftShoulder=`ObjNameToVar "*LF_Shoulder_jnt"`;
+	string $rightShoulder=`ObjNameToVar "*RH_Shoulder_jnt"`;
+	string $temp[]=`listRelatives -parent $leftShoulder`;
+	string $neck=$temp[0];
+	string $leftHand=`ObjNameToVar "*LF_Hand_jnt"`;
+	string $rightHand=`ObjNameToVar "*RH_Hand_jnt"`;
+	
+	//Desemparenta las piernas y los Brazos
+	parent -w $leftUpLeg;
+	parent -w $rightUpLeg;
+	parent -w $leftShoulder;
+	parent -w $rightShoulder;
+	string $childrenL[]=`removeChildren $leftHand`;
+	string $childrenR[]=`removeChildren $rightHand`;
+	
+	select -cl;
+	//Crea el nombre del Hip Low
+	string $hipLow = $hips;
+	$hipLow=`SetFromName $hipLow 2 "HipLow"`;
+	//Crea el HipLow
+	string $hipLow = `joint -n $hipLow`;
+	//Obriene la posicion del Hip y de la base de la pierna para calcular la posicion del HipLowNub
+	vector $var1=`xform -ws -q -t $rightUpLeg`;
+	vector $var2=`xform -ws -q -t $hips`;
+	
+	//Crea el nombre para el Joint Que sera el Hip Low Nub
+	string $hipLow_nub = $hips;
+	$hipLow_nub=`SetFromName $hipLow_nub 2 "HipLowNub"`;
+	//Crea el Joint Del hipLow nub
+	string $hipLow_nub = `joint -r -p (($var1.y-$var2.y)) 0 0 -n $hipLow_nub`;
+	
+	//Limpia La seleccion y alinea cada uno de las extremidades
+
+	joint -e -oj "xyz" /*-sao "yup"*/ -zso -ch $leftUpLeg ;
+	joint -e -oj "xyz" -sao "yup" -zso  $leftUpLeg ;
+
+	joint -e -oj "xyz" /*-sao "yup"*/ -zso -ch $rightUpLeg ;
+	joint -e -oj "xyz" -sao "yup" -zso  $rightUpLeg ;
+   
+   joint -e -oj "xzy" -sao "yup" -zso -ch $leftShoulder;
+   joint -e -oj "xyz" -sao "yup" -zso $leftShoulder;
+   joint -e -oj "xzy" -sao "yup" -zso -ch $rightShoulder;
+   joint -e -oj "xyz" -sao "yup" -zso -ch $rightShoulder;
+
+	joint -e -oj "xzy" -sao "zup" -zso -ch $hips;
+	
+	joint -e -o 0 0 0 $leftHand;
+	joint -e -o 0 0 0 $rightHand;
+	for ($i in $childrenL)
+	{
+	    if (`match "Thumb" $i `== "Thumb")
+	        joint -e -oj "xzy" -sao "zup" -zso -ch $i;
+	    else 
+	        joint -e -oj "xzy" -sao "yup" -zso -ch $i;
+	}
+	for ($i in $childrenR)
+	{
+	    if (`match "Thumb" $i `== "Thumb")
+	        joint -e -oj "xzy" -sao "zup" -zso -ch $i;
+	    else 
+	        joint -e -oj "xzy" -sao "yup" -zso -ch $i;
+	}
+	
+    //Posiciona el HipLow en la posicion del Hip
+	alinea $hips $hipLow 3;
+	//Resetea la matriz de transformacion del HipLow y su nub
+	select -r $hipLow;
+	makeIdentity -apply true -t 1 -r 1 -s 1 $hipLow;
+	makeIdentity -apply true -t 1 -r 1 -s 1 $hipLow_nub;
+	//Orienta el HipLow
+	joint -e -oj "xyz" /*-sao "yup"*/ -zso -ch;
+
+	//Reemparenta las piernas y los hombros
+	parent $leftUpLeg $hipLow_nub;
+	parent $rightUpLeg $hipLow_nub;
+	parent $leftShoulder $neck;
+	parent $rightShoulder $neck ;
+	parentArray $leftHand $childrenL;
+	parentArray $rightHand $childrenR;
+	//Crea un grupo principal para los Hips
+	string $newName=$hips;
+	$newName=`SetFromName $newName 2 "HipGroup"`;
+	select -cl;
+	group -em -n $newName;
+	//Alinea el Grupo al Hip y emparenta tanto Hips como HipLow alGrupo
+	alinea $hips $newName 3;
+	parent $hipLow $newName;
+	parent $hips $newName;
+
+	select -cl;
+}
+//Crea un grupo nuevo alineado al objeto $obj y emparenta el objeto $Obj a este nuevo grupo
+//La vandera en caso de ser 1, busará al padre de Obj y a este emparentará el nuevo grupo
+//La función regresa el nuevo grupo
+proc string CreateGrouponObj (string $Obj, int $flag)
+{
+	string $NewName = $Obj;
+	string $ObjType = `GetFromName $Obj 3`;
+	string $Temp;
+	
+	if ( $ObjType == "grp" )
+	{
+
+		$NewName=`UniqueName $Obj`;
+		group -empty -name $NewName;
+	}
+	else
+	{
+		$NewName=`SetFromName $NewName 3 "grp"`;
+		$NewName=`AddToName $NewName "Group"`;
+	   group -empty -name $NewName;
+	}
+	alinea $Obj $NewName 3;
+	switch ($flag)
+	{
+		case 1: string $Parent[] = `listRelatives -p $Obj`;
+				parent $Obj $NewName;
+				if (`size $Parent` != 0)
+					parent $NewName $Parent[0];
+				break;
+		case 2: parent $NewName $Obj;
+				break;
+	}
+	select $Obj;
+	return $NewName;
+}
+/*********************************************************************************************************************/
+/*********************************************************************************************************************/
+/************************************IK FK COntrols ****************************************************************/
+/*********************************************************************************************************************/
+/*********************************************************************************************************************/
+
+
+
+/*Reconstruye la herarquia de un brazo y la vuelve 4 huesos en lugar de 3*/
+
+
+
+proc string RebuildArm (string $firstBone,string $Prefix){
+	//Crea el primer Joint y lo alinea al Hueso inicial
+	select -cl;
+	string $Joint1=`joint -n ($firstBone+$Prefix)`;
+	alinea $firstBone $Joint1 3;
+	// Crea un grupo padre del Joint Inicial , y le aplica un parent Constraint al padre de la base con Mantain Ofset
+	string $parent[]=`listRelatives -p $firstBone`;
+	string $Joint1Parent=`CreateGrouponObj $Joint1 1`;
+	parentConstraint -mo $parent[0] $Joint1Parent;
+	
+	//Crea 2 huesos mas
+	string $temp[]=`listRelatives -c $firstBone`;
+	string $Joint2=`joint -n ($temp[0]+$Prefix)`;
+	// Alinea en posicion el nuevo hueso Joint2 al segundo hueso de la herarquia y en orientacion al primer hueso y lo mueve -1/6 parte en su eje X
+	alinea $temp[0] $Joint2 1;
+	alinea $firstBone $Joint2 2;
+	float $distancia= `distancia $firstBone $temp[0]`;
+	move -os -r (-$distancia/10) 0 0 $Joint2;
+	//Crea un segundo hueso Y le asigna el nombre SegundaFalange + 2
+	string $tempName =`GetFromName $temp[0] 2`;
+	$tempName = `SetFromName $temp[0] 2 ($tempName+"2")`;
+	string $Joint3=`joint -n ($tempName+$Prefix)`;
+	//Calcula la distancia entre la segunda y tercera Falange
+	string $temp1[]=`listRelatives -c $temp[0]`;
+	float $distancia= `distancia $temp1[0] $temp[0]`;
+	//Alinea el segundo hueso de la segunda Falange a la segunda Falange tanto en posicion como orientacion y lo mueve 1/6 de la distancia hacia la Falange 3
+	alinea $temp[0] $Joint3 3;
+	move -os -r ($distancia/10) 0 0 $Joint3;
+	//Crea una cuarta Falange y la alinea a la tercer Falange Original
+	string $temp1[]=`listRelatives -c $temp[0]`;
+	string $Joint4=`joint -n ($temp1[0]+$Prefix)`;
+	alinea $temp1[0] $Joint4 3;
+	//Resetea las transformaciones de todos los huesos nuevos
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Joint4;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Joint3;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Joint2;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Joint1;
+	setAttr ($Joint2+".rotate") 0 0 0;
+	setAttr ($Joint3+".rotate") 0 0 0;
+	// Orienta el segundo hueso para corregir su orientacion que no este como la del primer hueso
+	joint -e -oj "xzy" -zso $Joint2;
+	joint -e -oj "xzy" -zso $Joint3;
+	parent $Joint1Parent Joints;
+	//Regresa la primera Falange
+	
+	return $Joint1;
+}
+
+/*Crea la herarquia de los controles IK*/
+proc string[] CreateIKControls (string $IKroot , string $Systemparent)
+{
+	//Obtiene los nombres de los 4 joints del sistema y los reasigna a Ex1 2 3 4
+	string $Ex1 = $IKroot;
+	string $temp[]=`listRelatives -c $Ex1`;
+	string $temp1[]=`listRelatives -c $temp[0]`;
+	string $temp2[]=`listRelatives -c $temp1[0]`;
+	string $Ex2=$temp[0];
+	string $Ex3=$temp1[0];
+	string $Ex4=$temp2[0];
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Ex1;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Ex2;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Ex3;
+	//Crea un control posicionado y alineado a la extremidad 4
+    float $Lenghtbone = `LenghtOfBone $Ex3`/5;
+    string $IKcontrol=`SetFromName $Ex4 3 "ctr"`;
+    $IKcontrol=`UniqueName $IKcontrol`;
+    $IKcontrol = `CreateCubeLine $Lenghtbone $Lenghtbone $Lenghtbone $IKcontrol`;
+    move -r ($Lenghtbone/2) 0 0 ($IKcontrol+".scalePivot") ($IKcontrol+".rotatePivot");
+	move -rpr -a 0 0 0 $IKcontrol;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $IKcontrol;
+///////////////////////////////7
+    alinea $Ex4 $IKcontrol 1;
+/*    setAttr $IKcontrol*/
+
+	//Crea un Nombre para el IK que tenga en el sistema al que pertenece IKH
+	$IKname=$Ex4;
+	$IKname=`SetFromName $IKname 3 "IKH"`;
+	$IKname=`SetFromName $IKname 4 "IK"`;
+	ikHandle -sj $Ex1 -ee $Ex4 -name $IKname;
+
+	string $PoleVector[]=`CreatePoleVector $IKname`;
+	
+	makeIkStretchy $IKname;
+	pointConstraint $IKcontrol $IKname;
+	string $OrientGroup=`CreateGrouponObj $Ex4 3`;
+	parent $OrientGroup $IKcontrol;
+	orientConstraint $OrientGroup $Ex4;
+	//connectAttr ($IKcontrol +".rotate") ($Ex4+".rotate");
+	string $GrupoCntrl1 = `CreateGrouponObj $IKcontrol 1`;
+
+	/////////////////////////////7
+	
+	///////////////////////////////7
+	addAttr -at "float" -ln Twist -hnv 1 -hxv 1 -h 0 -k 1 -smn -180 -smx 180 $IKcontrol;
+    connectAttr  ($IKcontrol+".Twist") ($IKname+".twist");
+
+
+	string $ParentC[]=`parentConstraint -mo $Systemparent $GrupoCntrl1`;
+	string $moveMain=`ObjNameToVar "*MD_Mover2_ctr_rig"`;
+	parentConstraint -mo $moveMain $GrupoCntrl1;
+    ////////////////////////////7777
+    addAttr -at "enum" -k on -ln AttachTo -en "WORLD:COG:" $IKcontrol;
+
+    string $Alias[]=`parentConstraint -q -wal $ParentC[0]`;   
+    connectAttr   ($IKcontrol+".AttachTo") ($ParentC[0]+"."+$Alias[0]);
+   
+    string $newName=`SetFromName $IKcontrol 2 "HandIKReverse"`;
+    $newName=`SetFromName $newName 3 "utl"`;
+    $newName=`SetFromName $newName 4 "rig"`;
+    $newName=`UniqueName  $newName`;
+   
+    shadingNode -name $newName -asUtility reverse;
+    connectAttr   ($IKcontrol+".AttachTo") ($newName+".inputX");
+    connectAttr   ($newName+".outputX") ($ParentC[0]+"."+$Alias[1]);
+
+    LockAndHideAttributes ({$IKcontrol}) "1111110001";
+    
+	parentConstraint -mo $Systemparent $GrupoCntrl1;
+	return ({$IKcontrol,$PoleVector[0],$PoleVector[1]});
+}
+proc string[] CreateFKControls (string $FKroot,string $Systemparent)
+	{    
+	float $Tam=`LenghtOfBone $FKroot`;
+	string $Ex1 = $FKroot;
+	string $temp[]=`listRelatives -c $Ex1`;
+	string $temp1[]=`listRelatives -c $temp[0]`;
+	string $temp2[]=`listRelatives -c $temp1[0]`;
+	string $Ex2=$temp[0];
+	string $Ex3=$temp1[0];
+	string $Ex4=$temp2[0];
+/*	string $CntrlExt1 = `CreateBoxCtrl $Ex1`;
+	string $CntrlExt2 = `CreateBoxCtrl $Ex3`;
+	string $CntrlExt3 = `CreateBoxCtrl $Ex4`;*/
+	
+	string $CntrlExt1 = `creacontrol $Ex1 ($Tam*1/2)`;
+	string $CntrlExt2 = `creacontrol $Ex3 ($Tam*1/2)`;
+	string $CntrlExt3 = `creacontrol $Ex4 ($Tam*1/3)`;
+	
+	string $GrupoCntrl1 = `CreateGrouponObj $CntrlExt1 1`;
+	string $GrupoCntrl2 = `CreateGrouponObj $CntrlExt2 1`;
+	string $GrupoCntrl3 = `CreateGrouponObj $CntrlExt3 1`;
+	
+	alinea $Ex4 $GrupoCntrl3 2;
+	xform   -roo "zyx" -p true  $CntrlExt3;
+	setAttr ($GrupoCntrl3+".rotateZ") 0; 
+
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Ex1;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Ex2;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Ex3;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $CntrlExt2;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $CntrlExt1;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $CntrlExt3;
+	
+	pointConstraint $Ex1 $GrupoCntrl1;
+	parentConstraint -mo $Systemparent $GrupoCntrl1;
+	pointConstraint $Ex3 $CntrlExt2;
+	parentConstraint -maintainOffset -st "none" $Ex2 $GrupoCntrl2;
+	parent $GrupoCntrl2 $GrupoCntrl1;
+
+	parent $GrupoCntrl3 $GrupoCntrl2;
+	parentConstraint -mo $CntrlExt2 $GrupoCntrl3;
+	//parentConstraint $CntrlExt3 $Ex4;
+	connectAttr ($CntrlExt1 +".rotate") ($Ex1+".rotate");
+	connectAttr ($CntrlExt2 +".rotate") ($Ex2+".rotate");
+	connectAttr ($CntrlExt2 +".rotate") ($Ex3+".rotate");
+//	OrientConstraint -mo $CntrlExt3 $Ex4;
+	connectAttr ($CntrlExt3+".rotate") ($Ex4+".rotate");
+//funciones para el stretchyIK 
+	
+	connectScale $CntrlExt1 $Ex2;
+	connectScale $CntrlExt2 $Ex3;
+	connectScale $CntrlExt2 $Ex4;
+
+	LockAndHideAttributes ({$CntrlExt1}) "0001111003";
+	LockAndHideAttributes ({$CntrlExt2}) "0000101003";
+    LockAndHideAttributes ({$CntrlExt3}) "0001110003";
+   
+   string $Mover2=`ObjNameToVar "*MD_Mover2_ctr_rig"`;
+   
+   parent $GrupoCntrl1 $Mover2;
+   
+	return {$CntrlExt1, $CntrlExt2, $CntrlExt3};
+
+}
+
+
+/***********************************************************/
+/*********************ARMS**********************************/
+/***********************************************************/
+/***********************************************************/
+proc string [] RebuildFK(){
+	string $LeftArmroot= `ObjNameToVar "*LF_Arm_jnt"`;
+	RebuildArm $LeftArmroot "_FK";
+	string $LeftCntrls[]={"var","dae"};
+	string $LeftArmrootParent[]=`listRelatives -p $LeftArmroot`;
+	string $LeftArmrootFK=`ObjNameToVar "*LF_Arm_jnt_FK"`;
+	string $LeftCntrls[]=`CreateFKControls $LeftArmrootFK $LeftArmrootParent[0]`;
+	
+	string $RightArmroot = `ObjNameToVar "*RH_Arm_jnt"`;
+	RebuildArm $RightArmroot "_FK";
+	string $RightArmrootParent[]=`listRelatives -p $RightArmroot`;
+	string $RightArmrootFK=`ObjNameToVar "*RH_Arm_jnt_FK"`;
+	
+	string $RightCntrls[]=`CreateFKControls $RightArmrootFK $RightArmrootParent[0]`;
+	appendStringArray $LeftCntrls $RightCntrls 3;
+	return $LeftCntrls;
+}
+
+proc string[] RebuildIK()
+{
+	string $LeftArmroot=`ObjNameToVar "*LF_Arm_jnt"`;
+	string $LeftArmrootIK=`RebuildArm $LeftArmroot "_IK"`;
+	string $LeftArmrootParent[]=`listRelatives -p $LeftArmroot`;
+	// string $LeftArmrootIK=`ObjNameToVar "*LF_Arm_jnt_IK"`;
+	string $LeftCntrls[]=`CreateIKControls $LeftArmrootIK $LeftArmrootParent[0]`;
+	string $RightArmroot=`ObjNameToVar "*RH_Arm_jnt"`;
+	string $RightArmrootIK=`RebuildArm $RightArmroot "_IK"`;
+	string $RightArmrootParent[]=`listRelatives -p $RightArmroot`;
+	// string $RightArmrootIK=`ObjNameToVar "*RH_Arm_jnt_IK"`;
+	string $RightCntrls[]=`CreateIKControls $RightArmrootIK $RightArmrootParent[0]`;
+	return ({$LeftCntrls[0],$LeftCntrls[1],$LeftCntrls[2],$RightCntrls[0],$RightCntrls[1],$RightCntrls[2]});
+}
+
+proc RebuildJXT(string $side,string $IKControls[],string $FKControls[])
+{
+	string $ORGArmroot=`ObjNameToVar ("*"+$side+"_Arm_jnt")`;
+	RebuildArm $ORGArmroot "_JXT";
+	//Identifica el Nodo del Brazo
+	$JXTArmroot=`ObjNameToVar ("*"+$side+"_Arm_jnt_JXT")`;
+	//Busca El nodo de la Clavicula
+	string $JXTArmrootParent[]=`listRelatives -p $ORGArmroot`;
+	//Busca El nodo del Pecho
+	string $Pecho[]=`listRelatives -p $JXTArmrootParent[0]`;
+	
+	string $JXTArmControl = $JXTArmrootParent[0];
+	$JXTArmControl=`SetFromName $JXTArmControl 3 "ctr"`;
+	$JXTArmControl=`SetFromName $JXTArmControl 4 ""`;
+	duplicate -name $JXTArmControl "clav_ctrl";
+	/////////////////////
+	//Calcula La distancia entre la clavicula y el Brazo para redimensionar la Clavicula	
+	float $ClavSize = `distancia $ORGArmroot $JXTArmrootParent[0]`;
+	scale -scaleXYZ ($ClavSize) ($ClavSize) ($ClavSize) $JXTArmControl;
+	makeIdentity -apply true -t 0 -r 0 -s 1 -n 0 $JXTArmControl;
+	//Alinea EL control De la clavicula a su nacimiento
+	alinea $JXTArmrootParent[0] $JXTArmControl 3;
+	//Crea Un Grupo Padre al Control
+	string $JXTArmControlGrp = `CreateGrouponObj $JXTArmControl 1`;
+	string $JXTArmControlGrp2 = `CreateGrouponObj $JXTArmControlGrp 1`;
+	
+//	CreaUn Nodo Alineado al mundo en la posicion del Pecho para usarlo en el Orient Constraint Y evitar que popee
+	string $JointOriented=`CreateGrouponObj $Pecho[0] 0`;
+	string $WorldOriented=`UniqueName $JointOriented`;
+	group -em -name $WorldOriented;
+	alinea $JointOriented $WorldOriented 1;
+	parent $WorldOriented $Pecho[0];
+
+   //	Emparenta con un parent Constraint Al Pecho La clavicula 
+   parent -world  $JXTArmControl;
+   
+   //parentConstraint -mo $Pecho[0] $JXTArmControlGrp2;
+   pointConstraint -mo $JXTArmrootParent[0] $JXTArmControlGrp;
+   
+   //Crea 2 OrientConstraints uno al Pecho y otro Al mundo 
+   string $Mover2=`ObjNameToVar ("*Mover2_ctr_rig")`;
+   
+   
+   string $pCClav[]=`orientConstraint -mo $Mover2 $JXTArmControlGrp`;
+   orientConstraint  $WorldOriented $JXTArmControlGrp;
+	
+	//Agrega Un Attributo de Aligned To a la clavicula 
+   addAttr -ln AlignedTo  -k on  -at "enum" -en "UpperBack:World:" $JXTArmControl;
+  	
+  	//Conecta el Control de Aligned To a el ParentConstraint
+   string $Alias[]=`orientConstraint -q -wal $pCClav[0]`;   
+	connectAttr   ($JXTArmControl+".AlignedTo") ($pCClav[0]+"."+$Alias[0]);
+   string $newName=`SetFromName $JXTArmControl 2 "ClavicleOrientReverse"`;
+   $newName=`SetFromName $newName 3 "utl"`;
+   $newName=`SetFromName $newName 4 "rig"`;
+   $newName=`UniqueName  $newName`;
+   shadingNode -name $newName -asUtility reverse;
+   connectAttr   ($JXTArmControl+".AlignedTo") ($newName+".inputX");
+   connectAttr   ($newName+".outputX") ($pCClav[0]+"."+$Alias[1]);
+	
+ //Alinea El Hueso de la clavicula al Brazo
+	orientConstraint $JXTArmControl $JXTArmrootParent[0];
+   parent $JXTArmControl $JXTArmControlGrp;
+//	connectAttr ($JXTArmControl +".rotate") ($JXTArmrootParent[0]+".rotate");
+
+	string $temp[];
+	string $IKArmroot=`ObjNameToVar ("*"+$side+"_Arm_jnt_IK")`;
+	string $FKArmroot=`ObjNameToVar ("*"+$side+"_Arm_jnt_FK")`;
+	for ($n=0;$n<=3;$n++)
+	{
+		ParentLink $IKArmroot $FKArmroot $JXTArmroot $JXTArmControl;
+		$temp=`listRelatives -c $IKArmroot`;
+		$IKArmroot=$temp[0];
+		$temp=`listRelatives -c $FKArmroot`;
+		$FKArmroot=$temp[0];
+		$temp=`listRelatives -c $JXTArmroot`;
+		$JXTArmroot=$temp[0];
+	}
+	select -r $ORGArmroot;
+	pickWalk -d "down";
+	pickWalk -d "down";
+	string $temp[]=`ls -sl`;
+	string $Handnodes[]=`removeChildren $temp[0]`;
+	parentArray $JXTArmroot $Handnodes;
+	IKFKvisibilityLink ($IKControls,"IK",$JXTArmControl);
+	IKFKvisibilityLink ($FKControls, "FK" ,$JXTArmControl);
+	
+
+    parent $JXTArmControlGrp2 $Mover2;
+	
+	///////////////////////////////////////////////////////////////////7
+	//funciones para crear Toony Controls
+	
+	$JXTArmroot=`ObjNameToVar ("*"+$side+"_Arm_jnt_JXT")`;
+    string $temp1[]=`listRelatives -c $JXTArmroot`;    
+    string $temp2[]=`listRelatives -c $temp1[0]`;
+    string $temp3[]=`listRelatives -c $temp2[0]`;
+	string $JXTArmroot1 = $temp1[0];
+	string $JXTArmroot2 = $temp2[0];
+	string $JXTArmroot3 = $temp3[0];	
+
+	string $Ribbon01[]=`CreaRibbon  $JXTArmroot $JXTArmroot1`;
+    string $Ribbon02[]=`CreaRibbon  $JXTArmroot2 $JXTArmroot3`;
+    
+    string $Ribbon1Controls[]=`listRelatives -c $Ribbon01[2]`;
+    string $Ribbon2Controls[]=`listRelatives -c $Ribbon02[2]`;
+    
+    float  $LongitudBrazo = `LenghtOfBone $JXTArmroot2`;
+    string $MidControl =`creacontrol $JXTArmroot2 ($LongitudBrazo/3)`;
+    string $MidControlParent=`CreateGrouponObj $MidControl 1`;
+    
+    parentConstraint -mo $JXTArmroot1 $MidControlParent;
+    
+    parentConstraint -mo $MidControl $Ribbon1Controls[2];
+    parentConstraint -mo $MidControl $Ribbon2Controls[0];
+    
+    parentConstraint $JXTArmroot3 $Ribbon2Controls[2];
+    parentConstraint -mo $JXTArmrootParent[0] $Ribbon1Controls[0];
+    
+    string $Ribbon1Md=`CreateGrouponObj $Ribbon1Controls[1] 1`;
+    string $Ribbon2Md=`CreateGrouponObj $Ribbon2Controls[1] 1`;
+    
+    parentConstraint -mo $JXTArmroot $Ribbon1Md;
+    parentConstraint -mo $JXTArmroot2 $Ribbon2Md;
+
+   deleteShapeNodes  $Ribbon1Controls[0];
+   deleteShapeNodes  $Ribbon1Controls[2];
+   deleteShapeNodes  $Ribbon2Controls[0];
+   deleteShapeNodes  $Ribbon2Controls[2];
+   string $MainVis=`ObjNameToVar ("*MainVisibility*")`;
+   connectAttr ($MainVis+".ToonyControls") ($Ribbon1Controls[1]+".visibility");
+   connectAttr ($MainVis+".ToonyControls") ($Ribbon2Controls[1]+".visibility");
+   connectAttr ($MainVis+".ToonyControls") ($MidControl+".visibility");
+	
+}
+/**********************************************************************/
+/**********************************************************************/
+/***********************************LEGS*******************************/
+/**********************************************************************/
+/*Crea la herarquia de los controles IK Para La Pierna*/
+proc string[] CreateFKControlsLeg (string $FKroot,string $Systemparent)
+	{    
+	float $Tam=`LenghtOfBone $FKroot`;
+	string $Ex1 = $FKroot;
+	string $temp[]=`listRelatives -c $Ex1`;
+	string $temp1[]=`listRelatives -c $temp[0]`;
+	string $temp2[]=`listRelatives -c $temp1[0]`;
+    string $temp3[]=`listRelatives -c $temp2[0]`;
+	string $Ex2=$temp[0];
+	string $Ex3=$temp1[0];
+	string $Ex4=$temp2[0];
+    string $Ex5=$temp3[0];
+/*	string $CntrlExt1 = `CreateBoxCtrl $Ex1`;
+	string $CntrlExt2 = `CreateBoxCtrl $Ex3`;
+	string $CntrlExt3 = `CreateBoxCtrl $Ex4`;*/
+	string $CntrlExt1 = `creacontrol $Ex1 ($Tam*1/2)`;
+	string $CntrlExt2 = `creacontrol $Ex3 ($Tam*1/2)`;
+	string $CntrlExt3 = `creacontrol $Ex4 ($Tam*1/4)`;
+	string $CntrlExt4 = `creacontrol $Ex5 ($Tam*1/4)`;
+	
+	string $GrupoCntrl1 = `CreateGrouponObj $CntrlExt1 1`;
+	string $GrupoCntrl2 = `CreateGrouponObj $CntrlExt2 1`;
+	string $GrupoCntrl3 = `CreateGrouponObj $CntrlExt3 1`;
+	string $GrupoCntrl4 = `CreateGrouponObj $CntrlExt4 1`;
+    setAttr ($GrupoCntrl3+".rotateY") 0;
+    	
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Ex1;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Ex2;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Ex3;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Ex4;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $CntrlExt2;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $CntrlExt1;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $CntrlExt3;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $CntrlExt4;
+	
+	pointConstraint $Ex1 $GrupoCntrl1;
+	parentConstraint -mo $Systemparent $GrupoCntrl1;
+	pointConstraint $Ex3 $CntrlExt2;
+	parentConstraint -maintainOffset -st "none" $Ex2 $GrupoCntrl2;
+	parent $GrupoCntrl2 $GrupoCntrl1;
+	parent $GrupoCntrl4 $GrupoCntrl3;
+
+	parent $GrupoCntrl3 $GrupoCntrl2;
+	parentConstraint -mo $CntrlExt2 $GrupoCntrl3;
+	//pointConstraint $Ex4 $GrupoCntrl3;
+	//OrientConstraint $GrupoCntrl2 $GrupoCntrl3;
+	//parentConstraint -mo $CntrlExt2 $GrupoCntrl3;
+	//parentConstraint $CntrlExt3 $Ex4;
+	connectAttr ($CntrlExt1 +".rotate") ($Ex1+".rotate");
+	connectAttr ($CntrlExt2 +".rotate") ($Ex2+".rotate");
+	connectAttr ($CntrlExt2 +".rotate") ($Ex3+".rotate");
+	connectAttr ($CntrlExt3 +".rotate") ($Ex4+".rotate");
+	//connectAttr ($CntrlExt4 +".rotate") ($Ex5+".rotate");
+    
+	orientConstraint -mo $CntrlExt3 $Ex4;
+	orientConstraint $CntrlExt4 $Ex5;
+	parentConstraint -mo $Ex4 $GrupoCntrl4;
+	/*funciones para el stretchyIK */
+
+	connectScale $CntrlExt1 $Ex2;
+	connectScale $CntrlExt2 $Ex3;
+	connectScale $CntrlExt2 $Ex4;
+
+	LockAndHideAttributes ({$CntrlExt1}) "0001111003";
+	LockAndHideAttributes ({$CntrlExt2}) "0000101003";
+    LockAndHideAttributes ({$CntrlExt3}) "0001110003";
+   
+   string $Mover2=`ObjNameToVar "*MD_Mover2_ctr_rig"`;
+   
+   parent $GrupoCntrl1 $Mover2;
+   
+   return {$CntrlExt1, $CntrlExt2, $CntrlExt3,$CntrlExt4};
+}
+
+proc string[] CreateIKControlsLeg (string $IKroot , string $Systemparent)
+{
+	//Obtiene los nombres de los 4 joints del sistema y los reasigna a Ex1 2 3 4
+	string $Ex1 = $IKroot;
+	string $temp[]=`listRelatives -c $Ex1`;
+	string $temp1[]=`listRelatives -c $temp[0]`;
+	string $temp2[]=`listRelatives -c $temp1[0]`;
+	string $temp3[]=`listRelatives -c $temp2[0]`;
+	string $temp4[]=`listRelatives -c $temp3[0]`;
+	string $Ex2=$temp[0];
+	string $Ex3=$temp1[0];
+	string $Ex4=$temp2[0];
+	string $Ex5=$temp3[0];
+	string $Ex6=$temp4[0];
+	alinea $Ex5 $Ex6 2; 
+	
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Ex1;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Ex2;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Ex3;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Ex4;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Ex5;
+	//Crea un control posicionado y alineado a la extremidad 4
+	float $FeetSize=`distancia $Ex4 $Ex5`;
+   //string $IKcontrol = ` CreateBoxCtrl $Ex4`;
+    string $IKcontrol=$Ex4;
+	$IKcontrol=`SetFromName $IKcontrol 3 "ctr"`;
+	$IKcontrol=`SetFromName $IKcontrol 4 "IK"`;
+	$IKcontrol=`UniqueName $IKcontrol`;
+
+    CreateCubeLine $FeetSize $FeetSize $FeetSize $IKcontrol;
+    move -r ($FeetSize/2) 0 0 ($IKcontrol+".scalePivot") ($IKcontrol+".rotatePivot");
+	move -rpr -a 0 0 0 $IKcontrol;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $IKcontrol;
+   
+   
+  // alinea  $Ex5 $IKcontrol 2;
+   alinea  $Ex4 $IKcontrol 1;
+	
+//	string $IKcontrol = `creacontrol $Ex4 4`;
+	//Crea un Nombre para el IK que tenga en el sistema al que pertenece IKH
+	string $IKname=$Ex4;
+	$IKname=`SetFromName $IKname 3 "IKH"`;
+	$IKname=`SetFromName $IKname 4 "IK"`;
+	string $BallIK=`SetFromName $IKname 2 "BallIK"`;
+    string $TipIK=`SetFromName $IKname 2 "TipIK"`;
+	
+	ikHandle -sj $Ex1 -ee $Ex4 -name $IKname;
+
+   ikHandle -sj $Ex4 -ee $Ex5 -name $BallIK;
+   ikHandle -sj $Ex5 -ee $Ex6 -name $TipIK;
+   
+	string $PoleVector[]=`CreatePoleVector $IKname`;
+	makeIkStretchy $IKname;
+	
+	
+	string $Ankle=$Ex4;
+	$Ankle=`SetFromName $Ankle 2 "Ankle"`;
+	$Ankle=`SetFromName $Ankle 3 "grp"`;
+	$Ankle=`SetFromName $Ankle 4 "IK"`;
+	string $Ball=`SetFromName $Ankle 2 "Ball"`;
+   string $BallLift=`SetFromName $Ankle 2 "BallLift"`;
+   string $Toe=`SetFromName $Ankle 2 "Toe"`;
+   string $Tap=`SetFromName $Ankle 2 "Tap"`;
+   string $Tip=`SetFromName $Ankle 2 "Tip"`;
+   
+   string $SideIn=`SetFromName $Ankle 2 "SideIn"`;
+   string $SideOut=`SetFromName $Ankle 2 "SideOut"`;
+   string $FeetOrient=`SetFromName $Ankle 2 "FeetOrient"`;
+
+         
+   group -em -name $Ball;
+   group -em -name $BallLift;
+//   group -em $Toe;   
+   group -em -name $Tap;   
+   group -em -name $Tip; 
+   group -em -name $SideIn;	
+   group -em -name $SideOut;
+
+
+   alinea $Ex5 $Ball 3;
+   alinea $Ex5 $BallLift 3;
+//   alinea $Ex5 $Toe 3;
+   alinea $Ex5 $Tip 3;
+   alinea $Ex6 $Tip 1;
+   alinea $Ex5 $Tap 3;
+   alinea $Ex5 $SideIn 3;
+   alinea $Ex5 $SideOut 3;
+   
+   //move -ws -r -moveY 0 $FeetSize 0 $Ex6;
+
+   if (`GetFromName $SideIn 1`=="LF")
+       {
+        move -ws -r -moveX ($FeetSize*.3) 0  0 $SideIn;
+        move -ws -r -moveX (-$FeetSize*.3) 0 0 $SideOut;
+       }
+   else {
+        move -ws -r -moveX (-$FeetSize*.3) 0 0 $SideIn;
+        move -ws -r -moveX ($FeetSize*.3) 0 0 $SideOut;
+       }
+  
+   move -ws -r -moveZ 0 0 (-$FeetSize*0.5) $Tap;
+   
+   
+   
+   parent $IKname $Ball;
+   parent $BallIK $BallLift;
+   parent $TipIK $BallLift;
+   parent $BallLift $SideIn;   
+   parent $Ball $SideIn;      
+   parent $SideIn $SideOut;   
+   parent $SideOut $Tap;
+   parent $Tap $Tip;
+   string $TipData=`CreateGrouponObj $Tip 1`;
+   string $MainData=`CreateGrouponObj $TipData 1`;
+   string $Name=`SetFromName $TipData 2 "MainFeetData"`;
+   $MainData=`rename $MainData $Name`;
+   
+   parentConstraint  -mo $IKcontrol $TipData;
+    
+   addFeetControls $IKcontrol;
+
+   ConnectWithLimits ($IKcontrol+".ToePivot") ($Tip+".rotateZ") (-10) 10 (-70)(70)(0);
+   ConnectWithLimits ($IKcontrol+".ToePivotSide") ($Tip+".rotateY") (-10) 10 (-70)(70)(0);
+   ConnectWithLimits ($IKcontrol+".ToeLift") ($BallLift+".rotateZ") (-10) 10 (-70)(70)(0);
+   ConnectWithLimits ($IKcontrol+".BallPivot") ($Ball+".rotateZ") (-10) 10 (70)(-70)(0);
+   ConnectWithLimits ($IKcontrol+".HeelPivot") ($Tap+".rotateZ") (-10) 10 (-70)(70)(0);
+   ConnectWithLimits ($IKcontrol+".Tilt") ($SideIn+".rotateX") (-10) 10 (-70)(0)(0);
+   ConnectWithLimits ($IKcontrol+".Tilt") ($SideOut+".rotateX") (-10) 10 (0)(70)(0);
+
+
+  // AttachTo
+   
+	//pointConstraint $IKcontrol $IKname;
+	//orientConstraint $IKcontrol $Ex4;
+	
+	//connectAttr ($IKcontrol +".rotate") ($Ex4+".rotate");
+	string $GrupoCntrl1 = `CreateGrouponObj $IKcontrol 1`;
+
+   connectAttr  ($IKcontrol+".Twist") ($IKname+".twist");
+   LockAndHideAttributes ({$IKcontrol}) "1111110001";
+    
+	string $ParentC[]=`parentConstraint -mo $Systemparent $GrupoCntrl1`;
+	string $moveMain=`ObjNameToVar "*MD_Mover2_ctr_rig"`;
+	parentConstraint -mo $moveMain $GrupoCntrl1;
+	
+	
+	//Conecta el Control de Aligned To a el ParentConstraint
+
+   string $Alias[]=`parentConstraint -q -wal $ParentC[0]`;   
+	connectAttr   ($IKcontrol+".AttachTo") ($ParentC[0]+"."+$Alias[0]);
+   
+   string $newName=`SetFromName $IKcontrol 2 "FeetParentReverse"`;
+   $newName=`SetFromName $newName 3 "utl"`;
+   $newName=`SetFromName $newName 4 "rig"`;
+   $newName=`UniqueName  $newName`;
+   
+   shadingNode -name $newName -asUtility reverse;
+   connectAttr   ($IKcontrol+".AttachTo") ($newName+".inputX");
+   connectAttr   ($newName+".outputX") ($ParentC[0]+"."+$Alias[1]);
+
+	parent $GrupoCntrl1 $moveMain;
+	parent $MainData ScaledData;
+
+	
+	return ({$IKcontrol,$PoleVector[0],$PoleVector[1]});
+}
+
+proc string RebuildLeg (string $firstBone,string $Prefix){
+	//Crea el primer Joint y lo alinea al Hueso inicial
+	select -cl;
+	string $Joint1=`joint -n ($firstBone+$Prefix)`;
+	alinea $firstBone $Joint1 3;
+	// Crea un grupo padre del Joint Inicial , y le aplica un parent Constraint al padre de la base con Mantain Ofset
+	string $parent[]=`listRelatives -p $firstBone`;
+	string $Joint1Parent=`CreateGrouponObj $Joint1 1`;
+	parentConstraint -mo $parent[0] $Joint1Parent;
+	//Crea 2 huesos mas
+	string $temp[]=`listRelatives -c $firstBone`;
+	string $Joint2=`joint -n ($temp[0]+$Prefix)`;
+	// Alinea en posicion el nuevo hueso Joint2 al segundo hueso de la herarquia y en orientacion al primer hueso y lo mueve -1/10 parte en su eje X
+	alinea $temp[0] $Joint2 1;
+	alinea $firstBone $Joint2 2;
+	float $distancia= `distancia $firstBone $temp[0]`;
+	move -os -r (-$distancia/10) 0 0 $Joint2;
+	//Crea un segundo hueso Y le asigna el nombre de la Segunda Falange + 2
+	string $tempName =`GetFromName $temp[0] 2`;
+	$tempName = `SetFromName $temp[0] 2 ($tempName+"2")`;
+	string $Joint3=`joint -n ($tempName+$Prefix)`;
+	//Calcula la distancia entre la segunda y tercera Falange
+	string $temp1[]=`listRelatives -c $temp[0]`;
+	float $distancia= `distancia $temp1[0] $temp[0]`;
+	//Alinea el segundo hueso de la segunda Falange a la segunda Falange tanto en posicion como orientacion y lo mueve 1/6 de la distancia hacia la Falange 3
+	alinea $temp[0] $Joint3 3;
+	move -os -r ($distancia/10) 0 0 $Joint3;
+	//Crea una cuarta Falange y la alinea a la tercer Falange Original
+	string $temp1[]=`listRelatives -c $temp[0]`;
+	string $Joint4=`joint -n ($temp1[0]+$Prefix)`;
+	alinea $temp1[0] $Joint4 3;
+	
+	//Crea Los huesos del Pie
+	string $temp2[]=`listRelatives -c $temp1[0]`;
+	string $Joint5=`joint -n ($temp2[0]+$Prefix)`;
+	alinea $temp2[0] $Joint5 3;
+	string $temp3[]=`listRelatives -c $temp2[0]`;
+	string $Joint6=`joint -n ($temp3[0]+$Prefix)`;
+	alinea $temp3[0] $Joint6 3;
+	
+	//Resetea las transformaciones de todos los huesos nuevos
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Joint6;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Joint5;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Joint4;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Joint3;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Joint2;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Joint1;
+	setAttr ($Joint2+".rotate") 0 0 0;
+	setAttr ($Joint3+".rotate") 0 0 0;
+	// Orienta El segundo joint que esta mal orientado por la forma en que fue creado
+
+    joint -e -oj "xzy" -zso $Joint2;
+    joint -e -oj "xzy" -zso $Joint3;
+	//Regresa la primera Falange
+	
+	parent $Joint1Parent Joints;
+	return $Joint1;
+}
+
+proc string [] RebuildFKLegs(){
+	string $LeftArmroot= `ObjNameToVar "*LF_UpLeg_jnt"`;
+	RebuildLeg $LeftArmroot "_FK";
+	string $LeftArmrootParent[]=`listRelatives -p $LeftArmroot`;
+	string $LeftArmrootFK=`ObjNameToVar "*LF_UpLeg_jnt_FK"`;
+	string $LeftCntrls[]=`CreateFKControlsLeg $LeftArmrootFK $LeftArmrootParent[0]`;
+	
+	string $RightArmroot = `ObjNameToVar "*RH_UpLeg_jnt"`;
+	RebuildLeg $RightArmroot "_FK";
+	string $RightArmrootParent[]=`listRelatives -p $RightArmroot`;
+	string $RightArmrootFK=`ObjNameToVar "*RH_UpLeg_jnt_FK"`;
+	string $RightCntrls[]=`CreateFKControlsLeg $RightArmrootFK $RightArmrootParent[0]`;
+	
+	appendStringArray $LeftCntrls $RightCntrls 4;
+	
+	return $LeftCntrls;
+}
+proc string[] RebuildIKLegs()
+{
+	string $LeftArmroot=`ObjNameToVar "*LF_UpLeg_jnt"`;
+	string $LeftArmrootIK=`RebuildLeg $LeftArmroot "_IK"`;
+	string $LeftArmrootParent[]=`listRelatives -p $LeftArmroot`;
+	// string $LeftArmrootIK=`ObjNameToVar "*LF_Arm_jnt_IK"`;
+
+	string $LeftCntrls[]=`CreateIKControlsLeg $LeftArmrootIK $LeftArmrootParent[0]`;
+	string $RightArmroot=`ObjNameToVar "*RH_UpLeg_jnt"`;
+	string $RightArmrootIK=`RebuildLeg $RightArmroot "_IK"`;
+	string $RightArmrootParent[]=`listRelatives -p $RightArmroot`;
+	// string $RightArmrootIK=`ObjNameToVar "*RH_Arm_jnt_IK"`;
+	string $RightCntrls[]=`CreateIKControlsLeg $RightArmrootIK $RightArmrootParent[0]`;
+	return ({$LeftCntrls[0],$LeftCntrls[1],$LeftCntrls[2],$RightCntrls[0],$RightCntrls[1],$RightCntrls[2]});
+
+}
+
+
+proc RebuildJXTLeg(string $side,string $IKControls[],string $FKControls[])
+{
+	string $ORGArmroot=`ObjNameToVar ("*"+$side+"_UpLeg_jnt")`;
+	
+	RebuildLeg $ORGArmroot "_JXT";
+	
+	//Identifica el Nodo de la pierna que acaba de reconstruir Rebuild Leg
+	$JXTArmroot=`ObjNameToVar ("*"+$side+"_UpLeg_jnt_JXT")`;
+	
+	//Busca El nodo del Hip
+	string $JXTArmrootParent[]=`listRelatives -p $ORGArmroot`;
+	
+	
+	string $JXTArmControl = $JXTArmroot;
+	$JXTArmControl=`SetFromName $JXTArmControl 3 "ctr"`;
+	$JXTArmControl=`SetFromName $JXTArmControl 4 "rig"`;
+	
+	duplicate -name $JXTArmControl "clav_ctrl";
+	
+	/////////////////////
+	//Calcula La distancia entre la clavicula y el Brazo para redimensionar la Clavicula	
+	float $ClavSize = `distancia $ORGArmroot $JXTArmrootParent[0]`;
+	scale -scaleXYZ ($ClavSize) ($ClavSize) ($ClavSize) $JXTArmControl;
+	makeIdentity -apply true -t 0 -r 0 -s 1 -n 0 $JXTArmControl;
+	//Alinea EL control De la clavicula a su nacimiento
+	alinea $JXTArmroot $JXTArmControl 3;
+	
+	//Crea Un Grupo Padre al Control
+	string $JXTArmControlGrp = `CreateGrouponObj $JXTArmControl 1`;
+	string $JXTArmControlGrp2 = `CreateGrouponObj $JXTArmControlGrp 1`;
+
+
+//	CreaUn Nodo Alineado al mundo en la posicion del Pecho para usarlo en el Orient Constraint Y evitar que popee
+/*	string $JointOriented=`CreateGrouponObj $Pecho[0] 0`;
+	string $WorldOriented=`UniqueName $JointOriented`;
+	group -em -name $WorldOriented;
+	alinea $JointOriented $WorldOriented 1;
+	parent $WorldOriented $Pecho[0];*/
+	
+   //	Emparenta con un parent Constraint Al Pecho La clavicula 
+   parent -world  $JXTArmControl;
+   
+   parentConstraint -mo $JXTArmrootParent[0] $JXTArmControlGrp;
+
+//Emparenta el Control del Brazo al Gru
+   parent $JXTArmControl $JXTArmControlGrp;
+
+	string $temp[];
+	string $IKArmroot=`ObjNameToVar ("*"+$side+"_UpLeg_jnt_IK")`;
+	string $FKArmroot=`ObjNameToVar ("*"+$side+"_UpLeg_jnt_FK")`;
+	for ($n=0;$n<=5;$n++)
+	{
+		ParentLink $IKArmroot $FKArmroot $JXTArmroot $JXTArmControl;
+		$temp=`listRelatives -c -typ "transform" $IKArmroot`;
+		$IKArmroot=$temp[0];
+		$temp=`listRelatives -c -typ "transform" $FKArmroot`;
+		$FKArmroot=$temp[0];
+		$temp=`listRelatives -c -typ "transform" $JXTArmroot`;
+		$JXTArmroot=$temp[0];
+	}
+	
+	//select -r $ORGArmroot;
+	//pickWalk -d "down";
+	//pickWalk -d "down";
+
+	//string $temp[]=`ls -sl`;
+	//string $Handnodes[]=`removeChildren $temp[0]`;
+	//parentArray $JXTArmroot $Handnodes;
+    
+	IKFKvisibilityLink ($IKControls,"IK",$JXTArmControl);
+	IKFKvisibilityLink ($FKControls, "FK" ,$JXTArmControl);
+	
+   string $Mover2=`ObjNameToVar "*MD_Mover2_ctr_rig"`;
+   LockAndHideAttributes ({$JXTArmControl}) "0000000000";
+   parent $JXTArmControlGrp2 $Mover2;
+   
+   ///////////////////////////////////////////////////////////////////7
+	//funciones para crear Toony Controls
+	
+	$JXTArmroot=`ObjNameToVar ("*"+$side+"_UpLeg_jnt_JXT")`;
+    string $temp1[]=`listRelatives -c $JXTArmroot`;    
+    string $temp2[]=`listRelatives -c $temp1[0]`;
+    string $temp3[]=`listRelatives -c $temp2[0]`;
+	string $JXTArmroot1 = $temp1[0];
+	string $JXTArmroot2 = $temp2[0];
+	string $JXTArmroot3 = $temp3[0];	
+
+	string $Ribbon01[]=`CreaRibbon  $JXTArmroot $JXTArmroot1`;
+    string $Ribbon02[]=`CreaRibbon  $JXTArmroot2 $JXTArmroot3`;
+    
+    string $Ribbon1Controls[]=`listRelatives -c $Ribbon01[2]`;
+    string $Ribbon2Controls[]=`listRelatives -c $Ribbon02[2]`;
+    
+    float  $LongitudBrazo = `LenghtOfBone $JXTArmroot2`;
+    string $MidControl =`creacontrol $JXTArmroot2 ($LongitudBrazo/3)`;
+    string $MidControlParent=`CreateGrouponObj $MidControl 1`;
+    
+    parentConstraint -mo $JXTArmroot1 $MidControlParent;
+    
+    parentConstraint -mo $MidControl $Ribbon1Controls[2];
+    parentConstraint -mo $MidControl $Ribbon2Controls[0];
+    parentConstraint $JXTArmroot3 $Ribbon2Controls[2];
+    parentConstraint -mo $JXTArmrootParent[0] $Ribbon1Controls[0];
+    
+    string $Ribbon1Md=`CreateGrouponObj $Ribbon1Controls[1] 1`;
+    string $Ribbon2Md=`CreateGrouponObj $Ribbon2Controls[1] 1`;
+    
+    parentConstraint -mo $JXTArmroot $Ribbon1Md;
+    parentConstraint -mo $JXTArmroot2 $Ribbon2Md;
+   
+    deleteShapeNodes $Ribbon1Controls[0];
+    deleteShapeNodes $Ribbon1Controls[2];
+    deleteShapeNodes $Ribbon2Controls[0];    
+    deleteShapeNodes $Ribbon2Controls[2];
+
+   
+   string $MainVis=`ObjNameToVar ("*MainVisibility*")`;
+   connectAttr ($MainVis+".ToonyControls") ($Ribbon1Controls[1]+".visibility");
+   connectAttr ($MainVis+".ToonyControls") ($Ribbon2Controls[1]+".visibility");
+   connectAttr ($MainVis+".ToonyControls") ($MidControl+".visibility");   
+   
+}
+
+proc string customPickWalk (string $Elem,string $Class,int $depth){
+	string $childs[]=`listRelatives -c $Elem`;
+	string $i;
+	string $Class;
+	string $returnValue=$Elem;
+	if (($depth == 0) || (`size $childs` == 0))
+	{
+		$returValue = $Elem;
+	}
+	else
+	{
+		for ($i in $childs)
+		{
+			if (`nodeType $i` == $Class)
+				{
+				print ("node:" + $i + "\n");
+				$returnValue = `customPickWalk $i $Class ($depth-1)`;
+				}
+		}
+		if ($returnValue=="")
+		{
+			print ("valor cero:" + $returnValue + $Elem);
+			$returnValue=$Elem;
+		}
+	}
+	return $returnValue;
+}
+/*********************************************************************************************************************/
+/*********************************************************************************************************************/
+/************************************Spine****************************************************************************/
+/*********************************************************************************************************************/
+/*********************************************************************************************************************/
+proc RebuildSpine(){
+    
+//Obtiene el Nodode La Cadera
+	string $hips=`ObjNameToVar "*Hips_jnt"`;
+//string $temp[]=`listRelatives -c $hips`;
+//Obtiene el Nodo de la columna
+	string $Spine=`ObjNameToVar "*Spine_jnt"`;
+    float $SpineSize=`LenghtOfBone $hips`; 
+//Crea Un control en La cadera
+
+	string $HipsControl=`creacontrol $hips $SpineSize`;
+	string $COG =`SetFromName $HipsControl 2 "COG"`;
+	$HipsControl=`rename $HipsControl $COG`;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $HipsControl;
+//Crea Un Ribbon entre La cadera y la columna
+	string $RibbonGroups[]=`CreaRibbon $hips $Spine`;
+//Identifica el NOdo 3 
+	string $spineRibbon=`ObjNameToVar "*HipsToSpineJointsLookAt3*"`;
+
+//Crea los controles de la cabeza y los liga Identifica el logo del Cuello*/
+	string $Neck=`ObjNameToVar "*Neck_jnt"`;
+	string $temp1[]=`duplicate ControlCabeza`;
+	string $CntrlCabeza=$temp1[0];
+//Renombra El control de La cabeza a la nomenclatura
+   string $newName=`SetFromName $Neck 3 "ctr"`;
+   $newName=`SetFromName $newName 4 "rig"`;
+   $newName=`SetFromName $newName 2 "HeadControl"`;
+   $newName=`UniqueName $newName`;
+   $CntrlCabeza=`rename $CntrlCabeza $newName`;
+	
+   float $HeadSize=`LenghtOfBone $Neck`;
+
+   scale -scaleXYZ $HeadSize $HeadSize $HeadSize $CntrlCabeza;
+   makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $CntrlCabeza;
+//Alinea el control Cabeza al Joint Del cuello      
+	alinea $Neck $CntrlCabeza 3;
+	
+	parentConstraint $CntrlCabeza $Neck;
+	
+	string $GrupoCabeza2 = `CreateGrouponObj $CntrlCabeza 1`;
+	string $GrupoCabeza  = `CreateGrouponObj $CntrlCabeza 1`;
+	
+	parent -world $GrupoCabeza;
+	parent $GrupoCabeza2 $Spine;
+	
+	//Emparenta la parte superior al control inferior del Ribbon
+	parent $RibbonGroups[2] $HipsControl;
+	//select -r $RibbonGroups[0];
+	//string $temp2 = `customPickWalk $RibbonGroups[0] "joint" 6`;
+	//pointConstraint $spineRibbon $Spine;
+	
+	string $Controls[] =`listRelatives -c $RibbonGroups[2]`;
+	parentConstraint -mo $Controls[2] $Spine;
+	
+	////////////////////
+//Crea Los Controles Cuadrado
+//Identifica la distancia entre los controles Circulares del Ribbon
+   float $Height=`distancia $Controls[0] $Controls[1]`;
+   string $SpineFK1=`SetFromName $Controls[0] 2 "SpineFK1"`;
+   $SpineFK1=`UniqueName $SpineFK1`;
+   CreateCubeLine $Height ($Height*1.5) ($Height*1.5) $SpineFK1;
+   
+   $SpineFK2=`UniqueName $SpineFK1`;
+   CreateCubeLine $Height ($Height*1.5) ($Height*1.5)  $SpineFK2;
+   
+   alinea $Controls[0] $SpineFK1 3;
+   alinea $Controls[1] $SpineFK2 3;
+   
+   parent $SpineFK1 $RibbonGroups[2];
+   parent $SpineFK2 $SpineFK1;
+   parent $Controls[1] $SpineFK2;
+   parent $Controls[2] $SpineFK2;
+
+   makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $SpineFK1;
+   makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $SpineFK2;
+   
+	string $hipGroup=`ObjNameToVar "*HipGroup_jnt*"`;
+	parentConstraint $Controls[0] $hipGroup;
+	//Liga la Cabeza al Hueso del cuello
+		
+    //-mo
+	pointConstraint  $GrupoCabeza2 $GrupoCabeza;
+    //-mo
+	string $pCCabeza[]=`orientConstraint $GrupoCabeza2 $GrupoCabeza`;
+	string $Alias[]=`orientConstraint -q -wal $pCCabeza[0]`;
+	connectAttr   ($CntrlCabeza+".AlignedTo") ($pCCabeza[0]+"."+$Alias[0]);
+	
+    string $MoveAndScaleMain=`ObjNameToVar "*Mover2_ctr*"`;
+	parent $HipsControl $MoveAndScaleMain;
+	
+	
+}
+/*********************************************************************************************************************/
+/*********************************************************************************************************************/
+/************************************Control Hands********************************************************************/
+/*********************************************************************************************************************/
+/*********************************************************************************************************************/
+/*Crea la herarquia para cada dedo, y regresa,2 objetos Basicos, el Groupo que controla el dedo, y los controles del dedo */
+proc string[] LinkFinguer(string $rootFinguer){
+    select $rootFinguer;
+    pickWalk -d "up";
+    //identificar el Hueso que es la mano y asignarlo a Hand e identifica las 3 Falanges de los dedos
+    string $temp[]=`ls -sl`;
+    string $hand=$temp[0];
+    string $FingerF1 = `customPickWalk $rootFinguer "joint" 1`;
+    string $FingerF2 = `customPickWalk $rootFinguer "joint" 2`;
+    string $FingerF3 = `customPickWalk $rootFinguer "joint" 3`;
+    //string $FingerF4 = `customPickWalk $rootFinguer "joint" 4`;
+    //Obtengo la longitud del segundo hueso que sera la longitud del hueso de la palma
+    float $FingerLenght = `LenghtOfBone $FingerF2`;
+    //Creo el NombredelHueso de la palma Agregandole al nombre del Dedo el prefijo Palm
+    string $palmFingerJnt = `AddToName $rootFinguer "Palm"`;
+    select -clear;
+    // Creo el Joint y lo alineo al primer hueso actual del dedo
+    joint -name $palmFingerJnt;
+    alinea $rootFinguer $palmFingerJnt 3;
+    //Crea un segundo Joint en el mismo lugar y lo renombra
+    string $tempJoint[]=`duplicate $palmFingerJnt`;
+    $palmFingerJnt2=`UniqueName $palmFingerJnt`;
+    rename $tempJoint[0] $palmFingerJnt2;
+    //mueve ambos joints hacia atras para crear 2 falanges mas
+    move -r -os -moveX (-$FingerLenght*2) 0 0 $palmFingerJnt;
+    move -r -os -moveX (-$FingerLenght) 0 0 $palmFingerJnt2;
+    
+    parent $palmFingerJnt2 $palmFingerJnt;
+    parent $rootFinguer $palmFingerJnt2;
+    parent $palmFingerJnt $hand;
+    string $FingerLinks[]= {$palmFingerJnt,$palmFingerJnt2,$rootFinguer,$FingerF1,$FingerF2,$FingerF3};
+    string $RootName=`AddToName $rootFinguer "Root"`;
+    $RootName=`SetFromName $RootName 3 "nul"`;
+    $RootName=`SetFromName $RootName 4 "rig"`;
+    $RootName =`UniqueName $RootName`;
+//   Crea el Grupo que es la base de el dedo
+    group -em -name $RootName;
+    alinea $palmFingerJnt2 $RootName 3;
+    string $parent= $RootName;
+    int $i;
+    select -cl;
+    string $FingerCntrl = `SetFromName $rootFinguer 3 "ctr"`;
+    $FingerCntrl =`SetFromName $FingerCntrl 4 "rig"`;
+    $FingerCntrl = `AddToName $FingerCntrl "Control"`;
+//Crea el Control del Dedo     
+    $FingerCntrl=`CreateCubeLine ($FingerLenght/2) ($FingerLenght/2) ($FingerLenght/2) $FingerCntrl`;
+    move -r ($FingerLenght/6) 0 0 ($FingerCntrl+".scalePivot") ($FingerCntrl+".rotatePivot");
+    move -rpr -a 0 0 0 $FingerCntrl;
+    makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $FingerCntrl;
+    
+    alinea $FingerF3 $FingerCntrl 3;
+    parentConstraint $FingerF3 $FingerCntrl;
+    addFinguerControls $FingerCntrl;
+    LockAndHideAttributes ({$FingerCntrl}) ("0000000000");
+    
+    string $SubControl;
+    string $SubCtrParent;
+    string $ControlParent;
+    string $ControlShape;
+    for ($i=1;$i<=4;$i++)
+    {
+        //Crea una herarquia de 3 elementos, un locator un y dos Grupos $Group1Name $Group2Name
+        string $GenName = `SetFromName $FingerLinks[$i] 3 "loc"`;
+        $GenName =`SetFromName $GenName 4 "rig"`;
+        string $LocatorName = `AddToName $GenName "locator"`;
+        spaceLocator -name $LocatorName;
+        string $Group1Name=`SetFromName $GenName 3 "nul"`;
+        $Group1Name = `AddToName $GenName "nul"`;
+        group -em -name $Group1Name;
+        string $Group2Name=`UniqueName $Group1Name`;
+        group -em -name $Group2Name;
+        //Emparenta estos Elementos alinea con el hueso en curso y emparenta al padre $ parent que cambia cada ciclo
+        parent $Group2Name $Group1Name;
+        parent $Group1Name $LocatorName;
+        parent $LocatorName $parent;
+        alinea $FingerLinks[$i] $LocatorName 3;
+        if ($i==1)
+        {
+            print ("\n GenNAME= "+ $GenName+"\n");
+            string $Palm = `AddToName $GenName "Palm"`;
+            group -em -name $Palm;
+            alinea $Group1Name $Palm 3;
+            InsertInHierarchy $LocatorName $Palm 2;
+        }
+        //Hace un Parent Constraint del hueso al grupo de mas baja hearquia
+        parentConstraint $Group2Name $FingerLinks[$i];
+        //Crea un control por cada hueso, le crea un padre.
+        $SubControl=`creacontrol $Group2Name ($FingerLenght*2/3)`;
+        $SubCtrParent =`CreateGrouponObj $SubControl 1`;
+        connectAttr ($SubControl + ".rotate") ($Group2Name+".rotate");
+        parentConstraint $Group1Name $SubCtrParent;
+        connectAttr ($FingerCntrl+ ".Secondary") ($SubControl+".visibility");
+        LockAndHideAttributes ({$SubControl}) ("0001110000");
+        //Liga Los Atributos del Dedo
+        if ($i>=1)
+        {
+            if ($i==1)
+            {
+                ConnectWithLimits ($FingerCntrl+".MidUD") ($Group1Name+".rotateY") (-10) 10 (-100) 100 0;
+                ConnectWithLimits ($FingerCntrl+".MidLR") ($Group1Name+".rotateZ") (-10) 10 (-127) 127 0;
+                ConnectWithLimits ($FingerCntrl+".MidTwist") ($Group1Name+".rotateX") (-10) 10 (-90) 90 0;
+                $ControlParent=$SubCtrParent;
+                $ControlShape=$SubControl;
+            }
+            else
+            {
+                ConnectWithLimits ($FingerCntrl+".UD"+($i-1)) ($Group1Name+".rotateY") (-10) 10 (-100) 100 0;
+                ConnectWithLimits ($FingerCntrl+".LR"+($i-1)) ($Group1Name+".rotateZ") (-10) 10 (-127) 127 0;
+                ConnectWithLimits ($FingerCntrl+".Twist"+($i-1)) ($Group1Name+".rotateX") (-10) 10 (-90) 90 0;
+                parent $SubCtrParent $ControlShape;
+                $ControlShape=$ControlShape;
+            }
+        }
+        $parent=$Group2Name;
+    }
+    return ({$RootName,$ControlParent,$FingerCntrl});
+}
+proc string[] HandControls (string $Mano) {
+   string $dedos[]=`listRelatives -c $Mano`;
+    $dedos=`listRelatives -c $dedos[0]`;
+    string $i;
+    string $FingerRoots[];
+    string $ControlRoots[];
+
+
+    string $nameRoot=$Mano;
+    $nameRoot=`SetFromName $nameRoot 3 "grp"`;
+    $nameRoot=`SetFromName $nameRoot 4 "rig"`;
+//Crea los nombres que se usaran a continuacion
+    $nameControls=`AddToName $nameRoot "Controls"`;
+
+    $nameRoot=`AddToName $nameRoot "RootData"`;
+/////////////////////////////////////////////////////////
+//$nameControls Guardara los controles secundarios de la mano
+    group -em -name $nameControls;
+    string $MiddleBone;
+for ($i in $dedos)
+    {if (`match "Middle" $i`=="Middle")
+        $MiddleBone=$i;
+    }
+
+////////////////////////////////////////////////////////    
+//$nameRoot Guardara toda la informacion de los dedos RootData
+    group -em -name $nameRoot;
+    alinea $Mano $nameRoot 1;
+    alinea $MiddleBone $nameRoot 2;
+    alinea $Mano $nameControls 1;
+    alinea $MiddleBone $nameControls 2;
+    parentConstraint -mo $Mano $nameRoot;
+    string $FingerTips =`SetFromName $nameRoot 2 "FingerTips"`;
+    
+/////////////////////////////////////////////////////////
+//$FingerTips Guardara los controles de los dedos 
+    group -em -name $FingerTips;
+    alinea $Mano $FingerTips 1;
+    alinea $MiddleBone $FingerTips 2;
+    
+    string $fingerResult[];
+    int $index=0;
+    for ($i in $dedos)
+    {
+        $fingerResult=`LinkFinguer $i`;
+        parent $fingerResult[0] $nameRoot;
+        parent $fingerResult[1] $nameControls;
+        parent $fingerResult[2] $FingerTips;
+        clear($fingerResult);
+    }
+    //Obtener e identificar cada uno de los dedos
+    string $FingerIdentifier=$nameRoot;
+    $FingerIdentifier=`SetFromName $FingerIdentifier 3 "nul"`;
+    string $temp=`SetFromName $FingerIdentifier 2 "HandPinky1Root"`;
+    string $Pinky=`ObjNameToVar $temp`;
+    string $temp=`SetFromName $FingerIdentifier 2 "HandRing1Root"`;
+    string $Ring=`ObjNameToVar $temp`;
+    string $temp=`SetFromName $FingerIdentifier 2 "HandMiddle1Root"`;
+    string $Middle=`ObjNameToVar $temp`;
+    string $temp=`SetFromName $FingerIdentifier 2 "HandIndex1Root"`;
+    string $Index=`ObjNameToVar $temp`;
+    string $temp=`SetFromName $FingerIdentifier 2 "HandThumb1Root"`;
+    string $Thumb=`ObjNameToVar $temp`;
+    string $PinkyCup = `AddToName $Pinky "Cup"`;
+    
+    group -em -name $PinkyCup;
+    //alinea $nameRoot $PinkyCup 2;
+    alinea $Middle $PinkyCup 3;
+    InsertInHierarchy $Pinky $PinkyCup 1;
+    string $RingCup=`AddToName $Ring "Cup"`;
+ 
+    group -em -name $RingCup;
+    alinea $nameRoot $RingCup 2;
+    alinea $Middle $RingCup 3;
+    InsertInHierarchy $Ring $RingCup 1;
+
+    //string $MiddleCup=`AddToName $Middle "Palm";
+    //group -em $MiddleCup;
+    // alinea $Middle $MiddleCup 3;
+    //InsertInHierarchy $Middle $MiddleCup 1;
+
+    string $IndexCup=`AddToName $Index "Cup"`;
+    group -em -name $IndexCup;
+    alinea $nameRoot $IndexCup 2;
+    alinea $Middle $IndexCup 1;
+    InsertInHierarchy $Index $IndexCup 1;
+    string $ThumbCup=`AddToName $Thumb "Cup"`;
+    group -em -name $ThumbCup;
+    alinea $nameRoot $ThumbCup 2;
+    alinea $Mano $ThumbCup 1;
+    InsertInHierarchy $Thumb $ThumbCup 1;
+    float $SizePalm = `distancia $Pinky $Index`;
+    
+    
+    //Crea el Control Para la Palma
+    string $PalmControl = `creacontrol $Middle $SizePalm`;
+    
+	//Renombra el control a algo mas adecuado
+    string $newName=`SetFromName $Mano 3 "ctr"`;
+    
+    $newName =` AddToName $newName "Palm"`;
+    $PalmControl=`rename $PalmControl $newName`;
+    
+    //Crea los controles de PalmControl Y los liga, ademas de esto esconde los Attributos que no debe tocar el usuario
+    addPalmControls $PalmControl;
+    
+    parentConstraint $Middle $PalmControl;
+    LockAndHideAttributes ({$PalmControl}) "0000000000";
+    
+    ConnectWithLimits ($PalmControl+".PalmCup") ($PinkyCup+".rotateX") (-10) 10 (-20) 20 0;
+    ConnectWithLimits ($PalmControl+".PalmCup") ($RingCup+".rotateX") (-10) 10 (-10) 10 0;
+    ConnectWithLimits ($PalmControl+".PalmCup") ($IndexCup+".rotateX") (-10) 10 (15) (-15) 0;
+    
+    
+    // Uno a uno Busca el control del dedo que movera el Spread y el Bend y los liga
+    //Pinky
+    string $SpreadNull=`customPickWalk $Pinky "transform" 2`;
+    ConnectWithLimits ($PalmControl+".Spread") ($SpreadNull+".rotateZ") (-10) 10 (-20) (40) 0;
+    ConnectWithLimits ($PalmControl+".PalmBend") ($SpreadNull+".rotateY") (-10) 10 (90) (-90) 0;
+    
+    //Ring
+    string $SpreadNull=`customPickWalk $Ring "transform" 2`;
+    ConnectWithLimits ($PalmControl+".Spread") ($SpreadNull+".rotateZ") (-10) 10 (-10) (20) 0;
+    ConnectWithLimits ($PalmControl+".PalmBend") ($SpreadNull+".rotateY") (-10) 10 (90) (-90) 0;
+    
+    
+    //Middle
+    string $SpreadNull=`customPickWalk $Middle "transform" 2`;
+    ConnectWithLimits ($PalmControl+".PalmBend") ($SpreadNull+".rotateY") (-10) 10 (90) (-90) 0;
+    
+    //Index
+    string $SpreadNull=`customPickWalk $Index "transform" 2`;
+    ConnectWithLimits ($PalmControl+".Spread") ($SpreadNull+".rotateZ") (-10) 10 (10) (-20) 0;
+    ConnectWithLimits ($PalmControl+".PalmBend") ($SpreadNull+".rotateY") (-10) 10 (90) (-90) 0;
+    
+    //THUMB
+    string $SpreadNull=`customPickWalk $Thumb "transform" 2`;
+    ConnectWithLimits ($PalmControl+".Spread") ($SpreadNull+".rotateZ") (-10) 10 (10) (-40) 0;
+    
+    //Crea un nodo para el Twist de la palma, lo inserta en la herarquia y lo Liga
+    string $PalmTwist=`AddToName $nameRoot "Twist"`;
+    group -em -name $PalmTwist;
+    alinea $Middle $PalmTwist 3;
+    InsertInHierarchy $nameRoot $PalmTwist 2;
+    parent $Thumb $nameRoot;
+    ConnectWithLimits ($PalmControl+".Twist") ($PalmTwist+".rotateX") (-10) 10 (-20) 20 0;
+    
+ /////////////////////////////////////////////////////////
+//$FingerTips Se emparenta al objeto Palm Control Este contiene ya toda la herarquia de controles   
+    parent $FingerTips $PalmControl;
+    parent $nameControls $PalmControl;
+    
+    return ({$PalmControl,$nameRoot});
+}
+
+proc LinkHands(){
+	string $ManoIzquierda = `ObjNameToVar "*LF_Hand_jnt_JXT"`;
+	HandControls($ManoIzquierda);
+	string $ManoDerecha = `ObjNameToVar "*RH_Hand_jnt_JXT"`;
+	HandControls($ManoDerecha);
+}
+/*********************************************************************************************************************/
+/*********************************************************************************************************************/
+/******************************* OJOS *********************************************************************/
+/*********************************************************************************************************************/
+/*********************************************************************************************************************/
+proc LinkEyes(string $side){
+	string $Eye=`ObjNameToVar ("*_"+$side+"_Eye_msh_ful")`;
+	string $CharName=`GetFromName $Eye 2`;
+	float $eyeScale[]=`getAttr ($Eye+".scale")`;
+	setAttr ($Eye+".scale") 1.0 1.0 1.0;
+	select -cl;
+	float $SphRad=`sphere -q -r $Eye`;
+	string $newName=$CharName+"_"+$side+"_MainEyeUpperLid_jnt_ful";
+	string $MainEyeUpperLid=`joint -n $newName -rad ($SphRad/5)`;
+	alinea $Eye $MainEyeUpperLid 3 ;
+	string $newName=($CharName+"_"+$side+"_UpperLid_jnt_ful");
+	joint -n $newName -r -p $SphRad 0 0 -rad ($SphRad/5);
+	string $EyeParent=`CreateGrouponObj $MainEyeUpperLid 1`;
+	string $newName=$CharName+"_"+$side+"_MainEyeLowerLid_jnt_ful";
+	string $MainEyeLowerLid=`joint -n $newName -rad ($SphRad/5)`;
+	alinea $Eye $MainEyeLowerLid 3 ;
+	string $newName=$CharName+"_"+$side+"_LowerLid_jnt_ful";
+	joint -n $newName -r -p $SphRad 0 0 -rad ($SphRad/5);
+	parent $MainEyeLowerLid $EyeParent;
+	setAttr ($EyeParent+".scale") ($eyeScale[0]) ($eyeScale[1]) ($eyeScale[2]);
+	select -r $Eye;
+	string $eyeLattice[]= `lattice -n ($CharName+"_"+$side+"_EyeLattice_def_ful") -oc true -dv 2 2 2 -ol 2 -ofd ($SphRad/3)`;
+	float $LatticeScale[]=`getAttr ($eyeLattice[1]+".scale")`;
+	setAttr ($eyeLattice[1]+".scale") ($eyeScale[0]*$LatticeScale[0]) ($eyeScale[1]*$LatticeScale[1]) ($eyeScale[2]*$LatticeScale[2]);
+}
+proc CreateMainGroupsAndControls()
+{
+  	string $hips=`ObjNameToVar "*HipLow_jnt"`;
+  	//string $hips=`ObjNameToVar "*HipLowNub_jnt"`;
+    float $r=`LenghtOfBone $hips`;
+    $r=$r*10;
+    
+    $newName=$hips;
+    $newName=`SetFromName $newName 2 "Mover"`;
+    $newName=`SetFromName $newName 3 "ctr"`;
+    $newName=`SetFromName $newName 4 "rig"`;
+    string $Mover1=`UniqueName $newName`;
+    string $temp[]=`circle -normal 0 1 0 -r $r -name $Mover1`;
+    string $Mover2=`UniqueName $newName`;
+    string $temp[]=`circle -normal 0 1 0 -r ($r*7/8) -name $Mover2`;
+    string $Mover3=`UniqueName $newName`;    
+    string $temp[]=`circle -normal 0 1 0 -r ($r*6/8) -name $Mover3`;
+    string $CharacterName=`GetFromName $hips 0`;
+    
+
+    $CharacterName=`group  -em -name $CharacterName`;
+    
+    group  -em -name "Skeleton";
+    group  -em -name "Geometry";
+    group  -em -name "Controls";
+    group  -em -name "SkinedGeometry";
+    group  -em -name "ScaledGeometry";
+    group  -em -name "BlendShapes";
+    group  -em -name "Joints";
+    group  -em -name "ScaledData";
+    group  -em -name "NoScaledData";
+    
+    parent Skeleton $CharacterName;
+    parent Geometry $CharacterName;
+    parent Controls $CharacterName;
+   
+    parent Joints Skeleton;
+    parent ScaledData Skeleton;
+    parent NoScaledData Skeleton;
+    
+    parent  SkinedGeometry Geometry;
+    parent  ScaledGeometry Geometry;
+    parent  BlendShapes Geometry;
+    
+    parent $Mover2 $Mover1;
+    parent $Mover3 $Mover2;
+    parent $Mover1 Controls;
+    
+    scaleConstraint $Mover1 ScaledGeometry;
+    scaleConstraint $Mover1 ScaledData;
+    scaleConstraint $Mover1 Joints;    
+    
+    string $VChar=$hips;
+    $VChar=`SetFromName $VChar 2 "MainVisibility"`;
+    $VChar=`SetFromName $VChar 3 "ctr"`;
+    $VChar=`SetFromName $VChar 4 "rig"`;
+    $VChar=`UniqueName $VChar`;
+    duplicate -name $VChar V;
+    AddVisibilityControls $VChar;
+    scale -scaleXYZ ($r/7) ($r/7) ($r/7) $VChar;
+    parent $VChar $Mover1;
+    
+    string $head=`ObjNameToVar "*Head_jnt"`;
+    alinea  $head $VChar 1;
+    move -ws -r -moveY 0 ($r/10) 0 $VChar;
+    connectAttr ($VChar+".BodyControls")($Mover2+".visibility");
+}
+
+
+/************************************************************************************************************************/
+/************************************************************************************************************************/
+/**********************************Crea AutoRIgg*************************************************************************/
+/************************************************************************************************************************/
+//LinkEyes("LF");
+renameJointHierarchy "Lucas_Hips";
+SetSkeleton();
+CreateMainGroupsAndControls;
+RebuildSpine();
+
+string $FKControls[] = `RebuildFK`;
+
+string $IKControls[] = `RebuildIK`;
+
+RebuildJXT "LF" ({$IKControls[0],$IKControls[1],$IKControls[2]}) ({$FKControls[0],$FKControls[1],$FKControls[2]});
+RebuildJXT "RH" ({$IKControls[3],$IKControls[4],$IKControls[5]}) ({$FKControls[3],$FKControls[4],$FKControls[5]});
+LinkHands();
+string $FKControls[] = `RebuildFKLegs`;
+print "\n";
+print $FKControls;
+print "\n";
+
+string $IKControls[] = `RebuildIKLegs`;
+
+RebuildJXTLeg "LF" ({$IKControls[0],$IKControls[1],$IKControls[2]}) ({$FKControls[0],$FKControls[1],$FKControls[2],$FKControls[3]});
+RebuildJXTLeg "RH" ({$IKControls[3],$IKControls[4],$IKControls[5]}) ({$FKControls[4],$FKControls[5],$FKControls[6],$FKControls[7]});
+

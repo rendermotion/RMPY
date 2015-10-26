@@ -1,0 +1,40 @@
+global proc RMBoneSelection()
+{
+  string $temp []=`ls -sl`;
+string $BonesS[]=`RMCreateBonesAtPoints $temp`;
+RMCreateFKControls $temp[0] 0;
+}
+
+global proc string[] RMCreateFKControls (string $FKroot,int $depth)
+{
+    string $Ex=$FKroot;
+    string $Childs[];
+    int $Index=0;
+    float $Tam;
+    string $CntrlExt[];
+    string $GrupoCntrl[];
+    $Childs=`listRelatives -c $Ex`;
+    $Tam=`size $Childs`;
+    while ($Tam!=0)
+    {
+        if (`objectType -isType "transform" $Ex`!=0)
+       	{
+            $Tam=`RMLenghtOfBone $Ex`;
+            $CntrlExt[$Index] = `RMCreaControl $Ex ($Tam*1/2)`;
+            $GrupoCntrl[$Index]= `RMCreateGrouponObj $CntrlExt[$Index] 1`;
+            pointConstraint $Ex $GrupoCntrl[$Index];
+            connectAttr ($CntrlExt[$Index] +".rotate") ($Ex+".rotate");
+            RMconnectScale $CntrlExt[$Index] $Ex;
+            if ($Index>0) 
+            {
+               parent $GrupoCntrl[$Index] $CntrlExt[$Index-1];
+            }
+            $Index=$Index+1;
+        }
+            $Ex=$Childs[0];
+            $Childs=`listRelatives -c $Ex`;
+            $Tam=`size $Childs`;
+    }
+    return $GrupoCntrl;
+}
+

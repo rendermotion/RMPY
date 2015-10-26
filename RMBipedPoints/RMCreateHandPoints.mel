@@ -1,0 +1,139 @@
+global proc string[] RMCreateFingerPoints (vector $FingersOrigin, vector $DirectionVector, float $FingerLenght, string $FingerName){
+	string $fingerPointsArray[]={};
+    int $n;
+    float $extra=0;
+	for ($n=1;$n<5;++$n){
+        float $test2 =((0.5+(0.25*($n-2)))*$extra);
+
+        vector $TempV = $FingersOrigin +($DirectionVector*$test2*$FingerLenght);
+		string $temp[] = `spaceLocator -n ($FingerName+$n)-p ($TempV.x) ($TempV.y) ($TempV.z)`;
+        xform -cp $temp[0];
+        ScalePoints ($temp[0],$FingerLenght*0.3);
+        //appendStringArray ($)
+		$fingerPointsArray[$n-1]=$temp[0] ;
+		//RMObjLookXAtPoint ($fingerPointsArray[$n-1], $DirectionVector);
+        $extra=1;
+		
+        if ($n>=2){
+			parent ($fingerPointsArray[$n-1]) ($fingerPointsArray[($n-2)]);
+            
+		}
+	}
+	$DirectionVector = unit ($DirectionVector);
+	
+	/*select -r ($fingerPointsArray[0]);
+	move ($FingersOrigin.x) ($FingersOrigin.y) ($FingersOrigin.z);
+    vector $TempV = $FingersOrigin +($DirectionVector*0.5*$FingerLenght);
+    //vector $TempV = $FingersOrigin*0.5*$FingerLenght;
+	select -r ($fingerPointsArray[1]);
+	move ($TempV.x) ($TempV.y) ($TempV.z);
+	vector $TempV = $FingersOrigin +($DirectionVector*0.75*$FingerLenght);
+    //$TempV = $FingersOrigin *0.75*$FingerLenght;
+	select -r ($fingerPointsArray[2]);
+	move ($TempV.x) ($TempV.y) ($TempV.z);
+	vector $TempV = $FingersOrigin +($DirectionVector*$FingerLenght);
+    //$TempV = $FingersOrigin*$FingerLenght;
+	select -r ($fingerPointsArray[3]);
+	move ($TempV.x) ($TempV.y) ($TempV.z);
+    */
+	return ($fingerPointsArray);
+}
+
+global proc string[] RMCreateHandPoints(vector $OriginPoint, vector $DirectionVector, float $HandSize, string $Side){
+
+	$DirectionVector = unit ($DirectionVector);
+	vector $TransversalVector = unit (cross ($DirectionVector,<<0,1,0>>));
+	vector $FingersOrigin = $OriginPoint + ($DirectionVector*0.5*$HandSize);
+	float $FingerLenght = 0.5*$HandSize;
+	float $fistLenght=(0.5*$HandSize*0.8);
+	string $middle[]= RMCreateFingerPoints ($FingersOrigin, $DirectionVector, $FingerLenght, "Middle");;
+	float $distanceBetweenFingers=$fistLenght/3;
+
+	string $Palm[]= `spaceLocator -n ("Character01_"+$Side+"_palm_pnt_rfr") -p ($OriginPoint.x) ($OriginPoint.y) ($OriginPoint.z)`;
+    xform -cp $Palm[0];
+    ScalePoints ($Palm[0],$HandSize*0.4);
+    
+    //RMObjLookXAtPoint ($Palm[0], $DirectionVector);
+
+    string $ring[];
+    string $pinky[]={};
+    string $index[]={};
+    string $thumb[]={};
+
+    if ($Side=="RH"){
+    	$ring= RMCreateFingerPoints (($FingersOrigin+($TransversalVector*$distanceBetweenFingers)),($DirectionVector),($FingerLenght*0.9),"ring");
+    	$pinky= RMCreateFingerPoints (($FingersOrigin+($TransversalVector*$distanceBetweenFingers*2)),$DirectionVector,($FingerLenght*0.6),"pinky");
+    	$index= RMCreateFingerPoints (($FingersOrigin-($TransversalVector*$distanceBetweenFingers)),$DirectionVector,($FingerLenght*0.8),"index");
+    	$thumb= RMCreateFingerPoints (($OriginPoint-($TransversalVector*$distanceBetweenFingers)+$DirectionVector*0.5*0.25),($DirectionVector-$TransversalVector),($FingerLenght),"thumb");
+       
+    }
+    //Los RH tienen DirectionVector negativo, para volver original, middle debe ser creado fuera de los ifs
+    else{
+    	$ring= RMCreateFingerPoints (($FingersOrigin-($TransversalVector*$distanceBetweenFingers)),$DirectionVector,($FingerLenght*0.9),"ring");
+    	$pinky= RMCreateFingerPoints (($FingersOrigin-($TransversalVector*$distanceBetweenFingers*2)),$DirectionVector,($FingerLenght*0.6),"pinky");
+    	$index= RMCreateFingerPoints (($FingersOrigin+($TransversalVector*$distanceBetweenFingers)),$DirectionVector,($FingerLenght*0.8),"index");
+    	$thumb= RMCreateFingerPoints (($OriginPoint+($TransversalVector*$distanceBetweenFingers)+$DirectionVector*0.5*0.25),($DirectionVector+$TransversalVector),($FingerLenght),"thumb");
+        }
+
+    parent ($middle[0]) ($Palm[0]);
+    parent ($ring[0]) ($Palm[0]);
+    parent ($pinky[0]) ($Palm[0]);
+    parent ($index[0]) ($Palm[0]);
+    parent ($thumb[0]) ($Palm[0]);
+
+    RMRenamer ($middle) ("Character01_"+$Side+"_middle_pnt_rfr");
+    RMRenamer ($ring) ("Character01_"+$Side+"_ring_pnt_rfr");
+    RMRenamer ($pinky) ("Character01_"+$Side+"_pinky_pnt_rfr");
+    RMRenamer ($index) ("Character01_"+$Side+"_index_pnt_rfr");
+    RMRenamer ($thumb) ("Character01_"+$Side+"_thumb_pnt_rfr");
+
+    return ($Palm);
+}
+
+global proc string[] RMCreateToesPoints(vector $OriginPoint, vector $DirectionVector, float $ToesSize, string $Side){
+	$DirectionVector = unit ($DirectionVector);
+	vector $TransversalVector = unit (cross($DirectionVector,<<0,0,1>>));
+	vector $FingersOrigin = $OriginPoint + ($DirectionVector*0.5*$ToesSize);
+	float $FingerLenght=0.5*$ToesSize;
+	string $middle[] = RMCreateFingerPoints ($FingersOrigin, $DirectionVector, $FingerLenght, "middle");
+	float $fistLenght= (0.5*$ToesSize)*0.8;
+	float $distanceBetweenFingers = $fistLenght/3;
+
+	string $Palm[]= `spaceLocator -n ("Character01_"+$Side+"_palm_pnt_rfr") -p ($OriginPoint.x) ($OriginPoint.y) ($OriginPoint.z)`;
+    xform -cp $Palm[0];
+    ScalePoints ($Palm[0],$ToesSize*0.4);
+    
+    RMObjLookXAtPoint ($Palm[0], $DirectionVector);
+
+    string $ring[]={};
+    string $pinky[]={};
+    string $index[]={};
+    string $thumb[]={};
+    if ($Side=="RH"){
+    	$ring= RMCreateFingerPoints (($FingersOrigin+($TransversalVector*$distanceBetweenFingers)),$DirectionVector,($FingerLenght*0.9),"ring");
+    	$pinky= RMCreateFingerPoints (($FingersOrigin+($TransversalVector*$distanceBetweenFingers*2)),$DirectionVector,($FingerLenght*0.6),"pinky");
+    	$index= RMCreateFingerPoints (($FingersOrigin-($TransversalVector*$distanceBetweenFingers)),$DirectionVector,($FingerLenght*0.8),"index");
+    	$thumb= RMCreateFingerPoints (($OriginPoint-($TransversalVector*$distanceBetweenFingers)+$DirectionVector*0.5*0.25),($DirectionVector-$TransversalVector),($FingerLenght),"thumb");
+    }
+    else{
+    	$ring= RMCreateFingerPoints (($FingersOrigin-($TransversalVector*$distanceBetweenFingers)),$DirectionVector,($FingerLenght*0.9),"ring");
+    	$pinky= RMCreateFingerPoints (($FingersOrigin-($TransversalVector*$distanceBetweenFingers*2)),$DirectionVector,($FingerLenght*0.6),"pinky");
+    	$index= RMCreateFingerPoints (($FingersOrigin+($TransversalVector*$distanceBetweenFingers)),$DirectionVector,($FingerLenght*0.8),"index");
+    	$thumb= RMCreateFingerPoints (($OriginPoint+($TransversalVector*$distanceBetweenFingers)+$DirectionVector*0.5*0.25),($DirectionVector-$TransversalVector),($FingerLenght),"thumb");
+    }
+
+    parent ($middle[0]) ($Palm[0]);
+    parent ($ring[0]) ($Palm[0]);
+    parent ($pinky[0]) ($Palm[0]);
+    parent ($index[0]) ($Palm[0]);
+    parent ($thumb[0]) ($Palm[0]);
+
+    RMRenamer ($middle) ("Character01_"+$Side+"_ToeMiddle_pnt_rfr");
+    RMRenamer ($ring) ("Character01_"+$Side+"_ToeRing_pnt_rfr");
+    RMRenamer ($pinky) ("Character01_"+$Side+"_ToePinky_pnt_rfr");
+    RMRenamer ($index) ("Character01_"+$Side+"_ToeIndex_pnt_rfr");
+    RMRenamer ($thumb) ("Character01_"+$Side+"_ToeThumb_pnt_rfr");
+
+    return ($Palm);
+
+}

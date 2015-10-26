@@ -1,0 +1,2 @@
+source "RMRibbonSystem.mel";
+RMCreaRibbon Character01_MD_joint1_jnt_FK Character01_MD_joint2_jnt_FK;

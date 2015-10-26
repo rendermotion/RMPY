@@ -1,0 +1,417 @@
+global proc string RMCreateCubeLine(float $height,float $lenght,float $width,string $name)
+{
+    string $shapes[];
+    $shapes[0]=`curve -d 1 -p 0 (-$lenght/2) ($width/2) -p 0 (-$lenght/2) (-$width/2) -n $name`;
+    $shapes[1]=`curve -d 1 -p ($height) (-$lenght/2) ($width/2) -p ($height) (-$lenght/2) (-$width/2) -n ($name+"_1")`;
+    $shapes[2]=`curve -d 1 -p 0 ($lenght/2) ($width/2) -p 0 ($lenght/2) (-$width/2) -n ($name+"_2") `;
+    $shapes[3]=`curve -d 1 -p ($height) ($lenght/2) ($width/2) -p ($height) ($lenght/2) (-$width/2) -n ($name+"_3")`;
+    $shapes[4]=`curve -d 1 -p 0 (-$lenght/2) ($width/2) -p $height (-$lenght/2) ($width/2) -n ($name+"_4")`;
+    $shapes[5]=`curve -d 1 -p 0 ($lenght/2) (-$width/2) -p $height ($lenght/2) (-$width/2) -n ($name+"_5")`;
+    $shapes[6]=`curve -d 1 -p 0 (-$lenght/2) (-$width/2) -p $height (-$lenght/2) (-$width/2) -n ($name+"_6")`;
+    $shapes[7]=`curve -d 1 -p 0 ($lenght/2) ($width/2) -p $height ($lenght/2) ($width/2) -n ($name+"_7")`;
+    $shapes[8]=`curve -d 1 -p 0 (-$lenght/2) (-$width/2) -p 0 ($lenght/2) (-$width/2) -n ($name+"_8")`;
+    $shapes[9]=`curve -d 1 -p 0 (-$lenght/2) ($width/2) -p 0 ($lenght/2) ($width/2) -n ($name+"_9")`;
+    $shapes[10]=`curve -d 1 -p ($height) (-$lenght/2) (-$width/2) -p ($height) ($lenght/2) (-$width/2) -n ($name+"_10")`;
+    $shapes[11]=`curve -d 1 -p ($height) (-$lenght/2) ($width/2) -p ($height) ($lenght/2) ($width/2) -n ($name+"_11")`;
+    RMTurnToOne $shapes;
+    return $shapes[0];
+}
+
+global proc string RMCreateCubeControl (float $Sizev,string $name)
+{
+    string $shapes[];
+    float $lenght=$Sizev;
+    float $width=$Sizev;
+    float $height=$Sizev;
+    $shapes[0]=`curve -d 1 -p 0 (-$lenght/2) ($width/2) -p 0 (-$lenght/2) (-$width/2) -n $name`;
+    $shapes[1]=`curve -d 1 -p ($height) (-$lenght/2) ($width/2) -p ($height) (-$lenght/2) (-$width/2) -n ($name+"_1")`;
+    $shapes[2]=`curve -d 1 -p 0 ($lenght/2) ($width/2) -p 0 ($lenght/2) (-$width/2) -n ($name+"_2") `;
+    $shapes[3]=`curve -d 1 -p ($height) ($lenght/2) ($width/2) -p ($height) ($lenght/2) (-$width/2) -n ($name+"_3")`;
+    $shapes[4]=`curve -d 1 -p 0 (-$lenght/2) ($width/2) -p $height (-$lenght/2) ($width/2) -n ($name+"_4")`;
+    $shapes[5]=`curve -d 1 -p 0 ($lenght/2) (-$width/2) -p $height ($lenght/2) (-$width/2) -n ($name+"_5")`;
+    $shapes[6]=`curve -d 1 -p 0 (-$lenght/2) (-$width/2) -p $height (-$lenght/2) (-$width/2) -n ($name+"_6")`;
+    $shapes[7]=`curve -d 1 -p 0 ($lenght/2) ($width/2) -p $height ($lenght/2) ($width/2) -n ($name+"_7")`;
+    $shapes[8]=`curve -d 1 -p 0 (-$lenght/2) (-$width/2) -p 0 ($lenght/2) (-$width/2) -n ($name+"_8")`;
+    $shapes[9]=`curve -d 1 -p 0 (-$lenght/2) ($width/2) -p 0 ($lenght/2) ($width/2) -n ($name+"_9")`;
+    $shapes[10]=`curve -d 1 -p ($height) (-$lenght/2) (-$width/2) -p ($height) ($lenght/2) (-$width/2) -n ($name+"_10")`;
+    $shapes[11]=`curve -d 1 -p ($height) (-$lenght/2) ($width/2) -p ($height) ($lenght/2) ($width/2) -n ($name+"_11")`;
+    RMTurnToOne $shapes;
+    return $shapes[0];
+}
+
+global proc string RMCreateBoxCtrl(string $bone){
+    string $temp=`RMObjNameToVar $bone`;
+    string $CntlName=`RMSetFromName $temp 3 "ctr"`;
+    string $tempArray[]=`listRelatives -c $bone`;
+  
+    if (`size $tempArray`!=0){
+        float $Lenghtbone = `RMLenghtOfBone $temp`;
+        $CntlName=`RMCreateCubeLine $Lenghtbone ($Lenghtbone/4) ($Lenghtbone/4) $CntlName`;
+    }
+    else {
+        string $tempArray[]=`listRelatives -p $bone`;
+        float $Lenghtbone = `RMLenghtOfBone $tempArray[0]`;
+        $CntlName=`RMCreateCubeLine ($Lenghtbone/4) ($Lenghtbone/4) ($Lenghtbone/4) $CntlName`;
+    }
+    RMAlign $temp $CntlName 3;
+    return $CntlName;
+}
+
+/*Funcion que convierte un conjunto de lineas dadas en el arreglo $shapes en una sola que es $shapes[0]*/
+global proc RMTurnToOne(string $shapes[])
+{
+    int $sizeArray=`size $shapes`;
+    int $i;
+    for ( $i=1;$i<$sizeArray;$i++)
+    {
+        string $temp[]=`listRelatives -s -c $shapes[$i]`;
+        parent -add -shape $temp[0] $shapes[0];
+        delete $shapes[$i];
+    }
+}
+
+global proc string RMCreaControl(string $obj, float $r){
+    $newName=$obj;
+    $newName=`RMSetFromName $newName 3 "ctr"`;
+    string $temp[]=`circle -normal 1 0 0 -r $r -name $newName`;
+    RMAlign $obj $temp[0] 3;
+    return $temp[0];
+}
+
+global proc string[] RMRemoveChildren(string $obj1){
+    string $children[]=`listRelatives -type "transform" -children $obj1`;
+    
+    for ($i in $children)
+        {
+        parent -w $i;
+        }
+    return $children;
+}
+global proc RMParentArray(string $parent, string $Array[]){
+    for ($i in $Array)
+        {parent $i $parent;}
+}
+
+global proc RMConnectScale(string $controler,string $joint){
+    string $MultName = $joint;
+    string $name =`RMGetFromName $MultName 2`;
+    string $MultName=`RMSetFromName $MultName 2 ($name+"MultDivide")`;
+    string $MultName=`RMSetFromName $MultName 4 "utl"`;
+    $MultName=`shadingNode -asUtility -name $MultName multiplyDivide`;
+    float $origVal=`getAttr ($joint + ".translateX")`;
+    setAttr ($MultName+".input2X") $origVal;
+    connectAttr -f ($controler+".scaleX") ($MultName + ".input1X");
+    connectAttr -f ($MultName + ".outputX") ($joint + ".translateX");
+}
+
+global proc RMIKFKvisibilityLink (string $Obj[],string $systemIKFK,string $Control)
+{
+    string $newName=$Control;
+    string $Name=`RMGetFromName $Control 2`;
+    $newName=`RMSetFromName $newName 2 ($Name+"Reverse")`;
+    $newName=`RMSetFromName $newName 4 "utl"`;
+    string $i;
+    if ($systemIKFK=="FK")
+    {
+        if (`objExists $newName`==false)
+        {
+        shadingNode -name $newName -asUtility reverse;
+        connectAttr -f ($Control+".IKFKSwitch") ($newName+".inputX");
+        }
+        print $Obj;
+        for ($i in $Obj)
+            {
+             connectAttr -f ($newName+".outputX") ($i+".visibility");
+             RMLockAndHideAttributes ({$i}) "3333333330";
+            }
+        }
+        else
+        {
+        for ($i in $Obj)
+        {
+            connectAttr -f ($Control+".IKFKSwitch") ($i+".visibility");
+            RMLockAndHideAttributes ({$i}) "3333333330";
+        }        
+    }    
+}
+
+global proc RMParentLink( string $ObjIK , string $ObjFK , string $ObjJTX, string $Cntrl)
+{
+    $ObjName =`RMGetFromName $ObjJTX 2`;
+    string $Constraint = $ObjJTX;
+    $Constraint=`RMSetFromName $Constraint 2 ($ObjName+"IKSwitchConstraint")`;
+    $Constraint=`RMSetFromName $Constraint 3 "pcn"`;
+    $Constraint=`RMSetFromName $Constraint 4 "IKS"`;
+    $Constraint=`RMUniqueName $Constraint`;
+    $cntrlName =`RMGetFromName $Cntrl 2`;
+    string $ExpressionName = $Cntrl;
+    $ExpressionName=`RMSetFromName $ExpressionName 2 ($cntrlName+"Expression")`;
+    $ExpressionName=`RMSetFromName $ExpressionName 3 "exp"`;
+    $ExpressionName=`RMSetFromName $ExpressionName 4 "IKS"`;
+    $ExpressionName=`RMUniqueName $ExpressionName`;
+    string $PC[]=`parentConstraint -name $Constraint $ObjIK $ObjJTX `;
+    parentConstraint $ObjFK $ObjJTX;
+    string $TargetList[]=`parentConstraint -q -weightAliasList $PC[0]`;
+    if (!`attributeQuery -node $Cntrl -ex "IKFKSwitch"`)
+    {
+        addAttr -at "float" -ln IKFKSwitch -sn IFS -hnv 1 -hxv 1 -h 0 -k 1 -smn 0 -smx 1 $Cntrl;
+    }
+    if (!`objExists $ExpressionName`)
+    {
+        string $nodeName = `expression -s ($PC[0] + "." + $TargetList[0]+"="+$Cntrl+".IKFKSwitch;\n"+
+        $PC[0] + "." + $TargetList[1]+"=1-"+$Cntrl+".IKFKSwitch;\n") -name $ExpressionName`;
+    }
+    else 
+    {
+        string $script=`expression -q -s $ExpressionName`;
+        expression -e -s ($script + "\n" + $PC[0]+"."+$TargetList[0]+ "=" + $Cntrl + ".IKFKSwitch;\n"+
+        $PC[0]+"."+$TargetList[1]+"=1-"+$Cntrl+".IKFKSwitch;\n") $ExpressionName;
+    }
+}
+
+/*Funcion que agrega un Pole Vector a el Objeto y crea un cubo y una linea que va de el hueso medio al cubo*/
+global proc string[] RMCreatePoleVector (string $IKHandle)
+{
+    //Obtiene el inicio y fin del IKHandle
+    string $startJoint=`ikHandle -q -sj $IKHandle`;
+    string $endJoint=`ikHandle -q -ee $IKHandle`;
+    //Selecciona el segundo joint del IK
+    select -r $startJoint;
+    string $temp[]=`pickWalk -d "down"`;
+    string $forearm=$temp[0];
+    //Crea un locator lo posiciona en la segundo joint crea en el un aim
+    //constraint que apunta al inicio del IK y su up vector es el final del IK
+    string $temp1[]=`spaceLocator`;
+    string $locator=$temp1[0];
+    string $temp1[]=`spaceLocator`;
+    string $locator2=$temp1[0];
+    RMAlign $forearm $locator2 3;
+    float $LongitudDeHueso=`RMLenghtOfBone $forearm`;
+    move -r -os -moveXYZ ($LongitudDeHueso/2) 0 0 $locator2;
+    RMAlign $locator2 $locator 1;
+    delete $locator2;
+    aimConstraint -wut "object" $startJoint $endJoint $locator;
+    float $RMDistancia = `RMDistancia $startJoint $endJoint`;
+    move -r -os -moveX (-$RMDistancia/3*2) 0 0 $locator;
+    string $CntrlName = $IKHandle;
+    $CntrlName=`RMSetFromName $CntrlName 3 "ctr"`;
+    $CntrlName=`RMSetFromName $CntrlName 4 "rig"`;
+    $CntrlName=`RMAddToName $CntrlName "PoleVector"`;
+    $CntrlName=`RMUniqueName $CntrlName`;
+    //////////////////////////////////////////////////////////////////7
+    //Crea el Cntrl, donde Cntrl Tiene los el cubo del Pole Vector
+    $Cntrl=`RMCreateCubeLine ($RMDistancia/10) ($RMDistancia/10) ($RMDistancia/10) $CntrlName`;
+    
+    move -r ($RMDistancia/20) 0 0 ($Cntrl+".scalePivot") ($Cntrl+".rotatePivot");
+    move -rpr -a 0 0 0 $Cntrl;
+    makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $CntrlName;
+    string $LineCntrls[]=`RMCreateLineBetwenPoints $Cntrl $temp[0]`;
+    RMAlign $locator $CntrlName 1;
+    delete $locator;
+    ikHandle -e -sol "ikRPsolver" $IKHandle;
+    string $poleVectorName=$IKHandle;
+    $poleVectorName=`RMSetFromName $poleVectorName 3 "pvc"`;
+    poleVectorConstraint -name $poleVectorName $CntrlName $IKHandle;
+    makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $CntrlName;
+
+    parent $LineCntrls[0] NoScaledData;
+    parent $Cntrl ScaledData;
+    
+    return ({$Cntrl,$LineCntrls[0]});
+}
+
+global proc RMMakeIkStretchy (string $ikHandle)
+{
+    //Find the end joint where the ikHandle is located.
+    string $endJoint[];
+    $endJoint[0] = `eval ("ikHandle -q -endEffector " + $ikHandle)`;
+    select $endJoint[0];
+    $endJoint = `pickWalk -d up`;
+    $endJoint = `pickWalk -d down`;
+    //Find the start joint being affected by the ik handle.
+    string $startJoint[];
+    $startJoint[0] = `eval ("ikHandle -q -startJoint " + $ikHandle)`;
+    //Now that we know the start and end joints for the ik handle,
+    //we need to find the world space of these joints so that we can,
+    //calculate the total length of the chain.
+    //Create a vector array to store the world space coordinates of the joints.
+    vector $jointPos[];
+    //Vector between two points
+    vector $btwPointsVector = <<0,0,0>>;
+    //Create a float to store the distance between the current joint and the last one.
+    float $distBtwJoints = 0;
+    //This will store the total distance along the length of the chain.
+    float $totalDistance = 0;
+    //String variable to house current joint being queried in the while loop.
+    string $currentJoint = $startJoint[0];
+    //Counter integer used in the while loop to determine the proper index in the vector array.
+    int $counter = 0;
+    //Initial selection going into the while loop/
+    select $startJoint;
+    //Exit loop boolean
+    int $exitLoop = 0;
+    //Will loop through all the joints between the base and end by pickwalking through them.
+    //The loop stores the world space of each joint into $jointPos as it iterates over them.
+    //The while loop keeps going until the current joint equals the end joint.
+    while ($exitLoop == 0)
+    {
+        //Exit loop condition
+        if ($currentJoint == $endJoint[0])
+        {
+            $exitLoop = 1;
+        }
+        //Query the world space of the current joint.
+        $jointPos[$counter] = `joint -q -p -a $currentJoint`;
+        if ($counter != 0)
+        {
+            //Calulate the distance between this joint and the last.
+            //First compute the vector between the two points
+            $btwPointsVector = ($jointPos[$counter-1]) - ($jointPos[($counter)]);
+            //Now compute the length of the vector (the distance)
+            $distBtwJoints = mag ($btwPointsVector);
+            //Add the distance onto our total
+            $totalDistance = ($totalDistance + $distBtwJoints);
+        }
+        pickWalk -d down;
+        $sel = `ls -sl`;
+        $currentJoint = $sel[0];
+        $counter++;
+    }
+    //Now that we have the distance along the length of the chain ($totalDistance),
+    //we can use this to make the chain stretch when that distance
+    //is exceeded by the IK handle.
+    //To measure the distance from the ik handle to the start joint.
+    //Create two empty group nodes and use there translates to
+    //calculate the distance using a distanceBetween render node.
+    string $startPoint = `group -em`;
+    string $endPoint = `group -em`;
+    $startPoint = `rename $startPoint ($ikHandle + "startPoint")`;
+    $endPoint = `rename $endPoint ($ikHandle + "endPoint")`;
+    pointConstraint -offset 0 0 0 -weight 1 $startJoint[0] $startPoint;
+    pointConstraint -offset 0 0 0 -weight 1 $ikHandle $endPoint;
+    //Create a distance between render node.
+    string $distanceNode = `shadingNode -asUtility distanceBetween`;
+    //Connect the translates of the point constrained grp nodes
+    //to the point1 and point2 inputs on the distance node.
+    connectAttr -f ($startPoint + ".translate") ($distanceNode + ".point1");
+    connectAttr -f ($endPoint + ".translate") ($distanceNode + ".point2");
+    //Create a condition render node.
+    string $conditionNode = `shadingNode -asUtility condition`;
+    connectAttr -f ($distanceNode + ".distance") ($conditionNode + ".colorIfFalseR");
+    connectAttr -f ($distanceNode + ".distance") ($conditionNode + ".secondTerm");
+    //Set the condition node operation to 'greater or equal' ie, (>=)
+    setAttr ($conditionNode + ".operation") 3;
+    //Set the condition node's first term equal to the $totalDistance
+    setAttr ($conditionNode + ".firstTerm") $totalDistance;
+    //Set the condition node's colorIfTrueR equal to the $totalDistance
+    setAttr ($conditionNode + ".colorIfTrueR") $totalDistance;
+    //Create a multiply/Divide render node.
+    string $muliDivNode = `shadingNode -asUtility multiplyDivide`;
+    //Set the dividend to be the distance btw the ik handle and the start joint.
+    connectAttr -f ($conditionNode + ".outColorR") ($muliDivNode + ".input1X");
+    //Set the divisor to the total distance along the chain
+    setAttr ($muliDivNode + ".input2X") $totalDistance;
+    //Set the node operation to 'divide'
+    setAttr ($muliDivNode + ".operation") 2;
+    //Now that we have the normalized scale factor, lets plug this into the
+    //scaleX of each joint in the chain.
+    $exitLoop = 0;
+    $currentJoint = $startJoint[0];
+    select $currentJoint;
+    //The while loop keeps going until the current joint equals the end joint.
+    while ($exitLoop == 0)
+    {
+        //Connect the output of the multiply/divide node to the
+        //scale 'X' of the joints. This will cause them to stretch
+        //along their length as the distance expands.
+        connectAttr -f ($muliDivNode + ".outputX") ($currentJoint + ".scaleX");
+        //Pickwalk down to move down through the joint heirarchy.
+        pickWalk -d down;
+        $sel = `ls -sl`;
+        $currentJoint = $sel[0];
+        //Exit loop condition
+        if ($currentJoint == $endJoint[0])
+        {
+            $exitLoop = 1;
+        }
+    }
+    parent $startPoint ScaledData;
+    parent $endPoint ScaledData;
+    
+    select $ikHandle;
+}
+
+global proc RMConnectWithLimits (string $AttrDriver, string $AttrDriven, float $minDriver,float $maxDriver,float $minDriven,float $maxDriven,float $ZeroValue)
+{
+    setDrivenKeyframe -cd $AttrDriver -driverValue $maxDriver -value $maxDriven $AttrDriven;
+    setDrivenKeyframe -cd $AttrDriver -driverValue 0 -value $ZeroValue $AttrDriven;
+    setDrivenKeyframe -cd $AttrDriver -driverValue $minDriver -value $minDriven $AttrDriven;
+}
+
+global proc string RMCustomPickWalk (string $Elem,string $Class,int $depth){
+    string $childs[]=`listRelatives -c $Elem`;
+    string $i;
+    string $Class;
+    string $returnValue=$Elem;
+    if (($depth == 0) || (`size $childs` == 0))
+    {
+        $returValue = $Elem;
+    }
+    else
+    {
+        for ($i in $childs)
+        {
+            if (`nodeType $i` == $Class)
+                {
+                print ("node:" + $i + "\n");
+                $returnValue = `RMCustomPickWalk $i $Class ($depth-1)`;
+                }
+        }
+        if ($returnValue=="")
+        {
+            print ("valor cero:" + $returnValue + $Elem);
+            $returnValue=$Elem;
+        }
+    }
+    return $returnValue;
+}
+
+global proc RMLinkHands(){
+    string $ManoIzquierda = `RMObjNameToVar "*LF_wrist_jnt_JXT"`;
+    RMHandControls($ManoIzquierda);
+    string $ManoDerecha = `RMObjNameToVar "*RH_wrist_jnt_JXT"`;
+    RMHandControls($ManoDerecha);
+}
+
+/*********************************************************************************************************************/
+/*********************************************************************************************************************/
+/******************************* OJOS *********************************************************************/
+/*********************************************************************************************************************/
+/*********************************************************************************************************************/
+global proc RMLinkEyes(string $side){
+    string $Eye=`RMObjNameToVar ("*_"+$side+"_Eye_msh_ful")`;
+    string $CharName=`RMGetFromName $Eye 2`;
+    float $eyeScale[]=`getAttr ($Eye+".scale")`;
+    setAttr ($Eye+".scale") 1.0 1.0 1.0;
+    select -cl;
+    float $SphRad=`sphere -q -r $Eye`;
+    string $newName=$CharName+"_"+$side+"_MainEyeUpperLid_jnt_ful";
+    string $MainEyeUpperLid=`joint -n $newName -rad ($SphRad/5)`;
+
+    RMAlign $Eye $MainEyeUpperLid 3 ;
+
+    string $newName=($CharName+"_"+$side+"_UpperLid_jnt_ful");
+    joint -n $newName -r -p $SphRad 0 0 -rad ($SphRad/5);
+    string $EyeParent=`RMCreateGrouponObj $MainEyeUpperLid 1`;
+    string $newName=$CharName+"_"+$side+"_MainEyeLowerLid_jnt_ful";
+    string $MainEyeLowerLid=`joint -n $newName -rad ($SphRad/5)`;
+    RMAlign $Eye $MainEyeLowerLid 3 ;
+    string $newName=$CharName+"_"+$side+"_LowerLid_jnt_ful";
+    joint -n $newName -r -p $SphRad 0 0 -rad ($SphRad/5);
+    parent $MainEyeLowerLid $EyeParent;
+    setAttr ($EyeParent+".scale") ($eyeScale[0]) ($eyeScale[1]) ($eyeScale[2]);
+    select -r $Eye;
+    string $eyeLattice[]= `lattice -n ($CharName+"_"+$side+"_EyeLattice_def_ful") -oc true -dv 2 2 2 -ol 2 -ofd ($SphRad/3)`;
+    float $LatticeScale[]=`getAttr ($eyeLattice[1]+".scale")`;
+    setAttr ($eyeLattice[1]+".scale") ($eyeScale[0]*$LatticeScale[0]) ($eyeScale[1]*$LatticeScale[1]) ($eyeScale[2]*$LatticeScale[2]);
+}

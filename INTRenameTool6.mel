@@ -1,0 +1,46 @@
+source "RMNameConvention";
+
+
+if (`window -q -ex RenameObjectsWindow`) deleteUI RenameObjectsWindow;
+	//Main Window
+	window -title "Rename Objects" -w 400 -h 50 RenameObjectsWindow;
+	//Button Layouts
+	//rowColumnLayout -nc 1 -cw 1 400;
+	columnLayout -w 100 -rs 10 columnlayout1;
+	    text "Select name parameters";	            
+  setParent..;
+  rowColumnLayout  -nc 3 -cw 1 100 -cw 2 100 -cw 3 100 -cs 1 20 -cs 3 180 rowcolumnlayout1;    
+      text -label  "Character Name";
+      string $CharacterName =`textField -w 80`;
+      button -label "Apply Char Name" -c ("RMRenameOnlyOne ({\""+ $CharacterName +"\"}) 0;");
+      
+  setParent..;
+  rowColumnLayout  -nc  2  -cw 1 400  -cw 2 100 columnlayout2;
+          string $SideType = `radioButtonGrp -numberOfRadioButtons 3 -cw 1 80
+          -label "Side Type" -labelArray3 "MD" "LF" "RH"  -sl 1 `;
+          button -label "Apply SideType" -c ("RMRenameOnlyOne ({\""+ $SideType +"\"}) 1;");
+  setParent..;	
+  rowColumnLayout  -nc 4 -cw 1 100 -cw 2 80 -cw 3 130 -cw 4 100 -cs 1 20 -cs 3 30 -cs 4 40 rowcolumnlayout2;    
+      text   -label "Object   Name";
+      string $ObjectName =`textField -w 80`;
+      string $UseCurrentName = `checkBox -label "use Current Name" -v false`;
+      button -label "Apply Object Name" -c ("RMRenameOnlyOne ({\""+ $ObjectName +"\"}) 2;");
+  setParent..;
+  rowColumnLayout  -nc  2  -cw 1 400  -cw 2 100  columnlayout4;
+          string $ObjectType= `radioButtonGrp -numberOfRadioButtons 3 -cw 1 80
+          -label "Object Type" -labelArray3 "msh" "ctr" "jnt" -sl 1`;
+          text "";
+          string $ObjectType2=`radioButtonGrp    -numberOfRadioButtons 3 -shareCollection $ObjectType -cw 1 80
+          -label "" -labelArray3 "utl" "ikh" "loc"`;
+          button -label "Apply Obj Type" -c ("RMRenameOnlyOne ({\""+ $ObjectType+"\",\""+$ObjectType2+"\"}) 3;");         
+   setParent..;
+   rowColumnLayout  -nc  2  -cw 1 400  -cw 2 100 columnlayout5;         
+          string $ObjStatus = `radioButtonGrp -numberOfRadioButtons 3 -cw 1 80
+          -label "Object Status" -labelArray3 "ful" "prx" "IK" -sl 1`;
+          text "";
+          string $ObjStatus2 =`radioButtonGrp  -numberOfRadioButtons 3 -shareCollection $ObjStatus -cw 1 80
+             -label "" -labelArray3 "FK" "RBN" "mph"`;
+           button -label "Apply Obj Status" -c ("RMRenameOnlyOne ({\""+ $ObjStatus+"\",\""+$ObjStatus2+"\"}) 4;");
+   button -label "Rename" -c ("RMRenameThem "+ $CharacterName +" "+ $SideType+" "+$ObjectName+" "+$ObjectType+" "+$ObjectType2+" "+$ObjStatus+" "+$ObjStatus2+" "+$UseCurrentName);
+   setParent..;	
+   showWindow RenameObjectsWindow;

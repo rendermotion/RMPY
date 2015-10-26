@@ -1,0 +1,51 @@
+/***************************************************************************
+/**************************************************************************
+**********************Funciones para Generar el Suhi***********************
+***************************************************************************
+/**************************************************************************/
+global proc string RMCreateCube(float $height,float $lenght,float $width,string $name)
+{ string $CreateCubeNewname[]= `polyCube -axis 1 0 0 -h $height - d $lenght -w $width -name $name`;
+$name=$CreateCubeNewname[0];
+move -r (-$height/2) 0 0 ($name+".scalePivot") ($name+".rotatePivot") ;
+move -r ($height/2) 0 0 $name ;
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $name;
+return $name;
+}
+global proc RMSushi (string $bone, string $mesh, int $IsRecursive)
+{
+	string $Child[]=`listRelatives -c $bone`;
+	float $d;
+	string $Cube;
+	string $i;
+	string $CopyMesh[];
+	string $MeshName = $bone;
+	$MeshName=`RMSetFromName $MeshName 3 "msh"`;
+	$MeshName=`RMSetFromName $MeshName 4 "prx"`;
+	string $GroupName = $bone;
+	$GroupName = `RMSetFromName $GroupName 1 "NA"`;
+	$GroupName = `RMSetFromName $GroupName 2 "ProxyMesh"`;
+	$GroupName = `RMSetFromName $GroupName 3 "grp"`;
+	$GroupName = `RMSetFromName $GroupName 4 "prx"`;
+	if (!`objExists $GroupName`)
+		{group -em -name $GroupName;}
+	for ($i in $Child)
+	{
+		$d=`RMDistancia $i $bone`;
+		$MeshName=`RMSetFromName $MeshName 2 ($bone+"To"+$i+"Mesh")`;
+		$Cube= `RMCreateCube ($d) ($d*3/4) ($d*3/4) "Cube#"`;
+		RMAlign $bone $Cube 3;
+		$CopyMesh=`duplicate $mesh`;
+		delete -ch $CopyMesh;
+		polyBoolOp -op 3 -ch 0 -n $MeshName $Cube $CopyMesh;
+		delete -ch $MeshName;
+		parentConstraint -mo $bone $MeshName;
+		parent $MeshName $GroupName;
+	}
+	if ($IsRecursive==1)
+	{
+		for ($i in $Child)
+		{
+			RMSushi $i $mesh $IsRecursive;
+		}
+	}
+}

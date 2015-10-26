@@ -1,0 +1,42 @@
+global proc RMObjLookXAtPoint (string $Obj01, vector $Vector){
+    //print $Vector;
+    //vector $tempo = `dot ($Vector,(<<1,0,1>>))`;
+    float $longitud = (`mag ($Vector)`);
+    float $Ry =0;
+    if ($Vector.x > 0){
+    	float $Ry= asind ($Vector.y/$longitud);
+    }
+    else{
+    	float $Ry=180 - asind ($Vector.y/$longitud);
+    }
+    $longitud= `mag ($Vector)`;
+    float $Rz = asind($Vector.z/$longitud);
+    //setAttr ($Obj01+".rotate") -type "double3" (0) (-$Ry) (-$Rz);
+    $Obj01= `rotate -r 0 (-$Ry) (-$Rz)`;
+}
+global proc vector ReturnParentPos (string $Obj[]){
+    select -r $Obj;
+    string $temp[] = `listRelatives -p`;
+    select -r $temp;
+    vector $ParentPosition=`xform -q -ws -rp`;
+    return ($ParentPosition);
+}
+
+global proc vector ReturnParentRotation (string $Obj[]){
+    select -r $Obj;
+    string $temp[] = `listRelatives -p`;
+    select -r $temp;
+    vector $ParentRotation=`xform -q  -rotation`;
+    return ($ParentRotation);
+}
+
+global proc ScalePoints( string $Transformar, float $ref){
+    scale -xyz ($ref) ($ref) ($ref) $Transformar;
+    // Statements;
+} 
+/*Funcion que regresa la Distancia entre dos objetos*/
+global proc float RMDistancia (string $Obj1,string $Obj2){
+    vector $p1= `xform -a -ws -q -rp $Obj1`;
+    vector $p2= `xform -a -ws -q -rp $Obj2`;
+    return ($p1 - $p2);
+}

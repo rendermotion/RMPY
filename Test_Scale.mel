@@ -1,0 +1,63 @@
+global proc RMScaleShapeControls(float $Cx,float $Cy,float $Cz)
+{
+	string $daObj[] = `ls -sl`;
+	string $Shapes[] = `listRelatives -s $daObj[0]`;
+	select ($daObj[0]+".cv[*]");
+
+	print $Shapes;
+
+	for ( $Shape in $Shapes)
+	{
+		scale -r $Cx $Cy $Cz ($Shape+".cv[*]");
+	}
+
+	select -r $daObj[0] ;
+}
+global proc CheckValues (float $Bx,float $By,float $Bz, float $Size)
+{
+	float $SizeX=1;
+	float $SizeY=1;
+	float $SizeZ=1;
+	if ($Bx == true)
+	{
+		$SizeX=$Size;
+	}
+	if ($By == true)
+	{
+		$SizeY=$Size;
+	}
+	if ($Bz == true)
+	{
+		$SizeZ=$Size;
+	}
+	RMScaleShapeControls($SizeX,$SizeY,$SizeZ);
+}
+
+//proc ScaleWindow()
+//{
+	
+	string $Test= `window -wh 405 225 -t "RM Scale Controls" -menuBar true -vis true -sizeable false`;
+	float $SValX = 0;
+    float $SValY = 0;
+    float $SValZ = 0;
+
+	columnLayout -adjustableColumn true -cal "center";
+	    //string $SizeValue = `intFieldGrp -v 500 -l Size`;
+	    
+	    float $SizeVal = 1;
+	    floatSliderGrp  -field true -l Size -minValue 0 -maxValue 10 -v $SizeVal -cc "$SizeVal = #1; $SizeVal =(\"#1\"); ";
+	    rowLayout -nc 3;
+	 	    
+    		$SValX = 1;
+    		$SValY = 1;
+   			$SValZ = 1;
+	    	checkBox -label "X"   -align "left" -v $SValX -onc "$SValX= 1" -ofc "$SValX=0";
+	    	checkBox -label "Y" -align "center" -v $SValY -onc "$SValY= 1" -ofc "$SValY=0" ;
+	    	checkBox -label "Z"  -align "right" -v $SValZ -onc "$SValZ= 1" -ofc "$SValZ=0" ;
+	    setParent ..;
+	    //int $SizeV = `intField -q -v Size`;
+	    button  -l "Scale Control" -ann "Si editas el valor desde la casilla, Presiona Enter al terminar."  -c ("print $SizeVal; CheckValues($SValX,$SValY,$SValZ,$SizeVal)");
+	    //button  -label "Create Reference Points"  -command ("print $SizeVal2");
+	setParent ..;
+//}
+//ScaleWindow;

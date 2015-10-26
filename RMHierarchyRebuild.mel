@@ -1,0 +1,1316 @@
+source "RMNameConvention.mel";
+source "RMRigShapeControls.mel";
+source "RMRiggControllers.mel";
+source "RMRibbonSystem.mel";
+source "RMRiggMath.mel";
+source "RMRiggTools.mel";
+
+global proc RMCreateJointsOnSelected()
+{
+	string $temp[] = `ls -sl`;
+	string $Original = $temp[0];
+	string $temp2[] = `listRelatives -ad`;
+	vector $BonePosition=`xform -q -ws -rt`;
+	$temp2[`size $temp2`]=$temp[0];
+	string $TParent=$Original;
+	string $jointArray[]={};
+    string $temp3[] = ReverseArray($temp2);
+    print $temp3;
+	string $Nombrejnt;
+
+	//string $BonesS[]=`RMCreateBonesAtPoints $temp3`;
+	//$Nombrejnt=(RMSetFromName((RMSetFromName($temp[0], 3,"jnt")),4,"rig"));
+    //joint  -p ($BonePosition.x) ($BonePosition.y) ($BonePosition.z) -n $Nombrejnt;
+    string $i;
+    int $index=0;
+    int $indexR=0;
+    for ($i in $temp3)
+    {
+    	if ((RMIgnoraShape($i)==true))
+    	{
+		  	makeIdentity -apply true -t 1 -r 1 -s 1 $temp3[$indexR];
+		    select -cl;
+		    $Nombrejnt=(RMSetFromName((RMSetFromName($i, 3,"jnt")),4,"rig"));
+		    $jointArray[$index]=`joint -p 0 0 0 -n $Nombrejnt`;
+		    //$jointArray[$index]=RMSetNameInFormat ($jointArray[$index],"Object","MD","JNT","RIG");
+			RMAlign $temp3[$indexR] $jointArray[$index] 3;
+		    makeIdentity -apply true -t 1 -r 1 -s 0 $jointArray[$index];
+		    if ($index>0)
+	        {	
+		        parent $jointArray[$index] $jointArray[$index-1];
+		        joint -e -oj xyz -sao "yup" $jointArray[$index-1];
+	        }
+		   	
+		    $index=$index+1;
+
+		}
+		$indexR++;
+    } 
+
+    /*for ($i in $temp3)
+    { 
+    	//$objSide[0]=$temp3[$i];
+    	if ((RMIgnoraShape($i)==true))
+    	{	
+    		
+	    	$BonePosition = `pointPosition $i `;
+        	$Nombrejnt=(RMSetFromName((RMSetFromName($i, 3,"jnt")),4,"rig"));
+        	joint  -p ($BonePosition.x) ($BonePosition.y) ($BonePosition.z) -n $Nombrejnt;
+        	joint -e -oj xyz -sao "yup" $TParent;
+        	parent $Nombrejnt $TParent;
+        	//$JointArray[(`size $JointArray`)]=$Nombrejnt;
+        	//makeIdentity -apply true -t 1 -r 1 -s 0 $JointArray[(`size $JointArray`)-1];
+        	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 -pn 1 $Nombrejnt;
+        	$TParent=$Nombrejnt;
+        }
+    }*/
+	
+
+	if (RMObjectInArray($jointArray,"ball")!="")
+	{
+		string $TBall = RMObjectInArray($jointArray,"ball");
+		string $TBack = RMObjectInArray($jointArray,"footLimitBack");
+		string $TOut  = RMObjectInArray($jointArray,"footLimitOuter");
+		parent -w $TOut $TBack;
+		parent $TOut $TBack $TBall;
+
+		if (RMObjectInArray($jointArray,"leg")!="")
+		{
+			string $leg = RMObjectInArray($jointArray,"leg");
+			if (RMGetFromName($TBall,1)=="RH")
+			{
+					string $RightArmroot = `RMObjNameToVar "*RH_leg_jnt*"`;
+					RMRebuildLeg $RightArmroot "FK";
+					string $RightArmrootParent[]=`listRelatives -p $RightArmroot`;
+					string $RightArmrootFK=`RMObjNameToVar "*RH_leg_jnt_FK"`;
+					string $RightFKCntrls[]=`RMCreateFKControlsLeg $RightArmrootFK $RightArmrootParent[0]`;
+		
+					string $RightArmroot=`RMObjNameToVar "*RH_leg_jnt*"`;
+					string $RightArmrootIK=`RMRebuildLeg $RightArmroot "IK"`;
+					string $RightArmrootParent[]=`listRelatives -p $RightArmroot`;
+					string $RightIKCntrls[]=`RMCreateIKControlsLeg $RightArmrootIK $RightArmrootParent[0]`;
+					RMRebuildJXTLeg "RH" ({$RightIKCntrls[0],$RightIKCntrls[1],$RightIKCntrls[2]}) ({$RightFKCntrls[0],$RightFKCntrls[1],$RightFKCntrls[2],$RightFKCntrls[3]});
+				}
+				else if (RMGetFromName($TBall,1)=="LF")
+				{
+					string $LeftArmroot= `RMObjNameToVar "*LF_leg_jnt*"`;
+					RMRebuildLeg $LeftArmroot "FK";
+					string $LeftArmrootParent[]=`listRelatives -p $LeftArmroot`;
+					string $LeftArmrootFK=`RMObjNameToVar "*LF_leg_jnt_FK"`;
+					string $LeftFKCntrls[]=`RMCreateFKControlsLeg $LeftArmrootFK $LeftArmrootParent[0]`;
+		
+					string $LeftArmroot=`RMObjNameToVar "*LF_leg_jnt*"`;
+					string $LeftArmrootIK=`RMRebuildLeg $LeftArmroot "IK"`;
+					string $LeftArmrootParent[]=`listRelatives -p $LeftArmroot`;
+					string $LeftIKCntrls[]=`RMCreateIKControlsLeg $LeftArmrootIK $LeftArmrootParent[0]`;
+					RMRebuildJXTLeg "LF" ({$LeftIKCntrls[0],$LeftIKCntrls[1],$LeftIKCntrls[2]}) ({$LeftFKCntrls[0],$LeftFKCntrls[1],$LeftFKCntrls[2],$LeftFKCntrls[3]});
+				}
+			}
+		}
+		//string $FKControls[] = `RMRebuildFKLegs`;
+		//////string $IKControls[] = `RMRebuildIKLegs`;
+		
+		
+	}
+	select -r $Original;
+}
+global proc string RMObjectInArray(string $SArray[], string $key)
+{
+	string $i;
+	for ($i in $SArray)
+	{
+		if (`match $key $i `!="")
+		{
+			return $i;
+		}
+	}
+}
+global proc RMCreateSkeleton(string $PelvisPoint)
+{
+	select -r ($PelvisPoint);
+	string $temp[] = `ls -sl`;
+	string $temp2[] = `listRelatives -ad`;
+    vector $BonePosition=`xform -q -ws -rt`;
+
+    //$temp2[`size $temp2`]=$temp[0];
+    string $temp3[] = ReverseArray($temp2);
+    vector $xyzCoords =<<0,0,0>>;
+    
+    //joint -p ($BonePosition.x) ($BonePosition.y) ($BonePosition.z) -n (RMRemoveFromName((RMSetFromName($PelvisPoint, 3,"jnt")),"rfr"));
+    //joint -e -zso -oj xyz ;
+    
+    string $objSide1[]={};
+    string $JointArray[]={};
+    string $Nombrejnt;
+    string $TempParent[];
+	for ($i=0 ; $i<(`size $temp3`);$i++)
+    { 
+    	$objSide[0]=$temp3[$i];
+    	if ((RMIgnoraShape($objSide[0])==true&&($objSide[0]!="clavicle")))
+    	//if ((RMIgnoraShape($objSide[0])==true))
+    	{	
+    		select -r ($temp3[$i]);
+        	//$BonePosition=`xform -q -ws -rt`;
+        	$BonePosition = `pointPosition $temp3[$i] `;
+        	$Nombrejnt=(RMSetFromName((RMSetFromName($objSide[0], 3,"jnt")),4,"rig"));
+        	joint  -p ($BonePosition.x) ($BonePosition.y) ($BonePosition.z) -n $Nombrejnt;
+        	joint -e -zso -oj xyz -sao "yup";
+        	$JointArray[(`size $JointArray`)]=$Nombrejnt;
+        	//makeIdentity -apply true -t 1 -r 1 -s 0 $JointArray[(`size $JointArray`)-1];
+        	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 -pn 1 $JointArray[(`size $JointArray`)-1];
+
+        	//joint -e -oj xyz -sao "yup" $JointArray[(`size $JointArray`)-1];
+        	if ((`size $JointArray`)>1)
+        	{
+
+        		//joint -e -oj xyz -sao "yup" $JointArray[(`size $JointArray`)-2];
+
+        		if ((RMGetFromName($JointArray[(`size $JointArray`)-2],2)=="toe")&&(RMGetFromName($JointArray[(`size $JointArray`)-1],2)!="clavicle"))
+        		{
+        			
+        			parent $JointArray[(`size $JointArray`)-1] $JointArray[0];
+        			joint -e -oj xyz -sao "yup" $JointArray[0];
+        			//joint -e -oj xyz -sao "yup" $JointArray[(`size $JointArray`)-2];
+        			
+        		}
+
+        		else if ((RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="clavicle")||(RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="headTip")||(RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="neck")||(RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="footLimitBack")||(RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="footLimitOuter")||(RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="footLimitInner"))
+        		{
+        			print "pass";
+        		}
+        		else if ((RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="thumb")||(RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="pinky")||(RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="ring")||(RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="middle")||(RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="index"))
+        		{
+
+        			
+        			print ("p");
+        		}
+        		else
+        		{
+        			parent $JointArray[(`size $JointArray`)-1] $JointArray[(`size $JointArray`)-2];
+        			$TempParent = `listRelatives -p`;
+					print $TempParent[0];
+        			if ((RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="Knee")){
+					select -r $JointArray[(`size $JointArray`)-1];    			
+        			
+					//joint -e -oj xyz -sao "yup" $TempParent[0];
+					clear($TempParent);}
+					else{
+						
+					}
+        			
+        			
+        		}
+        		
+        		//joint -e -oj xyz -sao "yup" $JointArray[(`size $JointArray`)-2];	
+        	}
+
+	        if	(((`size $JointArray`)>1)&&(RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="pinky")&&(RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="ring")&&(RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="middle")&&(RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="index")&&(RMGetFromName($JointArray[(`size $JointArray`)-1],2)!="clavicle")&&(RMGetFromName($JointArray[(`size $JointArray`)-1],2)!="leg")&&(RMGetFromName($JointArray[(`size $JointArray`)-1],2)!="footLimitInner")&&(RMGetFromName($JointArray[(`size $JointArray`)-1],2)!="footLimitOuter")&&(RMGetFromName($JointArray[(`size $JointArray`)-1],2)!="footLimitBack"))
+	        {
+        		//joint -e -oj xyz -sao "yup" $JointArray[(`size $JointArray`)-2];
+        	}
+	        
+         	
+        }
+    }
+
+    //=================================================================================================================================//
+    select -r Character01_MD_headTip_jnt_rig_rfr;
+    parent -w;
+    select -r Character01_MD_headTip_jnt_rig_rfr Character01_MD_head_jnt_rig;
+    parent;
+    //select -r Character01_MD_Spine4_jnt;
+    //doDelete;
+    
+    select -r Character01_LF_thumb_jnt_rig Character01_LF_index_jnt_rig Character01_LF_pinky_jnt_rig Character01_LF_ring_jnt_rig Character01_LF_middle_jnt_rig ;
+    parent -w;
+    parent Character01_LF_thumb_jnt_rig Character01_LF_index_jnt_rig Character01_LF_pinky_jnt_rig Character01_LF_ring_jnt_rig Character01_LF_middle_jnt_rig Character01_LF_wrist_jnt_rig;
+    
+    parent Character01_RH_thumb_jnt_rig Character01_RH_index_jnt_rig Character01_RH_pinky_jnt_rig Character01_RH_ring_jnt_rig Character01_RH_middle_jnt_rig Character01_RH_wrist_jnt_rig;
+    select -r Character01_MD_Spine_jnt_rig;
+    parent -w;
+    
+    select -r Character01_MD_Spine_jnt_rig Character01_RH_leg_jnt_rig Character01_LF_leg_jnt_rig Character01_MD_Hip_jnt_rig;
+    parent;
+    //parent Character01_MD_neck_jnt Character01_MD_Spine3_jnt;
+    select -r Character01_MD_neck_jnt_rig Character01_RH_clavicle_jnt_rig Character01_LF_clavicle_jnt_rig Character01_MD_Spine4_jnt_rig ;
+    parent;
+    select -r Character01_RH_footLimitBack_jnt_rig Character01_RH_footLimitOuter_jnt_rig Character01_RH_footLimitInner_jnt_rig Character01_RH_ball_jnt_rig ;
+    parent;
+    select -r Character01_LF_footLimitBack_jnt_rig Character01_LF_footLimitOuter_jnt_rig Character01_LF_footLimitInner_jnt_rig Character01_LF_ball_jnt_rig ;
+    parent;
+
+    RMTransFormGroupsIdentitys();
+    parent -w Character01_MD_neck_jnt_rig Character01_RH_clavicle_jnt_rig Character01_LF_clavicle_jnt_rig Character01_RH_shoulder_jnt_rig ;
+    
+    
+
+    select -r Character01_LF_thumb_jnt_rig Character01_LF_index_jnt_rig Character01_LF_pinky_jnt_rig Character01_LF_ring_jnt_rig Character01_LF_middle_jnt_rig ;
+    parent -w;
+    parent Character01_RH_shoulder_jnt_rig Character01_RH_clavicle_jnt_rig;
+    parent Character01_LF_thumb_jnt_rig Character01_LF_index_jnt_rig Character01_LF_pinky_jnt_rig Character01_LF_ring_jnt_rig Character01_LF_middle_jnt_rig Character01_LF_wrist_jnt_rig;
+    //parent Character01_MD_neck_jnt Character01_MD_Spine3_jnt;
+    parent Character01_MD_neck_jnt_rig Character01_RH_clavicle_jnt_rig Character01_LF_clavicle_jnt_rig Character01_MD_Spine4_jnt_rig ;
+    parent Character01_RH_thumb_jnt_rig Character01_RH_index_jnt_rig Character01_RH_pinky_jnt_rig Character01_RH_ring_jnt_rig Character01_RH_middle_jnt_rig Character01_RH_wrist_jnt_rig;
+    parent Character01_MD_Spine_jnt_rig Character01_RH_leg_jnt_rig Character01_LF_leg_jnt_rig Character01_MD_Hip_jnt_rig;
+    //joint -e;
+    select -r Character01_MD_Hip_jnt_rig;
+
+
+ //=================================================================================================================================//
+    
+	//file -import -type "mayaBinary"  -ignoreVersion -ra false -mergeNamespacesOnClash false  -options "v=0;"  -pr "//server/Personal/LuisDaniel/RiggCtrls.mb";
+	file  -import -gr -gn "ReferenceControls" -type "mayaBinary"  -ignoreVersion -ra false -mergeNamespacesOnClash false  -options "v=0;"  -pr "//server/Personal/LuisDaniel/RiggCtrls.mb";
+
+	RMDeleteTransformG();
+
+	string $leftUpLeg=`RMObjNameToVar "*LF_leg_jnt*"`;
+	string $rightUpLeg=`RMObjNameToVar "*RH_leg_jnt*"`;
+	string $hips=`RMObjNameToVar "*Hip_jnt*"`;
+	string $hipLowN = $hips;
+	$hipLowN=`RMSetFromName $hipLowN 2 "HipLow"`;
+	string $hipLow_nub = $hips;
+	$hipLow_nub=`RMSetFromName $hipLow_nub 2 "HipLowNub"`;
+
+	parent -w $leftUpLeg;
+	parent -w $rightUpLeg;
+	//Crea el HipLow
+	//Obriene la posicion del Hip y de la base de la pierna para calcular la posicion del HipLowNub
+	vector $var1=`xform -ws -q -t $rightUpLeg`;
+	vector $var2=`xform -ws -q -t $hips`;
+	string $hipLow = `joint -p ($var2.x) ($var2.y) ($var2.z) -n $hipLowN`;
+	parent -w $hipLow;
+	string $hipLowNubName=$hipLow_nub;
+	float $TempDif=($var1.y-$var2.y);
+	if (($TempDif>=-0.1)&&($TempDif<=0.1))
+	{
+		//$var2 = <<$var2.x,$var2.y+($var1.x-$var2.x)*0.2,$var2.z>>;
+		string $hipLow_nub = `joint -r -p 0 (($var1.x-$var2.x)*0.35) 0 -n $hipLowNubName`;
+		//joint -e;
+	}
+	else
+	{
+		string $hipLow_nub = `joint -r -p 0 (($var1.y-$var2.y)) 0 -n $hipLowNubName`;
+		//joint -e;
+	}
+	//RMAlign $hips
+	RMAlign $hips $hipLow 3;
+
+	string $newName=$hips;
+	$newName=`RMSetFromName $newName 2 "HipGroup"`;
+	select -cl;
+	group -em -n $newName;
+	//Alinea el Grupo al Hip y emparenta tanto Hips como HipLow alGrupo
+	RMAlign $hips $newName 3;
+
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 -pn 1 $hipLow;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 -pn 1 $newName;
+	parent $hipLow $newName;
+	parent $hips $newName;
+	RMTransFormGroupsIdentitys();
+
+	parent $leftUpLeg $rightUpLeg $hipLow_nub;
+	parent $hipLow $hips $newName;
+	/*//parent $hipLow_nub $hipLow;
+	select -cl;*/
+	RMDeleteTransformG();
+	//setAttr ($hipLow+".jointOrientY") 180;
+
+	joint -e -oj xyz -sao "yup" $JointArray[0];
+	joint -e -oj xyz -sao "yup" Character01_MD_HipLow_jnt_rig;
+	joint -e -oj xyz -sao "yup" $leftUpLeg;
+	joint -e -oj xyz -sao "yup" $rightUpLeg;
+
+}
+
+
+global proc RMTransFormGroupsIdentitys()
+{
+	string $Trans = "transform1";
+	while (`objExists $Trans`){
+		makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 -pn 1 $Trans;
+        $Trans =`RMStringPlus1 $Trans`;
+        
+    }
+}
+global proc RMDeleteTransformG()
+{
+	string $Trans = "transform1";
+	while (`objExists $Trans`){
+		select -r $Trans;
+		doDelete;
+        $Trans =`RMStringPlus1 $Trans`;
+        
+    }
+}
+
+global proc RMSetSkeleton(){
+    
+    //Identifica y Selecciona los Objetos principales de la herarquia
+	string $hips=`RMObjNameToVar "*Hip_jnt*"`;
+	string $leftUpLeg=`RMObjNameToVar "*LF_leg_jnt*"`;
+	string $rightUpLeg=`RMObjNameToVar "*RH_leg_jnt*"`;
+	string $leftShoulder=`RMObjNameToVar "*LF_shoulder_jnt*"`;
+	string $rightShoulder=`RMObjNameToVar "*RH_shoulder_jnt*"`;
+	string $temp[]=`listRelatives -parent $leftShoulder`;
+	string $leftClavicle=`RMObjNameToVar "*LF_clavicle_jnt*"`;
+	string $rightClavicle=`RMObjNameToVar "*RH_clavicle_jnt*"`;
+	
+	string $tempN[]=`listRelatives -parent ($temp[0])`;
+	string $neck=$tempN[0];
+	string $leftHand=`RMObjNameToVar "*LF_wrist_jnt*"`;
+	string $rightHand=`RMObjNameToVar "*RH_wrist_jnt*"`;
+	
+	parent -w $leftUpLeg;
+	parent -w $rightUpLeg;
+	parent -w $leftClavicle;
+	parent -w $rightClavicle;
+	string $childrenL[]=`RMRemoveChildren $leftHand`;
+	string $childrenR[]=`RMRemoveChildren $rightHand`;
+	
+	//=========================================================
+	//=========================================================
+	select -cl;
+	//Crea el nombre del Hip Low
+	string $hipLow = $hips;
+	$hipLow=`RMSetFromName $hipLow 2 "HipLow"`;
+	//Crea el HipLow
+	string $hipLow = `joint -n $hipLow`;
+	//Obriene la posicion del Hip y de la base de la pierna para calcular la posicion del HipLowNub
+	vector $var1=`xform -ws -q -t $rightUpLeg`;
+	vector $var2=`xform -ws -q -t $hips`;
+	//Crea el nombre para el Joint Que sera el Hip Low Nub
+	string $hipLow_nub = $hips;
+	$hipLow_nub=`RMSetFromName $hipLow_nub 2 "HipLowNub"`;
+	//Crea el Joint Del hipLow nub
+	//string $hipLow_nub = `joint -r -p (($var1.y-$var2.y)) (($var1.x-$var2.x)*0.2) 0 -n $hipLow_nub`;
+	
+	string $hipLowNubName=$hipLow_nub;
+	float $TempDif=($var1.y-$var2.y);
+	if (($TempDif>=-0.1)&&($TempDif<=0.1))
+	{
+		//$var2 = <<$var2.x,$var2.y+($var1.x-$var2.x)*0.2,$var2.z>>;
+		string $hipLow_nub = `joint -r -p (($var1.x-$var2.x)*0.35) 0 0 -n $hipLowNubName`;
+	}
+	else
+	{
+		string $hipLow_nub = `joint -r -p (($var1.y-$var2.y)) 0 0 -n $hipLowNubName`;
+	}
+	//Limpia La seleccion y alinea cada uno de las extremidades
+
+	joint -e -oj "xyz" /*-sao "yup"*/ -zso -ch $leftUpLeg ;
+	joint -e -oj "xyz" -sao "yup" -zso  $leftUpLeg ;
+
+	joint -e -oj "xyz" /*-sao "yup"*/ -zso -ch $rightUpLeg ;
+	joint -e -oj "xyz" -sao "yup" -zso  $rightUpLeg ;
+   
+   joint -e -oj "xzy" -sao "yup" -zso -ch $leftShoulder;
+   joint -e -oj "xyz" -sao "yup" -zso $leftShoulder;
+   joint -e -oj "xzy" -sao "yup" -zso -ch $rightShoulder;
+   joint -e -oj "xyz" -sao "yup" -zso -ch $rightShoulder;
+
+	joint -e -oj "xzy" -sao "zup" -zso -ch $hips;
+
+	joint -e -o 0 0 0 $leftHand;
+	joint -e -o 0 0 0 $rightHand;
+	
+	for ($i in $childrenL)
+	{
+	    if (`match "thumb" $i `== "thumb")
+	        joint -e -oj "xzy" -sao "zup" -zso -ch $i;
+	    else 
+	        joint -e -oj "xzy" -sao "yup" -zso -ch $i;
+	}
+
+	for ($i in $childrenR)
+	{
+	    if (`match "thumb" $i `== "thumb")
+	        joint -e -oj "xzy" -sao "zup" -zso -ch $i;
+	    else 
+	        joint -e -oj "xzy" -sao "yup" -zso -ch $i;
+	}/**/
+	//Posiciona el HipLow en la posicion del Hip
+	RMAlign $hips $hipLow 3;
+	//Resetea la matriz de transformacion del HipLow y su nub
+	select -r $hipLow;
+	makeIdentity -apply true -t 1 -r 1 -s 1 $hipLow;
+	makeIdentity -apply true -t 1 -r 1 -s 1 $hipLow_nub;
+	//Orienta el HipLow
+	joint -e -oj "xyz" /*-sao "yup"*/ -zso -ch;
+	//Reemparenta las piernas y los hombros
+	parent $leftUpLeg $hipLow_nub;
+	parent $rightUpLeg $hipLow_nub;
+	parent $leftClavicle $neck;
+	parent $rightClavicle $neck;
+	RMParentArray $leftHand $childrenL;
+	RMParentArray $rightHand $childrenR;
+	//Crea un grupo principal para los Hips 
+	string $newName=$hips;
+	$newName=`RMSetFromName $newName 2 "HipGroup"`;
+	select -cl;
+	group -em -n $newName;
+	//Alinea el Grupo al Hip y emparenta tanto Hips como HipLow alGrupo
+	RMAlign $hips $newName 3;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 -pn 1 $hipLow;
+	parent $hipLow $newName;
+	parent $hips $newName;
+	RMTransFormGroupsIdentitys();
+	parent $leftUpLeg $rightUpLeg $hipLow_nub;
+	parent $hips $newName;
+	RMDeleteTransformG();
+	select -cl;
+	
+}
+
+/*Reconstruye la herarquia de un brazo y la vuelve 4 huesos en lugar de 3*/
+
+
+
+proc string RMRebuildArm (string $firstBone,string $Prefix){
+	//Crea el primer Joint y lo RMAlign al Hueso inicial
+	select -cl;
+	string $Joint1=`joint -n (RMSetFromName($firstBone,4,$Prefix))`;
+	
+	//setAttr ($firstBone+".jointOrientY") 0;
+	RMAlign $firstBone $Joint1 3;
+	string $temp[]=`listRelatives -c $firstBone`;
+	string $temp1[]=`listRelatives -c $temp[0]`;
+
+	//---
+	//parent -w $temp[0];
+	//setAttr ($firstBone+".jointOrientX") 0;
+	
+	//parent $temp[0] $firstBone;
+
+	//---
+	// Crea un grupo padre del Joint Inicial , y le aplica un parent Constraint al padre de la base con Mantain Ofset
+	string $parent[]=`listRelatives -p $firstBone`;
+	string $Joint1Parent=`RMCreateGrouponObj $Joint1 1`;
+	parentConstraint -mo $parent[0] $Joint1Parent;
+	
+	//Crea 2 huesos mas
+	string $Joint2=`joint -n (RMSetFromName($temp[0],4,$Prefix))`;
+	// RMAlign en posicion el nuevo hueso Joint2 al segundo hueso de la herarquia y en orientacion al primer hueso y lo mueve -1/6 parte en su eje X
+	RMAlign $temp[0] $Joint2 1;
+
+	//RMAlign $firstBone $Joint2 2;
+	float $RMDistancia= `RMDistancia $firstBone $temp[0]`;
+	move -os -r (-$RMDistancia/10) 0 0 $Joint2;
+
+	//Crea un segundo hueso Y le asigna el nombre SegundaFalange + 2
+	string $tempName =`RMGetFromName $temp[0] 2`;
+	$tempName = `RMSetFromName $temp[0] 2 ($tempName+"B")`;
+	string $Joint3=`joint -n (RMSetFromName($tempName,4,$Prefix))`;
+	//Calcula la RMDistancia entre la segunda y tercera Falange
+	string $temp1[]=`listRelatives -c $temp[0]`;
+	float $RMDistancia= `RMDistancia $temp1[0] $temp[0]`;
+	//RMAlign el segundo hueso de la segunda Falange a la segunda Falange tanto en posicion como orientacion y lo mueve 1/6 de la RMDistancia hacia la Falange 3
+	RMAlign $temp[0] $Joint3 3;
+	move -os -r ($RMDistancia/10) 0 0 $Joint3;
+	
+	string $tempFix[]; 
+	string $tempNewName ;
+	if (RMGetFromName($temp1[0],2)=="elbowB")
+	{	
+		$tempFix = `listRelatives -c $temp1[0]`;
+		
+		//$tempNewName= RMSetFromName($tempNewName,2,"ankle");
+	}
+	else 
+	{
+		$tempFix[0]= $temp1[0];
+		
+	}
+	$tempNewName = RMSetFromName($tempFix[0],4,$Prefix);
+	//Crea una cuarta Falange y la RMAlign a la tercer Falange Original
+	
+	string $Joint4=`joint -n ($tempNewName)`;
+	RMAlign $tempFix[0] $Joint4 3;
+	//Resetea las transformaciones de todos los huesos nuevos
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Joint4;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Joint3;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Joint2;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Joint1;
+	setAttr ($Joint2+".rotate") 0 0 0;
+	setAttr ($Joint3+".rotate") 0 0 0;
+	// Orienta el segundo hueso para corregir su orientacion que no este como la del primer hueso
+	joint -e -oj "xzy" -zso $Joint2;
+	joint -e -oj "xzy" -zso $Joint3;
+	parent $Joint1Parent Joints;
+	//Regresa la primera Falange
+	
+	return $Joint1;
+}
+
+global proc string [] RMRebuildFK(){
+	string $LeftArmroot= `RMObjNameToVar "*LF_shoulder_jnt*"`;
+
+	RMRebuildArm $LeftArmroot "FK";
+	string $LeftCntrls[]={"var","dae"};
+	string $LeftArmrootParent[]=`listRelatives -p $LeftArmroot`;
+	string $LeftArmrootFK=`RMObjNameToVar "*LF_shoulder_jnt_FK"`;
+	string $LeftCntrls[]=`RMCreateFKControlsArm $LeftArmrootFK $LeftArmrootParent[0]`;
+	
+	string $RightArmroot = `RMObjNameToVar "*RH_shoulder_jnt*"`;
+	RMRebuildArm $RightArmroot "FK";
+	string $RightArmrootParent[]=`listRelatives -p $RightArmroot`;
+	string $RightArmrootFK=`RMObjNameToVar "*RH_shoulder_jnt_FK"`;
+	
+	string $RightCntrls[]=`RMCreateFKControlsArm $RightArmrootFK $RightArmrootParent[0]`;
+	appendStringArray $LeftCntrls $RightCntrls 3;
+	return $LeftCntrls;
+}
+global proc string[] RMRebuildIK()
+{
+	string $LeftArmroot=`RMObjNameToVar "*LF_shoulder_jnt*"`;
+	string $LeftArmrootIK=`RMRebuildArm $LeftArmroot "IK"`;
+	string $LeftArmrootParent[]=`listRelatives -p $LeftArmroot`;
+	// string $LeftArmrootIK=`RMObjNameToVar "*LF_shoulder_jnt_IK"`;
+	string $LeftCntrls[]=`RMCreateIKControls $LeftArmrootIK $LeftArmrootParent[0]`;
+	string $RightArmroot=`RMObjNameToVar "*RH_shoulder_jnt*"`;
+	string $RightArmrootIK=`RMRebuildArm $RightArmroot "IK"`;
+	string $RightArmrootParent[]=`listRelatives -p $RightArmroot`;
+	// string $RightArmrootIK=`RMObjNameToVar "*RH_shoulder_jnt_IK"`;
+	string $RightCntrls[]=`RMCreateIKControls $RightArmrootIK $RightArmrootParent[0]`;
+
+	return ({$LeftCntrls[0],$LeftCntrls[1],$LeftCntrls[2],$RightCntrls[0],$RightCntrls[1],$RightCntrls[2]});
+}
+
+global proc RMRebuildJXT(string $side,string $IKControls[],string $FKControls[])
+{
+	string $ORGArmroot=`RMObjNameToVar ("*"+$side+"_shoulder_jnt_rig")`;
+	RMRebuildArm $ORGArmroot "JXT";
+	//Identifica el Nodo del Brazo
+	$JXTArmroot=`RMObjNameToVar ("*"+$side+"_shoulder_jnt_JXT")`;
+	//Busca El nodo de la Clavicula
+	string $JXTArmrootParent[]=`listRelatives -p $ORGArmroot`;
+	//Busca El nodo del Pecho
+	string $Pecho[]=`listRelatives -p $JXTArmrootParent[0]`;
+	
+	string $JXTArmControl = $JXTArmrootParent[0];
+	$JXTArmControl=`RMSetFromName $JXTArmControl 3 "ctr"`;
+	$JXTArmControl=`RMSetFromName $JXTArmControl 4 ""`;
+	duplicate -name $JXTArmControl "clav_ctrl";
+	/////////////////////
+	//Calcula La RMDistancia entre la clavicula y el Brazo para redimensionar la Clavicula	
+	float $ClavSize = `RMDistancia $ORGArmroot $JXTArmrootParent[0]`;
+	scale -scaleXYZ ($ClavSize) ($ClavSize) ($ClavSize) $JXTArmControl;
+	makeIdentity -apply true -t 0 -r 0 -s 1 -n 0 $JXTArmControl;
+	//RMAlign EL control De la clavicula a su nacimiento
+	RMAlign $JXTArmrootParent[0] $JXTArmControl 3;
+	//Crea Un Grupo Padre al Control
+	string $JXTArmControlGrp = `RMCreateGrouponObj $JXTArmControl 1`;
+	string $JXTArmControlGrp2 = `RMCreateGrouponObj $JXTArmControlGrp 1`;
+	
+//	CreaUn Nodo RMAligndo al mundo en la posicion del Pecho para usarlo en el Orient Constraint Y evitar que popee
+	string $JointOriented=`RMCreateGrouponObj $Pecho[0] 0`;
+	string $WorldOriented=`RMUniqueName $JointOriented`;
+	group -em -name $WorldOriented;
+	RMAlign $JointOriented $WorldOriented 1;
+	parent $WorldOriented $Pecho[0];
+
+	//	Emparenta con un parent Constraint Al Pecho La clavicula 
+	parent -world  $JXTArmControl;
+
+	//parentConstraint -mo $Pecho[0] $JXTArmControlGrp2;
+	pointConstraint -mo $JXTArmrootParent[0] $JXTArmControlGrp;
+
+	//Crea 2 OrientConstraints uno al Pecho y otro Al mundo 
+	string $Mover2=`RMObjNameToVar ("*Mover2_ctr_rig")`;
+
+
+	string $pCClav[]=`orientConstraint -mo $Mover2 $JXTArmControlGrp`;
+	orientConstraint  $WorldOriented $JXTArmControlGrp;
+	
+     
+    //Agrega Un Attributo de Aligned To a la clavicula 
+    //select -r $JXTArmControl;
+	addAttr -ln AlignedTo  -k on  -at "enum" -en "UpperBack:World:" $JXTArmControl;
+
+
+	//addAttr -ln AlignedTo  -k on  -at "enum" -en $JXTArmControl;
+	//Conecta el Control de Aligned To a el ParentConstraint
+	string $Alias[]=`orientConstraint -q -wal $pCClav[0]`;  
+
+	connectAttr   ($JXTArmControl+".AlignedTo") ($pCClav[0]+"."+$Alias[0]);
+
+	string $newName=`RMSetFromName $JXTArmControl 2 "ClavicleOrientReverse"`;
+	$newName=`RMSetFromName $newName 3 "utl"`;
+	$newName=`RMSetFromName $newName 4 "rig"`;
+	$newName=`RMUniqueName  $newName`;
+	shadingNode -name $newName -asUtility reverse;
+	connectAttr   ($JXTArmControl+".AlignedTo") ($newName+".inputX");
+	connectAttr   ($newName+".outputX") ($pCClav[0]+"."+$Alias[1]);
+	
+ //RMAlign El Hueso de la clavicula al Brazo
+	orientConstraint $JXTArmControl $JXTArmrootParent[0];
+   parent $JXTArmControl $JXTArmControlGrp;
+//	connectAttr ($JXTArmControl +".rotate") ($JXTArmrootParent[0]+".rotate");
+
+	string $temp[];
+	string $IKArmroot=`RMObjNameToVar ("*"+$side+"_shoulder_jnt_IK")`;
+	string $FKArmroot=`RMObjNameToVar ("*"+$side+"_shoulder_jnt_FK")`;
+
+
+	for ($n=0;$n<=3;$n++)
+	{
+		RMParentLink $IKArmroot $FKArmroot $JXTArmroot $JXTArmControl;
+		$temp=`listRelatives -c $IKArmroot`;
+		$IKArmroot=$temp[0];
+		$temp=`listRelatives -c $FKArmroot`;
+		$FKArmroot=$temp[0];
+		$temp=`listRelatives -c $JXTArmroot`;
+		$JXTArmroot=$temp[0];
+	}
+	select -r $ORGArmroot;
+	pickWalk -d "down";
+	pickWalk -d "down";
+	string $temp[]=`ls -sl`;
+	string $Handnodes[]=`RMRemoveChildren $temp[0]`;
+	RMParentArray $JXTArmroot $Handnodes;
+	RMIKFKvisibilityLink ($IKControls,"IK",$JXTArmControl);
+	RMIKFKvisibilityLink ($FKControls, "FK" ,$JXTArmControl);
+	
+
+    parent $JXTArmControlGrp2 $Mover2;
+
+	
+	///////////////////////////////////////////////////////////////////7
+	//funciones para crear Toony Controls
+	
+	$JXTArmroot=`RMObjNameToVar ("*"+$side+"_shoulder_jnt_JXT")`;
+    string $temp1[]=`listRelatives -c $JXTArmroot`;    
+    string $temp2[]=`listRelatives -c $temp1[0]`;
+    string $temp3[]=`listRelatives -c $temp2[0]`;
+	string $JXTArmroot1 = $temp1[0];
+	string $JXTArmroot2 = $temp2[0];
+	string $JXTArmroot3 = $temp3[0];	
+
+	string $Ribbon01[]=`RMCreaRibbon  $JXTArmroot $JXTArmroot1`;
+    string $Ribbon02[]=`RMCreaRibbon  $JXTArmroot2 $JXTArmroot3`;
+    
+    string $Ribbon1Controls[]=`listRelatives -c $Ribbon01[2]`;
+    string $Ribbon2Controls[]=`listRelatives -c $Ribbon02[2]`;
+    
+    float  $LongitudBrazo = `RMLenghtOfBone $JXTArmroot2`;
+    string $MidControl =`RMCreaControl $JXTArmroot2 ($LongitudBrazo/3)`;
+    string $MidControlParent=`RMCreateGrouponObj $MidControl 1`;
+    
+    parentConstraint -mo $JXTArmroot1 $MidControlParent;
+    
+    parentConstraint -mo $MidControl $Ribbon1Controls[2];
+    parentConstraint -mo $MidControl $Ribbon2Controls[0];
+    
+    parentConstraint $JXTArmroot3 $Ribbon2Controls[2];
+    parentConstraint -mo $JXTArmrootParent[0] $Ribbon1Controls[0];
+    
+    string $Ribbon1Md=`RMCreateGrouponObj $Ribbon1Controls[1] 1`;
+    string $Ribbon2Md=`RMCreateGrouponObj $Ribbon2Controls[1] 1`;
+    
+    parentConstraint -mo $JXTArmroot $Ribbon1Md;
+    parentConstraint -mo $JXTArmroot2 $Ribbon2Md;
+
+    RMdeleteShapeNodes  $Ribbon1Controls[0];
+    RMdeleteShapeNodes  $Ribbon1Controls[2];
+    RMdeleteShapeNodes  $Ribbon2Controls[0];
+    RMdeleteShapeNodes  $Ribbon2Controls[2];
+
+    
+
+    string $MainVis=`RMObjNameToVar ("*MainVisibility*")`;
+    connectAttr ($MainVis+".ToonyControls") ($Ribbon1Controls[1]+".visibility");
+    connectAttr ($MainVis+".ToonyControls") ($Ribbon2Controls[1]+".visibility");
+    connectAttr ($MainVis+".ToonyControls") ($MidControl+".visibility");
+
+    string $Group = `RMObjNameToVar ("*JXTGroup*")`;
+	string $ElbowThing = `RMObjNameToVar ("*"+$side+"_elbowBGroup_grp_JXT")`;
+	parent $ElbowThing $Group;
+	
+}
+global proc string RMRebuildLeg (string $firstBone,string $Prefix){
+	//Crea el primer Joint y lo RMAlign al Hueso inicial
+	select -cl;
+
+	//string $Joint1=`joint -n ($firstBone+$Prefix)`;
+	string $Joint1=`joint -n (RMSetFromName($firstBone,4,$Prefix))`;
+	//string $TempChild[] =
+	string $temp[]=`listRelatives -c $firstBone`;
+	//parent -w $temp[0];
+	//setAttr ($firstBone+".jointOrientZ") 180;
+	//setAttr ($firstBone+".jointOrientX") 0;
+	//setAttr ($firstBone+".jointOrientY") (-(`getAttr ($firstBone+".jointOrientY")`));
+	
+	//parent $temp[0] $firstBone;
+	RMAlign $firstBone $Joint1 3;
+	// Crea un grupo padre del Joint Inicial , y le aplica un parent Constraint al padre de la base con Mantain Ofset
+	string $parent[]=`listRelatives -p $firstBone`;
+	string $Joint1Parent=`RMCreateGrouponObj $Joint1 1`;
+	parentConstraint -mo $parent[0] $Joint1Parent;
+	//Crea 2 huesos mas
+	
+	//ring $Joint2=`joint -n ($temp[0]+$Prefix)`;
+	string $Joint2=`joint -n (RMSetFromName($temp[0],4,$Prefix))`;
+	// RMAlign en posicion el nuevo hueso Joint2 al segundo hueso de la herarquia y en orientacion al primer hueso y lo mueve -1/10 parte en su eje X
+	
+	RMAlign $firstBone $Joint2 3;
+	RMAlign $temp[0] $Joint2 1;
+	float $RMDistancia= `RMDistancia $firstBone $temp[0]`;
+	move -os -r (-$RMDistancia/10) 0 0 $Joint2;
+	//Crea un segundo hueso Y le asigna el nombre de la Segunda Falange + 2
+	string $tempName =`RMGetFromName $temp[0] 2`;
+	$tempName = `RMSetFromName $temp[0] 2 ($tempName+"B")`;
+	//string $Joint3=`joint -n ($tempName+$Prefix)`;
+	string $Joint3=`joint -n (RMSetFromName($tempName,4,$Prefix))`;
+
+	//Calcula la RMDistancia entre la segunda y tercera Falange
+	string $temp1[]=`listRelatives -c $temp[0]`;
+	float $RMDistancia= `RMDistancia $temp1[0] $temp[0]`;
+	//RMslign el segundo hueso de la segunda Falange a la segunda Falange tanto en posicion como orientacion y lo mueve 1/6 de la RMDistancia hacia la Falange 3
+	RMAlign $temp[0] $Joint3 3;
+	move -os -r ($RMDistancia/10) 0 0 $Joint3;
+	//Crea una cuarta Falange y la RMAlign a la tercer Falange Original
+	string $temp1[]=`listRelatives -c $temp[0]`;
+	//string $Joint4=`joint -n ($temp1[0]+$Prefix)`;
+	string $tempFix[]; 
+	string $tempNewName ;
+	if (RMGetFromName($temp1[0],2)=="KneeB")
+	{	
+		$tempFix = `listRelatives -c $temp1[0]`;
+		
+		//$tempNewName= RMSetFromName($tempNewName,2,"ankle");
+	}
+	else 
+	{
+		$tempFix[0]= $temp1[0];
+		
+	}
+	$tempNewName = RMSetFromName($tempFix[0],4,$Prefix);
+	
+
+	string $Joint4=`joint -n ($tempNewName)`;
+	RMAlign $tempFix[0] $Joint4 3;
+	
+	//Crea Los huesos del Pie
+	string $temp2[]=`listRelatives -c $temp1[0]`;
+	string $Joint5=`joint -n ($temp2[0]+$Prefix)`;
+	RMAlign $temp2[0] $Joint5 3;
+	string $temp3[]=`listRelatives -c $temp2[0]`;
+	string $Joint6=`joint -n ($temp3[0]+$Prefix)`;
+	RMAlign $temp3[0] $Joint6 3;
+	
+	//Resetea las transformaciones de todos los huesos nuevos
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Joint6;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Joint5;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Joint4;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Joint3;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Joint2;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Joint1;
+	setAttr ($Joint2+".rotate") 0 0 0;
+	setAttr ($Joint3+".rotate") 0 0 0;
+	// Orienta El segundo joint que esta mal orientado por la forma en que fue creado
+
+    joint -e -oj "xzy" -zso $Joint2;
+    joint -e -oj "xzy" -zso $Joint3;
+	//Regresa la primera Falange
+	
+	parent $Joint1Parent Joints;
+	return $Joint1;
+}
+
+/*********************************************************************************************************************/
+/*********************************************************************************************************************/
+/************************************Spine****************************************************************************/
+/*********************************************************************************************************************/
+/*********************************************************************************************************************/
+global proc RMRebuildSpine(){
+    
+	string $MoveAndScaleMain=`RMObjNameToVar "*Mover2_ctr*"`;
+	string $FKGroup = RMSetFromName ($MoveAndScaleMain, 2, "FKGroup");
+	group -em -n $FKGroup;
+	$IKGroup = RMSetFromName ($MoveAndScaleMain, 2, "IKGroup");
+	group -em -n $IKGroup;
+	$ToonGroup = RMSetFromName ($MoveAndScaleMain, 2, "ToonGroup");
+	group -em -n $ToonGroup;
+	$JXTGroup = RMSetFromName ($MoveAndScaleMain, 2, "JXTGroup");
+	group -em -n $JXTGroup;
+	parent $FKGroup $IKGroup $ToonGroup $JXTGroup $MoveAndScaleMain;
+
+
+	//Obtiene el Nodode La Cadera
+	string $hips=`RMObjNameToVar "*Hip_jnt_rig"`;
+	string $hipsLow=`RMObjNameToVar "*HipLow_jnt_rig"`;
+
+	string $TempChild[]=`listRelatives -c $hips`;
+	
+	//rotate -r -os 0 0 0 $hips;
+	//string $temp[]=`listRelatives -c $hips`;
+	//Obtiene el Nodo de la columna
+	string $Spine=`RMObjNameToVar "*Spine4_jnt_rig"`;
+    float $SpineSize=`RMLenghtOfBone $hips`; 
+	//Crea Un control en La cadera
+
+	string $HipsControl=`RMCreaControl $hips $SpineSize`;
+	string $COG =`RMSetFromName $HipsControl 2 "COG"`;
+	$HipsControl=`rename $HipsControl $COG`;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $HipsControl;
+	//Crea Un Ribbon entre La cadera y la columna
+	string $RibbonGroups[]=`RMCreaRibbon $hips $Spine`;
+	//Identifica el NOdo 3 
+	string $spineRibbon=`RMObjNameToVar "*HipToSpine4JointsLookAt3*"`;
+
+	//Crea los controles de la cabeza y los liga Identifica el logo del Cuello
+	string $Neck=`RMObjNameToVar "*neck_jnt*"`;
+	string $Head=`RMObjNameToVar "*head_jnt*"`;
+
+	//string $ControlCabeza = RMCreaControl(`RMObjNameToVar "*head_jnt"`, 3);
+
+	string $temp1[]=`duplicate ControlCabeza`;
+	string $CntrlCabeza=$temp1[0];
+	//Renombra El control de La cabeza a la nomenclatura
+   string $newName=`RMSetFromName $Neck 3 "ctr"`;
+   $newName=`RMSetFromName $newName 4 "rig"`;
+   $newName=`RMSetFromName $newName 2 "HeadControl"`;
+   $newName=`RMUniqueName $newName`;
+   $CntrlCabeza=`rename $CntrlCabeza $newName`;
+	
+   float $HeadSize=`RMLenghtOfBone $Head`;
+
+   scale -scaleXYZ $HeadSize $HeadSize $HeadSize $CntrlCabeza;
+   makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $CntrlCabeza;
+	//RMAlign el control Cabeza al Joint Del cuello      
+	RMAlign $Neck $CntrlCabeza 3;
+	
+	parentConstraint $CntrlCabeza $Neck;
+	
+	string $GrupoCabeza2 = `RMCreateGrouponObj $CntrlCabeza 1`;
+	string $GrupoCabeza  = `RMCreateGrouponObj $CntrlCabeza 1`;
+	
+	parent -world $GrupoCabeza;
+	parent $GrupoCabeza2 $Spine;
+	
+	//Emparenta la parte superior al control inferior del Ribbon
+	parent $RibbonGroups[2] $HipsControl;
+	//select -r $RibbonGroups[0];
+	//string $temp2 = `RMCustomPickWalk $RibbonGroups[0] "joint" 6`;
+	//pointConstraint $spineRibbon $Spine;
+	
+	string $Controls[] =`listRelatives -c $RibbonGroups[2]`;
+	parentConstraint -mo $Controls[2] $Spine;
+	
+	////////////////////
+	//Crea Los Controles Cuadrado
+	//Identifica la RMDistancia entre los controles Circulares del Ribbon
+   float $Height=`RMDistancia $Controls[0] $Controls[1]`;
+   string $SpineFK1=`RMSetFromName $Controls[0] 2 "SpineFK1"`;
+   $SpineFK1=`RMUniqueName $SpineFK1`;
+   RMCreateCubeLine $Height ($Height*1.5) ($Height*1.5) $SpineFK1;
+   
+   $SpineFK2=`RMUniqueName $SpineFK1`;
+   RMCreateCubeLine $Height ($Height*1.5) ($Height*1.5)  $SpineFK2;
+   
+   RMAlign $Controls[0] $SpineFK1 3;
+   RMAlign $Controls[1] $SpineFK2 3;
+   
+   parent $SpineFK1 $RibbonGroups[2];
+   parent $SpineFK2 $SpineFK1;
+   parent $Controls[1] $SpineFK2;
+   parent $Controls[2] $SpineFK2;
+
+   makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $SpineFK1;
+   makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $SpineFK2;
+   
+	string $hipGroup=`RMObjNameToVar "*HipGroup_jnt*"`;
+	parentConstraint $Controls[0] $hipGroup;
+	//Liga la Cabeza al Hueso del cuello
+		
+    //-mo
+	pointConstraint  $GrupoCabeza2 $GrupoCabeza;
+    //-mo
+	string $pCCabeza[]=`orientConstraint $GrupoCabeza2 $GrupoCabeza`;
+	string $Alias[]=`orientConstraint -q -wal $pCCabeza[0]`;
+
+
+	connectAttr   ($CntrlCabeza+".AlignedTo") ($pCCabeza[0]+"."+$Alias[0]);
+	
+    
+	parent $HipsControl $MoveAndScaleMain;
+	setAttr ($hipsLow+".jointOrientZ") -180;
+	setAttr ($hips+".jointOrientZ") 0;
+	string $ScaledData = RMObjNameToVar ("ScaledData");
+
+	
+	parent $GrupoCabeza $MoveAndScaleMain;
+	parent $hipGroup $ScaledData;
+/**/	
+	
+}
+
+/*********************************************************************************************************************/
+/*********************************************************************************************************************/
+/************************************Control Hands********************************************************************/
+/*********************************************************************************************************************/
+/*********************************************************************************************************************/
+/*Crea la herarquia para cada dedo, y regresa,2 objetos Basicos, el Groupo que controla el dedo, y los controles del dedo */
+global proc string[] RMLinkFinguer(string $rootFinguer){
+    
+    select $rootFinguer;
+    pickWalk -d "up";
+    //identificar el Hueso que es la mano y asignarlo a Hand e identifica las 3 Falanges de los dedos
+    string $temp[]=`ls -sl`;
+    string $hand=$temp[0];
+    string $FingerF1 = `RMCustomPickWalk $rootFinguer "joint" 1`;
+    string $FingerF2 = `RMCustomPickWalk $rootFinguer "joint" 2`;
+    string $FingerF3 = `RMCustomPickWalk $rootFinguer "joint" 3`;
+    //string $FingerF4 = `RMCustomPickWalk $rootFinguer "joint" 4`;
+    //Obtengo la longitud del segundo hueso que sera la longitud del hueso de la palma
+    float $FingerLenght = `RMLenghtOfBone $FingerF2`;
+    //Creo el NombredelHueso de la palma Agregandole al nombre del Dedo el prefijo Palm
+    string $palmFingerJnt = `RMAddToName $rootFinguer "Palm"`;
+    
+    select -clear;
+    // Creo el Joint y lo alineo al primer hueso actual del dedo
+    joint -name $palmFingerJnt;
+    RMAlign $rootFinguer $palmFingerJnt 3;
+    //Crea un segundo Joint en el mismo lugar y lo renombra
+    string $tempJoint[]=`duplicate $palmFingerJnt`;
+    
+    $palmFingerJnt2=`RMUniqueName $palmFingerJnt`;
+    rename $tempJoint[0] $palmFingerJnt2;
+    //mueve ambos joints hacia atras para crear 2 falanges mas
+    move -r -os -moveX (-$FingerLenght*2) 0 0 $palmFingerJnt;
+    move -r -os -moveX (-$FingerLenght) 0 0 $palmFingerJnt2;
+   
+    parent $palmFingerJnt2 $palmFingerJnt;
+    parent $rootFinguer $palmFingerJnt2;
+    parent $palmFingerJnt $hand;
+
+    string $FingerLinks[]= {$palmFingerJnt,$palmFingerJnt2,$rootFinguer,$FingerF1,$FingerF2,$FingerF3};
+    
+
+    string $RootName=`RMAddToName $rootFinguer "Root"`;
+    
+    
+    $RootName=`RMSetFromName $RootName 3 "nul"`;
+    $RootName=`RMSetFromName $RootName 4 "rig"`;
+    $RootName =`RMUniqueName $RootName`;
+   
+//   Crea el Grupo que es la base de el dedo
+    group -em -name $RootName;
+    RMAlign $palmFingerJnt2 $RootName 3;
+    string $parent= $RootName;
+    int $i;
+    select -cl;
+    string $FingerCntrl = `RMSetFromName $rootFinguer 3 "ctr"`;
+    $FingerCntrl =`RMSetFromName $FingerCntrl 4 "rig"`;
+    $FingerCntrl = `RMAddToName $FingerCntrl "Control"`;
+//Crea el Control del Dedo     
+    $FingerCntrl=`RMCreateCubeLine ($FingerLenght/2) ($FingerLenght/2) ($FingerLenght/2) $FingerCntrl`;
+    move -r ($FingerLenght/6) 0 0 ($FingerCntrl+".scalePivot") ($FingerCntrl+".rotatePivot");
+    move -rpr -a 0 0 0 $FingerCntrl;
+    makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $FingerCntrl;
+    
+    RMAlign $FingerF3 $FingerCntrl 3;
+    parentConstraint $FingerF3 $FingerCntrl;
+    RMaddFinguerControls $FingerCntrl;
+    RMLockAndHideAttributes ({$FingerCntrl}) ("0000000000");
+    
+    string $SubControl;
+    string $SubCtrParent;
+    string $ControlParent;
+    string $ControlShape;
+    for ($i=1;$i<=4;$i++)
+    {
+        //Crea una herarquia de 3 elementos, un locator un y dos Grupos $Group1Name $Group2Name
+        string $GenName = `RMSetFromName $FingerLinks[$i] 3 "loc"`;
+        $GenName =`RMSetFromName $GenName 4 "rig"`;
+        string $LocatorName = `RMAddToName $GenName "locator"`;
+        spaceLocator -name $LocatorName;
+        string $Group1Name=`RMSetFromName $GenName 3 "nul"`;
+        $Group1Name = `RMAddToName $GenName "nul"`;
+        group -em -name $Group1Name;
+        string $Group2Name=`RMUniqueName $Group1Name`;
+        group -em -name $Group2Name;
+        //Emparenta estos Elementos RMAlign con el hueso en curso y emparenta al padre $ parent que cambia cada ciclo
+        parent $Group2Name $Group1Name;
+        parent $Group1Name $LocatorName;
+        parent $LocatorName $parent;
+        RMAlign $FingerLinks[$i] $LocatorName 3;
+        if ($i==1)
+        {
+            print ("\n GenNAME= "+ $GenName+"\n");
+            string $Palm = `RMAddToName $GenName "Palm"`;
+            group -em -name $Palm;
+            RMAlign $Group1Name $Palm 3;
+            RMInsertInHierarchy $LocatorName $Palm 2;
+        }
+
+       
+        //Hace un Parent Constraint del hueso al grupo de mas baja hearquia
+        parentConstraint $Group2Name $FingerLinks[$i];
+        //Crea un control por cada hueso, le crea un padre.
+        $SubControl=`RMCreaControl $Group2Name ($FingerLenght*2/3)`;
+        $SubCtrParent =`RMCreateGrouponObj $SubControl 1`;
+        connectAttr ($SubControl + ".rotate") ($Group2Name+".rotate");
+        parentConstraint $Group1Name $SubCtrParent;
+        connectAttr ($FingerCntrl+ ".Secondary") ($SubControl+".visibility");
+        RMLockAndHideAttributes ({$SubControl}) ("0001110000");
+        //Liga Los Atributos del Dedo
+        if ($i>=1)
+        {
+            if ($i==1)
+            {
+                RMConnectWithLimits ($FingerCntrl+".MidUD") ($Group1Name+".rotateY") (-10) 10 (-100) 100 0;
+                RMConnectWithLimits ($FingerCntrl+".MidLR") ($Group1Name+".rotateZ") (-10) 10 (-127) 127 0;
+                RMConnectWithLimits ($FingerCntrl+".MidTwist") ($Group1Name+".rotateX") (-10) 10 (-90) 90 0;
+                $ControlParent=$SubCtrParent;
+                $ControlShape=$SubControl;
+            }
+            else
+            {
+                RMConnectWithLimits ($FingerCntrl+".UD"+($i-1)) ($Group1Name+".rotateY") (-10) 10 (-100) 100 0;
+                RMConnectWithLimits ($FingerCntrl+".LR"+($i-1)) ($Group1Name+".rotateZ") (-10) 10 (-127) 127 0;
+                RMConnectWithLimits ($FingerCntrl+".Twist"+($i-1)) ($Group1Name+".rotateX") (-10) 10 (-90) 90 0;
+                parent $SubCtrParent $ControlShape;
+                $ControlShape=$ControlShape;
+            }
+        }
+        $parent=$Group2Name;
+    }
+
+    return ({$RootName,$ControlParent,$FingerCntrl});
+}
+global proc string[] RMHandControls (string $Mano) {
+   	string $dedos[]=`listRelatives -c $Mano`;
+   	
+   	/*string $SkinName = RMSetFromName ($i,4,"SKN");
+		rename $i $SkinName;*/
+
+    $dedos=`listRelatives -c $dedos[0]`;
+    string $i;
+    string $FingerRoots[];
+    string $ControlRoots[];
+
+
+    string $nameRoot=$Mano;
+    $nameRoot=`RMSetFromName $nameRoot 3 "grp"`;
+    $nameRoot=`RMSetFromName $nameRoot 4 "rig"`;
+//Crea los nombres que se usaran a continuacion
+    $nameControls=`RMAddToName $nameRoot "Controls"`;
+
+    $nameRoot=`RMAddToName $nameRoot "RootData"`;
+/////////////////////////////////////////////////////////
+//$nameControls Guardara los controles secundarios de la mano
+    group -em -name $nameControls;
+    string $MiddleBone;
+
+	string $SkinName;
+	string $ChildName;
+	string $tchild1[];
+	string $tchild2[];
+	string $tchild3[];
+	for ($i in $dedos)
+	{
+		//$temD=`listRelatives -c $i`;
+		$SkinName = RMSetFromName ($i,4,"SKN");
+		rename $i $SkinName;
+		$i=$SkinName;
+		$tchild1 = `listRelatives -c $SkinName`;
+		$ChildName = RMSetFromName ($tchild1[0],4,"SKN");
+		rename $tchild1[0] $ChildName;
+		$tchild2 = `listRelatives -c $ChildName`;
+		$ChildName = RMSetFromName ($tchild2[0],4,"SKN");
+		rename $tchild2[0] $ChildName;
+		$tchild3 = `listRelatives -c $ChildName`;
+		$ChildName = RMSetFromName ($tchild3[0],4,"SKN");
+		rename $tchild3[0] $ChildName;
+		//saas
+		//print $temD[0];
+	    if (RMGetFromName ($i,2)=="middle")
+	    //if (`match "middle" ($i)`=="middle")
+	    {
+	        $MiddleBone=$SkinName;
+	    }
+	}
+////////////////////////////////////////////////////////    
+//$nameRoot Guardara toda la informacion de los dedos RootData
+    group -em -name $nameRoot;
+   
+    RMAlign $Mano $nameRoot 1;
+    
+   
+    RMAlign $MiddleBone $nameRoot 2;
+    
+    RMAlign $Mano $nameControls 1;
+    RMAlign $MiddleBone $nameControls 2;
+    parentConstraint -mo $Mano $nameRoot;
+    string $FingerTips =`RMSetFromName $nameRoot 2 "FingerTips"`;
+    
+/////////////////////////////////////////////////////////
+//$FingerTips Guardara los controles de los dedos 
+    group -em -name $FingerTips;
+    RMAlign $Mano $FingerTips 1;
+    RMAlign $MiddleBone $FingerTips 2;
+    
+    string $fingerResult[];
+    int $index=0;
+    for ($i in $dedos)
+    {	
+    	
+    	/*if ($i =="transform3")
+		{//
+			select -r $i;
+			doDelete;
+		}
+		else
+		{*/
+			$SkinName = RMSetFromName ($i,4,"SKN");
+	        $fingerResult=`RMLinkFinguer $SkinName`;
+	        
+	        parent $fingerResult[0] $nameRoot;
+	        
+	        parent $fingerResult[1] $nameControls;
+	        parent $fingerResult[2] $FingerTips;
+	        clear($fingerResult);
+    	//}
+		    
+    }
+    //Obtener e identificar cada uno de los dedos
+    string $FingerIdentifier=$nameRoot;
+    $FingerIdentifier=`RMSetFromName $FingerIdentifier 3 "nul"`;
+    string $temp=`RMSetFromName $FingerIdentifier 2 "pinkyRoot"`;
+    string $Pinky=`RMObjNameToVar $temp`;
+    string $temp=`RMSetFromName $FingerIdentifier 2 "ringRoot"`;
+    string $Ring=`RMObjNameToVar $temp`;
+    string $temp=`RMSetFromName $FingerIdentifier 2 "middleRoot"`;
+    string $Middle=`RMObjNameToVar $temp`;
+    string $temp=`RMSetFromName $FingerIdentifier 2 "indexRoot"`;
+    string $Index=`RMObjNameToVar $temp`;
+    string $temp=`RMSetFromName $FingerIdentifier 2 "thumbRoot"`;
+    string $Thumb=`RMObjNameToVar $temp`;
+    string $PinkyCup = `RMAddToName $Pinky "Cup"`;
+    
+
+    group -em -name $PinkyCup;
+    //RMAlign $nameRoot $PinkyCup 2;
+    RMAlign $Middle $PinkyCup 3;
+    RMInsertInHierarchy $Pinky $PinkyCup 1;
+    string $RingCup=`RMAddToName $Ring "Cup"`;
+ 
+    group -em -name $RingCup;
+    RMAlign $nameRoot $RingCup 2;
+    RMAlign $Middle $RingCup 3;
+    RMInsertInHierarchy $Ring $RingCup 1;
+
+    //string $MiddleCup=`AddToName $Middle "Palm";
+    //group -em $MiddleCup;
+    // RMAlign $Middle $MiddleCup 3;
+    //RMInsertInHierarchy $Middle $MiddleCup 1;
+
+    string $IndexCup=`RMAddToName $Index "Cup"`;
+    group -em -name $IndexCup;
+    RMAlign $nameRoot $IndexCup 2;
+    RMAlign $Middle $IndexCup 1;
+    RMInsertInHierarchy $Index $IndexCup 1;
+    string $ThumbCup=`RMAddToName $Thumb "Cup"`;
+    group -em -name $ThumbCup;
+    RMAlign $nameRoot $ThumbCup 2;
+    RMAlign $Mano $ThumbCup 1;
+    RMInsertInHierarchy $Thumb $ThumbCup 1;
+    float $SizePalm = `RMDistancia $Pinky $Index`;
+    
+    
+    //Crea el Control Para la Palma
+    string $PalmControl = `RMCreaControl $Middle $SizePalm`;
+    
+	//Renombra el control a algo mas adecuado
+    string $newName=`RMSetFromName $Mano 3 "ctr"`;
+    
+    $newName =` RMAddToName $newName "Palm"`;
+    $PalmControl=`rename $PalmControl $newName`;
+    
+    //Crea los controles de PalmControl Y los liga, ademas de esto esconde los Attributos que no debe tocar el usuario
+    RMaddPalmControls $PalmControl;
+    
+    parentConstraint $Middle $PalmControl;
+    RMLockAndHideAttributes ({$PalmControl}) "0000000000";
+    
+    RMConnectWithLimits ($PalmControl+".PalmCup") ($PinkyCup+".rotateX") (-10) 10 (-20) 20 0;
+    RMConnectWithLimits ($PalmControl+".PalmCup") ($RingCup+".rotateX") (-10) 10 (-10) 10 0;
+    RMConnectWithLimits ($PalmControl+".PalmCup") ($IndexCup+".rotateX") (-10) 10 (15) (-15) 0;
+    
+    
+    // Uno a uno Busca el control del dedo que movera el Spread y el Bend y los liga
+    //Pinky
+    string $SpreadNull=`RMCustomPickWalk $Pinky "transform" 2`;
+    RMConnectWithLimits ($PalmControl+".Spread") ($SpreadNull+".rotateZ") (-10) 10 (-20) (40) 0;
+    RMConnectWithLimits ($PalmControl+".PalmBend") ($SpreadNull+".rotateY") (-10) 10 (90) (-90) 0;
+    
+    //Ring
+    string $SpreadNull=`RMCustomPickWalk $Ring "transform" 2`;
+    RMConnectWithLimits ($PalmControl+".Spread") ($SpreadNull+".rotateZ") (-10) 10 (-10) (20) 0;
+    RMConnectWithLimits ($PalmControl+".PalmBend") ($SpreadNull+".rotateY") (-10) 10 (90) (-90) 0;
+    
+    
+    //Middle
+    string $SpreadNull=`RMCustomPickWalk $Middle "transform" 2`;
+    RMConnectWithLimits ($PalmControl+".PalmBend") ($SpreadNull+".rotateY") (-10) 10 (90) (-90) 0;
+    
+    //Index
+    string $SpreadNull=`RMCustomPickWalk $Index "transform" 2`;
+    RMConnectWithLimits ($PalmControl+".Spread") ($SpreadNull+".rotateZ") (-10) 10 (10) (-20) 0;
+    RMConnectWithLimits ($PalmControl+".PalmBend") ($SpreadNull+".rotateY") (-10) 10 (90) (-90) 0;
+    
+    //THUMB
+    string $SpreadNull=`RMCustomPickWalk $Thumb "transform" 2`;
+    RMConnectWithLimits ($PalmControl+".Spread") ($SpreadNull+".rotateZ") (-10) 10 (10) (-40) 0;
+    
+    //Crea un nodo para el Twist de la palma, lo inserta en la herarquia y lo Liga
+    string $PalmTwist=`RMAddToName $nameRoot "Twist"`;
+    group -em -name $PalmTwist;
+    RMAlign $Middle $PalmTwist 3;
+    RMInsertInHierarchy $nameRoot $PalmTwist 2;
+    parent $Thumb $nameRoot;
+    RMConnectWithLimits ($PalmControl+".Twist") ($PalmTwist+".rotateX") (-10) 10 (-20) 20 0;
+    
+ /////////////////////////////////////////////////////////
+//$FingerTips Se emparenta al objeto Palm Control Este contiene ya toda la herarquia de controles   
+    parent $FingerTips $PalmControl;
+    parent $nameControls $PalmControl;
+    string $ScaledData = RMObjNameToVar ("ScaledData");
+    string $JXTGroup = RMObjNameToVar ("*JXTGroup*");
+    parent $nameRoot $ScaledData;
+    parent $PalmControl $JXTGroup;
+    //saaas
+    return ({$PalmControl,$nameRoot});
+}
+
+global proc GroupParentControls ()
+{
+	string $ScaledData = RMObjNameToVar ("ScaledData");
+	string $GroupsRoot = RMObjNameToVar ("*Mover2_ctr_rig");
+	// FK IK y TOON Groups
+	string $FKGroup = RMSetFromName ($GroupsRoot, 2, "FKGroup");
+	group -em -n $FKGroup;
+	$IKGroup = RMSetFromName ($GroupsRoot, 2, "IKGroup");
+	group -em -n $IKGroup;
+	$ToonGroup = RMSetFromName ($GroupsRoot, 2, "ToonGroup");
+	group -em -n $ToonGroup;
+	$JXTGroup = RMSetFromName ($GroupsRoot, 2, "JXTGroup");
+	group -em -n $JXTGroup;
+	parent $FKGroup $IKGroup $ToonGroup $JXTGroup $GroupsRoot;
+
+	//string $RigName = RMGetFromName ($GroupsRoot, 2)
+	parent -w Character01_LF_clavicleGroup1_grp Character01_RH_clavicleGroup1_grp Character01_LF_legGroup1_grp_rig Character01_RH_legGroup1_grp_rig Character01_MD_HeadControlGroup1_grp_rig Character01_LF_Knee2Group_grp_JXT Character01_RH_Knee2Group_grp_JXT Character01_RH_wristPalm_ctr_JXT Character01_LF_wristPalm_ctr_JXT  Character01_RH_elbow2Group_grp_JXT Character01_LF_elbow2Group_grp_JXT Character01_RH_legGroup1_grp_FK Character01_LF_legGroup1_grp_FK Character01_LF_shoulderGroup1_grp_FK Character01_RH_shoulderGroup1_grp_FK  Character01_RH_ankleGroup_grp_IK Character01_LF_ankleGroup_grp_IK Character01_RH_wristGroup1_grp_IK Character01_LF_wristGroup1_grp_IK Character01_RH_Knee2ToankleControls_grp_RBN Character01_RH_legToKneeControls_grp_RBN Character01_LF_Knee2ToankleControls_grp_RBN Character01_LF_legToKneeControls_grp_RBN Character01_RH_elbow2TowristControls_grp_RBN Character01_RH_shoulderToelbowControls_grp_RBN Character01_LF_elbow2TowristControls_grp_RBN Character01_LF_shoulderToelbowControls_grp_RBN;
+
+	parent Character01_LF_clavicleGroup1_grp Character01_RH_clavicleGroup1_grp Character01_LF_legGroup1_grp_rig Character01_RH_legGroup1_grp_rig Character01_MD_HeadControlGroup1_grp_rig $GroupsRoot; 
+	parent Character01_LF_Knee2Group_grp_JXT Character01_RH_Knee2Group_grp_JXT Character01_RH_wristPalm_ctr_JXT Character01_LF_wristPalm_ctr_JXT  Character01_RH_elbow2Group_grp_JXT Character01_LF_elbow2Group_grp_JXT $JXTGroup;
+	parent Character01_RH_legGroup1_grp_FK Character01_LF_legGroup1_grp_FK Character01_LF_shoulderGroup1_grp_FK Character01_RH_shoulderGroup1_grp_FK  $FKGroup;
+	parent Character01_RH_ankleGroup_grp_IK Character01_LF_ankleGroup_grp_IK Character01_RH_wristGroup1_grp_IK Character01_LF_wristGroup1_grp_IK $IKGroup;
+	parent Character01_RH_Knee2ToankleControls_grp_RBN Character01_RH_legToKneeControls_grp_RBN Character01_LF_Knee2ToankleControls_grp_RBN Character01_LF_legToKneeControls_grp_RBN Character01_RH_elbow2TowristControls_grp_RBN Character01_RH_shoulderToelbowControls_grp_RBN Character01_LF_elbow2TowristControls_grp_RBN Character01_LF_shoulderToelbowControls_grp_RBN $ToonGroup;
+
+	//parent Character01_MD_HipGroup_jnt_rig Character01_LF_wrist_IKH_IK Character01_RH_wrist_IKH_IK Character01_LF_wristRootData_grp_rig Character01_RH_wristRootData_grp_rig $ScaledData;
+
+	select -r ReferenceControls;
+	doDelete;
+}
+//GroupParentControls;
+

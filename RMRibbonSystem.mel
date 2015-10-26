@@ -1,0 +1,178 @@
+source "RMRiggTools.mel";
+source "RMRigShapeControls.mel";
+/***********************************************************************************************/
+/*********************************Funciones del Ribbon System***********************************/
+/***********************************************************************************************/
+global proc string RMCreaPlano (string $Obj1,string $Obj2){
+	vector $p1= `xform -a -ws -q -t $Obj1`;
+	vector $p2= `xform -a -ws -q -t $Obj2`;
+	float $Longitud = $p1 - $p2;
+	string $newName = $Obj1;
+	//setAttr ($Obj1+".jointOrientZ") 0;
+	string $temp1 = `RMGetFromName $Obj1 2`;
+	string $temp2 = `RMGetFromName $Obj2 2`;
+	string $Token=($temp1 + "To" + $temp2 + "Plane");
+	$newName=`RMSetFromName $newName 2 $Token`;
+	$newName=`RMSetFromName $newName 3 "msh"`;
+	$newName=`RMSetFromName $newName 4 "RBN"`;
+	string $plano[] = `nurbsPlane -ax 0 1 0 -p ($Longitud/2) 0 0 -w $Longitud -lr .05 -d 3 -u 8 -v 1 -ch 0 -name $newName`;
+	RMAlign $Obj1 $plano[0] 3;
+	//vector $Obj1ro=`xform -q -ws -ro $Obj1`;
+	//xform -ws -ro (0) (0) (90) $plano[0];
+	//xform -q -ws -ro <<0,90,0>> $Obj1;
+	return $plano[0];
+}
+global proc string[] RMCreaRibbon (string $obj1,string $obj2)
+{
+	vector $value1= `xform -a -ws -q -t $obj1`;
+	vector $value2= `xform -a -ws -q -t $obj2`;
+	string $plano = `RMCreaPlano $obj1 $obj2 `;
+	select -cl;
+	string $newName = $obj1;
+	string $temp1 = `RMGetFromName $obj1 2`;
+	string $temp2 = `RMGetFromName $obj2 2`;
+	string $MainSkeleton = $obj1;
+	float $RibbonSize=`RMDistancia $obj1 $obj2`;
+	$MainSkeleton=`RMSetFromName $MainSkeleton 3 "grp"`;
+	$MainSkeleton=`RMSetFromName $MainSkeleton 4 "RBN"`;
+	$MainSkeleton=`RMSetFromName $MainSkeleton 2 ($temp1+"To"+$temp2+"RibbonSkeleton")`;
+	group -em -n $MainSkeleton;
+	
+	string $HairGroup=$obj1;
+	
+	$HairGroup =`RMSetFromName $HairGroup 2 ($temp1+"To"+$temp2+"HairSystem")`;
+	$HairGroup =`RMSetFromName $HairGroup 3 "grp"`;
+	$HairGroup =`RMSetFromName $HairGroup 4 "RBN"`;
+	group -em -name $HairGroup;
+	string $hsys = `createNode hairSystem`;
+	int $nfolcs=5;
+	int $flg[]={0};
+	int $n=0;
+	float $nstep= 1.0 /($nfolcs-1);
+	string $ArrayJoints[];
+	string $planoShape[]=`listRelatives -s $plano`;
+	for ($n=0;$n<$nfolcs;$n++)
+	{
+		createHairCurveNode ($hsys,$planoShape[0],($nstep*(float)$n),.5,1,0,0,0,0,"",1.0,$flg,$HairGroup,"",2);
+	}
+	string $temp[]=`listRelatives -p $hsys`;
+	delete $hsys;
+	delete $temp[0];
+	string $folcs_t[]=`listRelatives -c $HairGroup`;
+	$n=0;
+	select -cl;
+	string $newName = $obj1;
+	$newName=`RMSetFromName $newName 2 ($temp1+"To"+$temp2+"RibbonJoint")`;
+	$newName=`RMSetFromName $newName 3 "jnt"`;
+	$newName=`RMSetFromName $newName 4 "SKN"`;
+	int $n=0; 
+	string $skinedBones=$MainSkeleton;
+	$skinedBones=`RMSetFromName $skinedBones 2 ($temp1+"To"+$temp2+"RibbonSkinedSkeleton")`;
+	group -em -name $skinedBones;
+	RMAlign $obj1 $skinedBones 3;
+	select -r $skinedBones;
+	for ($i in $folcs_t)
+	{
+		string $nombre=`RMGetFromName $newName 2`;
+		$nombre=`RMStringPlus1 $nombre`;
+		$newName = `RMSetFromName $newName 2 $nombre`;
+		$ArrayJoints[$n]= `joint -name $newName`;
+		RMAlign $i $ArrayJoints[$n] 1;
+		parentConstraint $i $ArrayJoints[$n];
+		$n=$n+1;
+	}
+	string $controles[];
+	string $Locator_controles[];
+	string $Locator_LookAt[];
+	string $JNT_RBN[];
+	string $Group_RBN[];
+	string $temp[];
+	float $RMDistancia=$value1-$value2;
+	int $iloop;
+	string $ControlName = $obj1;
+	$ControlName=`RMSetFromName $ControlName 3 "ctr"`;
+	$ControlName=`RMSetFromName $ControlName 4 "RBN"`;
+	string $LocatorName = $obj1;
+	$LocatorName=`RMSetFromName $LocatorName 3 "loc"`;
+	$LocatorName=`RMSetFromName $LocatorName 4 "RBN"`;
+	string $JointName = $obj1;
+	$JointName=`RMSetFromName $JointName 3 "jnt"`;
+	$JointName=`RMSetFromName $JointName 4 "RBN"`;
+	string $GroupName = $obj1;
+	$GroupName=`RMSetFromName $GroupName 3 "grp"`;
+	$GroupName=`RMSetFromName $GroupName 4 "RBN"`;
+	$GroupName_Controls=`RMSetFromName $GroupName 2 ($temp1+"To"+$temp2+"Controls")`;
+	group -em -n $GroupName_Controls;
+	RMAlign $obj1 $GroupName_Controls 3;
+	string $GroupName_Joints = $obj1;
+	$GroupName_Joints=`RMSetFromName $GroupName_Joints 3 "grp"`;
+	$GroupName_Joints=`RMSetFromName $GroupName_Joints 4 "RBN"`;
+	$GroupName_Joints=`RMSetFromName $GroupName_Joints 2 ($temp1+"To"+$temp2+"GroupJointsLookAt")`;
+	group -em -n $GroupName_Joints;
+	for ($iloop=0;$iloop<3;$iloop++)
+	{
+		$controles[$iloop]=`RMCreaControl $obj1 ($RibbonSize/3)`;
+		$ControlName=`RMSetFromName $ControlName 2 ($temp1+"To"+$temp2+"Cntrl"+string($iloop+1))`;
+		rename $controles[$iloop] $ControlName;
+		$controles[$iloop]=$ControlName;
+		$LocatorName=`RMSetFromName $LocatorName 2 ($temp1+"To"+$temp2+"LocatorCntrl"+string($iloop+1))`;
+		$temp = `spaceLocator -n $LocatorName`;
+		$Locator_controles[$iloop]=$temp[0];
+		RMAlign $obj1 $Locator_controles [$iloop] 3;
+		$LocatorName=`RMSetFromName $LocatorName 2 ($temp1+"To"+$temp2+"LocatorLookAt"+string($iloop+1))`;
+		$temp= `spaceLocator -n $LocatorName`;
+		$Locator_LookAt[$iloop]=$temp[0];
+		RMAlign $obj1 $Locator_LookAt[$iloop] 3;
+		select -cl;
+		$JointName=`RMSetFromName $JointName 2 ($temp1+"To"+$temp2+"JointsLookAt"+string($iloop+1))`;
+		$JNT_RBN[$iloop]=`joint -n $JointName`;
+		RMAlign $obj1 $JNT_RBN[$iloop] 3;
+		$GroupName=`RMSetFromName $GroupName 2 ($temp1+"To"+$temp2+"GroupLookAt"+string($iloop+1))`;
+		$Group_RBN[$iloop]=`group -em -n $GroupName`;
+		RMAlign $obj1 $Group_RBN[$iloop] 3;
+		parent $GroupName $MainSkeleton;
+		move -r -os -moveX ($RMDistancia/2*$iloop) 0 0 $controles[$iloop];
+		move -r -os -moveX ($RMDistancia/2*$iloop) 0 0 $Locator_controles[$iloop];
+		move -r -os -moveXYZ ($RMDistancia/2*$iloop) 0 1 $Locator_LookAt[$iloop];
+		move -r -os -moveX ($RMDistancia/2*$iloop) 0 0 $JNT_RBN[$iloop];
+		move -r -os -moveX ($RMDistancia/2*$iloop) 0 0 $Group_RBN[$iloop];
+		parent $controles[$iloop] $GroupName_Controls;
+		parent $Locator_controles[$iloop] $Group_RBN[$iloop];
+		parent $Locator_LookAt[$iloop] $Group_RBN[$iloop];
+		parent $JNT_RBN[$iloop] $GroupName_Joints;
+		makeIdentity -apply true -t 1 -r 0 -s 1 -n 0 $controles[$iloop];
+		makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $JNT_RBN[$iloop];
+		/*makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Group_RBN[$iloop];
+		  makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Locator_controles[$iloop];
+		  //makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Locator_LookAt[$iloop];*/
+		parentConstraint $Locator_controles[$iloop] $JNT_RBN [$iloop];
+		parentConstraint $controles[$iloop] $Group_RBN[$iloop];
+	}
+	aimConstraint -aim 1 0 0 -upVector 0 0 1 -wut "object" -worldUpObject $Locator_LookAt[0] $Locator_controles[1] $Locator_controles[0];
+	aimConstraint -aim 1 0 0 -upVector 0 0 1 -wut "object" -worldUpObject $Locator_LookAt[2] $Locator_controles[1] $Locator_controles[2];
+	parent $GroupName_Joints $MainSkeleton;
+	select -r $planoShape[0];
+	select -add $JNT_RBN;
+	SmoothBindSkin();
+	parent $plano $HairGroup;
+	if (`objExists  NoScaledData`== false)
+		{
+			group -n NoScaledData -w;
+		}
+		parent $HairGroup NoScaledData;
+
+	if (`objExists  Joints`== false)
+		{
+			group -n Joints -w;
+		}
+	parent $skinedBones Joints;
+	parent $MainSkeleton Joints;
+	if (`objExists  "*Mover2_ctr*"`== true)
+	{
+		string $MoveAndScaleMain=`RMObjNameToVar ("*ToonGroup*")`;
+		parent $GroupName_Controls $MoveAndScaleMain;
+	}
+	
+
+	return {$skinedBones,$MainSkeleton,$GroupName_Controls};
+}

@@ -1,0 +1,211 @@
+global proc string GetFromName (string $name, int $flg)
+{
+string $Tokens[]=`stringToStringArray $name "_"`;
+return $Tokens[$flg];
+}
+global proc string SetFromName (string $name, int $flg, string $newToken)
+{
+     
+string $Tokens[]=`stringToStringArray $name "_"`;
+$Tokens[$flg]=$newToken;
+return `stringArrayToString $Tokens "_"`;
+
+}
+
+global proc string StringPlus1 (string $NameString)
+{
+ string $res = `match "[0-9]+$" $NameString`;
+ if ($res=="")
+    {$res="0";}
+ int $value=((int)$res + 1);
+ string $result= `substitute  $res $NameString  ""`;
+ return ($result + (string)$value);
+}
+proc SetFromSelName(string $Token, int $flag){
+    string $selection[]=`ls -sl`;
+    string $i;
+    string $NewName;
+    string $ObjectName;
+    string $PathName[];
+    int $ArraySize;
+    for ($i in $selection){
+        $PathName=`stringToStringArray $i "|"`;
+        $ArraySize=`size $PathName`;
+        $NewName = $PathName[$ArraySize-1];
+        $NewName=`SetFromName $NewName $flag $Token`;
+        $ObjectName = `GetFromName $NewName 2`;
+        while (`objExists $NewName`){
+                $ObjectName = `StringPlus1 $ObjectName`;
+                $NewName=`SetFromName $NewName 2 $ObjectName`;
+                }
+        rename  $i  $NewName;
+        }
+}
+
+global proc RenameOnlyOne(string $Token[],int $flag){
+int $ButtonValue;
+int $ButtonValue2;
+string $NameToken;
+switch ($flag)
+{ 
+  case 0:
+  case 2: $NameToken =`textField -q -text $Token[0]`;
+          SetFromSelName $NameToken $flag;
+          break;
+  case 1: $ButtonValue=`radioButtonGrp -q -sl $Token[0]`;
+          switch ($ButtonValue) {
+                 case 1: SetFromSelName "MD" $flag; break;
+                 case 2: SetFromSelName "LF" $flag; break;
+                 case 3: SetFromSelName "RH" $flag; break;
+                }
+  
+          break;
+              
+   case 3: $ButtonValue=`radioButtonGrp -q -sl $Token[0]`;
+          switch ($ButtonValue) {
+                        
+                        case 1: SetFromSelName "msh" $flag; break;
+                        case 2: SetFromSelName "ctr" $flag; break;
+                        case 3: SetFromSelName "jnt" $flag; break;
+                        case 0: $ButtonValue2=`radioButtonGrp -q -sl $Token[1]`;
+                               switch ($ButtonValue2)
+                                         {
+                                         case 1: SetFromSelName "utl" $flag; break;
+                                         case 2: SetFromSelName "ikh" $flag; break;
+                                         case 3: SetFromSelName "loc" $flag; break;
+                                         }                              
+                               break;
+                        }
+          break;
+    
+   case 4: $ButtonValue=`radioButtonGrp -q -sl $Token[0]`;
+          switch ($ButtonValue){
+                        case 1: SetFromSelName "ful" $flag;break;
+                        case 2: SetFromSelName "prx" $flag;break;
+                        case 3: SetFromSelName "IK" $flag;break;
+                        case 0: $ButtonValue2=`radioButtonGrp -q -sl $Token[1]`;
+                               switch ($ButtonValue2)
+                                         {
+                                         case 1: SetFromSelName "FK" $flag; break;
+                                         case 2: SetFromSelName "RBN" $flag; break;
+                                         case 3: SetFromSelName "mph" $flag; break;
+                                         }                              
+                               break;
+                        } 
+        break; 
+       }
+}
+global proc renameThem (string $CharacterName, string $sideType, string $ObjectName, string $ObjectType,string $ObjectType2, string $ObjStatus, string $ObjStatus2,string $CurrentNameFlg)
+{
+string $Name[];
+$Name[0] =`textField -q -text $CharacterName`;
+
+string $Name[1];
+int $ButtonValue=`radioButtonGrp -q -sl $sideType`;
+int $ButtonValue2;
+switch ($ButtonValue) {
+                        case 1: $Name[1]="MD"; break;
+                        case 2: $Name[1]="LF"; break;
+                        case 3: $Name[1]="RH"; break;
+                        }
+$Name[2]=`textField -q -tx $ObjectName`;
+
+$ButtonValue=`radioButtonGrp -q -sl $ObjectType`;
+switch ($ButtonValue){
+                        case 1: $Name[3]="msh"; break;
+                        case 2: $Name[3]="ctr"; break;
+                        case 3: $Name[3]="jnt"; break;
+                        case 0: $ButtonValue2=`radioButtonGrp -q -sl $ObjectType2`;
+                               switch ($ButtonValue2)
+                                         {
+                                         case 1: $Name[3]="utl"; break;
+                                         case 2: $Name[3]="ikh"; break;
+                                         case 3: $Name[3]="loc"; break;
+                                         }                              
+                               break;
+                        }
+$ButtonValue=`radioButtonGrp -q -sl $ObjStatus`;
+print $ButtonValue;
+print "\n";
+switch ($ButtonValue){
+                        case 1: $Name[4]="ful"; break;
+                        case 2: $Name[4]="prx"; break;
+                        case 3: $Name[4]="IK"; break;
+                        case 0: $ButtonValue2=`radioButtonGrp -q -sl $ObjStatus2`;
+                               switch ($ButtonValue2)
+                                         {
+                                          case 1: $Name[4]="FK"; break;
+                                          case 2: $Name[4]="RBN"; break;
+                                          case 3: $Name[4]="mph"; break;
+                                         }                              
+                              break;
+                      }
+
+string $NewName = `stringArrayToString $Name "_"`;
+string $Selection[]=`ls -sl`;
+string $ObjectName=`GetFromName $NewName 2`;
+    for ($i in $Selection)
+    { /*Opcion Para checar el checkbox de mantube el nombre*/
+         if (`checkBox -q -v $CurrentNameFlg`==true){
+               $ObjectName=$i;
+               $NewName=`SetFromName $NewName 2 $i`;
+               
+         }
+             while (`objExists $NewName`){
+                    $ObjectName =`StringPlus1 $ObjectName`;
+                    $NewName=`SetFromName $NewName 2 $ObjectName`;
+                    }
+            rename  $i  $NewName;
+            $ObjectName =`StringPlus1 $ObjectName`;
+            $NewName=`SetFromName $NewName 2 $ObjectName`;
+            
+    }
+
+}
+global proc RenameObjects()
+{
+	if (`window -q -ex RenameObjectsWindow`) deleteUI RenameObjectsWindow;
+	//Main Window
+	window -title "Rename Objects" -w 400 -h 50 RenameObjectsWindow;
+	//Button Layouts
+	//rowColumnLayout -nc 1 -cw 1 400;
+	columnLayout -w 100 -rs 10 columnlayout1;
+	    text "Selecciona los parametros del nombre";	            
+  setParent..;
+  rowColumnLayout  -nc 3 -cw 1 100 -cw 2 100 -cw 3 100 -cs 1 20 -cs 3 180 rowcolumnlayout1;    
+      text -label  "Character Name";
+      string $CharacterName =`textField -w 80`;
+      button -label "Apply Char Name" -c ("RenameOnlyOne ({\""+ $CharacterName +"\"}) 0;");
+      
+  setParent..;
+  rowColumnLayout  -nc  2  -cw 1 400  -cw 2 100 columnlayout2;
+          string $SideType = `radioButtonGrp -numberOfRadioButtons 3 -cw 1 80
+          -label "Side Type" -labelArray3 "MD" "LF" "RH"  -sl 1 `;
+          button -label "Apply SideType" -c ("RenameOnlyOne ({\""+ $SideType +"\"}) 1;");
+  setParent..;	
+  rowColumnLayout  -nc 4 -cw 1 100 -cw 2 80 -cw 3 130 -cw 4 100 -cs 1 20 -cs 3 30 -cs 4 40 rowcolumnlayout2;    
+      text   -label "Object   Name";
+      string $ObjectName =`textField -w 80`;
+      string $UseCurrentName = `checkBox -label "use Current Name" -v false`;
+      button -label "Apply Object Name" -c ("RenameOnlyOne ({\""+ $ObjectName +"\"}) 2;");
+  setParent..;
+  rowColumnLayout  -nc  2  -cw 1 400  -cw 2 100  columnlayout4;
+          string $ObjectType= `radioButtonGrp -numberOfRadioButtons 3 -cw 1 80
+          -label "Object Type" -labelArray3 "msh" "ctr" "jnt" -sl 1`;
+          text "";
+          string $ObjectType2=`radioButtonGrp    -numberOfRadioButtons 3 -shareCollection $ObjectType -cw 1 80
+          -label "" -labelArray3 "utl" "ikh" "loc"`;
+          button -label "Apply Obj Type" -c ("RenameOnlyOne ({\""+ $ObjectType+"\",\""+$ObjectType2+"\"}) 3;");         
+   setParent..;
+   rowColumnLayout  -nc  2  -cw 1 400  -cw 2 100 columnlayout5;         
+          string $ObjStatus = `radioButtonGrp -numberOfRadioButtons 3 -cw 1 80
+          -label "Object Status" -labelArray3 "ful" "prx" "IK" -sl 1`;
+          text "";
+          string $ObjStatus2 =`radioButtonGrp  -numberOfRadioButtons 3 -shareCollection $ObjStatus -cw 1 80
+             -label "" -labelArray3 "FK" "RBN" "mph"`;
+           button -label "Apply Obj Status" -c ("RenameOnlyOne ({\""+ $ObjStatus+"\",\""+$ObjStatus2+"\"}) 4;");
+   button -label "Rename" -c ("renameThem "+ $CharacterName +" "+ $SideType+" "+$ObjectName+" "+$ObjectType+" "+$ObjectType2+" "+$ObjStatus+" "+$ObjStatus2+" "+$UseCurrentName);
+   setParent..;	
+   showWindow RenameObjectsWindow;
+}
+RenameObjects();

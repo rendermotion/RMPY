@@ -1,0 +1,97 @@
+source "RMRigFunctions.mel";
+source "RMRigShapeControls.mel";
+source "RMRiggTools.mel";
+source "RMRigFK.mel";
+source "RMFK.mel";
+source "RMNameConvention.mel";
+source "RMCreateCharacterByped.mel";
+source "RMHierarchyRebuild.mel";
+
+
+string $Selecter= `window -wh 455 225 -t "RM Part Builder" -menuBar true -vis true -sizeable false`;
+    
+    
+    
+	string $Side = "RH";
+ 	float $SizeVal =40;   
+
+    string $myform = `formLayout -numberOfDivisions 100`;   
+    string $floatSlider =`floatSliderGrp  -field true -l Size -minValue 1 -maxValue 300 -v $SizeVal -cc "$SizeVal = #1; $SizeVal =(\"#1\")"`;
+    string $ButtonArms = `button  -l "Arm Points" -c ("RMCreateArmPoints (<<0,0,0>>, RMSideOrient($checkboxA), $SizeVal, RMCheckSide($checkboxA))")`;
+    string $ButtonLegs = `button  -l "Leg Points" -c ("RMCreateLegPoints (<<0,0,0>>,<<0,-1,0>>,<<0,0,1>>, $SizeVal, RMCheckSide($checkboxA))")`;
+    string $ButtonHead = `button  -l "Head Points" -c ("RMCreateHeadRefPoints (<<0,0,0>>,<<0,-1,0>>,<<0,0,1>>, $SizeVal)")`;
+    string $ButtonSpine = `button  -l "Spine Points" -c ("RMCreateSpinePoints (<<0,0,0>>,<<0,1,0>>, $SizeVal)")`;
+    string $ButtonHand = `button  -l "Hand Points" -c ("RMCreateHandPoints (<<0,0,0>>,RMSideOrient($checkboxA), $SizeVal,RMCheckSide($checkboxA))")`;
+    string $ButtonFeet = `button  -l "Feet Points" -c ("")`;
+    string $Text1 = `textField -ed false -w 800 -tx "  Build Reference Points" `;
+    string $checkboxA=`checkBox -label " Right " -v true /*-onc "$Side= "RH"" -ofc "$Side= "LF""*/`;
+    //string $Text2 = `textField -ed false -w 800 -tx "  Build Joints on Selected" `;
+    string $BuildJoints = `button  -w 300 -l "Build Joints on Selected" -c ("RMCreateJointsOnSelected()")`;
+    string $BuildFKJ = `button  -w 300 -l "Build FK to selected points" -c ("RMFKCreateonSelected()")`;
+   
+    formLayout  -edit 
+                -attachForm $Text1 "top"  26
+                -attachForm $Text1 "left"  -3
+                $myform;   
+    formLayout  -edit 
+                -attachForm $checkboxA "top"  8
+                -attachForm $checkboxA "left"  7
+                $myform;   
+	formLayout  -edit 
+                -attachForm $floatSlider "top"  5
+                -attachForm $floatSlider "left"  -40
+                $myform;
+    formLayout  -edit 
+                -attachForm $ButtonArms "top"  48
+                -attachForm $ButtonArms "left"  6
+                $myform;
+    formLayout  -edit 
+                -attachForm $ButtonLegs "top"  48
+                -attachForm $ButtonLegs "left"  77
+                $myform;
+    formLayout  -edit 
+                -attachForm $ButtonSpine "top"  48
+                -attachForm $ButtonSpine "left"  145
+                $myform;
+    formLayout  -edit 
+                -attachForm $ButtonHead "top"  48
+                -attachForm $ButtonHead "left"  224
+                $myform;
+    formLayout  -edit 
+                -attachForm $ButtonHand "top"  48
+                -attachForm $ButtonHand "left"  301
+                $myform;
+    formLayout  -edit 
+                -attachForm $ButtonFeet "top"  48
+                -attachForm $ButtonFeet "left"  379
+                $myform;
+    formLayout  -edit 
+                -attachForm $BuildJoints "top"  80
+                -attachForm $BuildJoints "left"  76
+                $myform;
+    formLayout  -edit 
+                -attachForm $BuildFKJ "top"  110
+                -attachForm $BuildFKJ "left"  76
+                $myform;
+setParent ..;
+
+global proc vector RMSideOrient(string $Box)
+{
+	if (`checkBox -q -value $Box` == true)
+    {
+      return (<<-1,0,0>>);
+    }
+    else{
+    	return (<<1,0,0>>);
+    }
+}
+global proc string RMCheckSide(string $Box)
+{
+	if (`checkBox -q -value $Box` == true)
+    {
+      return "RH";
+    }
+    else{
+    	return "LF";
+    }
+}

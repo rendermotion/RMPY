@@ -1,0 +1,36 @@
+//FaltaPoner Script Paths
+
+global proc string[] RMCreateSpinePoints (vector $Origin ,vector $DirectionVector ,float $SpineLength){
+    $DirectionVector = unit ($DirectionVector);
+    //print ("DirVe= "+$DirectionVector);
+    int $numberOfSpineBones = 5;
+    string $spinePointArray[] = {};
+    int $spinePointCount;
+    for ( $spinePointCount = 1; $spinePointCount<$numberOfSpineBones+1;++$spinePointCount )
+    {
+        vector $temp1 = <<($DirectionVector.x*(($SpineLength/$numberOfSpineBones)*$spinePointCount)),($DirectionVector.y*(($SpineLength/$numberOfSpineBones)*$spinePointCount)),($DirectionVector.z*(($SpineLength/$numberOfSpineBones)*$spinePointCount))>>;
+        
+        vector $toUseInCurves = ($Origin + $temp1);
+        string $temp[] = `spaceLocator -n (RMUniqueName("Character01_MD_Spine_pnt_rfr"))-p ($toUseInCurves.x) ($toUseInCurves.y) ($toUseInCurves.z)`;
+        xform -cp  $temp[0];    
+        ScalePoints ($temp[0],$SpineLength/10);
+        $spinePointArray[$spinePointCount-1]=$temp[0] ;
+        RMObjLookXAtPoint (($temp[0]),$DirectionVector);
+        
+        if ($spinePointCount >=2)
+        {
+            //print ("Objeto1="+$spinePointArray[$spinePointCount-1]);
+            //print ("Objeto2="+$spinePointArray[$spinePointCount-2]);
+            parent ($spinePointArray[$spinePointCount-1]) ($spinePointArray[$spinePointCount-2]);
+        }   
+    }
+    
+    string $temp[]= `spaceLocator -n (RMUniqueName("Character01_MD_Hip_pnt_rfr")) -p ($Origin.x) ($Origin.y) ($Origin.z)`;
+    xform -cp  $temp[0];
+    ScalePoints ($temp[0],$SpineLength/10);
+    $spinePointArray[size ($spinePointArray)-1]=$temp[0] ;
+        //Falta RMObjLookAt
+        parent ($spinePointArray[0]) ($spinePointArray[size ($spinePointArray)-1]);
+        //$spinePointArray[0]= `rotate -r 90 0 0` ;
+    return ($spinePointArray);
+}

@@ -1,0 +1,27 @@
+global proc RMAsigntoLayer (string $LayerName, string $Objetos[], int $AvoidNub)
+{
+	string $CapaExiste[] = `ls -type "displayLayer" $LayerName`;
+	if (!size($controllers_layer))
+	{
+		// Check if an another object has the name "controllers" in the scene
+		if (!`objExists $LayerName`)
+		{
+			createDisplayLayer -name $LayerName -empty;
+		}
+		else	
+		{
+			error ($LayerName + " already exists in the scene. No layer created.");
+		}
+	}
+	string $Temp = `whatIs "$Objetos"`
+	if ($temp=="string[] variable")
+	{
+		for ($i in $Objetos) 
+		{
+			if (!(($AvoidNub==true) && ($i=`size $Objetos`)))
+			{
+				editDisplayLayerMembers -noRecurse $LayerName $Objetos[i];
+			}
+		}
+	}
+}

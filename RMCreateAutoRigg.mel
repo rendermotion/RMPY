@@ -1,0 +1,175 @@
+source "RMHierarchyRebuild.mel";
+source "RMRiggTools.mel";
+source "RMRigShapeControls.mel";
+source "RMRiggControllers.mel";
+source "RMRibbonSystem.mel";
+source "RMRiggMath.mel";
+//source "RMCreateSuhi.mel";
+source "RMNameConvention.mel";
+source "RMRibbonSystem.mel";
+
+
+
+//renameJointHierarchy "Character01_MD_Pelvis_pnt_rfr";
+/************************************************************************************************************************/
+/************************************************************************************************************************/
+/**********************************Crea AutoRIgg*************************************************************************/
+/************************************************************************************************************************/
+//RMLinkEyes("LF");
+
+//file -import -type "mayaBinary"  -ignoreVersion -ra false -mergeNamespacesOnClash false  -options "v=0;"  -pr "//server/Personal/LuisDaniel/RiggCtrls.mb";
+global proc RMStartAutoRigg()
+{
+	//RMRenameJointHierarchy ;
+	RMCreateSkeleton("Character01_MD_Hip_pnt_rfr");
+	
+	//file -import -type "mayaBinary"  -ignoreVersion -ra false -mergeNamespacesOnClash false  -options "v=0;"  -pr "//server/Personal/LuisDaniel/RiggCtrls.mb";
+	//RMDeleteTransformG();
+	/*//RMSetSkeleton();*/
+	select "Character01_MD_Hip_pnt_rfr";
+	doDelete;
+	
+	RMCreateMainGroupsAndControls;
+	RMRebuildSpine();
+
+	string $FKControls[] = `RMRebuildFK`;
+	string $IKControls[] = `RMRebuildIK`;
+	RMRebuildJXT "LF" ({$IKControls[0],$IKControls[1],$IKControls[2]}) ({$FKControls[0],$FKControls[1],$FKControls[2]});
+	RMRebuildJXT "RH" ({$IKControls[3],$IKControls[4],$IKControls[5]}) ({$FKControls[3],$FKControls[4],$FKControls[5]});
+	RMLinkHands();
+	
+	string $FKControls[] = `RMRebuildFKLegs`;
+	print "\n";
+	print $FKControls;
+	print "\n";
+	string $IKControls[] = `RMRebuildIKLegs`;
+
+	
+
+	RMRebuildJXTLeg "LF" ({$IKControls[0],$IKControls[1],$IKControls[2]}) ({$FKControls[0],$FKControls[1],$FKControls[2],$FKControls[3]});
+	RMRebuildJXTLeg "RH" ({$IKControls[3],$IKControls[4],$IKControls[5]}) ({$FKControls[4],$FKControls[5],$FKControls[6],$FKControls[7]});
+	/*/**/
+	select -r "ReferenceControls";
+	doDelete;
+}
+global proc RMSelectSkinBones(float $Spine,float $Neck,float $HipLo,float $RArm,float $LArm,float $RLeg,float $LLeg,float $RHan, float $LHan)
+{
+	select -cl;
+	string $NameFind[];
+	select -r "*RibbonJoint*";
+	$NameFind = `ls -sl`;
+	string $HandFind[];
+	select -r "*jnt_SKN";
+	$HandFind = `ls -sl`;
+	print "Start ";
+	string $Selection[];
+	if ($RArm==true)
+	{
+		$Selection[(`size $Selection`)]=RMObjNameToVar("*RH_shoulder_jnt_rig");
+		for ($j in $NameFind)
+		{
+			if ((RMGetFromName($j,4)=="SKN")&&(RMGetFromName($j,1)=="RH")&& (`match "elbow" $j` == "elbow"))
+			{
+				
+				$Selection[(`size $Selection`)]=$j;
+			}
+		}
+	}
+	if ($LArm==true)
+	{
+		$Selection[(`size $Selection`)]=RMObjNameToVar("*LF_shoulder_jnt_rig");
+		for ($j in $NameFind)
+		{
+			if ((RMGetFromName($j,4)=="SKN")&&(RMGetFromName($j,1)=="LF")&& (`match "elbow" $j` == "elbow"))
+			{
+				
+				$Selection[(`size $Selection`)]=$j;
+			}
+		}
+	}
+	if ($RLeg==true)
+	{
+		$Selection[(`size $Selection`)]=RMObjNameToVar("*RH_leg_jnt_rig");
+		for ($j in $NameFind)
+		{
+			if ((RMGetFromName($j,4)=="SKN")&&(RMGetFromName($j,1)=="RH")&& (`match "Knee" $j` == "Knee"))
+			{
+				
+				$Selection[(`size $Selection`)]=$j;
+			}
+		}
+	}
+	if ($LLeg==true)
+	{
+		$Selection[(`size $Selection`)]=RMObjNameToVar("*LF_leg_jnt_rig");
+		for ($j in $NameFind)
+		{
+			if ((RMGetFromName($j,4)=="SKN")&&(RMGetFromName($j,1)=="LF")&& (`match "Knee" $j` == "Knee"))
+			{
+				
+				$Selection[(`size $Selection`)]=$j;
+			}
+		}
+	}
+	if ($Neck==true)
+	{
+		$Selection[(`size $Selection`)]=RMObjNameToVar("*neck*");
+	}
+	if ($HipLo==true)
+	{
+		$Selection[(`size $Selection`)]=RMObjNameToVar("*HipLow*");
+	}
+	if ($Spine==true)
+	{
+		//$Selection[(`size $Selection`)]=RMObjNameToVar("*LF_leg_jnt_rig");
+		for ($j in $NameFind)
+		{
+			if ((RMGetFromName($j,4)=="SKN")&&(RMGetFromName($j,1)=="MD")&& (`match "Spine4" $j` == "Spine4"))
+			{
+				
+				$Selection[(`size $Selection`)]=$j;
+			}
+		}
+	}
+	if ($LHan==true)
+	{
+		$Selection[(`size $Selection`)]=RMObjNameToVar("*LF_wrist_jnt_JXT");
+		for ($j in $HandFind)
+		{
+			if ((RMGetFromName($j,4)=="SKN")&&(RMGetFromName($j,1)=="LF"))
+			{
+				if ((`match "thumb" $j` == "thumb")||(`match "index" $j` == "index")||(`match "middle" $j` == "middle")||(`match "ring" $j` == "ring")||(`match "pinky" $j` == "pinky"))
+				{
+					$Selection[(`size $Selection`)]=$j;
+				}
+			}
+		}
+	}
+	if ($RHan==true)
+	{
+		$Selection[(`size $Selection`)]=RMObjNameToVar("*RH_wrist_jnt_JXT");
+		for ($j in $HandFind)
+		{
+			if ((RMGetFromName($j,4)=="SKN")&&(RMGetFromName($j,1)=="RH"))
+			{
+				if ((`match "thumb" $j` == "thumb")||(`match "index" $j` == "index")||(`match "middle" $j` == "middle")||(`match "ring" $j` == "ring")||(`match "pinky" $j` == "pinky"))
+				{
+					$Selection[(`size $Selection`)]=$j;
+				}
+			}
+		}
+	}
+	select -cl;
+	if ((`size $Selection`)>0)
+	{
+		for ($k in $Selection)
+		{
+			select -add $k;
+		}
+	}
+	//select -r ("*_SKN");
+	//select -add ("*neck*");
+	//select -add ("*HipLow*");
+	//select -add ("*shoulder_jnt_rig");
+}
+//RMSelectSkinBones;

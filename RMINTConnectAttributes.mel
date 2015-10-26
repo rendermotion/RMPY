@@ -1,0 +1,310 @@
+source "RMNameConvention.mel";
+
+
+global proc RMConnect3to2 (string $pD1,string $pD2,string $pD3, string $pDn1,string $pDn2, float $Limit, float $mval)
+{
+    string $temp[]= `stringToStringArray $pD1 "."`;
+    string $temp2[]= `stringToStringArray $pDn1 "."`;
+    string $MultNode=$temp[0];
+    string $name =`RMGetFromName $temp[0] 2`;
+    string $name2 =`RMGetFromName  $temp2[0] 2`;
+   
+    $MultNode=`RMSetFromName $MultNode 3 "utl"`;
+    string $ClampNode=`RMSetFromName $MultNode 2 ($name+$name2+"Clamp")`;
+    string $PlusNode=`RMSetFromName $MultNode 2 ($name+$name2+"Clamp")`;
+    $MultNode=`RMSetFromName $MultNode 2 ($name+$name2+"MultDivide")`;
+
+   
+
+    $MultNode=`RMUniqueName $MultNode`;
+    shadingNode -asUtility -name $MultNode multiplyDivide;
+    $ClampNode=`RMUniqueName $ClampNode`;
+    shadingNode -asUtility -name $ClampNode clamp;
+    $PlusNode=`RMUniqueName $PlusNode`;
+    shadingNode -asUtility -name $PlusNode plusMinusAverage;
+    source AEnewNonNumericMulti;
+    AEnewNonNumericMultiAddNewItem($PlusNode,"input3D");
+    AEnewNonNumericMultiAddNewItem($PlusNode,"input3D");
+
+    connectAttr -f $pD1 ($MultNode+".input1X");
+    connectAttr -f $pD2 ($MultNode+".input1Y");
+    connectAttr -f $pD3 ($MultNode+".input1Z");
+     
+    setAttr ($MultNode+".input2X") (1/$Limit);
+    setAttr ($MultNode+".input2Y") (1/$Limit);
+    setAttr ($MultNode+".input2Z") (1/$Limit);
+    
+    connectAttr -f ($MultNode+".outputX")  ($PlusNode + ".input3D[0].input3Dx");
+    connectAttr -f ($MultNode+".outputX")  ($PlusNode + ".input3D[0].input3Dy");
+    connectAttr -f ($MultNode+".outputY")  ($PlusNode + ".input3D[1].input3Dx");
+    connectAttr -f ($MultNode+".outputZ")  ($PlusNode + ".input3D[1].input3Dy");
+     
+    connectAttr -f ($PlusNode + ".output3D") ($ClampNode+".input");
+    //vector $VectorTemp={$Limit,$Limit,$Limit};
+    //setAttr $ClampNode.max $VectorTemp;
+    setAttr ($ClampNode+".maxR") $mval;
+    setAttr ($ClampNode+".maxG") $mval;
+    setAttr ($ClampNode+".maxB") $mval;
+
+    connectAttr ($ClampNode+".outputR") $pDn1;
+    connectAttr ($ClampNode+".outputG") $pDn2;
+}
+
+global proc RMConnect1to2 (string $pD1, string $pDn1,string $pDn2, float $Limit, float $mval)
+{
+    string $temp[]= `stringToStringArray $pD1 "."`;
+    string $temp2[]= `stringToStringArray $pDn1 "."`;
+    string $MultNode=$temp[0];
+    string $name =`RMGetFromName $temp[0] 2`;
+    string $name2 =`RMGetFromName  $temp2[0] 2`;
+    
+    $MultNode=`RMSetFromName $MultNode 3 "utl"`;
+    string $ClampNode=`RMSetFromName $MultNode 2 ($name+$name2+"Clamp")`;
+    $MultNode=`RMSetFromName $MultNode 2 ($name+$name2+"MultDivide")`;
+
+    $MultNode=`RMUniqueName $MultNode`;
+    shadingNode -asUtility -name $MultNode multiplyDivide;
+    $ClampNode=`RMUniqueName $ClampNode`;
+    shadingNode -asUtility -name $ClampNode clamp;
+
+    connectAttr -f $pD1 ($MultNode+".input1X");
+    connectAttr -f $pD1 ($MultNode+".input1Y");
+
+     
+    setAttr ($MultNode+".input2X") (1/$Limit);
+    setAttr ($MultNode+".input2Y") (-1/$Limit);
+
+    connectAttr -f ($MultNode+".output") ($ClampNode+".input");
+
+    setAttr ($ClampNode+".maxR") $mval;
+    setAttr ($ClampNode+".maxG") $mval;
+    setAttr ($ClampNode+".maxB") $mval;
+     
+    connectAttr ($ClampNode+".outputR") $pDn1;
+    connectAttr ($ClampNode+".outputG") $pDn2;
+}
+
+global proc RMConnect1to1 (string $pD1, string $pDn1, float $Limit, float $mval)
+{
+    string $temp[]= `stringToStringArray $pD1 "."`;
+    string $temp2[]= `stringToStringArray $pDn1 "."`;
+    string $MultNode=$temp[0];
+    string $name =`RMGetFromName $temp[0] 2`;
+    string $name2 =`RMGetFromName  $temp2[0] 2`;
+     
+    $MultNode=`RMSetFromName $MultNode 3 "utl"`;
+    string $ClampNode=`RMSetFromName $MultNode 2 ($name+$name2+"Clamp")`;
+    $MultNode=`RMSetFromName $MultNode 2 ($name+$name2+"MultDivide")`;
+     
+    $MultNode=`RMUniqueName $MultNode`;
+    shadingNode -asUtility -name $MultNode multiplyDivide;
+    $ClampNode=`RMUniqueName $ClampNode`;
+
+    /*string $aver
+    connectAttr theCubeOfDoom.translate theNodeOfDoom.input3D[0];
+    connectAttr theConeOfDoom.translate theNodeOfDoom.input3D[1];*/
+
+    shadingNode -asUtility -name $ClampNode clamp;
+
+    connectAttr -f $pD1 ($MultNode+".input1X");
+     
+    setAttr ($MultNode+".input2X") (1/$Limit);
+
+    connectAttr -f ($MultNode+ ".output") ($ClampNode+".input");
+
+    setAttr ($ClampNode+".maxR") $mval;
+    setAttr ($ClampNode+".maxG") $mval;
+    setAttr ($ClampNode+".maxB") $mval;
+
+    connectAttr ($ClampNode+".outputR") $pDn1;
+}
+
+
+global proc RMButtonAction_LinkAttributes (string $LeftOutliner,string $RightOutliner,string $multiplierchkbx,float $MaxValue, float $MaxMul)
+{
+    string $ScrollistItemsL[]=`textScrollList -q -ai $LeftOutliner`;
+    string $ScrollistItemsR[]=`textScrollList -q -ai $RightOutliner`;
+    textScrollList -e -ra $LeftOutliner;
+    textScrollList -e -ra $RightOutliner;
+    int $SL_L_Size=`size $ScrollistItemsL`;
+    int $SL_R_Size=`size $ScrollistItemsR`;
+      
+    float $mult=$MaxMul;
+    float $mval=$MaxValue;
+      
+    if (`checkBox -q -value $multiplierchkbx` == true)
+    {
+      $mult=-$mult;
+    }
+       
+    if (($SL_L_Size == 3) && ($SL_R_Size==2))
+    {
+      RMConnect3to2($ScrollistItemsL[0],$ScrollistItemsL[1],$ScrollistItemsL[2],$ScrollistItemsR[0],$ScrollistItemsR[1],$mult,$mval);
+    }
+    if (($SL_L_Size == 1) && ($SL_R_Size==2))
+    {
+      RMConnect1to2($ScrollistItemsL[0],$ScrollistItemsR[0],$ScrollistItemsR[1],$mult,$mval);
+    }
+
+    if (($SL_L_Size == 1) && ($SL_R_Size==1))
+    {
+        RMConnect1to1($ScrollistItemsL[0],$ScrollistItemsR[0],$mult,$mval);
+    }
+    if (($SL_L_Size == 2)|| (($SL_L_Size == 3) && ($SL_R_Size==3)) ||($SL_L_Size > 3)||($SL_R_Size>2)|| (($SL_L_Size == 3) && ($SL_R_Size==1)))
+    {
+        error ("\n Error: Invalid combination of elements "+$SL_L_Size+"-"+$SL_R_Size+ ".\n The correct combination is 1-1; 1-2; or 3-2");
+    }
+       
+//            (string $pD1,string $pD2,string $pD3, string $pDn1,string $pDn2, float $Limit)    
+}
+
+global proc RMItemSelected(string $nodeOutliner,string $scroll)
+{
+//	string $cmd = "nodeOutliner -q  -currentSelection " + $nodeOutliner;
+  	string $cmd = "nodeOutliner -q -lastClickedNode " + $nodeOutliner;
+  	string $label = `eval $cmd`;
+
+  	string $ScrollistItems[]=`textScrollList -q -ai $scroll`;
+	
+	  if (`stringArrayContains  $label $ScrollistItems`)
+    {
+        textScrollList -e -removeItem $label $scroll;
+    }
+    else
+	  {
+        textScrollList -e -append $label $scroll;
+    }
+
+/*	string $cmd = "nodeOutliner -q -lmc " + $nodeOutliner;
+	string $label = `eval $cmd`;
+	print $label;*/
+}
+global proc RMReloadSide(string $nodeOutliner,string $scrolList)
+{
+    string $CurrentSel[]=`ls -sl`;
+    nodeOutliner -e -rma $nodeOutliner;
+
+    if (`size $CurrentSel` >= 1)
+        {
+            
+        string $i;
+         for ($i in $CurrentSel)
+             nodeOutliner -e -a $i $nodeOutliner;
+        }
+    textScrollList -e -ra $scrolList;
+}
+ 
+string $mywindow = `window -h 525 -t "RM Attribute Conector"`;
+    string $myform = `formLayout -numberOfDivisions 100`;
+    // Create an outliner that will print the name of
+    // every object added to it to history pane of the
+    // script editor, then display all available input
+    // plugs on the node.
+    string $LeftOutliner = `nodeOutliner
+                              -showInputs false
+                              -showOutputs true
+                              -addCommand "print(\"%node \\n\")"`;
+    string $RightOutliner = `nodeOutliner
+                              -showInputs false 
+                              -showOutputs true
+                              -addCommand "print(\"%node \\n\")"`;
+ 
+ 
+    string $button01=`button -label "Link Attributes" -command "RMButtonAction_LinkAttributes $Scrol01 $Scrol02 $checkbox $MaxVal $MulVal"`;
+
+    string $buttonRL=`button -label "ReloadL" -command "RMReloadSide $LeftOutliner $Scrol01; "`;
+    string $buttonRR=`button -label "ReloadR" -command "RMReloadSide $RightOutliner $Scrol02;"`;
+    
+    string $Scrol01 =`textScrollList -numberOfRows 3 -en false -w 200 -allowMultiSelection off  -showIndexedItem 4`;
+    string $Scrol02 =`textScrollList -numberOfRows 3 -en false -w 200 -allowMultiSelection off  -showIndexedItem 4`;
+    string $checkbox=`checkBox -label " Inverse "`;
+    float $MulVal =10;
+    float $MaxVal =1;
+    string $MaxValue=`  floatField  -v $MaxVal -min 0 -max 500 -pre 1 -w 50 -ann "Maximun Value to set" -cc "$MaxVal = #1; $MaxVal =(\"#1\")"`;
+    string $MaxMul=`    floatField  -v $MulVal -min 0 -max 500  -pre 1 -w 50 -ann "Value to multiply by" -cc "$MulVal = #1; $MulVal =(\"#1\")"`;
+    string $TextMult = `textField -ed false -w 100 -tx "Multiply Value" `;
+    string $TextValue = `textField -ed false -w 100 -tx "Maximun Value" `;
+        
+        nodeOutliner -e 
+        -selectCommand ("RMItemSelected " + $LeftOutliner+" "+$Scrol01)
+        $LeftOutliner;
+
+        nodeOutliner -e 
+        -selectCommand ("RMItemSelected " + $RightOutliner+" "+$Scrol02) 
+        $RightOutliner;
+                              
+    formLayout  -edit 
+                -attachForm $TextMult "top"  3
+                -attachForm $TextMult "right"  -8
+                $myform;
+    formLayout  -edit 
+                -attachForm $TextValue "top"  25
+                -attachForm $TextValue "right"  -8
+                $myform;
+    formLayout  -edit 
+                -attachForm $checkbox "top"  5
+                -attachForm $checkbox "left"  20
+                $myform;
+    formLayout  -edit 
+                -attachForm $MaxValue "top"  25
+                -attachForm $MaxValue "right"  90
+                $myform;
+
+    formLayout  -edit 
+                -attachForm $MaxMul "top"  3
+                -attachForm $MaxMul "right"  90
+                $myform;
+
+    formLayout  -edit
+                -attachForm $button01 "top"  5
+                -ap $button01 "left" -40 50 
+                $myform;
+
+    formLayout  -edit
+                -attachForm $buttonRL "top"  5
+                -ap $buttonRL "left" -100 50 
+                $myform;            
+    formLayout  -edit
+                -attachForm $buttonRR "top"  5
+                -ap $buttonRR "left" 50 50 
+                $myform;            
+
+    formLayout  -edit
+                -attachControl $Scrol01 "top"  20 $button01
+                -attachForm $Scrol01 "left"   5
+                -ap $Scrol01  "right" 0 50 
+                $myform;
+          
+    formLayout  -edit
+                -attachControl $Scrol02 "top"  20 $button01
+                -ap $Scrol02 "left"   0 50
+                -attachForm $Scrol02  "right" 5
+                $myform;
+        
+    // Attach the nodeOutliner to the layout
+    formLayout  -edit
+                -attachControl $LeftOutliner "top"   5 $Scrol01
+                -attachForm $LeftOutliner "left"   5
+                -attachForm $LeftOutliner "bottom" 5
+                -ap $LeftOutliner "right"  0 50
+                $myform;
+    formLayout  -edit
+                -attachControl $RightOutliner "top" 5 $Scrol01
+                -ap $RightOutliner "left"  0 50
+                -attachForm $RightOutliner "bottom" 5
+                -attachForm $RightOutliner "right"  5
+                $myform;
+        
+    // Display the window with the node Outliner
+    showWindow $mywindow;
+    // Have the outliner display the sphere
+
+string $CurrentSel[]=`ls -sl`;
+if (`size $CurrentSel` >= 1)
+{
+    nodeOutliner -e -a $CurrentSel[0] $LeftOutliner;
+}
+if (`size $CurrentSel` >= 2)    
+{ 
+    nodeOutliner -e -a $CurrentSel[1] $RightOutliner;
+}

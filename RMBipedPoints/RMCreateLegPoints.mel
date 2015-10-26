@@ -1,0 +1,74 @@
+global proc string[] RMCreateLegPoints (vector $OrigenPoint, vector $DirectionVector,vector $FrontVector, float $legSize, string $Side){
+    string $LegPointsArray[]={};
+
+    vector $transversalVector = unit (cross($DirectionVector,$FrontVector));
+    vector $FrontVector = unit (cross($transversalVector,$DirectionVector));
+
+    vector $legPosition = $OrigenPoint;
+    vector $kneePosition = $OrigenPoint + $DirectionVector*$legSize*0.5 + $FrontVector*0.05*$legSize;
+    vector $anklePosition = $OrigenPoint+$DirectionVector*$legSize;
+    vector $ballPosition = $anklePosition + $FrontVector*0.1*$legSize+$DirectionVector*$legSize*0.05;
+    vector $toePosition = $ballPosition + $FrontVector*0.1*$legSize;
+
+    vector $FootLimitBackPosition = $anklePosition+$DirectionVector*$legSize*0.05;
+    vector $FootLimitLeftPosition;
+    vector $FootLimitRightPosition;
+
+    if($Side == "RH")
+    {
+        $FootLimitLeftPosition = $ballPosition+$transversalVector*0.05*$legSize;
+        $FootLimitRightPosition = $ballPosition-($transversalVector*0.05*$legSize);
+    }
+    if($Side == "LF")
+    {
+        $FootLimitLeftPosition = $ballPosition-$transversalVector*0.05*$legSize;
+        $FootLimitRightPosition = $ballPosition+($transversalVector*0.05*$legSize);
+    }
+
+    string $LegPoint[] = `spaceLocator -n ("Character01_"+$Side+"_leg_pnt_rfr") -p ($legPosition.x) ($legPosition.y) ($legPosition.z)`;
+    xform -cp $LegPoint[0];
+    ScalePoints ($LegPoint[0],$legSize*0.1);
+    string $KneePoint[] = `spaceLocator -n ("Character01_"+$Side+"_Knee_pnt_rfr") -p ($kneePosition.x) ($kneePosition.y) ($kneePosition.z)`;
+    xform -cp $KneePoint[0];
+    ScalePoints ($KneePoint[0],$legSize*0.1);
+    string $AnklePoint[] = `spaceLocator -n ("Character01_"+$Side+"_ankle_pnt_rfr") -p ($anklePosition.x) ($anklePosition.y) ($anklePosition.z)`;
+    xform -cp $AnklePoint[0];
+    ScalePoints ($AnklePoint[0],$legSize*0.1);
+    string $BallPoint[] = `spaceLocator -n ("Character01_"+$Side+"_ball_pnt_rfr") -p ($ballPosition.x) ($ballPosition.y) ($ballPosition.z)`;
+    xform -cp $BallPoint[0];
+    ScalePoints ($BallPoint[0],$legSize*0.1);
+    string $ToePoint[] = `spaceLocator -n ("Character01_"+$Side+"_toe_pnt_rfr") -p ($toePosition.x) ($toePosition.y) ($toePosition.z)`;
+    xform -cp $ToePoint[0];
+    ScalePoints ($ToePoint[0],$legSize*0.1);
+
+    string $FootLimitBackPoint[] = `spaceLocator -n ("Character01_"+$Side+"_footLimitBack_pnt_rfr") -p ($FootLimitBackPosition.x) ($FootLimitBackPosition.y) ($FootLimitBackPosition.z)`;
+    xform -cp $FootLimitBackPoint[0];
+    ScalePoints ($FootLimitBackPoint[0],$legSize*0.1);
+    string $FootLimitLeftPoint[] = `spaceLocator -n ("Character01_"+$Side+"_footLimitOuter_pnt_rfr") -p ($FootLimitLeftPosition.x) ($FootLimitLeftPosition.y) ($FootLimitLeftPosition.z)`;
+    xform -cp $FootLimitLeftPoint[0];
+    ScalePoints ($FootLimitLeftPoint[0],$legSize*0.1);
+    string $FootLimitRightPoint[] = `spaceLocator -n ("Character01_"+$Side+"_footLimitInner_pnt_rfr") -p ($FootLimitRightPosition.x) ($FootLimitRightPosition.y) ($FootLimitRightPosition.z)`;
+    xform -cp $FootLimitRightPoint[0];
+    ScalePoints ($FootLimitRightPoint[0],$legSize*0.1);
+
+    //RMObjLookXAtPoint ($LegPoint[0], ($kneePosition-$legPosition));
+    //RMObjLookXAtPoint ($KneePoint[0], ($anklePosition-$kneePosition));
+    //RMObjLookXAtPoint ($AnklePoint[0], ($ballPosition-$anklePosition));
+    //RMObjLookXAtPoint ($BallPoint[0], $FrontVector);
+    //RMObjLookXAtPoint ($ToePoint[0], $FrontVector);
+
+    //RMObjLookXAtPoint ($FootLimitBackPoint[0], $FrontVector);
+    //RMObjLookXAtPoint ($FootLimitLeftPoint[0], $FrontVector);
+    //RMObjLookXAtPoint ($FootLimitRightPoint[0], $FrontVector);
+
+    parent ($AnklePoint[0]) ($KneePoint[0]);
+    parent ($KneePoint[0]) ($LegPoint[0]);
+    parent ($ToePoint[0]) ($BallPoint[0]);
+    parent ($BallPoint[0]) ($AnklePoint[0]);
+
+    parent ($FootLimitBackPoint[0]) ($BallPoint[0]);
+    parent ($FootLimitLeftPoint[0]) ($BallPoint[0]);
+    parent ($FootLimitRightPoint[0]) ($BallPoint[0]);
+
+    return ($LegPoint);
+}

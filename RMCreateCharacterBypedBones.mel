@@ -1,0 +1,95 @@
+global proc RMCreateFullRig (){
+	//Max create noder?
+	//disableSceneRedraw?
+	//undo?
+
+	string $PointSpineArray[];
+	select  -r Character01_MD_Spine_pnt_rfr;
+	string $Temp[]=`ls -sl -fl`;
+	$PointSpineArray[0]= $Temp[0];
+	$Temp=`ls -sl -fl`;
+	select  -r Character01_MD_Spine1_pnt_rfr;
+	$Temp=`ls -sl -fl`;
+	$PointSpineArray[1]=$Temp[0];
+	select  -r Character01_MD_Spine2_pnt_rfr;
+	$Temp=`ls -sl -fl`;
+	$PointSpineArray[2]=$Temp[0];
+	select  -r Character01_MD_Spine3_pnt_rfr;
+	$Temp=`ls -sl -fl`;
+	$PointSpineArray[3]=$Temp[0];
+	select  -r Character01_MD_Spine4_pnt_rfr;
+	$Temp=`ls -sl -fl`;
+	$PointSpineArray[4]=$Temp[0];
+
+	select  -r Character01_MD_Pelvis_pnt_rfr;
+	string $PelvisPoint[]=`ls -sl -fl`;
+
+//ArmsRefPoints
+	select  -r Character01_RH_clavicle_pnt_rfr;
+	string $RHclavicle[]=`ls -sl -fl`;
+	select  -r Character01_RH_shoulder_pnt_rfr;
+	string $RHshoulder[]=`ls -sl -fl`;
+	select  -r Character01_RH_elbow_pnt_rfr;
+	string $RHelbow[]=`ls -sl -fl`;
+	select  -r Character01_RH_wrist_pnt_rfr;
+	string $RHwrist[]=`ls -sl -fl`;
+	select  -r Character01_RH_palm_pnt_rfr;
+	string $RHpalm[]=`ls -sl -fl`;
+
+	select  -r Character01_LF_clavicle_pnt_rfr;
+	string $LFclavicle[]=`ls -sl -fl`;
+	select  -r Character01_LF_shoulder_pnt_rfr;
+	string $LFshoulder[]=`ls -sl -fl`;
+	select  -r Character01_LF_elbow_pnt_rfr;
+	string $LFelbow[]=`ls -sl -fl`;
+	select  -r Character01_LF_wrist_pnt_rfr;
+	string $LFwrist[]=`ls -sl -fl`;
+	select  -r Character01_LF_palm_pnt_rfr;
+	string $LFpalm[]=`ls -sl -fl`;
+
+//LegRefPoints 
+	select  -r Character01_RH_leg_pnt_rfr;
+	string $RHleg[]=`ls -sl -fl`;
+	select  -r Character01_RH_Knee_pnt_rfr;
+	string $RHknee[]=`ls -sl -fl`;
+	select  -r Character01_RH_ankle_pnt_rfr;
+	string $RHankle[]=`ls -sl -fl`;
+	select  -r Character01_RH_ankle_pnt_rfr;
+	string $RHAnkle[]=`ls -sl -fl`;
+
+	select  -r Character01_LF_leg_pnt_rfr;
+	string $LFleg[]=`ls -sl -fl`;
+	select  -r Character01_LF_Knee_pnt_rfr;
+	string $LFknee[]=`ls -sl -fl`;
+	select  -r Character01_LF_ankle_pnt_rfr;
+	string $LFankle[]=`ls -sl -fl`;
+	select  -r Character01_LF_ankle_pnt_rfr;
+	string $LFAnkle[]=`ls -sl -fl`;
+
+//GetHeadRefPoints
+	string $PointHeadArray[];
+	select  -r Character01_MD_neck_pnt_rfr;
+	$Temp=`ls -sl -fl`;
+	$PointHeadArray[0]=$Temp[0];
+	select  -r Character01_MD_head_pnt_rfr;
+	$Temp=`ls -sl -fl`;
+	$PointHeadArray[1]=$Temp[0];
+	select  -r Character01_MD_headTip_ball_pnt_rfr;
+	$Temp=`ls -sl -fl`;
+	$PointHeadArray[2]=$Temp[0];
+
+	string $PointJawArray[];
+	select  -r Character01_MD_jaw_pnt_rfr;
+	$Temp=`ls -sl -fl`;
+	$PointJawArray[0]=$Temp[0];
+	select  -r Character01_MD_jawTip_pnt_rfr;
+	$Temp=`ls -sl -fl`;
+	$PointHeadArray[1]=$Temp[0];
+	
+	//Creating MainControls
+	vector $Pos1 = `xform -q -ws -rp $RHleg[0]`;
+	vector $Pos2 = `xform -q -ws -rp $PointSpineArray[0]`;
+	float $MainSize = $Pos2.y-$Pos1.y;
+	string $SpineMaster[] = RMCreateChildPoint ($PointSpineArray[0],"-parented -name Character01_MD_MainSpine_pnt_rig");
+	string $MainCOGControl = RMCreateRiggControl
+}
