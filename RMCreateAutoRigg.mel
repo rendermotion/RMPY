@@ -20,12 +20,7 @@ source "RMRibbonSystem.mel";
 //file -import -type "mayaBinary"  -ignoreVersion -ra false -mergeNamespacesOnClash false  -options "v=0;"  -pr "//server/Personal/LuisDaniel/RiggCtrls.mb";
 global proc RMStartAutoRigg()
 {
-	//RMRenameJointHierarchy ;
 	RMCreateSkeleton("Character01_MD_Hip_pnt_rfr");
-	
-	//file -import -type "mayaBinary"  -ignoreVersion -ra false -mergeNamespacesOnClash false  -options "v=0;"  -pr "//server/Personal/LuisDaniel/RiggCtrls.mb";
-	//RMDeleteTransformG();
-	/*//RMSetSkeleton();*/
 	select "Character01_MD_Hip_pnt_rfr";
 	doDelete;
 	

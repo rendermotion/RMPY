@@ -5,8 +5,9 @@ source "RMRibbonSystem.mel";
 source "RMRiggMath.mel";
 source "RMRiggTools.mel";
 
-global proc RMCreateJointsOnSelected()
+global proc RMCreateJointsOnSelected(string $Box)
 {
+	float $CBox=`checkBox -q -value $Box`;
 	string $temp[] = `ls -sl`;
 	string $Original = $temp[0];
 	string $temp2[] = `listRelatives -ad`;
@@ -73,11 +74,25 @@ global proc RMCreateJointsOnSelected()
 		string $TOut  = RMObjectInArray($jointArray,"footLimitOuter");
 		parent -w $TOut $TBack;
 		parent $TOut $TBack $TBall;
-
-		if (RMObjectInArray($jointArray,"leg")!="")
+		$Original=RMSetFromName(RMSetFromName($Original,3,"jnt"),4,"rig");
+		if ((RMObjectInArray($jointArray,"leg")!="")&&($CBox==true))
 		{
 			float $SideO;
+			if (RMGetFromName($TBall,1)=="RH"){
+				$SideO=-1;
+			}
+			else
+			{
+				$SideO=1;
+			}
 			string $leg = RMObjectInArray($jointArray,"leg");
+			$Nombrejnt=RMSetFromName($Nombrejnt,2,"HipLowNub");
+			vector $var1=`xform -ws -q -t $Original`;
+			vector $var2=`xform -ws -q -t $TBall`;
+			float $LongitudPierna=$var1-$var2;
+			select -cl;
+			string $HipLownub = `joint -p (($LongitudPierna*$SideO)*0.2) 0 0 -n $Nombrejnt`;
+			parent $Original $HipLownub;
 			if (RMGetFromName($TBall,1)=="RH")
 			{
 				$SideO=-1;
@@ -108,14 +123,9 @@ global proc RMCreateJointsOnSelected()
 				string $LeftIKCntrls[]=`RMCreateIKControlsLeg $LeftArmrootIK $LeftArmrootParent[0]`;
 				RMRebuildJXTLeg "LF" ({$LeftIKCntrls[0],$LeftIKCntrls[1],$LeftIKCntrls[2]}) ({$LeftFKCntrls[0],$LeftFKCntrls[1],$LeftFKCntrls[2],$LeftFKCntrls[3]});
 			}
-			$Nombrejnt=RMSetFromName($Nombrejnt,2,"HipLowNub");
-			vector $var1=`xform -ws -q -t $Original`;
-			vector $var2=`xform -ws -q -t $TBall`;
-			float $LongitudPierna=$var1-$var2;
-			string $HipLownub = `joint -p (($LongitudPierna*$SideO)*0.2) 0 0 -n $Nombrejnt`;
 		}
 	}
-	select -r $Original;
+	
 }
 global proc string RMObjectInArray(string $SArray[], string $key)
 {
@@ -814,8 +824,8 @@ global proc string RMRebuildLeg (string $firstBone,string $Prefix){
     joint -e -oj "xzy" -zso $Joint2;
     joint -e -oj "xzy" -zso $Joint3;
 	//Regresa la primera Falange
-	
-	parent $Joint1Parent Joints;
+	if (`objExists Joints`)
+	{parent $Joint1Parent Joints;}
 	return $Joint1;
 }
 
