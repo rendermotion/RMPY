@@ -18,11 +18,7 @@ global proc RMCreateJointsOnSelected(string $Box)
     string $temp3[] = ReverseArray($temp2);
     print $temp3;
 	string $Nombrejnt;
-
-	//string $BonesS[]=`RMCreateBonesAtPoints $temp3`;
-	//$Nombrejnt=(RMSetFromName((RMSetFromName($temp[0], 3,"jnt")),4,"rig"));
-    //joint  -p ($BonePosition.x) ($BonePosition.y) ($BonePosition.z) -n $Nombrejnt;
-    string $i;
+	string $i;
     int $index=0;
     int $indexR=0;
     for ($i in $temp3)
@@ -47,26 +43,6 @@ global proc RMCreateJointsOnSelected(string $Box)
 		}
 		$indexR++;
     } 
-
-    /*for ($i in $temp3)
-    { 
-    	//$objSide[0]=$temp3[$i];
-    	if ((RMIgnoraShape($i)==true))
-    	{	
-    		
-	    	$BonePosition = `pointPosition $i `;
-        	$Nombrejnt=(RMSetFromName((RMSetFromName($i, 3,"jnt")),4,"rig"));
-        	joint  -p ($BonePosition.x) ($BonePosition.y) ($BonePosition.z) -n $Nombrejnt;
-        	joint -e -oj xyz -sao "yup" $TParent;
-        	parent $Nombrejnt $TParent;
-        	//$JointArray[(`size $JointArray`)]=$Nombrejnt;
-        	//makeIdentity -apply true -t 1 -r 1 -s 0 $JointArray[(`size $JointArray`)-1];
-        	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 -pn 1 $Nombrejnt;
-        	$TParent=$Nombrejnt;
-        }
-    }*/
-	
-
 	if (RMObjectInArray($jointArray,"ball")!="")
 	{
 		string $TBall = RMObjectInArray($jointArray,"ball");
@@ -145,7 +121,7 @@ global proc RMCreateSkeleton(string $PelvisPoint)
 	string $temp2[] = `listRelatives -ad`;
     vector $BonePosition=`xform -q -ws -rt`;
 
-    //$temp2[`size $temp2`]=$temp[0];
+    $temp2[`size $temp2`]=$temp[0];
     string $temp3[] = ReverseArray($temp2);
     vector $xyzCoords =<<0,0,0>>;
     
@@ -153,9 +129,47 @@ global proc RMCreateSkeleton(string $PelvisPoint)
     //joint -e -zso -oj xyz ;
     
     string $objSide1[]={};
-    string $JointArray[]={};
     string $Nombrejnt;
     string $TempParent[];
+    string $temp[] = `ls -sl`;
+	string $Original = $temp[0];
+	string $temp2[] = `listRelatives -ad`;
+	vector $BonePosition=`xform -q -ws -rt`;
+	$temp2[`size $temp2`]=$temp[0];
+	string $TParent=$Original;
+	string $jointArray[]={};
+    string $temp3[] = ReverseArray($temp2);
+    //print $temp3;
+	string $Nombrejnt;
+	string $i;
+    int $index=0;
+    int $indexR=0;
+    for ($i in $temp3)
+    {
+    	if ((RMIgnoraShape($i)==true))
+    	{
+		  	makeIdentity -apply true -t 1 -r 1 -s 1 $temp3[$indexR];
+		    select -cl;
+		    $Nombrejnt=(RMSetFromName((RMSetFromName($i, 3,"jnt")),4,"rig"));
+		    $jointArray[$index]=`joint -p 0 0 0 -n $Nombrejnt`;
+		    //$jointArray[$index]=RMSetNameInFormat ($jointArray[$index],"Object","MD","JNT","RIG");
+			RMAlign $temp3[$indexR] $jointArray[$index] 3;
+		    makeIdentity -apply true -t 1 -r 1 -s 0 $jointArray[$index];
+		    if ($index>0)
+	        {	
+		        parent $jointArray[$index] $jointArray[$index-1];
+		        if ((RMGetFromName($jointArray[$index-1],2)!="toe")&&(RMGetFromName($jointArray[$index-1],2)!="footLimitOuter")&&(RMGetFromName($jointArray[$index-1],2)!="footLimitInner")&&(RMGetFromName($jointArray[$index-1],2)!="thumb3")&&(RMGetFromName($jointArray[$index-1],2)!="index3")&&(RMGetFromName($jointArray[$index-1],2)!="middle3")&&(RMGetFromName($jointArray[$index-1],2)!="ring3")&&(RMGetFromName($jointArray[$index-1],2)!="pinky3"))
+		        {
+		        	joint -e -oj xyz -sao "yup" $jointArray[$index-1];
+	        	}
+	        }
+		   	
+		    $index=$index+1;
+
+		}
+		$indexR++;
+    } 
+	/*
 	for ($i=0 ; $i<(`size $temp3`);$i++)
     { 
     	$objSide[0]=$temp3[$i];
@@ -201,11 +215,11 @@ global proc RMCreateSkeleton(string $PelvisPoint)
         		{
         			parent $JointArray[(`size $JointArray`)-1] $JointArray[(`size $JointArray`)-2];
         			$TempParent = `listRelatives -p`;
-					print $TempParent[0];
+					
         			if ((RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="Knee")){
 					select -r $JointArray[(`size $JointArray`)-1];    			
         			
-					//joint -e -oj xyz -sao "yup" $TempParent[0];
+					joint -e -oj xyz -sao "yup" $TempParent[0];
 					clear($TempParent);}
 					else{
 						
@@ -225,7 +239,7 @@ global proc RMCreateSkeleton(string $PelvisPoint)
          	
         }
     }
-
+	*/
     //=================================================================================================================================//
     select -r Character01_MD_headTip_jnt_rig_rfr;
     parent -w;
@@ -239,43 +253,43 @@ global proc RMCreateSkeleton(string $PelvisPoint)
     parent Character01_LF_thumb_jnt_rig Character01_LF_index_jnt_rig Character01_LF_pinky_jnt_rig Character01_LF_ring_jnt_rig Character01_LF_middle_jnt_rig Character01_LF_wrist_jnt_rig;
     
     parent Character01_RH_thumb_jnt_rig Character01_RH_index_jnt_rig Character01_RH_pinky_jnt_rig Character01_RH_ring_jnt_rig Character01_RH_middle_jnt_rig Character01_RH_wrist_jnt_rig;
-    select -r Character01_MD_Spine_jnt_rig;
-    parent -w;
+    parent -w Character01_MD_Spine_jnt_rig;
     
-    select -r Character01_MD_Spine_jnt_rig Character01_RH_leg_jnt_rig Character01_LF_leg_jnt_rig Character01_MD_Hip_jnt_rig;
-    parent;
+    parent Character01_MD_Spine_jnt_rig Character01_MD_Hip_jnt_rig;
+    //parent;
     //parent Character01_MD_neck_jnt Character01_MD_Spine3_jnt;
     select -r Character01_MD_neck_jnt_rig Character01_RH_clavicle_jnt_rig Character01_LF_clavicle_jnt_rig Character01_MD_Spine4_jnt_rig ;
     parent;
-    select -r Character01_RH_footLimitBack_jnt_rig Character01_RH_footLimitOuter_jnt_rig Character01_RH_footLimitInner_jnt_rig Character01_RH_ball_jnt_rig ;
-    parent;
-    select -r Character01_LF_footLimitBack_jnt_rig Character01_LF_footLimitOuter_jnt_rig Character01_LF_footLimitInner_jnt_rig Character01_LF_ball_jnt_rig ;
-    parent;
-
+    parent -w Character01_RH_footLimitBack_jnt_rig Character01_RH_footLimitOuter_jnt_rig Character01_RH_footLimitInner_jnt_rig ;
+    parent Character01_RH_footLimitBack_jnt_rig Character01_RH_footLimitOuter_jnt_rig Character01_RH_footLimitInner_jnt_rig Character01_RH_ball_jnt_rig ;
+    
+    parent -w Character01_LF_footLimitBack_jnt_rig Character01_LF_footLimitOuter_jnt_rig Character01_LF_footLimitInner_jnt_rig ;
+    parent Character01_LF_footLimitBack_jnt_rig Character01_LF_footLimitOuter_jnt_rig Character01_LF_footLimitInner_jnt_rig Character01_LF_ball_jnt_rig ;
     RMTransFormGroupsIdentitys();
     parent -w Character01_MD_neck_jnt_rig Character01_RH_clavicle_jnt_rig Character01_LF_clavicle_jnt_rig Character01_RH_shoulder_jnt_rig ;
-    
-    
-
     select -r Character01_LF_thumb_jnt_rig Character01_LF_index_jnt_rig Character01_LF_pinky_jnt_rig Character01_LF_ring_jnt_rig Character01_LF_middle_jnt_rig ;
     parent -w;
     parent Character01_RH_shoulder_jnt_rig Character01_RH_clavicle_jnt_rig;
     parent Character01_LF_thumb_jnt_rig Character01_LF_index_jnt_rig Character01_LF_pinky_jnt_rig Character01_LF_ring_jnt_rig Character01_LF_middle_jnt_rig Character01_LF_wrist_jnt_rig;
     //parent Character01_MD_neck_jnt Character01_MD_Spine3_jnt;
     parent Character01_MD_neck_jnt_rig Character01_RH_clavicle_jnt_rig Character01_LF_clavicle_jnt_rig Character01_MD_Spine4_jnt_rig ;
-    parent Character01_RH_thumb_jnt_rig Character01_RH_index_jnt_rig Character01_RH_pinky_jnt_rig Character01_RH_ring_jnt_rig Character01_RH_middle_jnt_rig Character01_RH_wrist_jnt_rig;
-    parent Character01_MD_Spine_jnt_rig Character01_RH_leg_jnt_rig Character01_LF_leg_jnt_rig Character01_MD_Hip_jnt_rig;
+    
+    //parent Character01_RH_thumb_jnt_rig Character01_RH_index_jnt_rig Character01_RH_pinky_jnt_rig Character01_RH_ring_jnt_rig Character01_RH_middle_jnt_rig Character01_RH_wrist_jnt_rig;
+    //parent Character01_MD_Spine_jnt_rig Character01_RH_leg_jnt_rig Character01_LF_leg_jnt_rig Character01_MD_Hip_jnt_rig;
+    select ("*palm_jnt*");
+    doDelete;
     //joint -e;
     select -r Character01_MD_Hip_jnt_rig;
 
+    print " FLAG REPORT ";
 
  //=================================================================================================================================//
     
 	//file -import -type "mayaBinary"  -ignoreVersion -ra false -mergeNamespacesOnClash false  -options "v=0;"  -pr "//server/Personal/LuisDaniel/RiggCtrls.mb";
-	file  -import -gr -gn "ReferenceControls" -type "mayaBinary"  -ignoreVersion -ra false -mergeNamespacesOnClash false  -options "v=0;"  -pr "//server/Personal/LuisDaniel/RiggCtrls.mb";
-
+	//file  -import -gr -gn "ReferenceControls" -type "mayaBinary"  -ignoreVersion -ra false -mergeNamespacesOnClash false  -options "v=0;"  -pr "//server/Personal/LuisDaniel/RiggCtrls.mb";
+	//requires -dataType "byteArray" "Mayatomr" "2015.0 - 3.12.1.16 ";
 	RMDeleteTransformG();
-
+	print " FLAG REPORT ";
 	string $leftUpLeg=`RMObjNameToVar "*LF_leg_jnt*"`;
 	string $rightUpLeg=`RMObjNameToVar "*RH_leg_jnt*"`;
 	string $hips=`RMObjNameToVar "*Hip_jnt*"`;
@@ -322,13 +336,14 @@ global proc RMCreateSkeleton(string $PelvisPoint)
 	RMTransFormGroupsIdentitys();
 
 	parent $leftUpLeg $rightUpLeg $hipLow_nub;
+	parent -w $hipLow $hips;
 	parent $hipLow $hips $newName;
-	/*//parent $hipLow_nub $hipLow;
-	select -cl;*/
+	//parent $hipLow_nub $hipLow;
+	//select -cl;
 	RMDeleteTransformG();
 	//setAttr ($hipLow+".jointOrientY") 180;
 
-	joint -e -oj xyz -sao "yup" $JointArray[0];
+	joint -e -oj xyz -sao "yup" $jointArray[0];
 	joint -e -oj xyz -sao "yup" Character01_MD_HipLow_jnt_rig;
 	joint -e -oj xyz -sao "yup" $leftUpLeg;
 	joint -e -oj xyz -sao "yup" $rightUpLeg;
@@ -764,7 +779,7 @@ global proc string RMRebuildLeg (string $firstBone,string $Prefix){
 	string $Joint2=`joint -n (RMSetFromName($temp[0],4,$Prefix))`;
 	// RMAlign en posicion el nuevo hueso Joint2 al segundo hueso de la herarquia y en orientacion al primer hueso y lo mueve -1/10 parte en su eje X
 	
-	RMAlign $firstBone $Joint2 3;
+	RMAlign $firstBone $Joint2 2;
 	RMAlign $temp[0] $Joint2 1;
 	float $RMDistancia= `RMDistancia $firstBone $temp[0]`;
 	move -os -r (-$RMDistancia/10) 0 0 $Joint2;
@@ -825,7 +840,9 @@ global proc string RMRebuildLeg (string $firstBone,string $Prefix){
     joint -e -oj "xzy" -zso $Joint3;
 	//Regresa la primera Falange
 	if (`objExists Joints`)
-	{parent $Joint1Parent Joints;}
+	{
+		parent $Joint1Parent Joints;
+	}
 	return $Joint1;
 }
 

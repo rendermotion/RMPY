@@ -910,8 +910,11 @@ global proc RMCreateMainGroupsAndControls()
     scale -scaleXYZ ($r/6) ($r/6) ($r/6) $VChar;
     parent $VChar $Mover1;
     
-    string $head=`RMObjNameToVar "*head_jnt*"`;
-    RMAlign  $head $VChar 1;
+    if (`objExists ("*head_jnt*")`==true)
+    {
+    	string $head=`RMObjNameToVar "*head_jnt*"`;
+        RMAlign  $head $VChar 1;
+    }
     move -ws -r -moveY 0 ($r/10) 0 $VChar;
     connectAttr ($VChar+".BodyControls")($Mover2+".visibility");
 }

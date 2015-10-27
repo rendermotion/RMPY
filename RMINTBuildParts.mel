@@ -27,9 +27,9 @@ string $Selecter= `window -wh 455 225 -t "RM Part Builder" -menuBar true -vis tr
     string $checkboxA=`checkBox -label " Right " -v true `;
     string $checkboxB=`checkBox -label " Controls " -v true `;
     //string $Text2 = `textField -ed false -w 800 -tx "  Build Joints on Selected" `;
-    string $BuildJoints = `button  -w 300 -l "Build Joints on Selected" -c ("RMCreateJointsOnSelected()")`;
-    string $BuildFKJ = `button  -w 300 -l "Build FK to selected points" -c ("RMFKCreateonSelected($checkboxB)")`;
-    string $BuildGroups = `button  -w 300 -l "Create Groups" -c ("RMCreateMainGroupsAndControls()")`;
+    string $BuildJoints = `button  -w 300 -l "Build Joints on Selected" -c ("RMCreateJointsOnSelected($checkboxB)")`;
+    string $BuildFKJ = `button  -w 300 -l "Build FK to selected points" -c ("RMFKCreateonSelected()")`;
+    //string $BuildGroups = `button  -w 300 -l "Create Groups" -c ("RMCreateMainGroupsAndControls()")`;
    
     formLayout  -edit 
                 -attachForm $Text1 "top"  26
