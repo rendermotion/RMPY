@@ -76,9 +76,11 @@ global proc RMCreateJointsOnSelected()
 
 		if (RMObjectInArray($jointArray,"leg")!="")
 		{
+			float $SideO;
 			string $leg = RMObjectInArray($jointArray,"leg");
 			if (RMGetFromName($TBall,1)=="RH")
 			{
+				$SideO=-1;
 				string $RightArmroot = `RMObjNameToVar "*RH_leg_jnt*"`;
 				RMRebuildLeg $RightArmroot "FK";
 				string $RightArmrootParent[]=`listRelatives -p $RightArmroot`;
@@ -93,6 +95,7 @@ global proc RMCreateJointsOnSelected()
 			}
 			else if (RMGetFromName($TBall,1)=="LF")
 			{
+				$SideO=1;
 				string $LeftArmroot= `RMObjNameToVar "*LF_leg_jnt*"`;
 				RMRebuildLeg $LeftArmroot "FK";
 				string $LeftArmrootParent[]=`listRelatives -p $LeftArmroot`;
@@ -105,8 +108,11 @@ global proc RMCreateJointsOnSelected()
 				string $LeftIKCntrls[]=`RMCreateIKControlsLeg $LeftArmrootIK $LeftArmrootParent[0]`;
 				RMRebuildJXTLeg "LF" ({$LeftIKCntrls[0],$LeftIKCntrls[1],$LeftIKCntrls[2]}) ({$LeftFKCntrls[0],$LeftFKCntrls[1],$LeftFKCntrls[2],$LeftFKCntrls[3]});
 			}
-			$Nombrejnt=RMSetFromName($Nombrejnt,2,"HipLowNub")
-			string $HipLownub = `joint -p 0 0 0 -n $Nombrejnt`;
+			$Nombrejnt=RMSetFromName($Nombrejnt,2,"HipLowNub");
+			vector $var1=`xform -ws -q -t $Original`;
+			vector $var2=`xform -ws -q -t $TBall`;
+			float $LongitudPierna=$var1-$var2;
+			string $HipLownub = `joint -p (($LongitudPierna*$SideO)*0.2) 0 0 -n $Nombrejnt`;
 		}
 	}
 	select -r $Original;
