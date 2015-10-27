@@ -79,38 +79,35 @@ global proc RMCreateJointsOnSelected()
 			string $leg = RMObjectInArray($jointArray,"leg");
 			if (RMGetFromName($TBall,1)=="RH")
 			{
-					string $RightArmroot = `RMObjNameToVar "*RH_leg_jnt*"`;
-					RMRebuildLeg $RightArmroot "FK";
-					string $RightArmrootParent[]=`listRelatives -p $RightArmroot`;
-					string $RightArmrootFK=`RMObjNameToVar "*RH_leg_jnt_FK"`;
-					string $RightFKCntrls[]=`RMCreateFKControlsLeg $RightArmrootFK $RightArmrootParent[0]`;
-		
-					string $RightArmroot=`RMObjNameToVar "*RH_leg_jnt*"`;
-					string $RightArmrootIK=`RMRebuildLeg $RightArmroot "IK"`;
-					string $RightArmrootParent[]=`listRelatives -p $RightArmroot`;
-					string $RightIKCntrls[]=`RMCreateIKControlsLeg $RightArmrootIK $RightArmrootParent[0]`;
-					RMRebuildJXTLeg "RH" ({$RightIKCntrls[0],$RightIKCntrls[1],$RightIKCntrls[2]}) ({$RightFKCntrls[0],$RightFKCntrls[1],$RightFKCntrls[2],$RightFKCntrls[3]});
-				}
-				else if (RMGetFromName($TBall,1)=="LF")
-				{
-					string $LeftArmroot= `RMObjNameToVar "*LF_leg_jnt*"`;
-					RMRebuildLeg $LeftArmroot "FK";
-					string $LeftArmrootParent[]=`listRelatives -p $LeftArmroot`;
-					string $LeftArmrootFK=`RMObjNameToVar "*LF_leg_jnt_FK"`;
-					string $LeftFKCntrls[]=`RMCreateFKControlsLeg $LeftArmrootFK $LeftArmrootParent[0]`;
-		
-					string $LeftArmroot=`RMObjNameToVar "*LF_leg_jnt*"`;
-					string $LeftArmrootIK=`RMRebuildLeg $LeftArmroot "IK"`;
-					string $LeftArmrootParent[]=`listRelatives -p $LeftArmroot`;
-					string $LeftIKCntrls[]=`RMCreateIKControlsLeg $LeftArmrootIK $LeftArmrootParent[0]`;
-					RMRebuildJXTLeg "LF" ({$LeftIKCntrls[0],$LeftIKCntrls[1],$LeftIKCntrls[2]}) ({$LeftFKCntrls[0],$LeftFKCntrls[1],$LeftFKCntrls[2],$LeftFKCntrls[3]});
-				}
+				string $RightArmroot = `RMObjNameToVar "*RH_leg_jnt*"`;
+				RMRebuildLeg $RightArmroot "FK";
+				string $RightArmrootParent[]=`listRelatives -p $RightArmroot`;
+				string $RightArmrootFK=`RMObjNameToVar "*RH_leg_jnt_FK"`;
+				string $RightFKCntrls[]=`RMCreateFKControlsLeg $RightArmrootFK $RightArmrootParent[0]`;
+	
+				string $RightArmroot=`RMObjNameToVar "*RH_leg_jnt*"`;
+				string $RightArmrootIK=`RMRebuildLeg $RightArmroot "IK"`;
+				string $RightArmrootParent[]=`listRelatives -p $RightArmroot`;
+				string $RightIKCntrls[]=`RMCreateIKControlsLeg $RightArmrootIK $RightArmrootParent[0]`;
+				RMRebuildJXTLeg "RH" ({$RightIKCntrls[0],$RightIKCntrls[1],$RightIKCntrls[2]}) ({$RightFKCntrls[0],$RightFKCntrls[1],$RightFKCntrls[2],$RightFKCntrls[3]});
 			}
+			else if (RMGetFromName($TBall,1)=="LF")
+			{
+				string $LeftArmroot= `RMObjNameToVar "*LF_leg_jnt*"`;
+				RMRebuildLeg $LeftArmroot "FK";
+				string $LeftArmrootParent[]=`listRelatives -p $LeftArmroot`;
+				string $LeftArmrootFK=`RMObjNameToVar "*LF_leg_jnt_FK"`;
+				string $LeftFKCntrls[]=`RMCreateFKControlsLeg $LeftArmrootFK $LeftArmrootParent[0]`;
+	
+				string $LeftArmroot=`RMObjNameToVar "*LF_leg_jnt*"`;
+				string $LeftArmrootIK=`RMRebuildLeg $LeftArmroot "IK"`;
+				string $LeftArmrootParent[]=`listRelatives -p $LeftArmroot`;
+				string $LeftIKCntrls[]=`RMCreateIKControlsLeg $LeftArmrootIK $LeftArmrootParent[0]`;
+				RMRebuildJXTLeg "LF" ({$LeftIKCntrls[0],$LeftIKCntrls[1],$LeftIKCntrls[2]}) ({$LeftFKCntrls[0],$LeftFKCntrls[1],$LeftFKCntrls[2],$LeftFKCntrls[3]});
+			}
+			$Nombrejnt=RMSetFromName($Nombrejnt,2,"HipLowNub")
+			string $HipLownub = `joint -p 0 0 0 -n $Nombrejnt`;
 		}
-		//string $FKControls[] = `RMRebuildFKLegs`;
-		//////string $IKControls[] = `RMRebuildIKLegs`;
-		
-		
 	}
 	select -r $Original;
 }
