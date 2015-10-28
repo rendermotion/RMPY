@@ -74,6 +74,11 @@ global proc int RMIgnoraShape (string $name)
             return false;
         }
     }
+    /*
+    if (`match $name "Shape" `!="")
+    {
+        return false;
+    }*/
     return true;
 }
 global proc RMMirrorPositionPoints(){

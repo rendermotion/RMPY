@@ -214,8 +214,11 @@ global proc string[] RMCreatePoleVector (string $IKHandle)
     poleVectorConstraint -name $poleVectorName $CntrlName $IKHandle;
     makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $CntrlName;
 
-    parent $LineCntrls[0] NoScaledData;
-    parent $Cntrl ScaledData;
+    if (`objExists ("*MD_Mover2_ctr_rig")`)
+    {
+        parent $LineCntrls[0] NoScaledData;
+        parent $Cntrl ScaledData;
+    }
     
     return ({$Cntrl,$LineCntrls[0]});
 }
@@ -335,8 +338,11 @@ global proc RMMakeIkStretchy (string $ikHandle)
             $exitLoop = 1;
         }
     }
-    parent $startPoint ScaledData;
-    parent $endPoint ScaledData;
+    if (`objExists ("*MD_Mover2_ctr_rig")`)
+    {
+        parent $startPoint ScaledData;
+        parent $endPoint ScaledData;
+    }
     
     select $ikHandle;
 }

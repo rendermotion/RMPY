@@ -154,8 +154,10 @@ global proc string[] RMCreateLineBetwenPoints (string $p1,string $p2)
 	group -em -name $GroupName;
 	parent $Cluster1Handle $GroupName;
 	parent $Cluster2Handle $GroupName;
-	
-   parent $GroupName NoScaledData;
+	if (`objExists ("*MD_Mover2_ctr_rig")`)
+    {
+    	parent $GroupName NoScaledData;
+	}
 	return {$curve,$GroupName};
 }
 

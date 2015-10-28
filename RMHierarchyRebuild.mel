@@ -35,14 +35,38 @@ global proc RMCreateJointsOnSelected(string $Box)
 		    if ($index>0)
 	        {	
 		        parent $jointArray[$index] $jointArray[$index-1];
-		        joint -e -oj xyz -sao "yup" $jointArray[$index-1];
-	        }
-		   	
+		        if ((RMGetFromName($jointArray[$index-1],2)!="toe")&&(RMGetFromName($jointArray[$index-1],2)!="footLimitOuter")&&(RMGetFromName($jointArray[$index-1],2)!="footLimitInner")&&(RMGetFromName($jointArray[$index-1],2)!="thumb3")&&(RMGetFromName($jointArray[$index-1],2)!="index3")&&(RMGetFromName($jointArray[$index-1],2)!="middle3")&&(RMGetFromName($jointArray[$index-1],2)!="ring3")&&(RMGetFromName($jointArray[$index-1],2)!="pinky3"))
+		        {
+		        	joint -e -oj xyz -sao "yup" $jointArray[$index-1];
+	        	}
+		   	}
 		    $index=$index+1;
-
 		}
+		
 		$indexR++;
-    } 
+    	 
+    }
+    
+	if (RMObjectInArray($jointArray,"thumb")!="")
+	{
+		string $thumbJ = RMObjectInArray($jointArray,"thumb_");
+		string $indexJ = RMObjectInArray($jointArray,"index_");
+		string $middleJ = RMObjectInArray($jointArray,"middle_");
+		string $ringJ = RMObjectInArray($jointArray,"ring_");
+		string $pinkyJ = RMObjectInArray($jointArray,"pinky_");
+		if (RMObjectInArray($jointArray,"wrist")!="")
+		{
+			parent -w $thumbJ;
+			select -r (RMObjectInArray($jointArray,"palm_"));
+			doDelete;
+			parent $thumbJ $indexJ $middleJ $ringJ $pinkyJ (RMObjectInArray($jointArray,"wrist"));
+		}
+		else 
+		{
+			parent $indexJ $middleJ $ringJ $pinkyJ (RMObjectInArray($jointArray,"palm_"));
+		}
+	}
+
 	if (RMObjectInArray($jointArray,"ball")!="")
 	{
 		string $TBall = RMObjectInArray($jointArray,"ball");
@@ -101,7 +125,13 @@ global proc RMCreateJointsOnSelected(string $Box)
 			}
 		}
 	}
-	
+	if (RMObjectInArray($jointArray,"neck")!="")
+	{
+		parent -w (RMObjectInArray($jointArray,"headTip"));
+		parent (RMObjectInArray($jointArray,"headTip")) (RMObjectInArray($jointArray,"head_jnt"));
+	}
+	select -r $Original;
+	doDelete;
 }
 global proc string RMObjectInArray(string $SArray[], string $key)
 {
@@ -113,6 +143,7 @@ global proc string RMObjectInArray(string $SArray[], string $key)
 			return $i;
 		}
 	}
+	return "";
 }
 global proc RMCreateSkeleton(string $PelvisPoint)
 {
@@ -170,75 +201,7 @@ global proc RMCreateSkeleton(string $PelvisPoint)
 		$indexR++;
     } 
 	/*
-	for ($i=0 ; $i<(`size $temp3`);$i++)
-    { 
-    	$objSide[0]=$temp3[$i];
-    	if ((RMIgnoraShape($objSide[0])==true&&($objSide[0]!="clavicle")))
-    	//if ((RMIgnoraShape($objSide[0])==true))
-    	{	
-    		select -r ($temp3[$i]);
-        	//$BonePosition=`xform -q -ws -rt`;
-        	$BonePosition = `pointPosition $temp3[$i] `;
-        	$Nombrejnt=(RMSetFromName((RMSetFromName($objSide[0], 3,"jnt")),4,"rig"));
-        	joint  -p ($BonePosition.x) ($BonePosition.y) ($BonePosition.z) -n $Nombrejnt;
-        	joint -e -zso -oj xyz -sao "yup";
-        	$JointArray[(`size $JointArray`)]=$Nombrejnt;
-        	//makeIdentity -apply true -t 1 -r 1 -s 0 $JointArray[(`size $JointArray`)-1];
-        	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 -pn 1 $JointArray[(`size $JointArray`)-1];
-
-        	//joint -e -oj xyz -sao "yup" $JointArray[(`size $JointArray`)-1];
-        	if ((`size $JointArray`)>1)
-        	{
-
-        		//joint -e -oj xyz -sao "yup" $JointArray[(`size $JointArray`)-2];
-
-        		if ((RMGetFromName($JointArray[(`size $JointArray`)-2],2)=="toe")&&(RMGetFromName($JointArray[(`size $JointArray`)-1],2)!="clavicle"))
-        		{
-        			
-        			parent $JointArray[(`size $JointArray`)-1] $JointArray[0];
-        			joint -e -oj xyz -sao "yup" $JointArray[0];
-        			//joint -e -oj xyz -sao "yup" $JointArray[(`size $JointArray`)-2];
-        			
-        		}
-
-        		else if ((RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="clavicle")||(RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="headTip")||(RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="neck")||(RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="footLimitBack")||(RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="footLimitOuter")||(RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="footLimitInner"))
-        		{
-        			print "pass";
-        		}
-        		else if ((RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="thumb")||(RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="pinky")||(RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="ring")||(RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="middle")||(RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="index"))
-        		{
-
-        			
-        			print ("p");
-        		}
-        		else
-        		{
-        			parent $JointArray[(`size $JointArray`)-1] $JointArray[(`size $JointArray`)-2];
-        			$TempParent = `listRelatives -p`;
-					
-        			if ((RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="Knee")){
-					select -r $JointArray[(`size $JointArray`)-1];    			
-        			
-					joint -e -oj xyz -sao "yup" $TempParent[0];
-					clear($TempParent);}
-					else{
-						
-					}
-        			
-        			
-        		}
-        		
-        		//joint -e -oj xyz -sao "yup" $JointArray[(`size $JointArray`)-2];	
-        	}
-
-	        if	(((`size $JointArray`)>1)&&(RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="pinky")&&(RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="ring")&&(RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="middle")&&(RMGetFromName($JointArray[(`size $JointArray`)-1],2)=="index")&&(RMGetFromName($JointArray[(`size $JointArray`)-1],2)!="clavicle")&&(RMGetFromName($JointArray[(`size $JointArray`)-1],2)!="leg")&&(RMGetFromName($JointArray[(`size $JointArray`)-1],2)!="footLimitInner")&&(RMGetFromName($JointArray[(`size $JointArray`)-1],2)!="footLimitOuter")&&(RMGetFromName($JointArray[(`size $JointArray`)-1],2)!="footLimitBack"))
-	        {
-        		//joint -e -oj xyz -sao "yup" $JointArray[(`size $JointArray`)-2];
-        	}
-	        
-         	
-        }
-    }
+	
 	*/
     //=================================================================================================================================//
     select -r Character01_MD_headTip_jnt_rig_rfr;
@@ -286,7 +249,7 @@ global proc RMCreateSkeleton(string $PelvisPoint)
  //=================================================================================================================================//
     
 	//file -import -type "mayaBinary"  -ignoreVersion -ra false -mergeNamespacesOnClash false  -options "v=0;"  -pr "//server/Personal/LuisDaniel/RiggCtrls.mb";
-	//file  -import -gr -gn "ReferenceControls" -type "mayaBinary"  -ignoreVersion -ra false -mergeNamespacesOnClash false  -options "v=0;"  -pr "//server/Personal/LuisDaniel/RiggCtrls.mb";
+	file  -import -gr -gn "ReferenceControls" -type "mayaBinary"  -ignoreVersion -ra false -mergeNamespacesOnClash false  -options "v=0;"  -pr "//server/Personal/LuisDaniel/RiggCtrls.mb";
 	//requires -dataType "byteArray" "Mayatomr" "2015.0 - 3.12.1.16 ";
 	RMDeleteTransformG();
 	print " FLAG REPORT ";
