@@ -19,13 +19,13 @@ string $Selecter= `window -wh 455 225 -t "RM Part Builder" -menuBar true -vis tr
     string $floatSlider =`floatSliderGrp  -field true -l Size -minValue 1 -maxValue 300 -v $SizeVal -cc "$SizeVal = #1; $SizeVal =(\"#1\")"`;
     string $ButtonArms = `button  -l "Arm Points" -c ("RMCreateArmPoints (<<0,0,0>>, RMSideOrient($checkboxA), $SizeVal, RMCheckSide($checkboxA))")`;
     string $ButtonLegs = `button  -l "Leg Points" -c ("RMCreateLegPoints (<<0,0,0>>,<<0,-1,0>>,<<0,0,1>>, $SizeVal, RMCheckSide($checkboxA))")`;
-    string $ButtonHead = `button  -l "Head Points" -c ("RMCreateHeadRefPoints (<<0,0,0>>,<<0,-1,0>>,<<0,0,1>>, $SizeVal)")`;
+    string $ButtonHead = `button  -l "Head Points" -c ("RMCreateHeadRefPoints (<<0,0,0>>,<<0,1,0>>,<<0,0,-1>>, $SizeVal)")`;
     string $ButtonSpine = `button  -l "Spine Points" -c ("RMCreateSpinePoints (<<0,0,0>>,<<0,1,0>>, $SizeVal)")`;
     string $ButtonHand = `button  -l "Hand Points" -c ("RMCreateHandPoints (<<0,0,0>>,RMSideOrient($checkboxA), $SizeVal,RMCheckSide($checkboxA))")`;
     string $ButtonFeet = `button  -l "Feet Points" -c ("")`;
     string $Text1 = `textField -ed false -w 800 -tx "  Build Reference Points" `;
     string $checkboxA=`checkBox -label " Right " -v true `;
-    string $checkboxB=`checkBox -label " Controls " -v true `;
+    string $checkboxB=`checkBox -label " Controls " -v false `;
     //string $Text2 = `textField -ed false -w 800 -tx "  Build Joints on Selected" `;
     string $BuildJoints = `button  -w 300 -l "Build Joints on Selected" -c ("RMCreateJointsOnSelected($checkboxB)")`;
     string $BuildFKJ = `button  -w 300 -l "Build FK to selected points" -c ("RMFKCreateonSelected()")`;
@@ -71,6 +71,10 @@ string $Selecter= `window -wh 455 225 -t "RM Part Builder" -menuBar true -vis tr
                 -attachForm $BuildJoints "top"  80
                 -attachForm $BuildJoints "left"  76
                 $myform;
+    formLayout  -edit 
+                -attachForm $checkboxB "top"  83
+                -attachForm $checkboxB "left"  379
+                $myform; 
     formLayout  -edit 
                 -attachForm $BuildFKJ "top"  110
                 -attachForm $BuildFKJ "left"  76
