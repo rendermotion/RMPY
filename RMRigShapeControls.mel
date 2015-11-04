@@ -120,13 +120,13 @@ global proc RMIKFKvisibilityLink (string $Obj[],string $systemIKFK,string $Contr
         }
         print $Obj;
         for ($i in $Obj)
-            {
-             connectAttr -f ($newName+".outputX") ($i+".visibility");
-             RMLockAndHideAttributes ({$i}) "3333333330";
-            }
-        }
-        else
         {
+         connectAttr -f ($newName+".outputX") ($i+".visibility");
+         RMLockAndHideAttributes ({$i}) "3333333330";
+        }
+    }
+    else
+    {
         for ($i in $Obj)
         {
             connectAttr -f ($Control+".IKFKSwitch") ($i+".visibility");
@@ -149,6 +149,7 @@ global proc RMParentLink( string $ObjIK , string $ObjFK , string $ObjJTX, string
     $ExpressionName=`RMSetFromName $ExpressionName 3 "exp"`;
     $ExpressionName=`RMSetFromName $ExpressionName 4 "IKS"`;
     $ExpressionName=`RMUniqueName $ExpressionName`;
+    
     string $PC[]=`parentConstraint -name $Constraint $ObjIK $ObjJTX `;
     parentConstraint $ObjFK $ObjJTX;
     string $TargetList[]=`parentConstraint -q -weightAliasList $PC[0]`;
@@ -381,7 +382,21 @@ global proc string RMCustomPickWalk (string $Elem,string $Class,int $depth){
     }
     return $returnValue;
 }
+global proc RMScaleShapeControls(float $Cx,float $Cy,float $Cz)
+{
+    string $daObj[] = `ls -sl`;
+    string $Shapes[] = `listRelatives -s $daObj[0]`;
+    select ($daObj[0]+".cv[*]");
 
+    print $Shapes;
+
+    for ( $Shape in $Shapes)
+    {
+        scale -r $Cx $Cy $Cz ($Shape+".cv[*]");
+    }
+
+    select -r $daObj[0] ;
+}
 global proc RMLinkHands(){
     string $ManoIzquierda = `RMObjNameToVar "*LF_wrist_jnt_JXT"`;
     RMHandControls($ManoIzquierda);

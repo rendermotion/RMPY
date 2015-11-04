@@ -8,9 +8,7 @@ source "RMRiggMath.mel";
 source "RMNameConvention.mel";
 source "RMRibbonSystem.mel";
 
-//requires -dataType "byteArray" "Mayatomr" "2015.0 - 3.12.1.16 ";
 
-//renameJointHierarchy "Character01_MD_Pelvis_pnt_rfr";
 /************************************************************************************************************************/
 /************************************************************************************************************************/
 /**********************************Crea AutoRIgg*************************************************************************/
@@ -31,14 +29,12 @@ global proc RMStartAutoRigg()
 
 	string $FKControls[] = `RMRebuildFK`;
 	string $IKControls[] = `RMRebuildIK`;
-	RMRebuildJXT "LF" ({$IKControls[0],$IKControls[1],$IKControls[2]}) ({$FKControls[0],$FKControls[1],$FKControls[2]});
-	RMRebuildJXT "RH" ({$IKControls[3],$IKControls[4],$IKControls[5]}) ({$FKControls[3],$FKControls[4],$FKControls[5]});
+	RMRebuildJXTArm "LF" ({$IKControls[0],$IKControls[1],$IKControls[2]}) ({$FKControls[0],$FKControls[1],$FKControls[2]});
+	RMRebuildJXTArm "RH" ({$IKControls[3],$IKControls[4],$IKControls[5]}) ({$FKControls[3],$FKControls[4],$FKControls[5]});
 	RMLinkHands();
 
 	string $FKControls[] = `RMRebuildFKLegs`;
-	print "\n";
-	print $FKControls;
-	print "\n";
+	
 	string $IKControls[] = `RMRebuildIKLegs`;
 
 	

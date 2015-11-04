@@ -1,0 +1,60 @@
+source "RMRigFunctions.mel";
+source "RMRigShapeControls.mel";
+source "RMRiggTools.mel";
+source "RMRigFK.mel";
+source "RMNameConvention.mel";
+
+global proc RMIKCreateonSelected()
+{
+	string $temp []=`ls -sl`;
+	string $BonesS[]=`RMCreateBonesAtPoints $temp`;
+	RMCreateIKControls $BonesS[0] 50;
+}
+
+global proc string[] RMCreateIKControls (string $IKroot,int $depth)
+{
+    string $Ex1=$IKroot;
+    string $Childs[];
+    int $Index=0;
+    float $Tam;
+    string $CntrlExt[];
+    string $GrupoCntrl[];
+    $Childs=`listRelatives -c $Ex1`;
+    
+    string $Ex2;
+    $Tam=`size $Childs`;
+    float $Lenghtbone;
+    while (($Tam!=0)&&($Index!=$depth))
+    {
+        
+        $Ex2=$Childs[0];
+        $Lenghtbone = `RMLenghtOfBone $Ex2`/3;
+        print ($Ex2+" ");
+        $Childs=`listRelatives -c $Ex2`;
+        $Tam=`size $Childs`;
+        $Index=$Index+1;
+    }
+    
+	string $IKname=$Ex2;
+	$IKname=`RMSetFromName $IKname 3 "IKH"`;
+	$IKname=`RMSetFromName $IKname 4 "IK"`;
+	string $BallIK=`RMSetFromName $IKname 2 "BallIK"`;
+    string $TipIK=`RMSetFromName $IKname 2 "TipIK"`;
+    ikHandle -sj $Ex1 -ee $Ex2 -name $IKname;
+
+    string $IKcontrol=`RMSetFromName $Ex2 3 "ctr"`;
+    $IKcontrol=`RMUniqueName $IKcontrol`;
+    $IKcontrol = `RMCreateCubeLine $Lenghtbone $Lenghtbone $Lenghtbone $IKcontrol`;
+    move -r ($Lenghtbone/2) 0 0 ($IKcontrol+".scalePivot") ($IKcontrol+".rotatePivot");
+    move -rpr -a 0 0 0 $IKcontrol;
+    makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $IKcontrol;
+    RMAlign $Ex2 $IKcontrol 1;
+
+    string $PoleVector[]=`RMCreatePoleVector $IKname`;
+	RMMakeIkStretchy $IKname;
+    RMMakeIkStretchy $IKname;
+    pointConstraint $IKcontrol $IKname;
+
+    return ({$IKcontrol,$PoleVector[0],$PoleVector[1]});
+}
+

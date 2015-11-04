@@ -2,6 +2,8 @@ source "RMRigFunctions.mel";
 source "RMRigShapeControls.mel";
 source "RMRiggTools.mel";
 source "RMRigFK.mel";
+source "RMRigIK.mel";
+source "RMRigJXT.mel";
 source "RMFK.mel";
 source "RMNameConvention.mel";
 source "RMCreateCharacterByped.mel";
@@ -22,14 +24,15 @@ string $Selecter= `window -wh 455 225 -t "RM Part Builder" -menuBar true -vis tr
     string $ButtonHead = `button  -l "Head Points" -c ("RMCreateHeadRefPoints (<<0,0,0>>,<<0,1,0>>,<<0,0,-1>>, $SizeVal)")`;
     string $ButtonSpine = `button  -l "Spine Points" -c ("RMCreateSpinePoints (<<0,0,0>>,<<0,1,0>>, $SizeVal)")`;
     string $ButtonHand = `button  -l "Hand Points" -c ("RMCreateHandPoints (<<0,0,0>>,RMSideOrient($checkboxA), $SizeVal,RMCheckSide($checkboxA))")`;
-    string $ButtonFeet = `button  -l "Feet Points" -c ("")`;
+    string $ButtonFeet = `button  -l "Feet Points" -c ("RMCreateToesPoints(<<0,0,0>>,<<0,0,1>>, $SizeVal,RMCheckSide($checkboxA))")`;
     string $Text1 = `textField -ed false -w 800 -tx "  Build Reference Points" `;
     string $checkboxA=`checkBox -label " Right " -v true `;
-    string $checkboxB=`checkBox -label " Controls " -v false `;
+    string $checkboxB=`checkBox -label " Add FK " -v false -ann "Only avalive for Arms & Legs"`;
+    string $checkboxC=`checkBox -label " Add IK " -v false -ann "Only avalive for Arms & Legs"`;
     //string $Text2 = `textField -ed false -w 800 -tx "  Build Joints on Selected" `;
-    string $BuildJoints = `button  -w 300 -l "Build Joints on Selected" -c ("RMCreateJointsOnSelected($checkboxB)")`;
+    string $BuildJoints = `button  -w 300 -l "Build Joints on Selected" -c ("RMCreateJointsOnSelected($checkboxB,$checkboxC)")`;
     string $BuildFKJ = `button  -w 300 -l "Build FK to selected points" -c ("RMFKCreateonSelected()")`;
-    //string $BuildGroups = `button  -w 300 -l "Create Groups" -c ("RMCreateMainGroupsAndControls()")`;
+    //string $BuildGroups = `button  -w 300 -l "Create Groups" -c ("oupsAndControls()")`;
    
     formLayout  -edit 
                 -attachForm $Text1 "top"  26
@@ -69,15 +72,19 @@ string $Selecter= `window -wh 455 225 -t "RM Part Builder" -menuBar true -vis tr
                 $myform;
     formLayout  -edit 
                 -attachForm $BuildJoints "top"  80
-                -attachForm $BuildJoints "left"  76
+                -attachForm $BuildJoints "left"  72
                 $myform;
     formLayout  -edit 
-                -attachForm $checkboxB "top"  83
+                -attachForm $checkboxB "top"  76
                 -attachForm $checkboxB "left"  379
                 $myform; 
     formLayout  -edit 
+                -attachForm $checkboxC "top"  90
+                -attachForm $checkboxC "left"  379
+                $myform; 
+    formLayout  -edit 
                 -attachForm $BuildFKJ "top"  110
-                -attachForm $BuildFKJ "left"  76
+                -attachForm $BuildFKJ "left"  72
                 $myform;
 setParent ..;
 

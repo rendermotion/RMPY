@@ -303,7 +303,7 @@ global proc RMAddVisibilityControls(string $Object)
     
 }
  /*Crea la herarquia de los controles IK*/
-global proc string[] RMCreateIKControls (string $IKroot , string $Systemparent)
+global proc string[] RMCreateIKControlsArm (string $IKroot , string $Systemparent)
 {
 	//Obtiene los nombres de los 4 joints del sistema y los reasigna a Ex1 2 3 4
 	string $Ex1 = $IKroot;
@@ -569,10 +569,10 @@ global proc string[] RMCreateIKControlsLeg (string $IKroot , string $Systemparen
 	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $IKcontrol;
    
    
-  // RMAlign  $Ex5 $IKcontrol 2;
-   RMAlign  $Ex4 $IKcontrol 1;
+    // RMAlign  $Ex5 $IKcontrol 2;
+    RMAlign  $Ex4 $IKcontrol 1;
 	
-//	string $IKcontrol = `RMCreaControl $Ex4 4`;
+	//	string $IKcontrol = `RMCreaControl $Ex4 4`;
 	//Crea un Nombre para el IK que tenga en el sistema al que pertenece IKH
 	string $IKname=$Ex4;
 	$IKname=`RMSetFromName $IKname 3 "IKH"`;
@@ -582,8 +582,8 @@ global proc string[] RMCreateIKControlsLeg (string $IKroot , string $Systemparen
 	
 	ikHandle -sj $Ex1 -ee $Ex4 -name $IKname;
 
-   ikHandle -sj $Ex4 -ee $Ex5 -name $BallIK;
-   ikHandle -sj $Ex5 -ee $Ex6 -name $TipIK;
+   	ikHandle -sj $Ex4 -ee $Ex5 -name $BallIK;
+   	ikHandle -sj $Ex5 -ee $Ex6 -name $TipIK;
    
 	string $PoleVector[]=`RMCreatePoleVector $IKname`;
 	RMMakeIkStretchy $IKname;
@@ -696,12 +696,15 @@ global proc string[] RMCreateIKControlsLeg (string $IKroot , string $Systemparen
    
     shadingNode -name $newName -asUtility reverse;
     connectAttr   ($IKcontrol+".AttachTo") ($newName+".inputX");
-    connectAttr   ($newName+".outputX") ($ParentC[0]+"."+$Alias[1]);
-   
-	//parent $GrupoCntrl1 $moveMain;
-	string $IKGroupp=`RMObjNameToVar "*IKGroup*"`;
-	parent $GrupoCntrl1 $IKGroupp;
-	parent $MainData ScaledData;
+    if (`objExists ("*MD_Mover2_ctr_rig")`)
+    {
+	    connectAttr   ($newName+".outputX") ($ParentC[0]+"."+$Alias[1]);
+	   
+		//parent $GrupoCntrl1 $moveMain;
+		string $IKGroupp=`RMObjNameToVar "*IKGroup*"`;
+		parent $GrupoCntrl1 $IKGroupp;
+		parent $MainData ScaledData;
+	}
 
 	/*string $ScaledData = RMObjNameToVar ("ScaledData");
     parent $IKname $ScaledData;
