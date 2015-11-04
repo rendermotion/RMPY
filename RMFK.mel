@@ -8,5 +8,5 @@ global proc RMFKCreateonSelected()
 {
 	string $temp []=`ls -sl`;
 	string $BonesS[]=`RMCreateBonesAtPoints $temp`;
-	RMCreateFKControls $temp[0] 0;
+	RMCreateFKControls $BonesS[0] 50;
 }

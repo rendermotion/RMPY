@@ -15,10 +15,10 @@ global proc string[] RMCreateFKControls (string $FKroot,int $depth)
     string $GrupoCntrl[];
     $Childs=`listRelatives -c $Ex`;
     $Tam=`size $Childs`;
-    while ($Tam!=0)
+    while (($Tam!=0)&&($Index!=$depth))
     {
-        if (`objectType -isType "transform" $Ex`!=0)
-       	{
+        //if (`objectType -isType "transform" $Ex`!=0)
+       	//{
             $Tam=`RMLenghtOfBone $Ex`;
             $CntrlExt[$Index] = `RMCreaControl $Ex ($Tam*1/2)`;
             $GrupoCntrl[$Index]= `RMCreateGrouponObj $CntrlExt[$Index] 1`;
@@ -30,10 +30,11 @@ global proc string[] RMCreateFKControls (string $FKroot,int $depth)
                parent $GrupoCntrl[$Index] $CntrlExt[$Index-1];
             }
             $Index=$Index+1;
-        }
-            $Ex=$Childs[0];
-            $Childs=`listRelatives -c $Ex`;
-            $Tam=`size $Childs`;
+        //}
+        $Ex=$Childs[0];
+        $Childs=`listRelatives -c $Ex`;
+        print $Childs;
+        $Tam=`size $Childs`;
     }
     return $GrupoCntrl;
 }

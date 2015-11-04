@@ -1,0 +1,150 @@
+global proc RMRebuildJXT(string $side,string $IKControls[],string $FKControls[],string $Part[])
+{
+	string $ORGArmroot=$Part[0];
+	float $Limit=2;
+	if (RMGetFromName($ORGArmroot,2)=="shoulder"){$Limit=2;}
+	
+	string $JXTARMID=`RMRebuild3Part $ORGArmroot "JXT"`;
+	
+	string $JXTArmroot=$Part[0];
+	
+	string $JXTArmControl = $Part[0];
+	$JXTArmControl=`RMSetFromName $JXTArmControl 3 "ctr"`;
+	$JXTArmControl=`RMSetFromName $JXTArmControl 4 "rig"`;
+	
+	file  -import -gr -gn "ReferenceControls" -type "mayaBinary"  -ignoreVersion -ra false -mergeNamespacesOnClash false  -options "v=0;"  -pr "//server/Personal/LuisDaniel/RiggCtrls.mb";
+	duplicate -name $JXTArmControl "clav_ctrl";
+	parent -w $JXTArmControl;
+	select -r ReferenceControls;
+	doDelete;
+	
+	float $ClavSize = (`RMLenghtOfBone $ORGArmroot`/2);
+	//float $ClavSize = RMLenghtOfBone ($JXTArmrootParent[0]);
+	scale -scaleXYZ ($ClavSize/2) ($ClavSize/2) ($ClavSize/2) $JXTArmControl;
+	makeIdentity -apply true -t 0 -r 0 -s 1 -n 0 $JXTArmControl;
+	//RMAlign EL control De la clavicula a su nacimiento
+	RMAlign $JXTArmroot $JXTArmControl 3;
+
+	string $JXTArmControlGrp = `RMCreateGrouponObj $JXTArmControl 1`;
+	string $JXTArmControlGrp2 = `RMCreateGrouponObj $JXTArmControlGrp 1`;
+
+    parent -world  $JXTArmControl;
+   
+    //parentConstraint -mo $JXTArmrootParent[0] $JXTArmControlGrp;
+
+	//Emparenta el Control del Brazo al Gru
+    parent $JXTArmControl $JXTArmControlGrp;
+
+	string $temp[];
+	string $IKArmroot=$Part[1];
+	string $FKArmroot=$Part[2];
+	
+	for ($n=0;$n<=$Limit;$n++)
+	{
+		RMParentLink $IKArmroot $FKArmroot $JXTArmroot $JXTArmControl;
+		$temp=`listRelatives -c -typ "transform" $IKArmroot`;
+		$IKArmroot=$temp[0];
+		$temp=`listRelatives -c -typ "transform" $FKArmroot`;
+		$FKArmroot=$temp[0];
+		$temp=`listRelatives -c -typ "transform" $JXTArmroot`;
+		$JXTArmroot=$temp[0];
+	}
+	
+    
+	RMIKFKvisibilityLink ($IKControls,"IK",$JXTArmControl);
+	RMIKFKvisibilityLink ($FKControls, "FK" ,$JXTArmControl);
+	
+    
+	$JXTArmroot=$JXTARMID;
+    string $temp1[]=`listRelatives -c $JXTArmroot`;    
+    string $temp2[]=`listRelatives -c $temp1[0]`;
+   	string $JXTArmroot1 = $temp1[0];
+	string $JXTArmroot2 = $temp2[0];
+		
+	string $Ribbon01[]=`RMCreaRibbon  $JXTArmroot $JXTArmroot1`;
+    string $Ribbon02[]=`RMCreaRibbon  $JXTArmroot1 $JXTArmroot2`;
+    
+    string $Ribbon1Controls[]=`listRelatives -c $Ribbon01[2]`;
+    string $Ribbon2Controls[]=`listRelatives -c $Ribbon02[2]`;
+    
+    float  $LongitudBrazo = `RMLenghtOfBone $JXTArmroot2`;
+    string $MidControl =`RMCreaControl $JXTArmroot2 ($LongitudBrazo/3)`;
+    string $MidControlParent=`RMCreateGrouponObj $MidControl 1`;
+    
+    parentConstraint -mo $JXTArmroot1 $MidControlParent;
+    
+    parentConstraint -mo $MidControl $Ribbon1Controls[2];
+    parentConstraint -mo $MidControl $Ribbon2Controls[0];
+    //parentConstraint $JXTArmroot3 $Ribbon2Controls[2];
+    //parentConstraint -mo $JXTArmrootParent[0] $Ribbon1Controls[0];
+    
+    string $Ribbon1Md=`RMCreateGrouponObj $Ribbon1Controls[1] 1`;
+    string $Ribbon2Md=`RMCreateGrouponObj $Ribbon2Controls[1] 1`;
+    
+    parentConstraint -mo $JXTArmroot $Ribbon1Md;
+    parentConstraint -mo $JXTArmroot2 $Ribbon2Md;
+   
+    RMdeleteShapeNodes $Ribbon1Controls[0];
+    RMdeleteShapeNodes $Ribbon1Controls[2];
+    RMdeleteShapeNodes $Ribbon2Controls[0];    
+    RMdeleteShapeNodes $Ribbon2Controls[2];
+
+    /*
+    string $MainVis=`RMObjNameToVar ("*MainVisibility*")`;
+    connectAttr ($MainVis+".ToonyControls") ($Ribbon1Controls[1]+".visibility");
+    connectAttr ($MainVis+".ToonyControls") ($Ribbon2Controls[1]+".visibility");
+    connectAttr ($MainVis+".ToonyControls") ($MidControl+".visibility");   
+	*/
+    select -r $JXTArmControl;
+    
+   
+}
+global proc string RMRebuild3Part (string $firstBone,string $Prefix){
+	//Crea el primer Joint y lo RMAlign al Hueso inicial
+	select -cl;
+	string $Joint1=`joint -n (RMSetFromName($firstBone,4,$Prefix))`;
+	
+	//setAttr ($firstBone+".jointOrientY") 0;
+	RMAlign $firstBone $Joint1 3;
+	string $temp[]=`listRelatives -c -typ "joint" $firstBone`;
+	string $temp1[]=`listRelatives -c -typ "joint" $temp[0]`;
+
+	// Crea un grupo padre del Joint Inicial , y le aplica un parent Constraint al padre de la base con Mantain Ofset
+	string $parent[]=`listRelatives -p $firstBone`;
+	string $Joint1Parent=`RMCreateGrouponObj $Joint1 1`;
+	if ($parent[0]!="")
+	{
+		parentConstraint -mo $parent[0] $Joint1Parent;
+	}
+	/*else
+	{
+		$parent[0]=RMCreaControl ($firstBone, RMLenghtOfBone($firstBone));
+		parentConstraint -mo $parent[0] $Joint1Parent;
+	}*/
+	
+	//Crea 2 huesos mas
+	string $Joint2=`joint -n (RMSetFromName($temp[0],4,$Prefix))`;
+	// RMAlign en posicion el nuevo hueso Joint2 al segundo hueso de la herarquia y en orientacion al primer hueso y lo mueve -1/6 parte en su eje X
+	RMAlign $temp[0] $Joint2 1;
+	string $temp2[]=`listRelatives -c $temp1[0]`;
+	
+	string $Joint3=`joint -n (RMSetFromName($temp1[0],4,$Prefix))`;
+	
+	float $RMDistancia= `RMDistancia $temp1[0] $temp[0]`;
+	//RMAlign el segundo hueso de la segunda Falange a la segunda Falange tanto en posicion como orientacion y lo mueve 1/6 de la RMDistancia hacia la Falange 3
+	RMAlign $temp1[0] $Joint3 3;
+	//move -os -r ($RMDistancia/10) 0 0 $Joint3;
+	//Resetea las transformaciones de todos los huesos nuevos
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Joint3;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Joint2;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Joint1;
+	setAttr ($Joint2+".rotate") 0 0 0;
+	setAttr ($Joint3+".rotate") 0 0 0;
+	// Orienta el segundo hueso para corregir su orientacion que no este como la del primer hueso
+	joint -e -oj "xzy" -zso $Joint2;
+	joint -e -oj "xzy" -zso $Joint3;
+	//parent $Joint1Parent Joints;
+	//Regresa la primera Falange
+	
+	return $Joint1;
+}

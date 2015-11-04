@@ -1,18 +1,4 @@
-global proc RMScaleShapeControls(float $Cx,float $Cy,float $Cz)
-{
-	string $daObj[] = `ls -sl`;
-	string $Shapes[] = `listRelatives -s $daObj[0]`;
-	select ($daObj[0]+".cv[*]");
-
-	print $Shapes;
-
-	for ( $Shape in $Shapes)
-	{
-		scale -r $Cx $Cy $Cz ($Shape+".cv[*]");
-	}
-
-	select -r $daObj[0] ;
-}
+source "RMRigShapeControls.mel";
 global proc CheckValues (float $Bx,float $By,float $Bz, float $Size)
 {
 	float $SizeX=1;
