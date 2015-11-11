@@ -1,0 +1,233 @@
+global proc RMCreateJointsOnSelected(string $Box,string $Box2)
+{
+	float $CBox=`checkBox -q -value $Box`;
+	float $CBox2=`checkBox -q -value $Box2`;
+	string $temp[] = `ls -sl`;
+	string $Original = $temp[0];
+	string $temp2[] = `listRelatives -ad`;
+	vector $BonePosition=`xform -q -ws -rt`;
+	$temp2[`size $temp2`]=$temp[0];
+	string $TParent=$Original;
+	string $jointArray[]={};
+    string $temp3[] = ReverseArray($temp2);
+    //print $temp3;
+	string $Nombrejnt;
+	string $i;
+    int $index=0;
+    int $indexR=0;
+    for ($i in $temp3)
+    {
+    	if ((RMIgnoraShape($i)==true))
+    	{
+		  	makeIdentity -apply true -t 1 -r 1 -s 1 $temp3[$indexR];
+		    select -cl;
+		    $Nombrejnt=(RMSetFromName((RMSetFromName($i, 3,"jnt")),4,"rig"));
+		    $jointArray[$index]=`joint -p 0 0 0 -n $Nombrejnt`;
+		    //$jointArray[$index]=RMSetNameInFormat ($jointArray[$index],"Object","MD","JNT","RIG");
+			RMAlign $temp3[$indexR] $jointArray[$index] 3;
+		    makeIdentity -apply true -t 1 -r 1 -s 0 $jointArray[$index];
+		    if ($index>0)
+	        {	
+		        parent $jointArray[$index] $jointArray[$index-1];
+		        if ((RMGetFromName($jointArray[$index-1],2)!="toe")&&(RMGetFromName($jointArray[$index-1],2)!="footLimitOuter")&&(RMGetFromName($jointArray[$index-1],2)!="footLimitInner")&&(RMGetFromName($jointArray[$index-1],2)!="thumb3")&&(RMGetFromName($jointArray[$index-1],2)!="index3")&&(RMGetFromName($jointArray[$index-1],2)!="middle3")&&(RMGetFromName($jointArray[$index-1],2)!="ring3")&&(RMGetFromName($jointArray[$index-1],2)!="pinky3")&&(RMGetFromName($jointArray[$index-1],2)!="ToeThumb3")&&(RMGetFromName($jointArray[$index-1],2)!="ToeIndex3")&&(RMGetFromName($jointArray[$index-1],2)!="ToeMiddle3")&&(RMGetFromName($jointArray[$index-1],2)!="ToeRing3")&&(RMGetFromName($jointArray[$index-1],2)!="ToePinky3"))
+		        {
+		        	joint -e -oj xyz -sao "yup" $jointArray[$index-1];
+	        	}
+		   	}
+		    $index=$index+1;
+		}
+		
+		$indexR++;
+    	 
+    }
+    //==================================================================================================//
+    //==================================================================================================//
+    string $PartNewName = (RMGetFromName($Original,0)+"_"+RMGetFromName($Original,1)+"_"+RMGetFromName($Original,2));
+    string $CharacterName =(RMGetFromName($Original,0)+"_"+RMGetFromName($Original,1)+"_");
+    circle -c 0 0 0 -nr 1 0 0 -sw 360 -r (RMLenghtOfBone($jointArray[0])/4) -d 3 -ut 0 -tol 0.01 -s 8 -ch 1 -n $PartNewName;
+    RMAlign $jointArray[0] ($PartNewName) 3;
+    RMCreateGrouponObj($PartNewName,1);
+    RMAlign ($PartNewName) ($PartNewName+"Group_grp") 3;
+    group -em -n ($PartNewName+"_grp_JOINTS");
+    group -em -n ($PartNewName+"_grp_SCALED");
+    group -em -n ($PartNewName+"_grp_NOTSCALED");
+    parent $jointArray[0] ($PartNewName+"_grp_JOINTS") ;
+    parent ($PartNewName+"_grp_JOINTS") ($PartNewName);
+    parent ($PartNewName+"_grp_SCALED") ($PartNewName);
+    parent ($PartNewName+"_grp_NOTSCALED") ($PartNewName+"Group_grp");
+    
+    //parentConstraint $PartNewName ($PartNewName+"_grp_SCALED");
+    //parentConstraint $PartNewName ($PartNewName+"_grp_NOTSCALED");
+
+    if ((RMObjectInArray($jointArray,"ToeThumb")!=""))
+	{
+		string $thumbJ = RMObjectInArray($jointArray,"humb_");
+		string $indexJ = RMObjectInArray($jointArray,"ndex_");
+		string $middleJ = RMObjectInArray($jointArray,"iddle_");
+		string $ringJ = RMObjectInArray($jointArray,"ing_");
+		string $pinkyJ = RMObjectInArray($jointArray,"inky_");
+		parent $indexJ $middleJ $ringJ $pinkyJ (RMObjectInArray($jointArray,"feet_"));
+		
+		parent -w $thumbJ $indexJ $middleJ $ringJ $pinkyJ;
+		if (RMObjectInArray($jointArray,"footLimitBack")!="")
+		{
+			RMAlign (RMObjectInArray($jointArray,"feet_")) (RMObjectInArray($jointArray,"footLimitBack")) 1;
+			//parent -w $thumbJ;
+			select -r (RMObjectInArray($jointArray,"feet_"));
+			doDelete;
+			parent $thumbJ $indexJ $middleJ $ringJ $pinkyJ (RMObjectInArray($jointArray,"footLimitBack"));
+			
+			
+		}
+		else 
+		{
+			parent $thumbJ $indexJ $middleJ $ringJ $pinkyJ (RMObjectInArray($jointArray,"feet_"));
+			if (($CBox==true))
+			{
+				RMHandControls ((RMObjectInArray($jointArray,"feet_")));
+
+			}
+		}
+
+	}
+	if ((RMObjectInArray($jointArray,"thumb")!=""))
+	{
+		string $thumbJ = RMObjectInArray($jointArray,"humb_");
+		string $indexJ = RMObjectInArray($jointArray,"ndex_");
+		string $middleJ = RMObjectInArray($jointArray,"iddle_");
+		string $ringJ = RMObjectInArray($jointArray,"ing_");
+		string $pinkyJ = RMObjectInArray($jointArray,"inky_");
+		if (RMObjectInArray($jointArray,"wrist")!="")
+		{
+			parent -w $thumbJ;
+			select -r (RMObjectInArray($jointArray,"palm_"));
+			doDelete;
+			parent $thumbJ $indexJ $middleJ $ringJ $pinkyJ (RMObjectInArray($jointArray,"wrist"));
+			if (($CBox==true)||($CBox2==true))
+			{
+				RMHandControls ((RMObjectInArray($jointArray,"wrist_")));
+				parent ($CharacterName+"wristRootData_grp_rig") ($CharacterName+"wristPalm_ctr_rig") ($PartNewName+"_grp_SCALED");
+			}
+		}
+		else 
+		{
+			parent $indexJ $middleJ $ringJ $pinkyJ (RMObjectInArray($jointArray,"palm_"));
+			if (($CBox==true)||($CBox2==true))
+			{
+				RMHandControls ((RMObjectInArray($jointArray,"palm_")));
+				parent ($CharacterName+"palmRootData_grp_rig") ($CharacterName+"palmPalm_ctr_rig") ($PartNewName+"_grp_SCALED");
+			}
+		}
+		
+	}
+
+	if (RMObjectInArray($jointArray,"ball")!="")
+	{
+		string $TBall = RMObjectInArray($jointArray,"ball");
+		string $TBack = RMObjectInArray($jointArray,"footLimitBack");
+		string $TOut  = RMObjectInArray($jointArray,"footLimitOuter");
+		string $TIne  = RMObjectInArray($jointArray,"footLimitInner");
+		string $TToe  = RMObjectInArray($jointArray,"toe_");
+		parent -w $TOut $TIne $TBack $TToe;
+		parent $TBack $TOut $TIne $TBall;
+		parent $TToe $TBack;
+		$Original=RMSetFromName(RMSetFromName($Original,3,"jnt"),4,"rig");
+		if (RMObjectInArray($jointArray,"leg")!="")
+		{
+			string $IKCONTROLLeg[];
+			string $FKCONTROLLeg[];
+			if (($CBox==true)&&($CBox2==false))
+			{
+				$FKCONTROLLeg = (RMCreateFKControls(RMObjectInArray($jointArray,"leg"),5));
+				parent $FKCONTROLLeg[0] ($PartNewName+"_grp_SCALED");
+			}
+			if (($CBox2==true)&&($CBox==false))
+			{	
+				$IKCONTROLLeg=(RMCreateIKControls(RMObjectInArray($jointArray,"leg"),2));
+				parent ($CharacterName+"ankle_IKH_IK") ($CharacterName+"ankle_IKH_IKstartPoint") ($CharacterName+"ankle_IKH_IKstartPoint1") ($CharacterName+"ankle_IKH_IKendPoint1") ($CharacterName+"ankle_IKH_IKendPoint") $IKCONTROLLeg[0] $IKCONTROLLeg[1] ($PartNewName+"_grp_SCALED");
+				parent ($CharacterName+"anklePoleVectorKneeData_rig_rig") $IKCONTROLLeg[2] ($PartNewName+"_grp_NOTSCALED");
+			}
+			if (($CBox2==true)&&($CBox==true))
+			{
+				string $FKLeg=RMRebuild3Part(RMObjectInArray($jointArray,"leg"),"FK");
+				string $IKLeg=RMRebuild3Part(RMObjectInArray($jointArray,"leg"),"IK");
+				$IKCONTROLLeg=RMCreateIKControls($IKLeg,2);
+				$FKCONTROLLeg=RMCreateFKControls($FKLeg,5);
+				select -r "*ankle_ctr_IK";
+				RMScaleShapeControls(6,6,6);
+				RMRebuildJXT(RMGetFromName($Original,1),({$IKCONTROLLeg[0],$IKCONTROLLeg[1],$IKCONTROLLeg[2]}) ,($FKCONTROLLeg),({RMObjectInArray($jointArray,"leg"),$IKLeg,$FKLeg}));
+				
+				parent ($CharacterName+"legGroup1_grp_rig") ($CharacterName+"legGroup_grp_JXT") ($CharacterName+"ankleGroup_grp_JXT") ($CharacterName+"KneeToankleControls_grp_RBN") ($CharacterName+"legToKneeControls_grp_RBN") ($CharacterName+"ankle_ctr_IK") ($CharacterName+"anklePoleVector_ctr_rig") ($CharacterName+"legGroup_grp_IK") ($CharacterName+"legGroup_grp_FK") $FKCONTROLLeg ($CharacterName+"ankle_IKH_IK") ($CharacterName+"ankle_IKH_IKstartPoint") ($CharacterName+"ankle_IKH_IKstartPoint1") ($CharacterName+"ankle_IKH_IKendPoint1") ($CharacterName+"ankle_IKH_IKendPoint") $FKCONTROLLeg[0] $FKCONTROLLeg[1] ($PartNewName+"_grp_SCALED");
+				parent Joints NoScaledData ($CharacterName+"anklePoleVectorKneeData_rig_rig") $IKCONTROLLeg[2] ($PartNewName+"_grp_NOTSCALED");
+
+				select -cl;
+				
+			}
+		}
+	}
+	if (RMObjectInArray($jointArray,"neck")!="")
+	{
+		parent -w (RMObjectInArray($jointArray,"headTip"));
+		parent (RMObjectInArray($jointArray,"headTip")) (RMObjectInArray($jointArray,"head_jnt"));
+	}
+	if (RMObjectInArray($jointArray,"shoulder")!="")
+	{
+		string $IKCONTROLARM[];
+		string $FKCONTROLARM[];
+		if (($CBox==true)&&($CBox2==false))
+		{
+			$FKCONTROLARM=(RMCreateFKControls(RMObjectInArray($jointArray,"shoulder"),3));
+			parent ($FKCONTROLARM[0]) ($PartNewName+"_grp_SCALED");
+			if(RMObjectInArray($jointArray,"thumb")!="")
+			{
+				select -r "*wrist_ctr_rig";
+				RMScaleShapeControls(6,6,6);
+			}
+		}
+		if (($CBox2==true)&&($CBox==false))
+		{
+			$IKCONTROLARM=RMCreateIKControls(RMObjectInArray($jointArray,"shoulder"),2);
+			parent ($CharacterName+"wrist_IKH_IK") ($CharacterName+"wrist_IKH_IKstartPoint") ($CharacterName+"wrist_IKH_IKstartPoint1") ($CharacterName+"wrist_IKH_IKendPoint1") ($CharacterName+"wrist_IKH_IKendPoint") $IKCONTROLARM[0] $IKCONTROLARM[1] ($PartNewName+"_grp_SCALED");
+			parent ($CharacterName+"wristPoleVectorelbowData_rig_rig") $IKCONTROLARM[2] ($PartNewName+"_grp_NOTSCALED");
+			select -r "*wrist_ctr_rig";
+			RMScaleShapeControls(3,3,3);
+		}	
+		
+			
+		if (($CBox2==true)&&($CBox==true))
+		{
+			string $FKARM=RMRebuild3Part(RMObjectInArray($jointArray,"shoulder"),"FK");
+			string $IKARM=RMRebuild3Part(RMObjectInArray($jointArray,"shoulder"),"IK");
+			$IKCONTROLARM=RMCreateIKControls($IKARM,2);
+			$FKCONTROLARM=RMCreateFKControls($FKARM,4);
+			if(RMObjectInArray($jointArray,"thumb")!="")
+			{
+				select -r "*_wrist_ctr_*";
+				RMScaleShapeControls(6,6,6);
+			}
+			RMRebuildJXT(RMGetFromName($Original,1),({$IKCONTROLARM[0],$IKCONTROLARM[1],$IKCONTROLARM[2]}) ,($FKCONTROLARM),({RMObjectInArray($jointArray,"shoulder"),$IKARM,$FKARM}));
+			
+			parent ($CharacterName+"shoulderGroup1_grp_rig") ($CharacterName+"shoulderGroup_grp_JXT") ($CharacterName+"wristGroup_grp_JXT") ($CharacterName+"elbowTowristControls_grp_RBN") ($CharacterName+"shoulderToelbowControls_grp_RBN") ($CharacterName+"wrist_ctr_IK") ($CharacterName+"wristPoleVector_ctr_rig") ($CharacterName+"shoulderGroup_grp_IK") ($CharacterName+"shoulderGroup_grp_FK") $FKCONTROLARM ($CharacterName+"wrist_IKH_IK") ($CharacterName+"wrist_IKH_IKstartPoint") ($CharacterName+"wrist_IKH_IKstartPoint1") ($CharacterName+"wrist_IKH_IKendPoint1") ($CharacterName+"wrist_IKH_IKendPoint") $FKCONTROLARM[0] $FKCONTROLARM[1] ($PartNewName+"_grp_SCALED");
+			parent Joints NoScaledData ($CharacterName+"wristPoleVectorelbowData_rig_rig") $IKCONTROLARM[2] ($PartNewName+"_grp_NOTSCALED");
+			select -r "*wrist_ctr_IK";
+			RMScaleShapeControls(2,2,2);
+		}
+		//select -r "*wrist_ctr_IK";
+		//RMScaleShapeControls(6,6,6);
+	}
+	//rebuiselect -r $Original;
+	//doDelete;
+}
+global proc string RMObjectInArray(string $SArray[], string $key)
+{
+	string $i;
+	for ($i in $SArray)
+	{
+		if (`match $key $i `!="")
+		{
+			return $i;
+		}
+	}
+	return "";
+}
+

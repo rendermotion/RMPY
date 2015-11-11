@@ -6,197 +6,6 @@ source "RMRiggMath.mel";
 source "RMRiggTools.mel";
 source "RMRigJXT.mel";
 
-global proc RMCreateJointsOnSelected(string $Box,string $Box2)
-{
-	float $CBox=`checkBox -q -value $Box`;
-	float $CBox2=`checkBox -q -value $Box2`;
-	string $temp[] = `ls -sl`;
-	string $Original = $temp[0];
-	string $temp2[] = `listRelatives -ad`;
-	vector $BonePosition=`xform -q -ws -rt`;
-	$temp2[`size $temp2`]=$temp[0];
-	string $TParent=$Original;
-	string $jointArray[]={};
-    string $temp3[] = ReverseArray($temp2);
-    //print $temp3;
-	string $Nombrejnt;
-	string $i;
-    int $index=0;
-    int $indexR=0;
-    for ($i in $temp3)
-    {
-    	if ((RMIgnoraShape($i)==true))
-    	{
-		  	makeIdentity -apply true -t 1 -r 1 -s 1 $temp3[$indexR];
-		    select -cl;
-		    $Nombrejnt=(RMSetFromName((RMSetFromName($i, 3,"jnt")),4,"rig"));
-		    $jointArray[$index]=`joint -p 0 0 0 -n $Nombrejnt`;
-		    //$jointArray[$index]=RMSetNameInFormat ($jointArray[$index],"Object","MD","JNT","RIG");
-			RMAlign $temp3[$indexR] $jointArray[$index] 3;
-		    makeIdentity -apply true -t 1 -r 1 -s 0 $jointArray[$index];
-		    if ($index>0)
-	        {	
-		        parent $jointArray[$index] $jointArray[$index-1];
-		        if ((RMGetFromName($jointArray[$index-1],2)!="toe")&&(RMGetFromName($jointArray[$index-1],2)!="footLimitOuter")&&(RMGetFromName($jointArray[$index-1],2)!="footLimitInner")&&(RMGetFromName($jointArray[$index-1],2)!="thumb3")&&(RMGetFromName($jointArray[$index-1],2)!="index3")&&(RMGetFromName($jointArray[$index-1],2)!="middle3")&&(RMGetFromName($jointArray[$index-1],2)!="ring3")&&(RMGetFromName($jointArray[$index-1],2)!="pinky3")&&(RMGetFromName($jointArray[$index-1],2)!="ToeThumb3")&&(RMGetFromName($jointArray[$index-1],2)!="ToeIndex3")&&(RMGetFromName($jointArray[$index-1],2)!="ToeMiddle3")&&(RMGetFromName($jointArray[$index-1],2)!="ToeRing3")&&(RMGetFromName($jointArray[$index-1],2)!="ToePinky3"))
-		        {
-		        	joint -e -oj xyz -sao "yup" $jointArray[$index-1];
-	        	}
-		   	}
-		    $index=$index+1;
-		}
-		
-		$indexR++;
-    	 
-    }
-    //==================================================================================================//
-    //==================================================================================================//
-    string $PartNewName = (RMGetFromName($Original,0)+"_"+RMGetFromName($Original,1)+"_"+RMGetFromName($Original,2));
-    RMCreaControl($PartNewName,RMLenghtOfBone($jointArray[0]))
-    if ((RMObjectInArray($jointArray,"ToeThumb")!=""))
-	{
-		string $thumbJ = RMObjectInArray($jointArray,"humb_");
-		string $indexJ = RMObjectInArray($jointArray,"ndex_");
-		string $middleJ = RMObjectInArray($jointArray,"iddle_");
-		string $ringJ = RMObjectInArray($jointArray,"ing_");
-		string $pinkyJ = RMObjectInArray($jointArray,"inky_");
-		parent $indexJ $middleJ $ringJ $pinkyJ (RMObjectInArray($jointArray,"feet_"));
-		
-		parent -w $thumbJ $indexJ $middleJ $ringJ $pinkyJ;
-		if (RMObjectInArray($jointArray,"footLimitBack")!="")
-		{
-			RMAlign (RMObjectInArray($jointArray,"feet_")) (RMObjectInArray($jointArray,"footLimitBack")) 1;
-			//parent -w $thumbJ;
-			select -r (RMObjectInArray($jointArray,"feet_"));
-			doDelete;
-			parent $thumbJ $indexJ $middleJ $ringJ $pinkyJ (RMObjectInArray($jointArray,"footLimitBack"));
-			
-			
-		}
-		else 
-		{
-			parent $thumbJ $indexJ $middleJ $ringJ $pinkyJ (RMObjectInArray($jointArray,"feet_"));
-			if (($CBox==true))
-			{
-				RMHandControls ((RMObjectInArray($jointArray,"feet_")));
-
-			}
-		}
-
-	}
-	if ((RMObjectInArray($jointArray,"thumb")!=""))
-	{
-		string $thumbJ = RMObjectInArray($jointArray,"humb_");
-		string $indexJ = RMObjectInArray($jointArray,"ndex_");
-		string $middleJ = RMObjectInArray($jointArray,"iddle_");
-		string $ringJ = RMObjectInArray($jointArray,"ing_");
-		string $pinkyJ = RMObjectInArray($jointArray,"inky_");
-		if (RMObjectInArray($jointArray,"wrist")!="")
-		{
-			parent -w $thumbJ;
-			select -r (RMObjectInArray($jointArray,"palm_"));
-			doDelete;
-			parent $thumbJ $indexJ $middleJ $ringJ $pinkyJ (RMObjectInArray($jointArray,"wrist"));
-			if (($CBox==true)||($CBox2==true))
-			{
-				RMHandControls ((RMObjectInArray($jointArray,"wrist_")));
-			}
-		}
-		else 
-		{
-			parent $indexJ $middleJ $ringJ $pinkyJ (RMObjectInArray($jointArray,"palm_"));
-			if (($CBox==true)||($CBox2==true))
-			{
-				RMHandControls ((RMObjectInArray($jointArray,"palm_")));
-			}
-		}
-	}
-
-	if (RMObjectInArray($jointArray,"ball")!="")
-	{
-		string $TBall = RMObjectInArray($jointArray,"ball");
-		string $TBack = RMObjectInArray($jointArray,"footLimitBack");
-		string $TOut  = RMObjectInArray($jointArray,"footLimitOuter");
-		string $TIne  = RMObjectInArray($jointArray,"footLimitInner");
-		string $TToe  = RMObjectInArray($jointArray,"toe_");
-		parent -w $TOut $TIne $TBack $TToe;
-		parent $TBack $TOut $TIne $TBall;
-		parent $TToe $TBack;
-		$Original=RMSetFromName(RMSetFromName($Original,3,"jnt"),4,"rig");
-		if (RMObjectInArray($jointArray,"leg")!="")
-		{
-			if (($CBox==true)&&($CBox2==false))
-			{
-				RMCreateFKControls(RMObjectInArray($jointArray,"leg"),5);
-			}
-			if (($CBox2==true)&&($CBox==false))
-			{	
-				RMCreateIKControls(RMObjectInArray($jointArray,"leg"),2);
-			}
-			if (($CBox2==true)&&($CBox==true))
-			{
-				string $FKLeg=RMRebuild3Part(RMObjectInArray($jointArray,"leg"),"FK");
-				string $IKLeg=RMRebuild3Part(RMObjectInArray($jointArray,"leg"),"IK");
-				string $IKCONTROLLeg[]=RMCreateIKControls($IKLeg,2);
-				string $FKCONTROLLeg[]=RMCreateFKControls($FKLeg,5);
-				select -r "*ankle_ctr_IK";
-				RMScaleShapeControls(6,6,6);
-				RMRebuildJXT(RMGetFromName($Original,1),({$IKCONTROLLeg[0],$IKCONTROLLeg[1],$IKCONTROLLeg[2]}) ,($FKCONTROLLeg),({RMObjectInArray($jointArray,"leg"),$IKLeg,$FKLeg}));
-				select -cl;
-				
-			}
-		}
-	}
-	if (RMObjectInArray($jointArray,"neck")!="")
-	{
-		parent -w (RMObjectInArray($jointArray,"headTip"));
-		parent (RMObjectInArray($jointArray,"headTip")) (RMObjectInArray($jointArray,"head_jnt"));
-	}
-	if (RMObjectInArray($jointArray,"shoulder")!="")
-	{
-		if (($CBox==true)&&($CBox2==false))
-		{
-			RMCreateFKControls(RMObjectInArray($jointArray,"shoulder"),3);
-			if(RMObjectInArray($jointArray,"thumb")!="")
-			{
-				select -r "*wrist_ctr_rig";
-				RMScaleShapeControls(6,6,6);
-			}
-		}
-		if (($CBox2==true)&&($CBox==false))
-		{
-			RMCreateIKControls(RMObjectInArray($jointArray,"shoulder"),2);
-		}
-		if (($CBox2==true)&&($CBox==true))
-		{
-			string $FKARM=RMRebuild3Part(RMObjectInArray($jointArray,"shoulder"),"FK");
-			string $IKARM=RMRebuild3Part(RMObjectInArray($jointArray,"shoulder"),"IK");
-			string $IKCONTROLARM[]=RMCreateIKControls($IKARM,2);
-			string $FKCONTROLARM[]=RMCreateFKControls($FKARM,4);
-			if(RMObjectInArray($jointArray,"thumb")!="")
-			{
-				select -r "*_wrist_ctr_*";
-				RMScaleShapeControls(6,6,6);
-			}
-			RMRebuildJXT(RMGetFromName($Original,1),({$IKCONTROLARM[0],$IKCONTROLARM[1],$IKCONTROLARM[2]}) ,($FKCONTROLARM),({RMObjectInArray($jointArray,"shoulder"),$IKARM,$FKARM}));
-	
-		}
-	}
-	//rebuiselect -r $Original;
-	//doDelete;
-}
-global proc string RMObjectInArray(string $SArray[], string $key)
-{
-	string $i;
-	for ($i in $SArray)
-	{
-		if (`match $key $i `!="")
-		{
-			return $i;
-		}
-	}
-	return "";
-}
-
 
 global proc RMCreateSkeleton(string $PelvisPoint)
 {
@@ -638,7 +447,7 @@ global proc RMRebuildJXTArm(string $side,string $IKControls[],string $FKControls
 	string $JXTArmControlGrp = `RMCreateGrouponObj $JXTArmControl 1`;
 	string $JXTArmControlGrp2 = `RMCreateGrouponObj $JXTArmControlGrp 1`;
 	
-//	CreaUn Nodo RMAligndo al mundo en la posicion del Pecho para usarlo en el Orient Constraint Y evitar que popee
+	//	CreaUn Nodo RMAligndo al mundo en la posicion del Pecho para usarlo en el Orient Constraint Y evitar que popee
 	string $JointOriented=`RMCreateGrouponObj $Pecho[0] 0`;
 	string $WorldOriented=`RMUniqueName $JointOriented`;
 	group -em -name $WorldOriented;
@@ -1026,7 +835,7 @@ global proc string[] RMLinkFinguer(string $rootFinguer){
     $RootName=`RMSetFromName $RootName 4 "rig"`;
     $RootName =`RMUniqueName $RootName`;
    
-//   Crea el Grupo que es la base de el dedo
+	//   Crea el Grupo que es la base de el dedo
     group -em -name $RootName;
     RMAlign $palmFingerJnt2 $RootName 3;
     string $parent= $RootName;
@@ -1035,7 +844,7 @@ global proc string[] RMLinkFinguer(string $rootFinguer){
     string $FingerCntrl = `RMSetFromName $rootFinguer 3 "ctr"`;
     $FingerCntrl =`RMSetFromName $FingerCntrl 4 "rig"`;
     $FingerCntrl = `RMAddToName $FingerCntrl "Control"`;
-//Crea el Control del Dedo     
+	//Crea el Control del Dedo     
     $FingerCntrl=`RMCreateCubeLine ($FingerLenght/2) ($FingerLenght/2) ($FingerLenght/2) $FingerCntrl`;
     move -r ($FingerLenght/6) 0 0 ($FingerCntrl+".scalePivot") ($FingerCntrl+".rotatePivot");
     move -rpr -a 0 0 0 $FingerCntrl;
@@ -1128,12 +937,12 @@ global proc string[] RMHandControls (string $Mano) {
     string $nameRoot=$Mano;
     $nameRoot=`RMSetFromName $nameRoot 3 "grp"`;
     $nameRoot=`RMSetFromName $nameRoot 4 "rig"`;
-//Crea los nombres que se usaran a continuacion
+	//Crea los nombres que se usaran a continuacion
     $nameControls=`RMAddToName $nameRoot "Controls"`;
 
     $nameRoot=`RMAddToName $nameRoot "RootData"`;
-/////////////////////////////////////////////////////////
-//$nameControls Guardara los controles secundarios de la mano
+	/////////////////////////////////////////////////////////
+	//$nameControls Guardara los controles secundarios de la mano
     group -em -name $nameControls;
     string $MiddleBone;
 
@@ -1165,8 +974,8 @@ global proc string[] RMHandControls (string $Mano) {
 	        $MiddleBone=$SkinName;
 	    }
 	}
-////////////////////////////////////////////////////////    
-//$nameRoot Guardara toda la informacion de los dedos RootData
+	////////////////////////////////////////////////////////    
+	//$nameRoot Guardara toda la informacion de los dedos RootData
     group -em -name $nameRoot;
    
     RMAlign $Mano $nameRoot 1;
@@ -1179,8 +988,8 @@ global proc string[] RMHandControls (string $Mano) {
     parentConstraint -mo $Mano $nameRoot;
     string $FingerTips =`RMSetFromName $nameRoot 2 "FingerTips"`;
     
-/////////////////////////////////////////////////////////
-//$FingerTips Guardara los controles de los dedos 
+	/////////////////////////////////////////////////////////
+	//$FingerTips Guardara los controles de los dedos 
     group -em -name $FingerTips;
     RMAlign $Mano $FingerTips 1;
     RMAlign $MiddleBone $FingerTips 2;
@@ -1307,7 +1116,7 @@ global proc string[] RMHandControls (string $Mano) {
     RMConnectWithLimits ($PalmControl+".Twist") ($PalmTwist+".rotateX") (-10) 10 (-20) 20 0;
     
  /////////////////////////////////////////////////////////
-//$FingerTips Se emparenta al objeto Palm Control Este contiene ya toda la herarquia de controles   
+	//$FingerTips Se emparenta al objeto Palm Control Este contiene ya toda la herarquia de controles   
     parent $FingerTips $PalmControl;
     parent $nameControls $PalmControl;
     
@@ -1321,35 +1130,3 @@ global proc string[] RMHandControls (string $Mano) {
     //saaas
     return ({$PalmControl,$nameRoot});
 }
-
-global proc GroupParentControls ()
-{
-	string $ScaledData = RMObjNameToVar ("ScaledData");
-	string $GroupsRoot = RMObjNameToVar ("*Mover2_ctr_rig");
-	// FK IK y TOON Groups
-	string $FKGroup = RMSetFromName ($GroupsRoot, 2, "FKGroup");
-	group -em -n $FKGroup;
-	$IKGroup = RMSetFromName ($GroupsRoot, 2, "IKGroup");
-	group -em -n $IKGroup;
-	$ToonGroup = RMSetFromName ($GroupsRoot, 2, "ToonGroup");
-	group -em -n $ToonGroup;
-	$JXTGroup = RMSetFromName ($GroupsRoot, 2, "JXTGroup");
-	group -em -n $JXTGroup;
-	parent $FKGroup $IKGroup $ToonGroup $JXTGroup $GroupsRoot;
-
-	//string $RigName = RMGetFromName ($GroupsRoot, 2)
-	parent -w Character01_LF_clavicleGroup1_grp Character01_RH_clavicleGroup1_grp Character01_LF_legGroup1_grp_rig Character01_RH_legGroup1_grp_rig Character01_MD_HeadControlGroup1_grp_rig Character01_LF_Knee2Group_grp_JXT Character01_RH_Knee2Group_grp_JXT Character01_RH_wristPalm_ctr_JXT Character01_LF_wristPalm_ctr_JXT  Character01_RH_elbow2Group_grp_JXT Character01_LF_elbow2Group_grp_JXT Character01_RH_legGroup1_grp_FK Character01_LF_legGroup1_grp_FK Character01_LF_shoulderGroup1_grp_FK Character01_RH_shoulderGroup1_grp_FK  Character01_RH_ankleGroup_grp_IK Character01_LF_ankleGroup_grp_IK Character01_RH_wristGroup1_grp_IK Character01_LF_wristGroup1_grp_IK Character01_RH_Knee2ToankleControls_grp_RBN Character01_RH_legToKneeControls_grp_RBN Character01_LF_Knee2ToankleControls_grp_RBN Character01_LF_legToKneeControls_grp_RBN Character01_RH_elbow2TowristControls_grp_RBN Character01_RH_shoulderToelbowControls_grp_RBN Character01_LF_elbow2TowristControls_grp_RBN Character01_LF_shoulderToelbowControls_grp_RBN;
-
-	parent Character01_LF_clavicleGroup1_grp Character01_RH_clavicleGroup1_grp Character01_LF_legGroup1_grp_rig Character01_RH_legGroup1_grp_rig Character01_MD_HeadControlGroup1_grp_rig $GroupsRoot; 
-	parent Character01_LF_Knee2Group_grp_JXT Character01_RH_Knee2Group_grp_JXT Character01_RH_wristPalm_ctr_JXT Character01_LF_wristPalm_ctr_JXT  Character01_RH_elbow2Group_grp_JXT Character01_LF_elbow2Group_grp_JXT $JXTGroup;
-	parent Character01_RH_legGroup1_grp_FK Character01_LF_legGroup1_grp_FK Character01_LF_shoulderGroup1_grp_FK Character01_RH_shoulderGroup1_grp_FK  $FKGroup;
-	parent Character01_RH_ankleGroup_grp_IK Character01_LF_ankleGroup_grp_IK Character01_RH_wristGroup1_grp_IK Character01_LF_wristGroup1_grp_IK $IKGroup;
-	parent Character01_RH_Knee2ToankleControls_grp_RBN Character01_RH_legToKneeControls_grp_RBN Character01_LF_Knee2ToankleControls_grp_RBN Character01_LF_legToKneeControls_grp_RBN Character01_RH_elbow2TowristControls_grp_RBN Character01_RH_shoulderToelbowControls_grp_RBN Character01_LF_elbow2TowristControls_grp_RBN Character01_LF_shoulderToelbowControls_grp_RBN $ToonGroup;
-
-	//parent Character01_MD_HipGroup_jnt_rig Character01_LF_wrist_IKH_IK Character01_RH_wrist_IKH_IK Character01_LF_wristRootData_grp_rig Character01_RH_wristRootData_grp_rig $ScaledData;
-
-	select -r ReferenceControls;
-	doDelete;
-}
-//GroupParentControls;
-

@@ -29,7 +29,7 @@ global proc string[] RMCreateIKControls (string $IKroot,int $depth)
         
         $Ex2=$Childs[0];
         $Lenghtbone = `RMLenghtOfBone $Ex2`/3;
-        print ($Ex2+" ");
+        
         $Childs=`listRelatives -c $Ex2`;
         $Tam=`size $Childs`;
         $Index=$Index+1;
