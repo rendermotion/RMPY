@@ -155,7 +155,7 @@ global proc RMCreateJointsOnSelected(string $Box,string $Box2)
 				$FKCONTROLLeg=RMCreateFKControls($FKLeg,5);
 				select -r "*ankle_ctr_IK";
 				RMScaleShapeControls(6,6,6);
-				RMRebuildJXT(RMGetFromName($Original,1),({$IKCONTROLLeg[0],$IKCONTROLLeg[1],$IKCONTROLLeg[2]}) ,($FKCONTROLLeg),({RMObjectInArray($jointArray,"leg"),$IKLeg,$FKLeg}));
+				RMRebuildJXT(RMGetFromName($Original,1),({$IKCONTROLLeg[0],$IKCONTROLLeg[1],$IKCONTROLLeg[2]}) ,({$FKCONTROLLeg[0],$FKCONTROLLeg[1],$FKCONTROLLeg[2]}),({RMObjectInArray($jointArray,"leg"),$IKLeg,$FKLeg}));
 				
 				parent ($CharacterName+"legGroup1_grp_rig") ($CharacterName+"legGroup_grp_JXT") ($CharacterName+"ankleGroup_grp_JXT") ($CharacterName+"KneeToankleControls_grp_RBN") ($CharacterName+"legToKneeControls_grp_RBN") ($CharacterName+"ankle_ctr_IK") ($CharacterName+"anklePoleVector_ctr_rig") ($CharacterName+"legGroup_grp_IK") ($CharacterName+"legGroup_grp_FK") $FKCONTROLLeg ($CharacterName+"ankle_IKH_IK") ($CharacterName+"ankle_IKH_IKstartPoint") ($CharacterName+"ankle_IKH_IKstartPoint1") ($CharacterName+"ankle_IKH_IKendPoint1") ($CharacterName+"ankle_IKH_IKendPoint") $FKCONTROLLeg[0] $FKCONTROLLeg[1] ($PartNewName+"_grp_SCALED");
 				parent Joints NoScaledData ($CharacterName+"anklePoleVectorKneeData_rig_rig") $IKCONTROLLeg[2] ($PartNewName+"_grp_NOTSCALED");
@@ -205,7 +205,7 @@ global proc RMCreateJointsOnSelected(string $Box,string $Box2)
 				select -r "*_wrist_ctr_*";
 				RMScaleShapeControls(6,6,6);
 			}
-			RMRebuildJXT(RMGetFromName($Original,1),({$IKCONTROLARM[0],$IKCONTROLARM[1],$IKCONTROLARM[2]}) ,($FKCONTROLARM),({RMObjectInArray($jointArray,"shoulder"),$IKARM,$FKARM}));
+			RMRebuildJXT(RMGetFromName($Original,1),({$IKCONTROLARM[0],$IKCONTROLARM[1],$IKCONTROLARM[2]}) ,({$FKCONTROLARM[0],$FKCONTROLARM[1],$FKCONTROLARM[2]}),({RMObjectInArray($jointArray,"shoulder"),$IKARM,$FKARM}));
 			
 			parent ($CharacterName+"shoulderGroup1_grp_rig") ($CharacterName+"shoulderGroup_grp_JXT") ($CharacterName+"wristGroup_grp_JXT") ($CharacterName+"elbowTowristControls_grp_RBN") ($CharacterName+"shoulderToelbowControls_grp_RBN") ($CharacterName+"wrist_ctr_IK") ($CharacterName+"wristPoleVector_ctr_rig") ($CharacterName+"shoulderGroup_grp_IK") ($CharacterName+"shoulderGroup_grp_FK") $FKCONTROLARM ($CharacterName+"wrist_IKH_IK") ($CharacterName+"wrist_IKH_IKstartPoint") ($CharacterName+"wrist_IKH_IKstartPoint1") ($CharacterName+"wrist_IKH_IKendPoint1") ($CharacterName+"wrist_IKH_IKendPoint") $FKCONTROLARM[0] $FKCONTROLARM[1] ($PartNewName+"_grp_SCALED");
 			parent Joints NoScaledData ($CharacterName+"wristPoleVectorelbowData_rig_rig") $IKCONTROLARM[2] ($PartNewName+"_grp_NOTSCALED");
