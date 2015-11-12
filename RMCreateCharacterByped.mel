@@ -32,7 +32,7 @@ global proc string[] CreateBipedCharacter (float $Size ,vector $FrontVector ,vec
 
     parent ($LegOriginLF[0]) ($SpineOrigin[(size ($SpineOrigin))-1]);
     parent ($LegOriginRH[0]) ($SpineOrigin[(size ($SpineOrigin))-1]);
-/**/
+  /**/
     return ($SpineOrigin);
 }
 
