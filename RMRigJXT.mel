@@ -30,10 +30,13 @@ global proc RMRebuildJXT(string $side,string $IKControls[],string $FKControls[],
 
     parent -world  $JXTArmControl;
    
-    //parentConstraint -mo $JXTArmrootParent[0] $JXTArmControlGrp;
+    
 
 	//Emparenta el Control del Brazo al Gru
+	string $JXTArmrootParent[] = `listRelatives -p $JXTArmroot`;
+	parentConstraint -mo $JXTArmrootParent[0] $JXTArmControlGrp;
     parent $JXTArmControl $JXTArmControlGrp;
+    //parentConstraint $JXTArmrootParent[0] $JXTArmControl;
 
 	string $temp[];
 	string $IKArmroot=$Part[1];
@@ -75,8 +78,8 @@ global proc RMRebuildJXT(string $side,string $IKControls[],string $FKControls[],
     
     parentConstraint -mo $MidControl $Ribbon1Controls[2];
     parentConstraint -mo $MidControl $Ribbon2Controls[0];
-    //parentConstraint $JXTArmroot3 $Ribbon2Controls[2];
-    //parentConstraint -mo $JXTArmrootParent[0] $Ribbon1Controls[0];
+    parentConstraint $JXTArmroot2 $Ribbon2Controls[2];
+    parentConstraint -mo $JXTArmrootParent[0] $Ribbon1Controls[0];
     
     string $Ribbon1Md=`RMCreateGrouponObj $Ribbon1Controls[1] 1`;
     string $Ribbon2Md=`RMCreateGrouponObj $Ribbon2Controls[1] 1`;
@@ -96,7 +99,7 @@ global proc RMRebuildJXT(string $side,string $IKControls[],string $FKControls[],
     connectAttr ($MainVis+".ToonyControls") ($MidControl+".visibility");   
 	*/
     select -r $JXTArmControl;
-    
+    RMAlign $JXTArmroot $JXTArmControl 3;
    
 }
 global proc string RMRebuild3Part (string $firstBone,string $Prefix){
