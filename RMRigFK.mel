@@ -15,6 +15,7 @@ global proc string[] RMCreateFKControls (string $FKroot,int $depth)
     string $GrupoCntrl[];
     $Childs=`listRelatives -c $Ex`;
     $Tam=`size $Childs`;
+    
     while (($Tam!=0)&&($Index!=$depth))
     {
         //if (`objectType -isType "transform" $Ex`!=0)
