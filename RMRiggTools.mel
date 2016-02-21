@@ -295,6 +295,13 @@ global proc string [] RMCreateBonesAtPoints (string $PointArray[])
 	    select -cl;
 	    $jointArray[$index]=`joint -p 0 0 0 `;
 	    $jointArray[$index]=RMSetNameInFormat ($jointArray[$index],"Object","MD","JNT","RIG");
+	    if (RMIsNameInFormat $PointArray[$index])
+	    	{
+	    		$jointArray[$index] = RMSetFromName $jointArray[$index] 1 (RMGetFromName($jointArray[$index] , 1));
+	    		$jointArray[$index] = RMSetFromName $jointArray[$index] 2 (RMGetFromName($jointArray[$index] , 2));
+	    		$jointArray[$index] = RMSetFromName $jointArray[$index] 3 (RMGetFromName($jointArray[$index] , 3));
+	    	}
+
 		RMAlign $PointArray[$index] $jointArray[$index] 3;
 	    makeIdentity -apply true -t 1 -r 1 -s 0 $jointArray[$index];
 	    if ($index>0)
