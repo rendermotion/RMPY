@@ -12,10 +12,7 @@ source "RMPartBuilder.mel";
 
 
 string $Selecter= `window -wh 455 225 -t "RM Part Builder" -menuBar true -vis true -sizeable false`;
-    
-    
-    
-	string $Side = "RH";
+    string $Side = "RH";
  	float $SizeVal =40;   
 
     string $myform = `formLayout -numberOfDivisions 100`;   

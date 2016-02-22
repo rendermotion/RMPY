@@ -170,59 +170,6 @@ global proc RMParentLink( string $ObjIK , string $ObjFK , string $ObjJTX, string
     }
 }
 
-/*Funcion que agrega un Pole Vector a el Objeto y crea un cubo y una linea que va de el hueso medio al cubo*/
-global proc string[] RMCreatePoleVector (string $IKHandle)
-{
-    //Obtiene el inicio y fin del IKHandle
-    string $startJoint=`ikHandle -q -sj $IKHandle`;
-    string $endJoint=`ikHandle -q -ee $IKHandle`;
-    //Selecciona el segundo joint del IK
-    select -r $startJoint;
-    string $temp[]=`pickWalk -d "down"`;
-    string $forearm=$temp[0];
-    //Crea un locator lo posiciona en la segundo joint crea en el un aim
-    //constraint que apunta al inicio del IK y su up vector es el final del IK
-    string $temp1[]=`spaceLocator`;
-    string $locator=$temp1[0];
-    string $temp1[]=`spaceLocator`;
-    string $locator2=$temp1[0];
-    RMAlign $forearm $locator2 3;
-    float $LongitudDeHueso=`RMLenghtOfBone $forearm`;
-    move -r -os -moveXYZ ($LongitudDeHueso/2) 0 0 $locator2;
-    RMAlign $locator2 $locator 1;
-    delete $locator2;
-    aimConstraint -wut "object" $startJoint $endJoint $locator;
-    float $RMDistancia = `RMDistancia $startJoint $endJoint`;
-    move -r -os -moveX (-$RMDistancia/3*2) 0 0 $locator;
-    string $CntrlName = $IKHandle;
-    $CntrlName=`RMSetFromName $CntrlName 3 "ctr"`;
-    $CntrlName=`RMSetFromName $CntrlName 4 "rig"`;
-    $CntrlName=`RMAddToName $CntrlName "PoleVector"`;
-    $CntrlName=`RMUniqueName $CntrlName`;
-    //////////////////////////////////////////////////////////////////7
-    //Crea el Cntrl, donde Cntrl Tiene los el cubo del Pole Vector
-    $Cntrl=`RMCreateCubeLine ($RMDistancia/10) ($RMDistancia/10) ($RMDistancia/10) $CntrlName`;
-    
-    move -r ($RMDistancia/20) 0 0 ($Cntrl+".scalePivot") ($Cntrl+".rotatePivot");
-    move -rpr -a 0 0 0 $Cntrl;
-    makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $CntrlName;
-    string $LineCntrls[]=`RMCreateLineBetwenPoints $Cntrl $temp[0]`;
-    RMAlign $locator $CntrlName 1;
-    delete $locator;
-    ikHandle -e -sol "ikRPsolver" $IKHandle;
-    string $poleVectorName=$IKHandle;
-    $poleVectorName=`RMSetFromName $poleVectorName 3 "pvc"`;
-    poleVectorConstraint -name $poleVectorName $CntrlName $IKHandle;
-    makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $CntrlName;
-
-    if (`objExists ("*MD_Mover2_ctr_rig")`)
-    {
-        parent $LineCntrls[0] NoScaledData;
-        parent $Cntrl ScaledData;
-    }
-    
-    return ({$Cntrl,$LineCntrls[0]});
-}
 
 global proc RMMakeIkStretchy (string $ikHandle)
 {

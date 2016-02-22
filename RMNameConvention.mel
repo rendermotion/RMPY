@@ -206,8 +206,8 @@ global proc RMSetFromSelName(string $Token, int $flag){
         $NewName=`RMSetFromName $NewName $flag $Token`;
         $ObjectName = `RMGetFromName $NewName 2`;
         while (`objExists $NewName`){
-                $ObjectName = `StringPlus1 $ObjectName`;
-                $NewName=`SetFromName $NewName 2 $ObjectName`;
+                $ObjectName = `RMStringPlus1 $ObjectName`;
+                $NewName=`RMSetFromName $NewName 2 $ObjectName`;
                 }
         rename  $i  $NewName;
         }

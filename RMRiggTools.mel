@@ -281,21 +281,51 @@ global proc string [] RMCreateBonesAtPoints (string $PointArray[])
     string $jointArray[];
     int $index=0;
     string $i;
-    
+    vector $Obj1position=`xform -ws -q -rp $PointArray[0]`;
+    vector $Obj2position=`xform -ws -q -rp $PointArray[1]`;
+    vector $InitVector=$Obj2position-$Obj1position;
+    vector $CurrentVector;
+    float $FirsBoneAngle=angle ($InitVector,<<0,1,0>>);
+    float $Angle;
+    float $Angle02;
+    print (rad_to_deg($Angle));
     for ($i in $PointArray)
     {
 	  	makeIdentity -apply true -t 1 -r 1 -s 1 $PointArray[$index];
 	    select -cl;
 	    $jointArray[$index]=`joint -p 0 0 0 `;
 	    $jointArray[$index]=RMSetNameInFormat ($jointArray[$index],"Object","MD","JNT","RIG");
-		  RMAlign $PointArray[$index] $jointArray[$index] 3;
+	    if (RMIsNameInFormat $PointArray[$index])
+	    	{
+	    		$jointArray[$index] = RMSetFromName $jointArray[$index] 1 (RMGetFromName($jointArray[$index] , 1));
+	    		$jointArray[$index] = RMSetFromName $jointArray[$index] 2 (RMGetFromName($jointArray[$index] , 2));
+	    		$jointArray[$index] = RMSetFromName $jointArray[$index] 3 (RMGetFromName($jointArray[$index] , 3));
+	    	}
+
+		RMAlign $PointArray[$index] $jointArray[$index] 3;
 	    makeIdentity -apply true -t 1 -r 1 -s 0 $jointArray[$index];
 	    if ($index>0)
 	        {
+	        $Obj1position=`xform -ws -q -rp $PointArray[$index-1]`;
+	        $Obj2position=`xform -ws -q -rp $PointArray[$index]`;
+	        $CurrentVector=$Obj2position-$Obj1position;
+	        $Angle=angle ($CurrentVector,<<0,1,0>>);
+	        $Angle02=angle($InitVector,$CurrentVector);
+
+//	        print ("\nAngulo "+$index+"\n");
+//    		print (rad_to_deg($Angle)+" ANG2="+rad_to_deg($Angle02));
+
 	        parent $jointArray[$index] $jointArray[$index-1];
-	        joint -e -oj xyz -sao "yup" $jointArray[$index-1];
+			joint -e -oj xyz -sao "yup" $jointArray[$index-1];
+
+			if (rad_to_deg($FirsBoneAngle + $Angle02)>180)
+	            {
+	            	joint -e -oj xyz -sao "ydown" $jointArray[$index-1];
+	            	//rotate -r -os -fo -pcp 180 0 0 $jointArray[$index-1];
+	            }
+
+
 	        }
-	   	
 	    $index=$index+1;
 	    } 
     RMCreateGrouponObj $jointArray[0] 1;
