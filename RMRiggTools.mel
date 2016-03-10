@@ -36,6 +36,10 @@ global proc RMAlign (string $obj1, string $obj2,int $flag){
         }
     }
 }
+
+//If var is 0 or anything else  it doesnt parent anything
+//If var is 1  parents the Obj to the new object
+//if var is 2 parents the New Object to the Obj
 global proc string RMCreateGrouponObj (string $Obj, int $flag)
 {
 	string $NewName = $Obj;
@@ -238,7 +242,7 @@ global proc int RMLinkHerarchyRotation(string $BoneStart, string $BoneEnd, strin
 	string $i;
 	if ($BoneStart==$BoneEnd){
 		$n=1;
-		print "Sali";
+		print "Start and End Joint should be diferent joints";
 	}
 	else 
 	{
@@ -293,15 +297,20 @@ global proc string [] RMCreateBonesAtPoints (string $PointArray[])
     {
 	  	makeIdentity -apply true -t 1 -r 1 -s 1 $PointArray[$index];
 	    select -cl;
-	    $jointArray[$index]=`joint -p 0 0 0 `;
-	    $jointArray[$index]=RMSetNameInFormat ($jointArray[$index],"Object","MD","JNT","RIG");
-	    if (RMIsNameInFormat $PointArray[$index])
+	    
+	    if (RMIsNameInFormat ($PointArray[$index]))
 	    	{
-	    		$jointArray[$index] = RMSetFromName $jointArray[$index] 1 (RMGetFromName($jointArray[$index] , 1));
-	    		$jointArray[$index] = RMSetFromName $jointArray[$index] 2 (RMGetFromName($jointArray[$index] , 2));
-	    		$jointArray[$index] = RMSetFromName $jointArray[$index] 3 (RMGetFromName($jointArray[$index] , 3));
-	    	}
+				$CharName = RMGetFromName($PointArray[$index],0);
+	    		$Side = RMGetFromName($PointArray[$index],1);
+	    		$ObjName = RMGetFromName($PointArray[$index] ,2);
 
+				$jointArray[$index]=`joint -p 0 0 0 -name $ObjName`;
+	    		$jointArray[$index]=RMSetNameInFormat ($jointArray[$index],$CharName,$Side,"JNT","RIG");
+	    	}
+	    else{
+	    		$jointArray[$index]=`joint -p 0 0 0`;
+				$jointArray[$index]=RMSetNameInFormat ($jointArray[$index],"Object","MD","JNT","RIG");
+		    }
 		RMAlign $PointArray[$index] $jointArray[$index] 3;
 	    makeIdentity -apply true -t 1 -r 1 -s 0 $jointArray[$index];
 	    if ($index>0)

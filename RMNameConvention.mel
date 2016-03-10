@@ -17,7 +17,7 @@ global proc string[] stringToArray(string $input){
     return $output;
 }
 
-proc string RMReturnLastNumberString(string $NameString){
+global proc string RMReturnLastNumberString(string $NameString){
     int $Size = size($NameString);
     for ( $i=0; $i<($Size)+1; ++$i ){
         string $NumberString = substring($NameString, 1,$Size- $i + 1);
@@ -130,12 +130,17 @@ global proc string RMSetNameInFormat (string $CurrentName,string $Object,string 
             rename $CurrentName $newname;
    return $newname;
 }
+
 global proc int RMIsNameInFormat (string $name){
     string $Tokens[]=`stringToStringArray $name "_"`;
     int $TokenSize=`size $Tokens`;
     if ($TokenSize == 5)
-        if ($Tokens[2]=="LF"||$Tokens[2]=="RH"||$Tokens[2]=="MD")
+        {
+        if ($Tokens[1]=="LF"||$Tokens[1]=="RH"||$Tokens[1]=="MD")
+          { 
             return true;
+          }
+        }
     return false;
 }
 
