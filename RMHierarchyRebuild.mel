@@ -3,7 +3,7 @@ source "RMRigShapeControls.mel";
 source "RMRiggControllers.mel";
 source "RMRibbonSystem.mel";
 source "RMRiggMath.mel";
-source "RMRiggTools.mel";
+source "RMRigTools.mel";
 source "RMRigJXT.mel";
 
 

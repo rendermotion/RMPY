@@ -1,4 +1,4 @@
-source "RMRiggTools.mel";
+source "RMRigTools.mel";
 source "RMRigShapeControls.mel";
 /***********************************************************************************************/
 /*********************************Funciones del Ribbon System***********************************/

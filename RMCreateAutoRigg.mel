@@ -1,10 +1,9 @@
 source "RMHierarchyRebuild.mel";
-source "RMRiggTools.mel";
+source "RMRigTools.mel";
 source "RMRigShapeControls.mel";
 source "RMRiggControllers.mel";
 source "RMRibbonSystem.mel";
 source "RMRiggMath.mel";
-//source "RMCreateSuhi.mel";
 source "RMNameConvention.mel";
 source "RMRibbonSystem.mel";
 

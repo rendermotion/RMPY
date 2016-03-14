@@ -1,10 +1,9 @@
 source "RMRigFunctions.mel";
 source "RMRigShapeControls.mel";
-source "RMRiggTools.mel";
+source "RMRigTools.mel";
 source "RMRigFK.mel";
 source "RMRigIK.mel";
 source "RMRigJXT.mel";
-source "RMFK.mel";
 source "RMNameConvention.mel";
 source "RMCreateCharacterByped.mel";
 source "RMHierarchyRebuild.mel";

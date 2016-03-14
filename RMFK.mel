@@ -1,6 +1,6 @@
 source "RMRigFunctions.mel";
 source "RMRigShapeControls.mel";
-source "RMRiggTools.mel";
+source "RMRigTools.mel";
 source "RMRigFK.mel";
 source "RMNameConvention.mel";
 
@@ -8,5 +8,5 @@ global proc RMFKCreateonSelected()
 {
 	string $temp []=`ls -sl`;
 	string $BonesS[]=`RMCreateBonesAtPoints $temp`;
-	RMCreateFKControls $BonesS[0] 50;
+	RMCreateFKControls $BonesS[0] (`size $BonesS`-1);
 }
