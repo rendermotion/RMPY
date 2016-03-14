@@ -1,0 +1,17 @@
+//SelectedObjs=`ls -sl`
+
+
+string $skinInfluences[]=`skinPercent -q -t skinCluster125 C_HMn_SAO_PonyTail_MF.vtx[1]`;
+select -clear;
+for ($i in $skinInfluences)
+	{
+	select -add $i;
+	print $i;
+	print "\n";
+	}
+print "end Reached";
+ls -sl;
+
+
+
+

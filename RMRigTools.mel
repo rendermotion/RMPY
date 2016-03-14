@@ -1,0 +1,355 @@
+source "RMRiggMath.mel";
+source "RMNameConvention.mel";
+
+global proc RMAlign (string $obj1, string $obj2,int $flag){
+    if ($flag==1 || $flag==3){
+        vector $Obj1position=`xform -ws -q -rp $obj1`;
+        xform -ws -t ($Obj1position.x) ($Obj1position.y) ($Obj1position.z) $obj2;
+    }
+    if ($flag==2 || $flag==3){
+        
+        string $rotateOrderObj1=`xform -q -rotateOrder $obj1`;
+        string $rotateOrderObj2=`xform -q -rotateOrder $obj2`;
+        
+        if ($rotateOrderObj1 != $rotateOrderObj2)
+        {
+            string $Null =`group -em`;
+            xform  -rotateOrder $rotateOrderObj1 $Null;
+            
+            vector $Obj1rotacion=`xform -q -ws -ro $obj1`;
+            
+            xform -ws -ro ($Obj1rotacion.x) ($Obj1rotacion.y) ($Obj1rotacion.z) $Null;
+            xform  -p true -rotateOrder $rotateOrderObj2 $Null;
+            
+            vector $Obj1rotacion=`xform -q -ws -ro $Null`;
+            
+            xform -ws -ro ($Obj1rotacion.x) ($Obj1rotacion.y) ($Obj1rotacion.z) $obj2;
+            print "Warning : Obj Rotation Order Mismatch on obj ";
+            print  ($obj2+" Aligning to "+ $obj1+"\n");
+            
+            delete $Null;
+        }
+        else 
+        {
+            vector $Obj1rotacion=`xform -q -ws -ro $obj1`;
+            xform -ws -ro ($Obj1rotacion.x) ($Obj1rotacion.y) ($Obj1rotacion.z) $obj2;
+        }
+    }
+}
+
+//If Flag is 0 or anything else  it doesnt parent anything
+//If flag is 1  parents the Obj to the new object
+//if flag is 2 parents the New Object to the Obj
+global proc string RMCreateGrouponObj (string $Obj, int $flag)
+{
+	string $NewName = $Obj;
+	string $ObjType = `RMGetFromName $Obj 3`;
+	string $Temp;
+	
+	if ( $ObjType == "grp" )
+	{
+
+		$NewName=`RMUniqueName $Obj`;
+		group -empty -name $NewName;
+	}
+	else
+	{
+		$NewName=`RMSetFromName $NewName 3 "grp"`;
+		$NewName=`RMAddToName $NewName "Group"`;
+	   group -empty -name $NewName;
+	}
+	RMAlign $Obj $NewName 3;
+	switch ($flag)
+	{
+		case 1: string $Parent[] = `listRelatives -p $Obj`;
+				parent $Obj $NewName;
+				if (`size $Parent` != 0)
+					parent $NewName $Parent[0];
+				break;
+		case 2: parent $NewName $Obj;
+				break;
+	}
+	select $Obj;
+	return $NewName;
+}
+//Crea un grupo nuevo alineado al objeto $obj y emparenta el objeto $Obj a este nuevo grupo
+//La vandera en caso de ser 1, busará al padre de Obj y a este emparentará el nuevo grupo
+//La función regresa el nuevo grupo
+
+global proc float RMLenghtOfBone (string $Bone ){
+    string $temp[]=`listRelatives -c $Bone`;
+    if ((`size $temp`!=0)&&(`objectType $temp[0]`!="locator")){
+        return `getAttr ($temp[0]+".translateX")`;
+    }
+    else
+        {return 1.0;}
+}
+
+/*************Borra los Shape Nodes de una Linea y la vuelve un null****************************/
+global proc RMdeleteShapeNodes (string $Obj)
+{
+   string $ShapeNodes[]=`listRelatives -type "shape" $Obj`;
+   string $i;
+   for ($i in $ShapeNodes)
+       {
+        delete $i;   
+       }
+}
+
+/*Funcion que inserta en la herarquia un nuevo Objeto
+1 Lo inserta como padre de $Obj
+2 lo inserta como Hijo de $Obj
+*/
+global proc RMInsertInHierarchy (string $obj,string $ObjToInsert, int $flag)
+{
+    if ($flag==1)
+    {
+        string $Parent[]=`listRelatives -parent $obj`;
+        parent $ObjToInsert $Parent[0];
+        parent $obj $ObjToInsert;
+    }
+    else{
+        string $Children[]=`RMRemoveChildren $obj`;
+        parent $ObjToInsert $obj;
+        RMParentArray $ObjToInsert $Children;
+    }
+}
+/**********************************************************************************
+/**********************************************************************************
+Funciones Para generar un Stretchy IK y Pole Constraint
+/**********************************************************************************/
+/**********************************************************************************/
+global proc string[] RMCreateLineBetwenPoints (string $p1,string $p2)
+{
+	string $nameObj1=`RMGetFromName $p1 2`;
+	string $nameObj2=`RMGetFromName $p2 2`;
+	string $Cluster1=`RMSetFromName $p1 2 ($nameObj1+$nameObj2+"Cluster")`;
+	string $Cluster1=`RMSetFromName $Cluster1 3 "CLS"`;
+	string $Cluster1=`RMSetFromName $Cluster1 4 "RIG"`;
+	$Cluster1=`RMUniqueName $Cluster1`;
+	string $curve = `curve -degree 1 -p 0 0 0 -p 1 0 0`;
+	int $numCVs = `getAttr -size ($curve + ".controlPoints")`;
+	string $temp1[]=`cluster -name $Cluster1 -relative ($curve+".cv[0]") `;
+	$Cluster2=`RMUniqueName $Cluster1`;
+	string $temp2[]=`cluster -name $Cluster2 -relative ($curve+".cv[1]") `;
+	print $Cluster1;
+	print "\n";
+	print $Cluster2;
+	setAttr ($curve+".overrideEnabled") 1;
+	setAttr ($curve+".overrideDisplayType") 2;
+	string $POC1=`RMSetFromName $Cluster1 3 "POC"`;
+	string $POC2=`RMSetFromName $Cluster2 3 "POC"`;
+	string $nombre = `RMGetFromName $Cluster1 2`;
+	string $NewName =`RMSetFromName ($Cluster1+"Handle") 3 "HND"`;
+	string $Cluster1Handle =`rename ($Cluster1+"Handle") $NewName`;
+	string $nombre = `RMGetFromName $Cluster2 2`;
+	string $NewName = `RMSetFromName ($Cluster1+"Handle") 3 "HND"`;
+	string $Cluster2Handle =`rename ($Cluster2+"Handle") $NewName`;
+	RMAlign $p1 $Cluster1Handle 1;
+	RMAlign $p2 $Cluster2Handle 1;
+	pointConstraint -name $POC1 $p1 $Cluster1Handle;
+	pointConstraint -name $POC2 $p2 $Cluster2Handle;
+	setAttr ($Cluster1Handle+".visibility") false;
+	setAttr ($Cluster2Handle+".visibility") false;
+	string $GroupName=`RMSetFromName $p1 2 ($nameObj1+$nameObj2+"Data")`;
+	$GroupName=`RMSetFromName $GroupName 3 "grp"`;
+	$GroupName=`RMSetFromName $GroupName 3 "rig"`;
+    $GroupName=`RMUniqueName $GroupName`;
+	group -em -name $GroupName;
+	parent $Cluster1Handle $GroupName;
+	parent $Cluster2Handle $GroupName;
+	if (`objExists ("*MD_Mover2_ctr_rig")`)
+    {
+    	parent $GroupName NoScaledData;
+	}
+	return {$curve,$GroupName};
+}
+
+global proc RMLockAndHideAttributes(string $obj[],string $BitArray)
+{
+	string $BitArray;
+	string $i;
+	if (`sizeBytes $BitArray` == 10)
+	{
+		for ($i in $obj)
+		{
+			//Position
+			if (`substring $BitArray 1 1`==0)
+				setAttr -k off -l on ($i+".translateX");
+			else
+				if (`substring $BitArray 1 1`==1)
+					setAttr -k on -l off ($i+".translateX");
+			if (`substring $BitArray 2 2`==0)
+				setAttr -k off -l on ($i+".translateY");
+			else
+				if (`substring $BitArray 2 2`==1)
+					setAttr -k on -l off ($i+".translateY");
+			if (`substring $BitArray 3 3`==0)
+				setAttr -k off -l on ($i+".translateZ");
+			else
+				if (`substring $BitArray 3 3`==1)
+					setAttr -k on -l off ($i+".translateZ");
+			//Rotation
+			if (`substring $BitArray 4 4`==0)
+				setAttr -k off -l on ($i+".rotateX");
+			else
+				if (`substring $BitArray 4 4`==1)
+					setAttr -k on -l off ($i+".rotateX");
+			if (`substring $BitArray 5 5`==0)
+				setAttr -k off -l on ($i+".rotateY");
+			else
+				if (`substring $BitArray 5 5`==1)
+					setAttr -k on -l off ($i+".rotateY");
+			if (`substring $BitArray 6 6`==0)
+				setAttr -k off -l on ($i+".rotateZ");
+			else
+				if (`substring $BitArray 6 6`==1)
+					setAttr -k on -l off ($i+".rotateZ");
+			//Scale
+			if (`substring $BitArray 7 7`=="0")
+				setAttr -k off -l on ($i+".scaleX");
+			else
+				if (`substring $BitArray 7 7`==1)
+					setAttr -k on -l off ($i+".scaleX");
+			if (`substring $BitArray 8 8`=="0")
+				setAttr -k off -l on ($i+".scaleY");
+			else
+				if (`substring $BitArray 8 8`==1)
+					setAttr -k on -l off ($i+".scaleY");
+			if (`substring $BitArray 9 9`=="0")
+				setAttr -k off -l on ($i+".scaleZ");
+			else
+				if (`substring $BitArray 9 9`==1)
+					setAttr -k on -l off ($i+".scaleZ");
+			//Visibility
+			if (`substring $BitArray 10 10`=="0")
+				setAttr -k off -l on ($i+".visibility");
+			else
+				if (`substring $BitArray 10 10`==1)
+					setAttr -k on -l off ($i+".visibility");
+		}
+	}
+}
+
+/**********************************************************************************
+Funcion que liga La rotacion de una herarquia un objeto a otro
+/**********************************************************************************/
+global proc int RMLinkHerarchyRotation(string $BoneStart, string $BoneEnd, string $Cntrl,int $X,int $Y,int $Z)
+{
+	string $hijos[] = `listRelatives -c $BoneStart`;
+	print "Entre a Funcion \n";
+	int $n=0;
+	string $i;
+	if ($BoneStart==$BoneEnd){
+		$n=1;
+		print "Start and End Joint should be diferent joints";
+	}
+	else 
+	{
+		for ($i in $hijos)
+		{
+			if (`RMIsInHierarchy $i $BoneEnd` == 1)
+			{
+				print ("ligue "+$BoneStart+"\n") ;
+				if ($X==1)
+					{connectAttr ($Cntrl + ".rotateX") ($BoneStart+".rotateX");}
+				if ($Y==1)
+					{connectAttr ($Cntrl + ".rotateY") ($BoneStart+".rotateY");}
+				if ($Z==1)
+					{connectAttr ($Cntrl + ".rotateZ") ($BoneStart+".rotateZ");}
+				RMLinkHerarchyRotation ($i,$BoneEnd,$Cntrl,$X,$Y,$Z);
+				$n=1;
+			}
+		}
+	}
+	return $n;
+}
+global proc int RMIsInHierarchy(string $Obj1,string $Obj2){
+	string $hijos[] = `listRelatives -c $Obj1`;
+	int $n=0;
+	string $i;
+	if ($Obj1==$Obj2)
+		{$n=1;}
+	else
+	{
+		for ($i in $hijos)
+		{
+			$n=(`RMIsInHierarchy $i $Obj2` || $n);
+		}
+	}
+	return $n;
+}
+global proc string [] RMCreateBonesAtPoints (string $PointArray[])
+{
+  
+    string $jointArray[];
+    int $index=0;
+    string $i;
+    vector $Obj1position=`xform -ws -q -rp $PointArray[0]`;
+    vector $Obj2position=`xform -ws -q -rp $PointArray[1]`;
+    vector $InitVector=$Obj2position-$Obj1position;
+    vector $CurrentVector;
+    float $FirsBoneAngle=angle ($InitVector,<<0,1,0>>);
+    float $Angle;
+    float $Angle02;
+    print (rad_to_deg($Angle));
+    for ($i in $PointArray)
+    {
+	  	makeIdentity -apply true -t 1 -r 1 -s 1 $PointArray[$index];
+	    select -cl;
+	    
+	    if (RMIsNameInFormat ($PointArray[$index]))
+	    	{
+				$CharName = RMGetFromName($PointArray[$index],0);
+	    		$Side = RMGetFromName($PointArray[$index],1);
+	    		$ObjName = RMGetFromName($PointArray[$index] ,2);
+
+				$jointArray[$index]=`joint -p 0 0 0 -name $ObjName`;
+	    		$jointArray[$index]=RMSetNameInFormat ($jointArray[$index],$CharName,$Side,"JNT","RIG");
+	    	}
+	    else{
+	    		$jointArray[$index]=`joint -p 0 0 0`;
+				$jointArray[$index]=RMSetNameInFormat ($jointArray[$index],"Object","MD","JNT","RIG");
+		    }
+		RMAlign $PointArray[$index] $jointArray[$index] 3;
+	    makeIdentity -apply true -t 1 -r 1 -s 0 $jointArray[$index];
+	    if ($index>0)
+	        {
+	        $Obj1position=`xform -ws -q -rp $PointArray[$index-1]`;
+	        $Obj2position=`xform -ws -q -rp $PointArray[$index]`;
+	        $CurrentVector=$Obj2position-$Obj1position;
+	        $Angle=angle ($CurrentVector,<<0,1,0>>);
+	        $Angle02=angle($InitVector,$CurrentVector);
+
+//	        print ("\nAngulo "+$index+"\n");
+//    		print (rad_to_deg($Angle)+" ANG2="+rad_to_deg($Angle02));
+
+	        parent $jointArray[$index] $jointArray[$index-1];
+			joint -e -oj xyz -sao "yup" $jointArray[$index-1];
+
+			if (rad_to_deg($FirsBoneAngle + $Angle02)>180)
+	            {
+	            	joint -e -oj xyz -sao "ydown" $jointArray[$index-1];
+	            	//rotate -r -os -fo -pcp 180 0 0 $jointArray[$index-1];
+	            }
+
+
+	        }
+	    $index=$index+1;
+	    } 
+    RMCreateGrouponObj $jointArray[0] 1;
+    
+	return $jointArray;
+}
+
+global proc RMParent (string $Obj01,string $Obj02)
+{
+	if (`objExists $Obj02`) {
+		parent $Obj01 $Obj02;
+	}
+	else 
+	{
+		group -empty -name $Obj02;
+		parent $Obj01 $Obj02;	
+	}
+}

@@ -1,0 +1,11 @@
+string $lista[];
+$lista=stringToStringArray ("Libbon_L Ribbon_R Ribbon_main Root_M BackA_M BackB_M Chest_M"," ");
+//$lista={"Root_M","BackA_M","BackB_M","Chest_M","Scapula_R","Scapula_L"};
+for ($i in $lista)
+	{
+		select -add $i;
+	}
+
+//select -add Facial_Eye_R_Squash;
+//select -add Facial_Eye_L_Squash;
+//select -add Facial_Head_M;

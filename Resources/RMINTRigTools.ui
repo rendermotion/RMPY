@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>264</width>
+    <height>662</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_6">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QPushButton" name="RenameTool">
+         <property name="text">
+          <string>Rename Tool</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <widget class="QPushButton" name="IKOnSelection">
+         <property name="toolTip">
+          <string>Select some locators in order to create an FK Control</string>
+         </property>
+         <property name="text">
+          <string>IK on selection</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="FKOnSelection">
+         <property name="toolTip">
+          <string>Select some locators in order to create an FK Control</string>
+         </property>
+         <property name="text">
+          <string>FK on selection</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLabel" name="GroupCreationLabel">
+         <property name="text">
+          <string>Group Creation</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="CreateChildGroup">
+         <property name="text">
+          <string>Create Child Group</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="CreateParentGroup">
+         <property name="text">
+          <string>Create Parent Group</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="JointsOnPoints">
+         <property name="text">
+          <string>CreateJointsOnPoints</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QLabel" name="AlignLabel">
+         <property name="text">
+          <string>Align</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="AlignRotation">
+         <property name="text">
+          <string>AlignRotation</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="AlignPosition">
+         <property name="text">
+          <string>AlignPosition</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="AlignAll">
+         <property name="text">
+          <string>Align Pos &amp; Rot</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <item>
+      <widget class="QLabel" name="SkiningToolslabel">
+       <property name="text">
+        <string>SkiningTools</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="ListConnectedJoints">
+       <property name="text">
+        <string>List Skined Joints</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QListWidget" name="listWidget"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="SelectJoints">
+       <property name="text">
+        <string>Select Joints</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

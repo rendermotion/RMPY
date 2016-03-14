@@ -1,0 +1,1 @@
+This folder is intended for testing some snippets that are in development before been added to the libraries.
