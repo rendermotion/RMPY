@@ -1,0 +1,49 @@
+
+global proc string[] getSkinInfluence(string $Node)
+{
+	string $SkinClusterArray[];
+	if (`objectType($Node)`!="skinCluster")
+	{
+		if (`objectType($Node)`=="transform")
+	    	{
+
+	    		string $ShapeNodes[]=`listRelatives -s $Node`;
+	    		string $i;
+	    			for ($i in  $ShapeNodes)
+	    			{
+						string $SkinCluster[] = `listConnections  -type skinCluster $i`;
+						string $g;
+			    		for ($g in $SkinCluster)
+				    	{
+					        if (`objectType($g)`=="skinCluster");
+					        		$SkinClusterArray [`size($SkinClusterArray)`] = $g;
+					    }
+		    		}
+			}
+		else
+			{
+
+				string $SkinCluster[] = `listConnections  -type skinCluster $Node`;
+				string $g;
+	    		for ($g in $SkinCluster)
+		    	{
+			        if (`objectType($g)`=="skinCluster");
+			        		$SkinClusterArray [`size($SkinClusterArray)`] = $g;
+			    }
+			}
+	}
+	else 
+    {
+
+    	$SkinClusterArray[`size($SkinClusterArray)`]=$Node;
+    }
+   string $result[];
+   string $SKNodes;
+   for ($SKNodes in $SkinClusterArray){
+	   	$result= `skinCluster -q -influence $SKNodes`;
+  	}
+  	return $result;
+}
+
+
+

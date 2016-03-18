@@ -1,5 +1,4 @@
 import sys
-sys.path.append("P:\\configs\\studio\install\\engines\\app_store\\tk-maya\\v0.4.7\\resources\\pyside111_py26_qt471_win64\\python")
 import maya.cmds as cmds
 import maya.OpenMayaUI as mui
 from PySide import QtGui, QtCore
@@ -29,8 +28,11 @@ class RMRigTools(QtGui.QDialog):
 		self.ui.AlignRotation.clicked.connect(self.AlignRotationBtnPressed)
 		self.ui.AlignPosition.clicked.connect(self.AlignPositionBtnPressed)
 		self.ui.AlignAll.clicked.connect(self.AlignAllBtnPressed)
-		self.ui.ListConnectedJoints.clicked.connect(self.RenameToolBtnPressed)
-		self.ui.SelectJoints.clicked.connect(self.RenameToolBtnPressed)
+		self.ui.ListConnectedJoints.clicked.connect(self.ListConnectedJointsBtnPressed)
+		self.ui.SelectJoints.clicked.connect(self.SelectJointsBtnPressed)
+		#support Multiple selections on qwidgets
+		self.ui.listWidget.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
+
 	def RenameToolBtnPressed(self):
 		mel.eval('source RMINTRenameTool.mel;')
 	def IKOnSelectionBtnPressed(self):
@@ -63,7 +65,19 @@ class RMRigTools(QtGui.QDialog):
 		mel.eval('''source RMRigTools.mel;
 		string $temp[]=`ls -sl`;
 		RMAlign $temp[0] $temp[1] 3;''')
-
+	def ListConnectedJointsBtnPressed(self):
+		returned=mel.eval('''source RMRigSkinTools.mel;
+			string $var[]=`ls -sl`;
+		getSkinInfluence($var[0]);''')
+		self.ui.listWidget.clear()
+		for i in returned:
+			self.ui.listWidget.addItem(i)
+	def SelectJointsBtnPressed(self):
+		Array=self.ui.listWidget.selectedItems()
+		cmds.select(clear=True)
+		for g in (Array):
+			print g.text()
+			cmds.select(g.text(),add=True)
 if __name__ == '__main__':
 	w = RMRigTools()
 	w.show()
