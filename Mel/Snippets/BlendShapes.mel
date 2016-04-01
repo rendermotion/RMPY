@@ -1,0 +1,19 @@
+/*print `blendShape -q -g -gi blendShape1`;
+string $select[]=`ls -sl`;
+print(`listConnections -p true $select[0]`);
+
+connectAttr -f pCubeShape5.outMesh blendShape1.inputTarget[0].inputTargetGroup[0].inputTargetItem[6000].inputGeomTarget;*/
+
+
+//print `blendShape -q -g -gi blendShape1`;
+print (`getAttr  "blendShape1.attributeAliasList"`);
+
+string $GetShapes[]=`listAttr -m ("blendShape1"+ ".w")`; 
+
+/*for ($Name in $Names)
+	print ($Name);*/
+//print (`listAttr blendShape1`);
+
+blendShape -edit -t pSphereShape1 1 SuspiroShape 1.0 Breath_body_Bs;
+string $skinInfluences[]=`skinPercent -q -t skinCluster125 C_HMn_SAO_PonyTail_MF.vtx[1]`;
+string $GetShapes[]=`listAttr -m ("blendShape1"+ ".w")`;

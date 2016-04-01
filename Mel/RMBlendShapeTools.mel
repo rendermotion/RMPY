@@ -1,0 +1,42 @@
+source "RMDeformers.mel";
+global proc RMblendShapeRebuilder(string $BSNode)
+{
+	string $BSWeight[]= (`listAttr ($BSNode +".weight")`);
+	string $BSWeightAlias[]= (`listAttr -m ($BSNode +".weight")`);
+
+	for ($EachBS in $BSWeightAlias){
+		print $EachBS;	
+		print (`getAttr ($BSNode+"."+$EachBS)`);
+		print "\n";
+	}
+
+	$Value = getAttr ($BSNode+".inputTarget[0].inputTargetGroup[1].inputTargetItem[6000].inputPointsTarget");
+	print $Value;
+	$Componets = getAttr ($BSNode+".inputTarget[0].inputTargetGroup[1].inputTargetItem[6000].inputComponentsTarget");
+	print $Componets;
+	 //connectAttr -f ($BSNode+".inputTarget[0].inputTargetGroup[0].inputTargetItem[6000].inputGeomTarget") ("pSphereShape1.inMesh");
+	 //print $Target;
+	//print(`listConnections ($BSNode)`);
+}
+
+
+/*This procedure creates an sphere and reconnects the input geometry from another object*/
+global proc string  RMduplicateOutputMesh (string $Node,string $ObjName)
+{
+	polySphere -ch 0 -name $ObjName;
+	string $ShapeArray[]=`listRelatives -s $ObjName`;
+	string $Shape=$ShapeArray[0];
+	print $Shape;
+	print $Node;
+	connectAttr -f ($Node+".outputGeometry[0]")  ($Shape+".inMesh");
+	int $Time = `currentTime -query`;
+	currentTime -edit ($Time+1);
+	currentTime -edit $Time;
+	disconnectAttr ($Node+".outputGeometry[0]") ($Shape+".inMesh");
+	return $Shape;
+}
+print "***************\n";
+RMblendShapeRebuilder ("blendShape1");
+//RMduplicateOutputMesh("blendShape1","Copy");
+
+

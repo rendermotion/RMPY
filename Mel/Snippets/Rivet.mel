@@ -1,0 +1,10 @@
+string $Edges[]=`ls -sl`;
+print $Edges;
+
+string $DataLinked[] = `polyInfo -vertexToEdge $Edges[0]`;
+print $DataLinked;
+print $DataLinked[0];
+Edges tokenize $DataLinked[0] ":"
+
+
+

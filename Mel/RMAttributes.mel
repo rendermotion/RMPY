@@ -1,0 +1,124 @@
+global proc CopyAttributes (string $SourceNode , string $DestNode){
+	string $AttrList[]= `listAttr -ud $SourceNode`;
+	string $Iter;
+	for ($Iter in $AttrList){
+		string $longName =`attributeQuery -node $SourceNode -longName $Iter`;
+		string $attrType =`attributeQuery -node $SourceNode -at $Iter`;
+		print $SourceNode;
+		print $DestNode;
+		$keyable=true;
+		$maxExists=true;
+		$minExists=true;
+		$writable=true;
+		$channelBox=true;
+		float $maximum[]={0};
+		float $minimum[]={0};
+		if (`getAttr -k ($SourceNode+"."+$Iter)`){$keyable=true;}
+		else {$keyable=false;}
+		if (`getAttr -cb ($SourceNode+"."+$Iter)`){$channelBox=true;}
+		else {$channelBox=false;}
+		if (`attributeQuery -node $SourceNode -maxExists $Iter`){$maxExists=true;}
+		else {$maxExists=false;}
+
+		if ($maxExists){
+			$maximum=`attributeQuery -node $SourceNode -maximum $Iter`;
+		}
+		
+
+		if (`attributeQuery -node $SourceNode -minExists $Iter`){$minExists=true;}
+		else {$minExists=false;}
+		
+		if ($minExists){
+			$minimum=`attributeQuery -node $SourceNode -minimum $Iter`;
+		}
+		
+		string $niceName =`attributeQuery -node $SourceNode -niceName $Iter`;
+		if (`attributeQuery -node $SourceNode -writable $Iter`){$writable=true;}
+		else {$writable=false;}
+		
+		if ($attrType=="enum"){
+			string $EnumVal[]= `attributeQuery -node $SourceNode -listEnum $Iter`;
+			addAttr -attributeType $attrType -enumName $EnumVal[0] -writable $writable -keyable $keyable -niceName $niceName -longName $Iter /*-maxValue $maximum -minValue $minimum -hasMaxValue $maxExists -hasMinValue $minExists*/$DestNode;
+			setAttr -cb $channelBox ($DestNode +"."+ $Iter);
+			}
+		else {
+			//addAttr -attributeType $attrType -writable $writable -keyable $keyable -niceName $niceName -longName $longName -hasMaxValue $maxExists -hasMinValue $minExists -maxValue $maximum[0] -minValue $minimum[0]  $DestNode;
+			if 	($maxExists && $minExists) 
+				{
+					addAttr -attributeType $attrType -writable $writable -keyable $keyable -niceName $niceName -longName $longName -hasMaxValue $maxExists -hasMinValue $minExists -maxValue $maximum[0] -minValue $minimum[0]  $DestNode;
+				}
+				else
+				{
+					if ($maxExists){
+							addAttr -attributeType $attrType -writable $writable -keyable $keyable -niceName $niceName -longName $longName -hasMaxValue $maxExists -maxValue $maximum[0]  $DestNode;
+					}
+					else{
+							if ($minExists){
+								addAttr -attributeType $attrType -writable $writable -keyable $keyable -niceName $niceName -longName $longName -hasMinValue $minExists -minValue $minimum[0]  $DestNode;
+							}
+							else 
+								addAttr -attributeType $attrType -writable $writable -keyable $keyable -niceName $niceName -longName $longName $DestNode;
+
+					}
+				}
+			setAttr -cb $channelBox ($DestNode +"."+ $Iter);
+
+			}
+	}
+}
+
+global proc MoveConnection(string $nodeSource,string $nodeDest)
+{
+	string $AttrList[]= `listAttr -ud $nodeSource`;
+	string $Iter;
+	for($Iter in $AttrList)
+	{	
+
+		setAttr ($nodeDest+"."+$Iter) (`getAttr ($nodeSource+"."+$Iter)`);
+
+		string $Connections[]= `listConnections -p true ($nodeSource+"."+$Iter)`;
+		string $EachConnection;
+
+		for($EachConnection in $Connections)
+		{
+			int $Locked = `getAttr -l $EachConnection`;
+			if ($Locked){setAttr -l 0 $EachConnection;}
+			disconnectAttr ($nodeSource+"."+$Iter) $EachConnection;
+			if ($Locked){setAttr -l 1 $EachConnection;}
+			/*In this part creates the connection but first checks if the source object is not a destination and changeit for the Destination $Node*/
+			string $buffer[];
+			$numTokens = `tokenize  $EachConnection "." $buffer`;
+			if ($buffer[0]==$nodeSource)
+			{
+
+				int $Locked = `getAttr -l ($nodeDest+"."+$buffer[1])`;
+				if ($Locked){setAttr -l 0 ($nodeDest+"."+$buffer[1]);}
+			 	connectAttr -f ($nodeDest+"."+$Iter) ($nodeDest+"."+$buffer[1]);
+			 	if ($Locked){setAttr -l 1 ($nodeDest+"."+$buffer[1]);}
+			}
+			else 
+			{
+				int $Locked = `getAttr -l $EachConnection`;
+				if ($Locked){setAttr -l 0 $EachConnection;}
+				connectAttr -f ($nodeDest+"."+$Iter) $EachConnection;
+				if ($Locked){setAttr -l 1 $EachConnection;}
+			}
+		}
+	}
+}
+
+global proc DeleteAttributes(string $nodeSource){
+string $AttrList[]= `listAttr -ud $nodeSource`;
+string $Iter;
+for ($EachAtt in $AttrList)
+	{	
+		deleteAttr -at $EachAtt $nodeSource;
+	}
+}
+global proc TransferAllAttr (string $nodeSource,string $nodeDest){
+	CopyAttributes ($nodeSource,$nodeDest);
+	MoveConnection($nodeSource,$nodeDest);
+	DeleteAttributes($nodeSource);
+}
+string $Attr[]=`ls -sl`;
+TransferAllAttr $Attr[0] $Attr[1];

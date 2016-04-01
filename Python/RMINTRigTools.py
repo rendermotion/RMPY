@@ -5,7 +5,7 @@ from PySide import QtGui, QtCore
 from shiboken import wrapInstance
 import maya.mel as mel
 import os
-sys.path.append(os.path.dirname(__file__))
+#sys.path.append(os.path.dirname(__file__))
 from ui import RMFormRigTools
 reload(RMFormRigTools)
 
@@ -30,6 +30,9 @@ class RMRigTools(QtGui.QDialog):
 		self.ui.AlignAll.clicked.connect(self.AlignAllBtnPressed)
 		self.ui.ListConnectedJoints.clicked.connect(self.ListConnectedJointsBtnPressed)
 		self.ui.SelectJoints.clicked.connect(self.SelectJointsBtnPressed)
+		self.ui.SCCombineButton.clicked.connect(self.SCCombineButtonPressed)
+		self.ui.AttributeTransferBtn.clicked.connect(self.AttributeTransferBtnPressed)
+		
 		#support Multiple selections on qwidgets
 		self.ui.listWidget.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
 
@@ -56,15 +59,15 @@ class RMRigTools(QtGui.QDialog):
 	def AlignPositionBtnPressed(self):
 		mel.eval('''source RMRigTools.mel;
 		string $temp[]=`ls -sl`;
-		RMAlign $temp[0] $temp[1] 1;''')
+		RMAlign $temp[1] $temp[0] 1;''')
 	def AlignRotationBtnPressed(self):
 		mel.eval('''source RMRigTools.mel;
 		string $temp[]=`ls -sl`;
-		RMAlign $temp[0] $temp[1] 2;''')
+		RMAlign $temp[1] $temp[0] 2;''')
 	def AlignAllBtnPressed(self):
 		mel.eval('''source RMRigTools.mel;
 		string $temp[]=`ls -sl`;
-		RMAlign $temp[0] $temp[1] 3;''')
+		RMAlign $temp[1] $temp[0] 3;''')
 	def ListConnectedJointsBtnPressed(self):
 		returned=mel.eval('''source RMRigSkinTools.mel;
 			string $var[]=`ls -sl`;
@@ -78,6 +81,17 @@ class RMRigTools(QtGui.QDialog):
 		for g in (Array):
 			print g.text()
 			cmds.select(g.text(),add=True)
+	def SCCombineButtonPressed(self):
+		mel.eval('''source RMRigShapeControls.mel;
+		string $temp[]=`ls -sl`;
+		RMTurnToOne $temp;''')
+	def AttributeTransferBtnPressed(self):
+		mel.eval('''source RMAttributes.mel;
+		string $temp[]=`ls -sl`;
+		TransferAllAttr $temp[0] $temp[1];''')
+
+
+
 if __name__ == '__main__':
 	w = RMRigTools()
 	w.show()

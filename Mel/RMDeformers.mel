@@ -1,0 +1,28 @@
+global proc string[] GetDeformer(string $Node,string $Type)
+{
+	string $DeformerArray[]={};
+	if (`objectType($Node)`!=$Type)
+	{
+		if (`objectType($Node)`=="transform")
+	    	{
+
+	    		string $ShapeNodes[]=`listRelatives -s $Node`;
+	    		string $i;
+	    			for ($i in  $ShapeNodes)
+	    			{
+						string $DeformerList[] = `listConnections  -type $Type $i`;
+						appendStringArray $DeformerArray $DeformerList `size($DeformerList)`;
+		    		}
+			}
+		else
+			{
+				string $DeformerList[] = `listConnections  -type $Type $Node`;
+				appendStringArray $DeformerArray $DeformerList `size($DeformerList)`;
+			}
+	}
+	else 
+    {
+    	$DeformerArray[`size($DeformerArray)`]=$Node;
+    }
+  	return $DeformerArray;
+}

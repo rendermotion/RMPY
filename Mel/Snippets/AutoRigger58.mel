@@ -431,8 +431,6 @@ proc IKFKvisibilityLink (string $Obj[],string $systemIKFK,string $Control)
     	}
 		
 	}
-	
-	
 }
 proc ParentLink( string $ObjIK , string $ObjFK , string $ObjJTX, string $Cntrl)
 {

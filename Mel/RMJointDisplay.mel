@@ -1,0 +1,26 @@
+
+/*Changes the display drawstyle on Bones
+	0 they are visible
+	2 they are not visible
+*/
+global proc RMChangeJointDrawStyle()
+{
+	string $sel[] =`ls -sl -type "joint"`;
+	if (size($sel)==0) {
+		$sel=`ls -type "joint"`;	
+	}
+	int $DrawStyle = 0;
+	if (size($sel)!=0)
+	{
+		if (`getAttr ($sel[0]+".drawStyle")`==0){
+			$DrawStyle = 2;
+		}
+		for ($i in $sel)
+		    {
+		    if(`objectType $i` == "joint")
+			   	{
+					setAttr ($i+".drawStyle") $DrawStyle;
+			   	}
+			}
+	}
+}

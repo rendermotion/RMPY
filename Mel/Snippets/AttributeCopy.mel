@@ -1,0 +1,66 @@
+global proc CopyAttributes (string $SourceNode , string $DestNode){
+	string $AttrList[]= `listAttr -ud $SourceNode`;
+	string $Iter;
+	for ($Iter in $AttrList){
+		string $longName =`attributeQuery -node $SourceNode -longName $Iter`;
+		string $attrType =`attributeQuery -node $SourceNode -at $Iter`;
+		print $SourceNode;
+		print $DestNode;
+		$keyable=true;
+		$maxExists=true;
+		$minExists=true;
+		$writable=true;
+		$channelBox=true;
+		if (`getAttr -k ($SourceNode+"."+$Iter)`){$keyable=true;}
+		else {$keyable=false;}
+		if (`getAttr -cb ($SourceNode+"."+$Iter)`){$channelBox=true;}
+		else {$channelBox=false;}
+		if (`attributeQuery -node $SourceNode -maxExists $Iter`){$maxExists=true;}
+		else {$maxExists=false;}
+		float $maximum[]=`attributeQuery -node $SourceNode -maximum $Iter`;
+		if (`attributeQuery -node $SourceNode -minExists $Iter`){$minExists=true;}
+		else {$minExists=false;}
+		float $minimum[]=`attributeQuery -node $SourceNode -minimum $Iter`;
+		string $niceName =`attributeQuery -node $SourceNode -niceName $Iter`;
+		if (`attributeQuery -node $SourceNode -writable $Iter`){$writable=true;}
+		else {$writable=false;}
+		if ($attrType=="enum"){
+			string $EnumVal[]= `attributeQuery -node $SourceNode -listEnum $Iter`;
+			addAttr -attributeType $attrType -enumName $EnumVal[0] -writable $writable -keyable $keyable -niceName $niceName -longName $Iter /*-maxValue $maximum -minValue $minimum -hasMaxValue $maxExists -hasMinValue $minExists*/$DestNode;
+			setAttr -cb $channelBox ($DestNode +"."+ $Iter);
+			}
+		else {
+			addAttr -attributeType $attrType -writable $writable -keyable $keyable -niceName $niceName -longName $longName -maxValue $maximum -minValue $minimum -hasMaxValue $maxExists -hasMinValue $minExists $DestNode;
+			}
+	}
+}
+
+global proc DuplicateConnection(string $nodeSource,string $nodeDest){
+string $AttrList[]= `listAttr -ud $nodeSource`;
+string $Iter;
+for($Iter in $AttrList){
+	string $Connections[]= `listConnections -p true ($nodeSource+"."+$Iter)`;
+	string $EachConnection;
+	for($EachConnection in $Connections){
+		print "\n";
+		print $EachConnection;
+		print "\n";
+		print ($nodeDest+"."+$Iter);
+		connectAttr -f ($nodeDest+"."+$Iter) $EachConnection;
+		}
+	}
+}
+global proc DeleteAttributes(string $nodeSource){
+string $AttrList[]= `listAttr -ud $nodeSource`;
+string $Iter;
+for ($EachAtt in $AttrList)
+	{	
+		deleteAttr -at $EachAtt $nodeSource;
+	}
+
+}
+
+string $Var[]=`ls -sl`;
+CopyAttributes ($Var[0],$Var[1]);
+DuplicateConnection($Var[0],$Var[1]);
+DeleteAttributes($Var[0]);
