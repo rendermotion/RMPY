@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'RMINTRigTools.ui'
 #
-# Created: Thu Mar 24 10:06:10 2016
+# Created: Mon Apr 04 16:21:07 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!

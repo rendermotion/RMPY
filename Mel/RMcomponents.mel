@@ -1,0 +1,36 @@
+global proc int[] RMcomponentRange( string $select )
+{
+  string $buffer[];
+  int $i, $tokens;
+  int $elements[]={};
+
+  $tokens = `tokenize $select "[:]" $buffer`;
+
+  $elements[0] = int($buffer[1]);
+
+  if ( $tokens > 2 )
+   	{
+   	$elements[1] = int($buffer[2]);
+	}
+
+  return $elements;
+}
+global proc string RMcomponentName( string $select )
+{
+  string $buffer[];
+  int $tokens = `tokenize $select "[:]" $buffer`;
+  return $buffer[0];
+}
+
+global proc int[] RMcomponentArray(string $CompArray[])
+{ int $ResultArray[]={};
+  for ($strings in  $CompArray)
+  {
+    int $TempArray[] = RMcomponentRange($strings);
+    for ($i in $TempArray)
+    {
+    $ResultArray[`size($ResultArray)`]=$i;
+    }
+  }
+  return $ResultArray;
+}
