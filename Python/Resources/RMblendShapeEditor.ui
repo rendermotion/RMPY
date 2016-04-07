@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>434</width>
-    <height>753</height>
+    <width>390</width>
+    <height>275</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -67,20 +67,6 @@ From Selection</string>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QPushButton" name="ReplaceBlendShapeInputBtn">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>40</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>Replace Input Connections
- with selection</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QPushButton" name="RebuildTargetsFromSelectionBtn">
        <property name="minimumSize">
         <size>
@@ -101,20 +87,18 @@ selected node</string>
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <spacer name="verticalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Maximum</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
+        <widget class="QPushButton" name="ReplaceBlendShapeInputBtn">
+         <property name="minimumSize">
           <size>
-           <width>20</width>
+           <width>0</width>
            <height>40</height>
           </size>
          </property>
-        </spacer>
+         <property name="text">
+          <string>Replace BS Input 
+ with selection</string>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QLabel" name="BlendShapeNodesLbl">
@@ -136,7 +120,7 @@ selected node</string>
           <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeType">
-          <enum>QSizePolicy::Maximum</enum>
+          <enum>QSizePolicy::Fixed</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>

@@ -68,7 +68,31 @@ global proc string  RMduplicateOutputMesh (string $Node,string $ObjName)
 	return $Shape;
 }
 
-RMblendShapeRebuilder ("blendShape2");
+global proc string RMGetGPInputShape(string $Node){
+
+	if (`objectType($Node)`=="groupParts")
+	{
+		string $Input[] = `listConnections -sh true ($Node + ".inputGeometry")`;
+
+		if (`objectType ($Input[0])`=="mesh")
+
+			return $Node;
+		else
+			return RMGetGPInputShape($Input[0]);
+	}
+	else 
+	{
+		string $GroupParts[] = `listConnections -type "groupParts" $Node`;
+
+		if (`size($GroupParts)` > 0)
+		{
+			return RMGetGPInputShape($GroupParts[0]);
+		}
+		else
+			print "No GroupParts Node Found";
+			return "";
+	}
+}
 
 
 

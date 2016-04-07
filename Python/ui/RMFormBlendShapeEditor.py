@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'RMblendShapeEditor.ui'
 #
-# Created: Mon Apr 04 16:21:09 2016
+# Created: Thu Apr 07 14:20:20 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(434, 753)
+        Form.resize(390, 275)
         self.verticalLayout_4 = QtGui.QVBoxLayout(Form)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
@@ -34,10 +34,6 @@ class Ui_Form(object):
         self.verticalLayout_4.addLayout(self.horizontalLayout_3)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.ReplaceBlendShapeInputBtn = QtGui.QPushButton(Form)
-        self.ReplaceBlendShapeInputBtn.setMinimumSize(QtCore.QSize(0, 40))
-        self.ReplaceBlendShapeInputBtn.setObjectName("ReplaceBlendShapeInputBtn")
-        self.horizontalLayout_2.addWidget(self.ReplaceBlendShapeInputBtn)
         self.RebuildTargetsFromSelectionBtn = QtGui.QPushButton(Form)
         self.RebuildTargetsFromSelectionBtn.setMinimumSize(QtCore.QSize(0, 40))
         self.RebuildTargetsFromSelectionBtn.setObjectName("RebuildTargetsFromSelectionBtn")
@@ -47,8 +43,10 @@ class Ui_Form(object):
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.verticalLayout = QtGui.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
-        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Maximum)
-        self.verticalLayout.addItem(spacerItem)
+        self.ReplaceBlendShapeInputBtn = QtGui.QPushButton(Form)
+        self.ReplaceBlendShapeInputBtn.setMinimumSize(QtCore.QSize(0, 40))
+        self.ReplaceBlendShapeInputBtn.setObjectName("ReplaceBlendShapeInputBtn")
+        self.verticalLayout.addWidget(self.ReplaceBlendShapeInputBtn)
         self.BlendShapeNodesLbl = QtGui.QLabel(Form)
         self.BlendShapeNodesLbl.setObjectName("BlendShapeNodesLbl")
         self.verticalLayout.addWidget(self.BlendShapeNodesLbl)
@@ -58,8 +56,8 @@ class Ui_Form(object):
         self.horizontalLayout.addLayout(self.verticalLayout)
         self.verticalLayout_2 = QtGui.QVBoxLayout()
         self.verticalLayout_2.setObjectName("verticalLayout_2")
-        spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Maximum)
-        self.verticalLayout_2.addItem(spacerItem1)
+        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
+        self.verticalLayout_2.addItem(spacerItem)
         self.TargetGroupsLbl = QtGui.QLabel(Form)
         self.TargetGroupsLbl.setObjectName("TargetGroupsLbl")
         self.verticalLayout_2.addWidget(self.TargetGroupsLbl)
@@ -92,10 +90,10 @@ class Ui_Form(object):
         self.BlendShapeNodeNamelbl.setText(QtGui.QApplication.translate("Form", "No Blendshape Node Selected", None, QtGui.QApplication.UnicodeUTF8))
         self.GetBlendshapeBtn.setText(QtGui.QApplication.translate("Form", "Get BlendShape Node\n"
 "From Selection", None, QtGui.QApplication.UnicodeUTF8))
-        self.ReplaceBlendShapeInputBtn.setText(QtGui.QApplication.translate("Form", "Replace Input Connections\n"
-" with selection", None, QtGui.QApplication.UnicodeUTF8))
         self.RebuildTargetsFromSelectionBtn.setText(QtGui.QApplication.translate("Form", "Rebuild targets from \n"
 "selected node", None, QtGui.QApplication.UnicodeUTF8))
+        self.ReplaceBlendShapeInputBtn.setText(QtGui.QApplication.translate("Form", "Replace BS Input \n"
+" with selection", None, QtGui.QApplication.UnicodeUTF8))
         self.BlendShapeNodesLbl.setText(QtGui.QApplication.translate("Form", "BlendShape Nodes", None, QtGui.QApplication.UnicodeUTF8))
         self.TargetGroupsLbl.setText(QtGui.QApplication.translate("Form", "Target Groups Alias", None, QtGui.QApplication.UnicodeUTF8))
         self.ReplaceTargetWithSelBtn.setText(QtGui.QApplication.translate("Form", "Replace Selected Target \n"
