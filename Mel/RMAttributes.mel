@@ -57,7 +57,10 @@ global proc CopyAttributes (string $SourceNode , string $DestNode){
 								addAttr -attributeType $attrType -writable $writable -keyable $keyable -niceName $niceName -longName $longName -hasMinValue $minExists -minValue $minimum[0]  $DestNode;
 							}
 							else 
+								{
 								addAttr -attributeType $attrType -writable $writable -keyable $keyable -niceName $niceName -longName $longName $DestNode;
+								}
+
 
 					}
 				}
@@ -120,5 +123,3 @@ global proc TransferAllAttr (string $nodeSource,string $nodeDest){
 	MoveConnection($nodeSource,$nodeDest);
 	DeleteAttributes($nodeSource);
 }
-string $Attr[]=`ls -sl`;
-TransferAllAttr $Attr[0] $Attr[1];
