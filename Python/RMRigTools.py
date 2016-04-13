@@ -29,8 +29,6 @@ def RMAlign(obj1,obj2,flag):
 #localTransform=localTransform*-1;
 #cmds.xform(AlignedCam,os=True,ws=False,rt=localTransform,worldSpaceDistance=True)
 #cmds.select(AlignedCam)
-
-
 #RMAlign("Shot0130BakedCamera1","Shot0130BakedCamera",3)
 
 

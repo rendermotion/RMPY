@@ -32,7 +32,7 @@ class RMRigTools(QtGui.QDialog):
 		self.ui.SelectJoints.clicked.connect(self.SelectJointsBtnPressed)
 		self.ui.SCCombineButton.clicked.connect(self.SCCombineButtonPressed)
 		self.ui.AttributeTransferBtn.clicked.connect(self.AttributeTransferBtnPressed)
-		
+
 		#support Multiple selections on qwidgets
 		self.ui.listWidget.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
 

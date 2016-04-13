@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'RMblendShapeEditor.ui'
 #
-# Created: Thu Apr 07 14:20:20 2016
+# Created: Mon Apr 11 16:15:29 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,9 +12,14 @@ from PySide import QtCore, QtGui
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(390, 275)
-        self.verticalLayout_4 = QtGui.QVBoxLayout(Form)
-        self.verticalLayout_4.setObjectName("verticalLayout_4")
+        Form.resize(533, 416)
+        self.horizontalLayout_4 = QtGui.QHBoxLayout(Form)
+        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
+        self.verticalLayout_5 = QtGui.QVBoxLayout()
+        self.verticalLayout_5.setObjectName("verticalLayout_5")
+        self.BlendShapeRebuilderLabel = QtGui.QLabel(Form)
+        self.BlendShapeRebuilderLabel.setObjectName("BlendShapeRebuilderLabel")
+        self.verticalLayout_5.addWidget(self.BlendShapeRebuilderLabel)
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.CurrentBSlbl = QtGui.QLabel(Form)
@@ -31,14 +36,14 @@ class Ui_Form(object):
         self.GetBlendshapeBtn.setMaximumSize(QtCore.QSize(16777215, 40))
         self.GetBlendshapeBtn.setObjectName("GetBlendshapeBtn")
         self.horizontalLayout_3.addWidget(self.GetBlendshapeBtn)
-        self.verticalLayout_4.addLayout(self.horizontalLayout_3)
+        self.verticalLayout_5.addLayout(self.horizontalLayout_3)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.RebuildTargetsFromSelectionBtn = QtGui.QPushButton(Form)
         self.RebuildTargetsFromSelectionBtn.setMinimumSize(QtCore.QSize(0, 40))
         self.RebuildTargetsFromSelectionBtn.setObjectName("RebuildTargetsFromSelectionBtn")
         self.horizontalLayout_2.addWidget(self.RebuildTargetsFromSelectionBtn)
-        self.verticalLayout_4.addLayout(self.horizontalLayout_2)
+        self.verticalLayout_5.addLayout(self.horizontalLayout_2)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.verticalLayout = QtGui.QVBoxLayout()
@@ -79,13 +84,37 @@ class Ui_Form(object):
         self.TargetList.setObjectName("TargetList")
         self.verticalLayout_3.addWidget(self.TargetList)
         self.horizontalLayout.addLayout(self.verticalLayout_3)
-        self.verticalLayout_4.addLayout(self.horizontalLayout)
+        self.verticalLayout_5.addLayout(self.horizontalLayout)
+        self.horizontalLayout_4.addLayout(self.verticalLayout_5)
+        self.line = QtGui.QFrame(Form)
+        self.line.setFrameShape(QtGui.QFrame.VLine)
+        self.line.setFrameShadow(QtGui.QFrame.Sunken)
+        self.line.setObjectName("line")
+        self.horizontalLayout_4.addWidget(self.line)
+        self.verticalLayout_4 = QtGui.QVBoxLayout()
+        self.verticalLayout_4.setObjectName("verticalLayout_4")
+        self.CorrectVtxPosBtn = QtGui.QLabel(Form)
+        self.CorrectVtxPosBtn.setFrameShape(QtGui.QFrame.NoFrame)
+        self.CorrectVtxPosBtn.setObjectName("CorrectVtxPosBtn")
+        self.verticalLayout_4.addWidget(self.CorrectVtxPosBtn)
+        self.LoadSelectionBtn = QtGui.QPushButton(Form)
+        self.LoadSelectionBtn.setObjectName("LoadSelectionBtn")
+        self.verticalLayout_4.addWidget(self.LoadSelectionBtn)
+        self.listWidget = QtGui.QListWidget(Form)
+        self.listWidget.setObjectName("listWidget")
+        self.verticalLayout_4.addWidget(self.listWidget)
+        self.CorrectVtxBtn = QtGui.QPushButton(Form)
+        self.CorrectVtxBtn.setMinimumSize(QtCore.QSize(100, 30))
+        self.CorrectVtxBtn.setObjectName("CorrectVtxBtn")
+        self.verticalLayout_4.addWidget(self.CorrectVtxBtn)
+        self.horizontalLayout_4.addLayout(self.verticalLayout_4)
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(QtGui.QApplication.translate("Form", "Form", None, QtGui.QApplication.UnicodeUTF8))
+        self.BlendShapeRebuilderLabel.setText(QtGui.QApplication.translate("Form", "Blend Shape Rebuilder", None, QtGui.QApplication.UnicodeUTF8))
         self.CurrentBSlbl.setText(QtGui.QApplication.translate("Form", "Current Blend Shape:", None, QtGui.QApplication.UnicodeUTF8))
         self.BlendShapeNodeNamelbl.setText(QtGui.QApplication.translate("Form", "No Blendshape Node Selected", None, QtGui.QApplication.UnicodeUTF8))
         self.GetBlendshapeBtn.setText(QtGui.QApplication.translate("Form", "Get BlendShape Node\n"
@@ -99,4 +128,9 @@ class Ui_Form(object):
         self.ReplaceTargetWithSelBtn.setText(QtGui.QApplication.translate("Form", "Replace Selected Target \n"
 "With Selection", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("Form", "BlendShape Targets", None, QtGui.QApplication.UnicodeUTF8))
+        self.CorrectVtxPosBtn.setText(QtGui.QApplication.translate("Form", "Vertex Position Correction", None, QtGui.QApplication.UnicodeUTF8))
+        self.LoadSelectionBtn.setToolTip(QtGui.QApplication.translate("Form", "Load Targets you want to correct, then select the vertex on the original shape that you want to transfer to this targets. ", None, QtGui.QApplication.UnicodeUTF8))
+        self.LoadSelectionBtn.setText(QtGui.QApplication.translate("Form", "Load Selection", None, QtGui.QApplication.UnicodeUTF8))
+        self.CorrectVtxBtn.setText(QtGui.QApplication.translate("Form", "Correct With \n"
+"Selected Verices", None, QtGui.QApplication.UnicodeUTF8))
 

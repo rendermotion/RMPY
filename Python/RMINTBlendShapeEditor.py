@@ -26,6 +26,11 @@ class RMBlendShapeEditor(QtGui.QDialog):
 		self.ui.RebuildTargetsFromSelectionBtn.clicked.connect(self.RebuildTargetsFromSelectionBtnPressed)
 		self.ui.ReplaceTargetWithSelBtn.clicked.connect(self.ReplaceTargetWithSelBtnPressed)
 		self.ui.InputTargetGroupAlias.currentItemChanged.connect(self.UpdateBlendShapeTargets)
+		
+		self.ui.LoadSelectionBtn.clicked.connect(self.LoadSelectionBtnPressed)
+		self.ui.CorrectVtxBtn.clicked.connect(self.CorrectVtxBtnPressed)
+
+		self.ui.listWidget.setSelectionMode(QtGui.QAbstractItemView.NoSelection)
 		self.BlendShapeDic={}
 		self.currentBS ={}
 	def UpdateBlendShapeTargets(self):
@@ -81,6 +86,7 @@ class RMBlendShapeEditor(QtGui.QDialog):
 				mel.eval('''source "RMBlendShapeTools.mel";\nRMblendShapeRebuilder("'''+BSNode+'''");''')		
 		else:
 			mel.eval('''source RMBlendShapeTools.mel;\nRMblendShapeRebuilder("'''+BSNode+'''");''')
+
 	def ReplaceTargetWithSelBtnPressed(self):
 		BSNode = self.ui.BlendShapeNodeNamelbl.text()
 		CurrentGroup = self.ui.InputTargetGroupAlias.currentItem()
@@ -99,8 +105,29 @@ class RMBlendShapeEditor(QtGui.QDialog):
 						Shapes = cmds.listRelatives(selection[0],s=True)
 						if len(Shapes) > 0:
 							cmds.connectAttr(Shapes[0]+".outMesh",(BSNode +".inputTarget[0].inputTargetGroup[" +str(self.BlendShapeDic[BSNode][CurrentGroup.text()]["TargetGroup"])+ "].inputTargetItem["+ str(int(BSTargetNum*1000+5000))+"].inputGeomTarget") , f=True)
-
-
+	def LoadSelectionBtnPressed(self):
+		self.ui.listWidget.clear()
+		selection = cmds.ls(sl=True)
+		for i in selection:
+			self.ui.listWidget.addItem(i)
+	def CorrectVtxBtnPressed(self):
+		#Array=self.ui.listWidget.selectedItems()
+		ItemNum = self.ui.listWidget.count()
+		Objects=[]
+		Txt="{"
+		for g in range(0,ItemNum):
+			Item = self.ui.listWidget.item(g)
+			Txt+="\""
+			Txt+=Item.text()
+			Txt+="\""
+			Txt+=","
+		Txt=Txt[:-1]
+		Txt+="}"
+		mel.eval('''
+		source RMcomponents.mel;
+		string $selection[] = `ls -sl`;
+		vertexPositionTransfer($selection,'''+Txt+''');
+		''')
 
 if __name__ == '__main__':
 	w = RMBlendShapeEditor()

@@ -12,7 +12,6 @@ global proc int[] RMcomponentRange( string $select )
    	{
    	$elements[1] = int($buffer[2]);
 	}
-
   return $elements;
 }
 global proc string RMcomponentName( string $select )
@@ -24,7 +23,7 @@ global proc string RMcomponentName( string $select )
 
 global proc int[] RMcomponentArray(string $CompArray[])
 { int $ResultArray[]={};
-  for ($strings in  $CompArray)
+  for ($strings in $CompArray)
   {
     int $TempArray[] = RMcomponentRange($strings);
     for ($i in $TempArray)
@@ -34,3 +33,42 @@ global proc int[] RMcomponentArray(string $CompArray[])
   }
   return $ResultArray;
 }
+
+global proc vertexPositionTransfer(string $vertexArray[],string $DestObjects[])
+{
+  int $Values[]={};
+
+  for ($vtxStr in $vertexArray)
+  {
+    int $singleVtxStr[] = RMcomponentRange($vtxStr);
+    print $singleVtxStr;
+    if (`size($singleVtxStr)`>1) {
+      for ($i=$singleVtxStr[0];$i<=$singleVtxStr[1];$i++)
+      {
+        $Values[`size($Values)`] = $i;
+      }
+    }
+    else {
+        $Values[`size($Values)`]=$singleVtxStr[0];
+    }
+  }
+  string $ObjName = RMcomponentName($vertexArray[0]);
+  print $ObjName;
+  print "\n";
+  print $Values;
+  print `size($Values)`;
+  for ($vertexNumber in $Values)
+  {
+    vector $position=`xform -q -os -t ($ObjName+"["+string($vertexNumber)+"]")`;
+    //print ($ObjName+"["+string($vertexNumber)+"]=");
+    //print $position;
+    for($eachObject in $DestObjects)
+    {
+      xform -os -t ($position.x) ($position.y) ($position.z) ($eachObject+".vtx"+"["+string($vertexNumber)+"]");
+    }
+  }
+}
+/*string $selection[] = `ls -sl`;
+$destObjects={"pSphere2","pSphere3","pSphere4"};
+vertexPositionTransfer($selection,$destObjects);
+print "Loaded";*/

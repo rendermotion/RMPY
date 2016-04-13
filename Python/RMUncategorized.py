@@ -3,14 +3,16 @@ import maya.cmds as cmds
 def ObjectTransformDic(objects):
 	ObjectDic={}
 	for eachObject in objects:
-		position =(cmds.getAttr(eachObject+".t"))
-		rotation = (cmds.getAttr(eachObject+".r"))
-		scale = (cmds.getAttr(eachObject+".s"))
-		objectName=eachObject.split(":",1)
-		if (len(objectName)>1):
-			ObjectDic[objectName[1]]={"t":position[0], "r":rotation[0],"s":scale[0]}
-		else:
-			ObjectDic[eachObject]={"t":position[0], "r":rotation[0],"s":scale[0]}
+		Address=eachObject.split("|")
+		if len(Address)== 1:
+			position =(cmds.getAttr(eachObject+".t"))
+			rotation = (cmds.getAttr(eachObject+".r"))
+			scale = (cmds.getAttr(eachObject+".s"))
+			objectName=eachObject.split(":",1)
+			if (len(objectName)>1):
+				ObjectDic[objectName[1]]={"t":position[0], "r":rotation[0],"s":scale[0]}
+			else:
+				ObjectDic[eachObject]={"t":position[0], "r":rotation[0],"s":scale[0]}
 	return ObjectDic
 def ResetPostoZero(objects):
 	for eachObject in objects:
@@ -51,18 +53,19 @@ def ignoreNamespace(Name):
 	else:
 		filter = cmds.itemFilter(byName="*"+str(Name))
 		FocusObject = cmds.lsThroughFilter(filter)
-		if len(FocusObject)>0:
-			if len(FocusObject)==1:
-				return FocusObject[0]
+		if FocusObject:
+			if len(FocusObject)>0:
+				if len(FocusObject)==1:
+					return FocusObject[0]
+				else:
+					print ("More than one object matches Name:"+ Name)
+					print FocusObject
+					for i in FocusObject:
+						values = i.split(":")
+						if values[len(values) - 1] == str(Name):
+							return i
+					return None
 			else:
-				print ("More than one object matches Name:"+ Name)
-				print FocusObject
-
-				for i in FocusObject:
-					values = i.split(":",1)
-					if values[1]==str(Name):
-
-						return i
 				return None
 		else:
 			return None

@@ -46,15 +46,17 @@ class RMCopyPosition(QtGui.QDialog):
 			os.makedirs(self.Directory)
 		with open ( self.DiskCachePath, 'w') as outfile:
 		    json.dump (SaveDic,outfile, sort_keys=True,indent=4)
-
 	def SaveTransformsBtnPressed(self):
+		selection=cmds.ls(sl=True)
+		self.TramsformDic = RMUncategorized.ObjectTransformDic(selection)
+		SaveDic={'type':'ObjectTransforms','data':self.TramsformDic}
 		if not os.path.exists(self.Directory):
 			os.makedirs (self.Directory)
-		SaveDic={'type':'ObjectTransforms', 'data':self.TramsformDic}
 		fname = QtGui.QFileDialog.getSaveFileName(parent=self,caption='Save Filename As',dir=unicode (self.Directory))#self.Directory
-		print fname[0]
+		print fname
 		with open ( fname[0], 'w') as outfile:
 			json.dump (SaveDic,outfile, sort_keys=True,indent=4)
+
 	def SetTransformBtnPressed(self):
 		self.TramsformDic={}
 		with open (self.DiskCachePath,'r') as outfile:
@@ -83,7 +85,10 @@ class RMCopyPosition(QtGui.QDialog):
 		if OpenDic != u'':
 			if OpenDic.has_key('data') and OpenDic.has_key('type'):
 				if OpenDic['type']==str('ObjectTransforms'):
-					self.TramsformDic=OpenDic['data']
+					self.TramsformDic = OpenDic['data']
+					RMUncategorized.SetObjectTransformDic(self.TramsformDic)
+					print "File Loaded succesfully"
+					print self.TramsformDic
 				else:
 					print "File loaded not Valid"
 		else:
