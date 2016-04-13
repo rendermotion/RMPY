@@ -134,9 +134,36 @@ global proc RMMakeIkStretchy (string $ikHandle)
     
     select $ikHandle;
 }
+global proc string RMGetPoleVectorPoint (string $BoneArray[]){
+  vector $P1=`xform -a -ws -q -rp $BoneArray[0]`;
+  vector $P2=`xform -a -ws -q -rp $BoneArray[1]`;
+  vector $P3=`xform -a -ws -q -rp $BoneArray[2]`;
+  vector $V1=$P2-$P1;
+  vector $V2=$P3-$P2;
+//the vector turned in to an array to the cross product operation
+  float $V1a[]={$V1.x,$V1.y,$V1.z};
+  float $V2a[]={$V2.x,$V2.y,$V2.z};
+  float $Angulo=angle($V1,$V2);
+  float $Angulo3=((rad_to_deg($Angulo)+180)/2);
+  float $Angulo=deg_to_rad($Angulo3-90);
+  float $EjeZ[]= crossProduct ($V1a,$V2a,1,1);
+  float $EjeY[]= crossProduct ($V2a,$EjeZ,1,1);  
+  float $EjeX[]= $V2a;
+  normalize $EjeX;
+  float $Y1=cos ($Angulo);
+  float $X1= - sin($Angulo);
+  float $Vy[]={$EjeY[0]*$Y1,$EjeY[1]*$Y1,$EjeY[2]*$Y1};
+  float $Vx[]={$EjeX[0]*$X1,$EjeX[1]*$X1,$EjeX[2]*$X1};
+  float $LProm=(mag ($V1) + mag ($V2))/2;//Longitud promedio
+  float $Vres[]={($Vy[0]+$Vx[0])*$LProm,($Vy[1]+$Vx[1])*$LProm,($Vy[2]+$Vx[2])*$LProm};
+  vector $PoleVector = <<$Vres[0]+$P2.x,$Vres[1]+$P2.y,$Vres[2]+$P2.z>>;
+    string $temp1[]=`spaceLocator`;
+    string $locator=$temp1[0];
+  xform -ws -t ($PoleVector.x) ($PoleVector.y) ($PoleVector.z)  $locator;
+  return $locator;
+}
 
-
-proc string[] RMCreatePoleVector (string $IKHandle)
+global proc string[] RMCreatePoleVector (string $IKHandle)
 {
     //Obtiene el inicio y fin del IKHandle
     string $startJoint=`ikHandle -q -sj $IKHandle`;
@@ -191,34 +218,7 @@ proc string[] RMCreatePoleVector (string $IKHandle)
 }
 
 /*Funcion que agrega un Pole Vector a el Objeto y crea un cubo y una linea que va de el hueso medio al cubo*/
-global proc string RMGetPoleVectorPoint (string $BoneArray[]){
-  vector $P1=`xform -a -ws -q -rp $BoneArray[0]`;
-  vector $P2=`xform -a -ws -q -rp $BoneArray[1]`;
-  vector $P3=`xform -a -ws -q -rp $BoneArray[2]`;
-  vector $V1=$P2-$P1;
-  vector $V2=$P3-$P2;
-//the vector turned in to an array to the cross product operation
-  float $V1a[]={$V1.x,$V1.y,$V1.z};
-  float $V2a[]={$V2.x,$V2.y,$V2.z};
-  float $Angulo=angle($V1,$V2);
-  float $Angulo3=((rad_to_deg($Angulo)+180)/2);
-  float $Angulo=deg_to_rad($Angulo3-90);
-  float $EjeZ[]= crossProduct ($V1a,$V2a,1,1);
-  float $EjeY[]= crossProduct ($V2a,$EjeZ,1,1);  
-  float $EjeX[]= $V2a;
-  normalize $EjeX;
-  float $Y1=cos ($Angulo);
-  float $X1= - sin($Angulo);
-  float $Vy[]={$EjeY[0]*$Y1,$EjeY[1]*$Y1,$EjeY[2]*$Y1};
-  float $Vx[]={$EjeX[0]*$X1,$EjeX[1]*$X1,$EjeX[2]*$X1};
-  float $LProm=(mag ($V1) + mag ($V2))/2;//Longitud promedio
-  float $Vres[]={($Vy[0]+$Vx[0])*$LProm,($Vy[1]+$Vx[1])*$LProm,($Vy[2]+$Vx[2])*$LProm};
-  vector $PoleVector = <<$Vres[0]+$P2.x,$Vres[1]+$P2.y,$Vres[2]+$P2.z>>;
-    string $temp1[]=`spaceLocator`;
-    string $locator=$temp1[0];
-  xform -ws -t ($PoleVector.x) ($PoleVector.y) ($PoleVector.z)  $locator;
-  return $locator;
-}
+
 global proc string[] RMCreateIKControls (string $IKroot,int $depth)
 {
     string $Ex1=$IKroot;

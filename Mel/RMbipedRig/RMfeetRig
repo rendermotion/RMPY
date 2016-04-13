@@ -1,0 +1,226 @@
+source "RMNameConvention.mel";
+source "RMRigTools.mel";
+source "RMRigShapeControls.mel";
+source "RMRiggMath.mel";
+
+
+global proc string StandardReverseFeetJoints(string $AnklePoint){
+
+	string $Ball[]=`listRelatives -c -type "transform" $AnklePoint`;
+	print  $Ball[0];
+	string $BorderPoints[]=`listRelatives -c -type "transform" $Ball[0]`;
+	$Toe="";
+	for ($Node in $BorderPoints)
+	{
+		if (isValidString($Node,".*toe.*"))
+		{
+			$Toe = $Node;
+			print $Toe;
+			print "Toe Fue asignado";
+		}
+	}
+
+	string $AnkleJoint = RMSetFromName($AnklePoint,3,"jnt");
+	$AnkleJoint = RMSetFromName($AnkleJoint,4,"rvf");
+
+	$AnkleJoint = `joint -n $AnkleJoint`;
+	RMAlign $AnklePoint $AnkleJoint  3;
+	string $BallJoint = `joint -n (RMSetFromName($AnkleJoint,2,"Ball"))`;
+	print  $Ball[0];
+	print $BallJoint;
+	RMAlign $Ball[0] $BallJoint 3;
+	string $ToeJoint = `joint -n (RMSetFromName($AnkleJoint,2,"Toe"))`;
+	RMAlign $Toe $ToeJoint 3;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 -pn 1 $BallJoint;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 -pn 1 $ToeJoint;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 -pn 1 $AnklePoint;
+	joint -e -oj "xzy" -sao "yup" $AnkleJoint;
+    joint -e -oj "xzy" -sao "yup" $BallJoint;
+    joint -e -oj "xzy" -zso $ToeJoint ;
+    return $AnkleJoint;
+}
+
+
+
+global proc StandardReverseFeet($originPoint){
+
+	string $Ball[]=`listRelatives -c -type "transform"  $originPoint`;
+	string $BorderPoints[]=`listRelatives -c -type "transform" $Ball[0]`;
+
+	$AnkleJnt = StandardReverseFeetJoints($originPoint);
+	$BallJnt =`listRelatives -c -type "transform" $Ankle`;
+	$TopJnt =`listRelatives -c -type "transform" $BallJnt`;
+
+	for $Node in $BorderPoints{
+		if isValidString($Node, ".*toe.*")
+		{
+			$Toe=$Node;
+		}
+		if isValidString($Node, ".*footLimitBack.*")
+		{
+			$FootBK=$Node;
+		}
+		if isValidString($Node, ".*footLimitOuter.*")
+		{
+			$FootOut=$Node;
+		}
+		if isValidString($Node, ".*footLimitInner.*")
+		{
+			$FootIn=$Node;
+		}
+	}
+
+	$side = `RMGetFromName $originPoint 1`;
+
+	string $BallIK=$originPoint;
+	$BallIK=`RMSetFromName $BallIK 3 "IKH"`;
+	$BallIK=`RMSetFromName $BallIK 4 "IK"`;
+	string $BallIK=`RMSetFromName $BallIK 2 "BallIK"`;
+
+	string $ToeGrp=`RMSetFromName $AnkleJnt 2 "Toe"`;
+   	string $TapGrp=`RMSetFromName $AnkleJnt 2 "Tap"`;
+   	string $Tip=`GrpRMSetFromName $AnkleJnt 2 "Tip"`;
+   
+   	string $SideIn=`RMSetFromName $AnkleJnt 2 "SideIn"`;
+   	string $SideOut=`RMSetFromName $AnkleJnt 2 "SideOut"`;
+
+   	string $BallIK=$AnkleJnt;
+	$BallIK=`RMSetFromName $BallIK 3 "IKH"`;
+	$BallIK=`RMSetFromName $BallIK 4 "rvf"`;
+	string $BallIK=`RMSetFromName $BallIK 2 "BallIK"`;
+    string $TipIK=`RMSetFromName $BallIK 2 "TipIK"`;
+	
+
+
+   	ikHandle -sj $AnkleJnt -ee $BallJnt -name $BallIK;
+   	ikHandle -sj $BallJnt -ee $TopJnt -name $TipIK;
+   
+
+	
+	string $AnkleGrp=$AnkleJnt;
+	$AnkleGrp=`RMSetFromName $AnkleGrp 2 "Ankle"`;
+	$AnkleGrp=`RMSetFromName $AnkleGrp 3 "grp"`;
+	$AnkleGrp=`RMSetFromName $AnkleGrp 4 "IK"`;
+	string $Ball=`RMSetFromName $AnkleGrp 2 "Ball"`;
+   	string $BallLift=`RMSetFromName $AnkleGrp 2 "BallLift"`;
+   	string $Toe=`RMSetFromName $AnkleGrp 2 "Toe"`;
+   	string $Tap=`RMSetFromName $AnkleGrp 2 "Tap"`;
+   	string $Tip=`RMSetFromName $AnkleGrp 2 "Tip"`;
+   
+   	string $SideIn=`RMSetFromName $AnkleGrp 2 "SideIn"`;
+   	string $SideOut=`RMSetFromName $AnkleGrp 2 "SideOut"`;
+   	string $FeetOrient=`RMSetFromName $AnkleGrp 2 "FeetOrient"`;
+
+         
+   	group -em -name $Ball;
+   	group -em -name $BallLift;
+	//   group -em $Toe;   
+   	group -em -name $Tap;   
+   	group -em -name $Tip; 
+   	group -em -name $SideIn;	
+   	group -em -name $SideOut;
+
+
+   	RMAlign $BallJnt $Ball 3;
+   	RMAlign $BallJnt $BallLift 3;
+	// 	  RMAlign $BallJnt $Toe 3;
+   	RMAlign $BallJnt $Tip 3;
+   	RMAlign $TopJnt $Tip 1;
+   	RMAlign $BallJnt $Tap 3;
+   	RMAlign $BallJnt $SideIn 3;
+    RMAlign $BallJnt $SideOut 3;
+   
+
+    RMAlign (FootIn, $SideIn,1);
+    RMAlign (FootOut,$SideOut,1);
+    RMAlign (FootBK,$Tap,1);
+
+  	 
+   	parent $IKname $Ball;
+   	parent $BallIK $BallLift;
+   	parent $TipIK $BallLift;
+   	parent $BallLift $SideIn;   
+   	parent $Ball $SideIn;      
+   	parent $SideIn $SideOut;   
+   	parent $SideOut $Tap;
+   	parent $Tap $Tip;
+   	string $TipData=`RMCreateGrouponObj $Tip 1`;
+   	string $MainData=`RMCreateGrouponObj $TipData 1`;
+   	string $Name=`RMSetFromName $TipData 2 "MainFeetData"`;
+   	$MainData=`rename $MainData $Name`;
+   	
+	
+	$IKcontrol=RMSetFromName($MainData,1,$side);
+	$IKcontrol=RMSetFromName($IKcontrol,2,"FeetControl");
+	$IKcontrol=RMSetFromName($IKcontrol,3,"ctrl");
+	$IKcontrol=RMSetFromName($IKcontrol,4,"rvf");
+
+
+	$Length = RMDistancia($Toe,$FootBK);
+	$Width = RMDistancia($FootIn,$FootOut);
+   	$IKcontrol = RMCreateCubeLine($Length,$Width,$Width/2,"Character01"+$side+);
+
+   	//parentConstraint  -mo $IKcontrol $TipData;
+    
+   	RMaddFeetControls $IKcontrol;
+
+   	RMConnectWithLimits ($IKcontrol+".ToePivot") ($Tip+".rotateZ") (-10) 10 (-70)(70)(0);
+   	RMConnectWithLimits ($IKcontrol+".ToePivotSide") ($Tip+".rotateY") (-10) 10 (-70)(70)(0);
+   	RMConnectWithLimits ($IKcontrol+".ToeLift") ($BallLift+".rotateZ") (-10) 10 (-70)(70)(0);
+   	RMConnectWithLimits ($IKcontrol+".BallPivot") ($Ball+".rotateZ") (-10) 10 (70)(-70)(0);
+   	RMConnectWithLimits ($IKcontrol+".HeelPivot") ($Tap+".rotateZ") (-10) 10 (-70)(70)(0);
+
+   	if (`RMGetFromName $SideIn 1`=="LF")
+    {
+    ConnectWithLimits ($IKcontrol+".Tilt") ($SideIn+".rotateX") (-10) 10 (70)(0)(0);
+    ConnectWithLimits ($IKcontrol+".Tilt") ($SideOut+".rotateX") (-10) 10 (0)(-70)(0);
+	}
+	else
+	{
+	ConnectWithLimits ($IKcontrol+".Tilt") ($SideIn+".rotateX") (-10) 10 (0)(-70)(0);
+    ConnectWithLimits ($IKcontrol+".Tilt") ($SideOut+".rotateX") (-10) 10 (70)(0)(0);
+	}
+
+	string $GrupoCntrl1 = `RMCreateGrouponObj $IKcontrol 1`;
+
+    //connectAttr  ($IKcontrol+".Twist") ($IKname+".twist");
+    //RMLockAndHideAttributes ({$IKcontrol}) "1111110001";
+    
+	string $ParentC[]=`parentConstraint -mo $Systemparent $GrupoCntrl1`;
+	if (`objExists ("*MD_Mover2_ctr_rig")`)
+    {
+		string $moveMain=`RMObjNameToVar "*MD_Mover2_ctr_rig"`;
+		parentConstraint -mo $moveMain $GrupoCntrl1;
+	}
+	
+	
+	//Conecta el Control de Aligned To a el ParentConstraint
+
+   	string $Alias[]=`parentConstraint -q -wal $ParentC[0]`;   
+	connectAttr   ($IKcontrol+".AttachTo") ($ParentC[0]+"."+$Alias[0]);
+   
+    string $newName=`RMSetFromName $IKcontrol 2 "FeetParentReverse"`;
+    $newName=`RMSetFromName $newName 3 "utl"`;
+    $newName=`RMSetFromName $newName 4 "rig"`;
+    $newName=`RMUniqueName  $newName`;
+   
+    shadingNode -name $newName -asUtility reverse;
+    connectAttr   ($IKcontrol+".AttachTo") ($newName+".inputX");
+    if (`objExists ("*MD_Mover2_ctr_rig")`)
+    {
+	    connectAttr   ($newName+".outputX") ($ParentC[0]+"."+$Alias[1]);
+
+		string $IKGroupp=`RMObjNameToVar "*IKGroup*"`;
+		parent $GrupoCntrl1 $IKGroupp;
+		parent $MainData ScaledData;
+	}
+
+
+	return ({$IKcontrol,$PoleVector[0],$PoleVector[1]});
+
+}
+
+StandardReverseFeetJoints("Character01_RH_ankleFeet_pnt_rfr");
+
+
+

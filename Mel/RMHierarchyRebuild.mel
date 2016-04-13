@@ -62,9 +62,7 @@ global proc RMCreateSkeleton(string $PelvisPoint)
 		}
 		$indexR++;
     } 
-	/*
 	
-	*/
     //=================================================================================================================================//
     select -r Character01_MD_headTip_jnt_rig_rfr;
     parent -w;
@@ -83,13 +81,15 @@ global proc RMCreateSkeleton(string $PelvisPoint)
     parent Character01_MD_Spine_jnt_rig Character01_MD_Hip_jnt_rig;
     //parent;
     //parent Character01_MD_neck_jnt Character01_MD_Spine3_jnt;
-    select -r Character01_MD_neck_jnt_rig Character01_RH_clavicle_jnt_rig Character01_LF_clavicle_jnt_rig Character01_MD_Spine4_jnt_rig ;
+    select -r Character01_MD_neck_jnt_rig Character01_RH_clavicle_jnt_rig Character01_LF_clavicle_jnt_rig Character01_MD_Spine4_jnt_rig;
     parent;
-    parent -w Character01_RH_footLimitBack_jnt_rig Character01_RH_footLimitOuter_jnt_rig Character01_RH_footLimitInner_jnt_rig ;
-    parent Character01_RH_footLimitBack_jnt_rig Character01_RH_footLimitOuter_jnt_rig Character01_RH_footLimitInner_jnt_rig Character01_RH_ball_jnt_rig ;
+    parent -w Character01_RH_footLimitBack_jnt_rig Character01_RH_footLimitOuter_jnt_rig Character01_RH_footLimitInner_jnt_rig Character01_RH_toe_jnt_rig;
+    parent Character01_RH_toe_jnt_rig Character01_RH_footLimitBack_jnt_rig Character01_RH_footLimitOuter_jnt_rig Character01_RH_footLimitInner_jnt_rig Character01_RH_ball_jnt_rig ;
     
-    parent -w Character01_LF_footLimitBack_jnt_rig Character01_LF_footLimitOuter_jnt_rig Character01_LF_footLimitInner_jnt_rig ;
-    parent Character01_LF_footLimitBack_jnt_rig Character01_LF_footLimitOuter_jnt_rig Character01_LF_footLimitInner_jnt_rig Character01_LF_ball_jnt_rig ;
+    parent -w Character01_LF_footLimitBack_jnt_rig Character01_LF_footLimitOuter_jnt_rig Character01_LF_footLimitInner_jnt_rig Character01_LF_toe_jnt_rig;
+
+    parent Character01_LF_toe_jnt_rig Character01_LF_footLimitBack_jnt_rig Character01_LF_footLimitOuter_jnt_rig Character01_LF_footLimitInner_jnt_rig Character01_LF_ball_jnt_rig;
+
     RMTransFormGroupsIdentitys();
     parent -w Character01_MD_neck_jnt_rig Character01_RH_clavicle_jnt_rig Character01_LF_clavicle_jnt_rig Character01_RH_shoulder_jnt_rig ;
     select -r Character01_LF_thumb_jnt_rig Character01_LF_index_jnt_rig Character01_LF_pinky_jnt_rig Character01_LF_ring_jnt_rig Character01_LF_middle_jnt_rig ;
@@ -105,16 +105,19 @@ global proc RMCreateSkeleton(string $PelvisPoint)
     doDelete;
     //joint -e;
     select -r Character01_MD_Hip_jnt_rig;
+	
+	joint -e -oj "xyz" -sao "zdown" Character01_MD_Hip_jnt_rig;
+	parent  -w Character01_RH_leg_jnt_rig;
+    parent  -w Character01_LF_leg_jnt_rig;
 
-    print " FLAG REPORT ";
 
  //=================================================================================================================================//
     
-	//file -import -type "mayaBinary"  -ignoreVersion -ra false -mergeNamespacesOnClash false  -options "v=0;"  -pr "//server/Personal/LuisDaniel/RiggCtrls.mb";
-	file  -import -gr -gn "ReferenceControls" -type "mayaBinary"  -ignoreVersion -ra false -mergeNamespacesOnClash false  -options "v=0;"  -pr "//server/Personal/LuisDaniel/RiggCtrls.mb";
-	//requires -dataType "byteArray" "Mayatomr" "2015.0 - 3.12.1.16 ";
+
+	file  -import -gr -gn "ReferenceControls" -type "mayaBinary"  -ignoreVersion -ra false -mergeNamespacesOnClash false  -options "v=0;"  -pr "D:/Development/RMMel/Mel/RiggCtrls.mb";
+
+	
 	RMDeleteTransformG();
-	print " FLAG REPORT ";
 	string $leftUpLeg=`RMObjNameToVar "*LF_leg_jnt*"`;
 	string $rightUpLeg=`RMObjNameToVar "*RH_leg_jnt*"`;
 	string $hips=`RMObjNameToVar "*Hip_jnt*"`;
@@ -123,29 +126,31 @@ global proc RMCreateSkeleton(string $PelvisPoint)
 	string $hipLow_nub = $hips;
 	$hipLow_nub=`RMSetFromName $hipLow_nub 2 "HipLowNub"`;
 
-	parent -w $leftUpLeg;
-	parent -w $rightUpLeg;
+	/*parent -w $leftUpLeg;
+	parent -w $rightUpLeg;*/
 	//Crea el HipLow
 	//Obriene la posicion del Hip y de la base de la pierna para calcular la posicion del HipLowNub
 	vector $var1=`xform -ws -q -t $rightUpLeg`;
 	vector $var2=`xform -ws -q -t $hips`;
-	string $hipLow = `joint -p ($var2.x) ($var2.y) ($var2.z) -n $hipLowN`;
+	string $hipLow = `joint -a -p ($var2.x) ($var2.y) ($var2.z) -n $hipLowN`;
 	parent -w $hipLow;
 	string $hipLowNubName=$hipLow_nub;
 	float $TempDif=($var1.y-$var2.y);
+
 	if (($TempDif>=-0.1)&&($TempDif<=0.1))
 	{
 		//$var2 = <<$var2.x,$var2.y+($var1.x-$var2.x)*0.2,$var2.z>>;
-		string $hipLow_nub = `joint -r -p 0 (($var1.x-$var2.x)*0.35) 0 -n $hipLowNubName`;
+		string $hipLow_nub = `joint -r -p (($var1.x-$var2.x)*0.35) 0 0 -n $hipLowNubName`;
 		//joint -e;
 	}
 	else
 	{
-		string $hipLow_nub = `joint -r -p 0 (($var1.y-$var2.y)) 0 -n $hipLowNubName`;
+		string $hipLow_nub = `joint -r -p  (($var1.y-$var2.y)) 0 0 -n $hipLowNubName`;
 		//joint -e;
 	}
 	//RMAlign $hips
-	RMAlign $hips $hipLow 3;
+	
+	//RMAlign $hips $hipLow 3;
 
 	string $newName=$hips;
 	$newName=`RMSetFromName $newName 2 "HipGroup"`;
@@ -387,7 +392,7 @@ proc string RMRebuildArm (string $firstBone,string $Prefix){
 	return $Joint1;
 }
 
-global proc string [] RMRebuildFK(){
+global proc string [] RMRebuildFK () {
 	string $LeftArmroot= `RMObjNameToVar "*LF_shoulder_jnt*"`;
 
 	RMRebuildArm $LeftArmroot "FK";
@@ -407,12 +412,12 @@ global proc string [] RMRebuildFK(){
 }
 global proc string[] RMRebuildIK()
 {
-	string $LeftArmroot=`RMObjNameToVar "*LF_shoulder_jnt*"`;
+	string $LeftArmroot=`RMObjNameToVar "*LF_shoulder_jnt_rig"`;
 	string $LeftArmrootIK=`RMRebuildArm $LeftArmroot "IK"`;
 	string $LeftArmrootParent[]=`listRelatives -p $LeftArmroot`;
 	// string $LeftArmrootIK=`RMObjNameToVar "*LF_shoulder_jnt_IK"`;
 	string $LeftCntrls[]=`RMCreateIKControlsArm $LeftArmrootIK $LeftArmrootParent[0]`;
-	string $RightArmroot=`RMObjNameToVar "*RH_shoulder_jnt*"`;
+	string $RightArmroot=`RMObjNameToVar "*RH_shoulder_jnt_rig"`;
 	string $RightArmrootIK=`RMRebuildArm $RightArmroot "IK"`;
 	string $RightArmrootParent[]=`listRelatives -p $RightArmroot`;
 	// string $RightArmrootIK=`RMObjNameToVar "*RH_shoulder_jnt_IK"`;
@@ -495,6 +500,9 @@ global proc RMRebuildJXTArm(string $side,string $IKControls[],string $FKControls
 	string $temp[];
 	string $IKArmroot=`RMObjNameToVar ("*"+$side+"_shoulder_jnt_IK")`;
 	string $FKArmroot=`RMObjNameToVar ("*"+$side+"_shoulder_jnt_FK")`;
+
+	//string $IKArmroot=`RMObjNameToVar ("*"+$side+"_Arm_jnt_IK")`;
+	//string $FKArmroot=`RMObjNameToVar ("*"+$side+"_Arm_jnt_FK")`;
 
 
 	for ($n=0;$n<=3;$n++)
@@ -589,7 +597,7 @@ global proc string RMRebuildLeg (string $firstBone,string $Prefix){
 	
 	//ring $Joint2=`joint -n ($temp[0]+$Prefix)`;
 	string $Joint2=`joint -n (RMSetFromName($temp[0],4,$Prefix))`;
-	// RMAlign en posicion el nuevo hueso Joint2 al segundo hueso de la herarquia y en orientacion al primer hueso y lo mueve -1/10 parte en su eje X
+	// Alinea en posicion el nuevo hueso Joint2 al segundo hueso de la herarquia y en orientacion al primer hueso y lo mueve -1/10 parte en su eje X
 	
 	RMAlign $firstBone $Joint2 2;
 	RMAlign $temp[0] $Joint2 1;
@@ -604,14 +612,15 @@ global proc string RMRebuildLeg (string $firstBone,string $Prefix){
 	//Calcula la RMDistancia entre la segunda y tercera Falange
 	string $temp1[]=`listRelatives -c $temp[0]`;
 	float $RMDistancia= `RMDistancia $temp1[0] $temp[0]`;
-	//RMslign el segundo hueso de la segunda Falange a la segunda Falange tanto en posicion como orientacion y lo mueve 1/6 de la RMDistancia hacia la Falange 3
+	//Alinea el segundo hueso de la segunda Falange a la segunda Falange tanto en posicion como orientacion y lo mueve 1/6 de la RMDistancia hacia la Falange 3
 	RMAlign $temp[0] $Joint3 3;
 	move -os -r ($RMDistancia/10) 0 0 $Joint3;
 	//Crea una cuarta Falange y la RMAlign a la tercer Falange Original
 	string $temp1[]=`listRelatives -c $temp[0]`;
 	//string $Joint4=`joint -n ($temp1[0]+$Prefix)`;
-	string $tempFix[]; 
-	string $tempNewName ;
+	
+	/*string $tempFix[]; 
+	string $tempNewName;
 	if (RMGetFromName($temp1[0],2)=="KneeB")
 	{	
 		$tempFix = `listRelatives -c $temp1[0]`;
@@ -623,12 +632,15 @@ global proc string RMRebuildLeg (string $firstBone,string $Prefix){
 		$tempFix[0]= $temp1[0];
 		
 	}
+
 	$tempNewName = RMSetFromName($tempFix[0],4,$Prefix);
 	
-
 	string $Joint4=`joint -n ($tempNewName)`;
 	RMAlign $tempFix[0] $Joint4 3;
-	
+	*/
+	string $Joint4=`joint -n (RMSetFromName($temp1[0],4,$Prefix))`;
+	RMAlign $temp1[0] $Joint4 3;
+
 	//Crea Los huesos del Pie
 	string $temp2[]=`listRelatives -c $temp1[0]`;
 	string $Joint5=`joint -n ($temp2[0]+$Prefix)`;
@@ -650,6 +662,7 @@ global proc string RMRebuildLeg (string $firstBone,string $Prefix){
 
     joint -e -oj "xzy" -zso $Joint2;
     joint -e -oj "xzy" -zso $Joint3;
+    joint -e -oj "xyz" -sao "yup" -zso $Joint5;
 	//Regresa la primera Falange
 	if (`objExists Joints`)
 	{
@@ -1127,6 +1140,5 @@ global proc string[] RMHandControls (string $Mano) {
         parent $nameRoot $ScaledData;
         parent $PalmControl $JXTGroup;
     }
-    //saaas
     return ({$PalmControl,$nameRoot});
 }

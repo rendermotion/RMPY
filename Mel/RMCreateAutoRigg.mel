@@ -1,7 +1,9 @@
+source "RMRiggControllers.mel";
+
 source "RMHierarchyRebuild.mel";
 source "RMRigTools.mel";
 source "RMRigShapeControls.mel";
-source "RMRiggControllers.mel";
+
 source "RMRibbonSystem.mel";
 source "RMRiggMath.mel";
 source "RMNameConvention.mel";
@@ -12,37 +14,36 @@ source "RMRibbonSystem.mel";
 /************************************************************************************************************************/
 /**********************************Crea AutoRIgg*************************************************************************/
 /************************************************************************************************************************/
-//RMLinkEyes("LF");
-
-//file -import -type "mayaBinary"  -ignoreVersion -ra false -mergeNamespacesOnClash false  -options "v=0;"  -pr "//server/Personal/LuisDaniel/RiggCtrls.mb";
 global proc RMStartAutoRigg()
 {
-	//file  -import -gr -gn "ReferenceControls" -type "mayaBinary"  -ignoreVersion -ra false -mergeNamespacesOnClash false  -options "v=0;"  -pr "//server/Personal/LuisDaniel/RiggCtrls.mb";
-	//requires -dataType "byteArray" "Mayatomr" "2015.0 - 3.12.1.16 ";
+	
 	RMCreateSkeleton("Character01_MD_Hip_pnt_rfr");
-	select "Character01_MD_Hip_pnt_rfr";
-	doDelete;
+	
 
-	RMCreateMainGroupsAndControls;
+	RMCreateMainGroupsAndControls();
 	RMRebuildSpine();
-
+	
 	string $FKControls[] = `RMRebuildFK`;
+	
 	string $IKControls[] = `RMRebuildIK`;
+
 	RMRebuildJXTArm "LF" ({$IKControls[0],$IKControls[1],$IKControls[2]}) ({$FKControls[0],$FKControls[1],$FKControls[2]});
+
 	RMRebuildJXTArm "RH" ({$IKControls[3],$IKControls[4],$IKControls[5]}) ({$FKControls[3],$FKControls[4],$FKControls[5]});
 	RMLinkHands();
 
 	string $FKControls[] = `RMRebuildFKLegs`;
 	
 	string $IKControls[] = `RMRebuildIKLegs`;
-
 	
-
 	RMRebuildJXTLeg "LF" ({$IKControls[0],$IKControls[1],$IKControls[2]}) ({$FKControls[0],$FKControls[1],$FKControls[2],$FKControls[3]});
 	RMRebuildJXTLeg "RH" ({$IKControls[3],$IKControls[4],$IKControls[5]}) ({$FKControls[4],$FKControls[5],$FKControls[6],$FKControls[7]});
-	/*	/**/
+	
 	select -r "ReferenceControls";
 	doDelete;
+	/*select "Character01_MD_Hip_pnt_rfr";
+	doDelete;
+	*/
 }
 global proc RMSelectSkinBones(float $Spine,float $Neck,float $HipLo,float $RArm,float $LArm,float $RLeg,float $LLeg,float $RHan, float $LHan)
 {

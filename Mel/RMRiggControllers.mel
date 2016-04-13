@@ -1,4 +1,4 @@
-
+source "RMRigIK.mel";
 /*Crea la herarquia de los controles IK Para La Pierna*/
 proc string[] CreateFKControlsLeg (string $FKroot,string $Systemparent)
 	{    
@@ -76,7 +76,214 @@ proc string[] CreateFKControlsLeg (string $FKroot,string $Systemparent)
    
    return {$CntrlExt1, $CntrlExt2, $CntrlExt3,$CntrlExt4};
 }
+global proc string[] RMCreateIKControlsLeg (string $IKroot , string $Systemparent)
+{
+	//Obtiene los nombres de los 4 joints del sistema y los reasigna a Ex1 2 3 4
+	string $Ex1 = $IKroot;
+	string $temp[]=`listRelatives -c $Ex1`;
+	string $temp1[]=`listRelatives -c $temp[0]`;
+	string $temp2[]=`listRelatives -c $temp1[0]`;
+	string $temp3[]=`listRelatives -c $temp2[0]`;
+	string $temp4[]=`listRelatives -c $temp3[0]`;
+	string $Ex2=$temp[0];
+	string $Ex3=$temp1[0];
+	string $Ex4=$temp2[0];
+	string $Ex5=$temp3[0];
+	string $Ex6=$temp4[0];
+	RMAlign $Ex5 $Ex6 2; 
+	
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Ex1;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Ex2;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Ex3;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Ex4;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Ex5;
+	//Crea un control posicionado y RMAligndo a la extremidad 4
+	float $FeetSize=`RMDistancia $Ex4 $Ex5`;
+   //string $IKcontrol = ` RMCreateBoxCtrl $Ex4`;
+    string $IKcontrol=$Ex4;
+	$IKcontrol=`RMSetFromName $IKcontrol 3 "ctr"`;
+	$IKcontrol=`RMSetFromName $IKcontrol 4 "IK"`;
+	$IKcontrol=`RMUniqueName $IKcontrol`;
 
+    RMCreateCubeLine $FeetSize $FeetSize $FeetSize $IKcontrol;
+    move -r ($FeetSize/2) 0 0 ($IKcontrol+".scalePivot") ($IKcontrol+".rotatePivot");
+	move -rpr -a 0 0 0 $IKcontrol;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $IKcontrol;
+   
+   
+    // RMAlign  $Ex5 $IKcontrol 2;
+    RMAlign  $Ex4 $IKcontrol 1;
+	
+	//	string $IKcontrol = `RMCreaControl $Ex4 4`;
+	//Crea un Nombre para el IK que tenga en el sistema al que pertenece IKH
+	string $IKname=$Ex4;
+	$IKname=`RMSetFromName $IKname 3 "IKH"`;
+	$IKname=`RMSetFromName $IKname 4 "IK"`;
+	string $BallIK=`RMSetFromName $IKname 2 "BallIK"`;
+    string $TipIK=`RMSetFromName $IKname 2 "TipIK"`;
+	
+	ikHandle -sj $Ex1 -ee $Ex4 -name $IKname;
+
+   	ikHandle -sj $Ex4 -ee $Ex5 -name $BallIK;
+   	ikHandle -sj $Ex5 -ee $Ex6 -name $TipIK;
+   
+	string $PoleVector[]=`RMCreatePoleVector $IKname`;
+	RMMakeIkStretchy $IKname;
+	
+	
+	string $Ankle=$Ex4;
+	$Ankle=`RMSetFromName $Ankle 2 "Ankle"`;
+	$Ankle=`RMSetFromName $Ankle 3 "grp"`;
+	$Ankle=`RMSetFromName $Ankle 4 "IK"`;
+	string $Ball=`RMSetFromName $Ankle 2 "Ball"`;
+   	string $BallLift=`RMSetFromName $Ankle 2 "BallLift"`;
+   	string $Toe=`RMSetFromName $Ankle 2 "Toe"`;
+   	string $Tap=`RMSetFromName $Ankle 2 "Tap"`;
+   	string $Tip=`RMSetFromName $Ankle 2 "Tip"`;
+   
+   	string $SideIn=`RMSetFromName $Ankle 2 "SideIn"`;
+   	string $SideOut=`RMSetFromName $Ankle 2 "SideOut"`;
+   	string $FeetOrient=`RMSetFromName $Ankle 2 "FeetOrient"`;
+
+         
+   	group -em -name $Ball;
+   	group -em -name $BallLift;
+	//   group -em $Toe;   
+   	group -em -name $Tap;   
+   	group -em -name $Tip; 
+   	group -em -name $SideIn;	
+   	group -em -name $SideOut;
+
+
+   	RMAlign $Ex5 $Ball 3;
+   	RMAlign $Ex5 $BallLift 3;
+	// 	  RMAlign $Ex5 $Toe 3;
+   	RMAlign $Ex5 $Tip 3;
+   	RMAlign $Ex6 $Tip 1;
+   	RMAlign $Ex5 $Tap 3;
+   	RMAlign $Ex5 $SideIn 3;
+    RMAlign $Ex5 $SideOut 3;
+   
+    //move -ws -r -moveY 0 $FeetSize 0 $Ex6;
+
+    if (`RMGetFromName $SideIn 1`=="LF")
+    {
+        
+        RMAlign Character01_LF_footLimitInner_pnt_rfr $SideIn 1;
+        RMAlign Character01_LF_footLimitOuter_pnt_rfr $SideOut 1;
+        RMAlign Character01_LF_footLimitBack_pnt_rfr $Tap 1;
+        //move -ws -r -moveX ($FeetSize*.3) 0  0 $SideIn;
+        //move -ws -r -moveX (-$FeetSize*.3) 0 0 $SideOut;
+    }
+    else 
+    {
+    	RMAlign Character01_RH_footLimitInner_pnt_rfr $SideIn 1;
+        RMAlign Character01_RH_footLimitOuter_pnt_rfr $SideOut 1;
+        RMAlign Character01_RH_footLimitBack_pnt_rfr $Tap 1;
+        //move -ws -r -moveX (-$FeetSize*.3) 0 0 $SideIn;
+        //move -ws -r -moveX ($FeetSize*.3) 0 0 $SideOut;
+    }
+    /*
+    if (`RMGetFromName $SideIn 1`=="LF")
+    {
+        move -ws -r -moveX ($FeetSize*.3) 0  0 $SideIn;
+        move -ws -r -moveX (-$FeetSize*.3) 0 0 $SideOut;
+    }
+   	else 
+   	{
+        move -ws -r -moveX (-$FeetSize*.3) 0 0 $SideIn;
+        move -ws -r -moveX ($FeetSize*.3) 0 0 $SideOut;
+    }
+  
+   	move -ws -r -moveZ 0 0 (-$FeetSize*0.5) $Tap;
+   	*/
+   
+  	 
+   	parent $IKname $Ball;
+   	parent $BallIK $BallLift;
+   	parent $TipIK $BallLift;
+   	parent $BallLift $SideIn;   
+   	parent $Ball $SideIn;      
+   	parent $SideIn $SideOut;   
+   	parent $SideOut $Tap;
+   	parent $Tap $Tip;
+   	string $TipData=`RMCreateGrouponObj $Tip 1`;
+   	string $MainData=`RMCreateGrouponObj $TipData 1`;
+   	string $Name=`RMSetFromName $TipData 2 "MainFeetData"`;
+   	$MainData=`rename $MainData $Name`;
+   
+   	parentConstraint  -mo $IKcontrol $TipData;
+    
+   	RMaddFeetControls $IKcontrol;
+
+   	RMConnectWithLimits ($IKcontrol+".ToePivot") ($Tip+".rotateZ") (-10) 10 (-70)(70)(0);
+   	RMConnectWithLimits ($IKcontrol+".ToePivotSide") ($Tip+".rotateY") (-10) 10 (-70)(70)(0);
+   	RMConnectWithLimits ($IKcontrol+".ToeLift") ($BallLift+".rotateZ") (-10) 10 (-70)(70)(0);
+   	RMConnectWithLimits ($IKcontrol+".BallPivot") ($Ball+".rotateZ") (-10) 10 (70)(-70)(0);
+   	RMConnectWithLimits ($IKcontrol+".HeelPivot") ($Tap+".rotateZ") (-10) 10 (-70)(70)(0);
+
+   	if (`RMGetFromName $SideIn 1`=="LF")
+    {
+    ConnectWithLimits ($IKcontrol+".Tilt") ($SideIn+".rotateX") (-10) 10 (70)(0)(0);
+    ConnectWithLimits ($IKcontrol+".Tilt") ($SideOut+".rotateX") (-10) 10 (0)(-70)(0);
+	}
+	else
+	{
+	ConnectWithLimits ($IKcontrol+".Tilt") ($SideIn+".rotateX") (-10) 10 (0)(-70)(0);
+    ConnectWithLimits ($IKcontrol+".Tilt") ($SideOut+".rotateX") (-10) 10 (70)(0)(0);
+	}
+
+
+  	// AttachTo
+   
+	//pointConstraint $IKcontrol $IKname;
+	//orientConstraint $IKcontrol $Ex4;
+	
+	//connectAttr ($IKcontrol +".rotate") ($Ex4+".rotate");
+	string $GrupoCntrl1 = `RMCreateGrouponObj $IKcontrol 1`;
+
+    connectAttr  ($IKcontrol+".Twist") ($IKname+".twist");
+    RMLockAndHideAttributes ({$IKcontrol}) "1111110001";
+    
+	string $ParentC[]=`parentConstraint -mo $Systemparent $GrupoCntrl1`;
+	if (`objExists ("*MD_Mover2_ctr_rig")`)
+    {
+		string $moveMain=`RMObjNameToVar "*MD_Mover2_ctr_rig"`;
+		parentConstraint -mo $moveMain $GrupoCntrl1;
+	}
+	
+	
+	//Conecta el Control de Aligned To a el ParentConstraint
+
+   	string $Alias[]=`parentConstraint -q -wal $ParentC[0]`;   
+	connectAttr   ($IKcontrol+".AttachTo") ($ParentC[0]+"."+$Alias[0]);
+   
+    string $newName=`RMSetFromName $IKcontrol 2 "FeetParentReverse"`;
+    $newName=`RMSetFromName $newName 3 "utl"`;
+    $newName=`RMSetFromName $newName 4 "rig"`;
+    $newName=`RMUniqueName  $newName`;
+   
+    shadingNode -name $newName -asUtility reverse;
+    connectAttr   ($IKcontrol+".AttachTo") ($newName+".inputX");
+    if (`objExists ("*MD_Mover2_ctr_rig")`)
+    {
+	    connectAttr   ($newName+".outputX") ($ParentC[0]+"."+$Alias[1]);
+	   
+		//parent $GrupoCntrl1 $moveMain;
+		string $IKGroupp=`RMObjNameToVar "*IKGroup*"`;
+		parent $GrupoCntrl1 $IKGroupp;
+		parent $MainData ScaledData;
+	}
+
+	/*string $ScaledData = RMObjNameToVar ("ScaledData");
+    parent $IKname $ScaledData;
+    string $Group = `RMObjNameToVar "*IKGroup*"`;
+	parent $GrupoCntrl1 $Group;*/
+
+	return ({$IKcontrol,$PoleVector[0],$PoleVector[1]});
+}
+
+/*
 global proc string[] RMCreateIKControlsLeg (string $IKroot , string $Systemparent)
 {
 	//Obtiene los nombres de los 4 joints del sistema y los reasigna a Ex1 2 3 4
@@ -169,16 +376,23 @@ global proc string[] RMCreateIKControlsLeg (string $IKroot , string $Systemparen
 
     if (`RMGetFromName $SideIn 1`=="LF")
     {
-        move -ws -r -moveX ($FeetSize*.3) 0  0 $SideIn;
-        move -ws -r -moveX (-$FeetSize*.3) 0 0 $SideOut;
+        
+        RMAlign Character01_LF_footLimitInner_pnt_rfr $SideIn 1;
+        RMAlign Character01_LF_footLimitOuter_pnt_rfr $SideOut 1;
+        RMAlign Character01_LF_footLimitBack_pnt_rfr $Tap 1;
+        //move -ws -r -moveX ($FeetSize*.3) 0  0 $SideIn;
+        //move -ws -r -moveX (-$FeetSize*.3) 0 0 $SideOut;
     }
     else 
     {
-        move -ws -r -moveX (-$FeetSize*.3) 0 0 $SideIn;
-        move -ws -r -moveX ($FeetSize*.3) 0 0 $SideOut;
+    	RMAlign Character01_RH_footLimitInner_pnt_rfr $SideIn 1;
+        RMAlign Character01_RH_footLimitOuter_pnt_rfr $SideOut 1;
+        RMAlign Character01_RH_footLimitBack_pnt_rfr $Tap 1;
+        //move -ws -r -moveX (-$FeetSize*.3) 0 0 $SideIn;
+        //move -ws -r -moveX ($FeetSize*.3) 0 0 $SideOut;
     }
-  
-    move -ws -r -moveZ 0 0 (-$FeetSize*0.5) $Tap;
+  	
+  	//move -ws -r -moveZ 0 0 (-$FeetSize*0.5) $Tap;
    
    
    
@@ -204,8 +418,17 @@ global proc string[] RMCreateIKControlsLeg (string $IKroot , string $Systemparen
     ConnectWithLimits ($IKcontrol+".ToeLift") ($BallLift+".rotateZ") (-10) 10 (-70)(70)(0);
     ConnectWithLimits ($IKcontrol+".BallPivot") ($Ball+".rotateZ") (-10) 10 (70)(-70)(0);
     ConnectWithLimits ($IKcontrol+".HeelPivot") ($Tap+".rotateZ") (-10) 10 (-70)(70)(0);
+
+    if (`RMGetFromName $SideIn 1`=="LF")
+    {
     ConnectWithLimits ($IKcontrol+".Tilt") ($SideIn+".rotateX") (-10) 10 (-70)(0)(0);
     ConnectWithLimits ($IKcontrol+".Tilt") ($SideOut+".rotateX") (-10) 10 (0)(70)(0);
+	}
+	else
+	{
+	ConnectWithLimits ($IKcontrol+".Tilt") ($SideIn+".rotateX") (-10) 10 (0)(-70)(0);
+    ConnectWithLimits ($IKcontrol+".Tilt") ($SideOut+".rotateX") (-10) 10 (70)(0)(0);
+	}
 
 
     // AttachTo
@@ -251,7 +474,7 @@ global proc string[] RMCreateIKControlsLeg (string $IKroot , string $Systemparen
 	}
 	
 	return ({$IKcontrol,$PoleVector[0],$PoleVector[1]});
-}
+}*/
 
 global proc RMaddFinguerControls (string $Object)
 {
@@ -534,194 +757,15 @@ global proc string[] RMCreateFKControlsLeg (string $FKroot,string $Systemparent)
    return {$CntrlExt1, $CntrlExt2, $CntrlExt3,$CntrlExt4};
 }
 
-global proc string[] RMCreateIKControlsLeg (string $IKroot , string $Systemparent)
-{
-	//Obtiene los nombres de los 4 joints del sistema y los reasigna a Ex1 2 3 4
-	string $Ex1 = $IKroot;
-	string $temp[]=`listRelatives -c $Ex1`;
-	string $temp1[]=`listRelatives -c $temp[0]`;
-	string $temp2[]=`listRelatives -c $temp1[0]`;
-	string $temp3[]=`listRelatives -c $temp2[0]`;
-	string $temp4[]=`listRelatives -c $temp3[0]`;
-	string $Ex2=$temp[0];
-	string $Ex3=$temp1[0];
-	string $Ex4=$temp2[0];
-	string $Ex5=$temp3[0];
-	string $Ex6=$temp4[0];
-	RMAlign $Ex5 $Ex6 2; 
-	
-	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Ex1;
-	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Ex2;
-	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Ex3;
-	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Ex4;
-	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Ex5;
-	//Crea un control posicionado y RMAligndo a la extremidad 4
-	float $FeetSize=`RMDistancia $Ex4 $Ex5`;
-   //string $IKcontrol = ` RMCreateBoxCtrl $Ex4`;
-    string $IKcontrol=$Ex4;
-	$IKcontrol=`RMSetFromName $IKcontrol 3 "ctr"`;
-	$IKcontrol=`RMSetFromName $IKcontrol 4 "IK"`;
-	$IKcontrol=`RMUniqueName $IKcontrol`;
-
-    RMCreateCubeLine $FeetSize $FeetSize $FeetSize $IKcontrol;
-    move -r ($FeetSize/2) 0 0 ($IKcontrol+".scalePivot") ($IKcontrol+".rotatePivot");
-	move -rpr -a 0 0 0 $IKcontrol;
-	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $IKcontrol;
-   
-   
-    // RMAlign  $Ex5 $IKcontrol 2;
-    RMAlign  $Ex4 $IKcontrol 1;
-	
-	//	string $IKcontrol = `RMCreaControl $Ex4 4`;
-	//Crea un Nombre para el IK que tenga en el sistema al que pertenece IKH
-	string $IKname=$Ex4;
-	$IKname=`RMSetFromName $IKname 3 "IKH"`;
-	$IKname=`RMSetFromName $IKname 4 "IK"`;
-	string $BallIK=`RMSetFromName $IKname 2 "BallIK"`;
-    string $TipIK=`RMSetFromName $IKname 2 "TipIK"`;
-	
-	ikHandle -sj $Ex1 -ee $Ex4 -name $IKname;
-
-   	ikHandle -sj $Ex4 -ee $Ex5 -name $BallIK;
-   	ikHandle -sj $Ex5 -ee $Ex6 -name $TipIK;
-   
-	string $PoleVector[]=`RMCreatePoleVector $IKname`;
-	RMMakeIkStretchy $IKname;
-	
-	
-	string $Ankle=$Ex4;
-	$Ankle=`RMSetFromName $Ankle 2 "Ankle"`;
-	$Ankle=`RMSetFromName $Ankle 3 "grp"`;
-	$Ankle=`RMSetFromName $Ankle 4 "IK"`;
-	string $Ball=`RMSetFromName $Ankle 2 "Ball"`;
-   	string $BallLift=`RMSetFromName $Ankle 2 "BallLift"`;
-   	string $Toe=`RMSetFromName $Ankle 2 "Toe"`;
-   	string $Tap=`RMSetFromName $Ankle 2 "Tap"`;
-   	string $Tip=`RMSetFromName $Ankle 2 "Tip"`;
-   
-   	string $SideIn=`RMSetFromName $Ankle 2 "SideIn"`;
-   	string $SideOut=`RMSetFromName $Ankle 2 "SideOut"`;
-   	string $FeetOrient=`RMSetFromName $Ankle 2 "FeetOrient"`;
-
-         
-   	group -em -name $Ball;
-   	group -em -name $BallLift;
-	//   group -em $Toe;   
-   	group -em -name $Tap;   
-   	group -em -name $Tip; 
-   	group -em -name $SideIn;	
-   	group -em -name $SideOut;
-
-
-   	RMAlign $Ex5 $Ball 3;
-   	RMAlign $Ex5 $BallLift 3;
-	// 	  RMAlign $Ex5 $Toe 3;
-   	RMAlign $Ex5 $Tip 3;
-   	RMAlign $Ex6 $Tip 1;
-   	RMAlign $Ex5 $Tap 3;
-   	RMAlign $Ex5 $SideIn 3;
-    RMAlign $Ex5 $SideOut 3;
-   
-    //move -ws -r -moveY 0 $FeetSize 0 $Ex6;
-
-    if (`RMGetFromName $SideIn 1`=="LF")
-    {
-        move -ws -r -moveX ($FeetSize*.3) 0  0 $SideIn;
-        move -ws -r -moveX (-$FeetSize*.3) 0 0 $SideOut;
-    }
-   	else 
-   	{
-        move -ws -r -moveX (-$FeetSize*.3) 0 0 $SideIn;
-        move -ws -r -moveX ($FeetSize*.3) 0 0 $SideOut;
-    }
-  
-   	move -ws -r -moveZ 0 0 (-$FeetSize*0.5) $Tap;
-   
-   
-  	 
-   	parent $IKname $Ball;
-   	parent $BallIK $BallLift;
-   	parent $TipIK $BallLift;
-   	parent $BallLift $SideIn;   
-   	parent $Ball $SideIn;      
-   	parent $SideIn $SideOut;   
-   	parent $SideOut $Tap;
-   	parent $Tap $Tip;
-   	string $TipData=`RMCreateGrouponObj $Tip 1`;
-   	string $MainData=`RMCreateGrouponObj $TipData 1`;
-   	string $Name=`RMSetFromName $TipData 2 "MainFeetData"`;
-   	$MainData=`rename $MainData $Name`;
-   
-   	parentConstraint  -mo $IKcontrol $TipData;
-    
-   	RMaddFeetControls $IKcontrol;
-
-   	RMConnectWithLimits ($IKcontrol+".ToePivot") ($Tip+".rotateZ") (-10) 10 (-70)(70)(0);
-   	RMConnectWithLimits ($IKcontrol+".ToePivotSide") ($Tip+".rotateY") (-10) 10 (-70)(70)(0);
-   	RMConnectWithLimits ($IKcontrol+".ToeLift") ($BallLift+".rotateZ") (-10) 10 (-70)(70)(0);
-   	RMConnectWithLimits ($IKcontrol+".BallPivot") ($Ball+".rotateZ") (-10) 10 (70)(-70)(0);
-   	RMConnectWithLimits ($IKcontrol+".HeelPivot") ($Tap+".rotateZ") (-10) 10 (-70)(70)(0);
-   	RMConnectWithLimits ($IKcontrol+".Tilt") ($SideIn+".rotateX") (-10) 10 (-70)(0)(0);
-   	RMConnectWithLimits ($IKcontrol+".Tilt") ($SideOut+".rotateX") (-10) 10 (0)(70)(0);
-
-
-  	// AttachTo
-   
-	//pointConstraint $IKcontrol $IKname;
-	//orientConstraint $IKcontrol $Ex4;
-	
-	//connectAttr ($IKcontrol +".rotate") ($Ex4+".rotate");
-	string $GrupoCntrl1 = `RMCreateGrouponObj $IKcontrol 1`;
-
-    connectAttr  ($IKcontrol+".Twist") ($IKname+".twist");
-    RMLockAndHideAttributes ({$IKcontrol}) "1111110001";
-    
-	string $ParentC[]=`parentConstraint -mo $Systemparent $GrupoCntrl1`;
-	if (`objExists ("*MD_Mover2_ctr_rig")`)
-    {
-		string $moveMain=`RMObjNameToVar "*MD_Mover2_ctr_rig"`;
-		parentConstraint -mo $moveMain $GrupoCntrl1;
-	}
-	
-	
-	//Conecta el Control de Aligned To a el ParentConstraint
-
-   string $Alias[]=`parentConstraint -q -wal $ParentC[0]`;   
-	connectAttr   ($IKcontrol+".AttachTo") ($ParentC[0]+"."+$Alias[0]);
-   
-    string $newName=`RMSetFromName $IKcontrol 2 "FeetParentReverse"`;
-    $newName=`RMSetFromName $newName 3 "utl"`;
-    $newName=`RMSetFromName $newName 4 "rig"`;
-    $newName=`RMUniqueName  $newName`;
-   
-    shadingNode -name $newName -asUtility reverse;
-    connectAttr   ($IKcontrol+".AttachTo") ($newName+".inputX");
-    if (`objExists ("*MD_Mover2_ctr_rig")`)
-    {
-	    connectAttr   ($newName+".outputX") ($ParentC[0]+"."+$Alias[1]);
-	   
-		//parent $GrupoCntrl1 $moveMain;
-		string $IKGroupp=`RMObjNameToVar "*IKGroup*"`;
-		parent $GrupoCntrl1 $IKGroupp;
-		parent $MainData ScaledData;
-	}
-
-	/*string $ScaledData = RMObjNameToVar ("ScaledData");
-    parent $IKname $ScaledData;
-    string $Group = `RMObjNameToVar "*IKGroup*"`;
-	parent $GrupoCntrl1 $Group;*/
-
-	return ({$IKcontrol,$PoleVector[0],$PoleVector[1]});
-}
 
 global proc string [] RMRebuildFKLegs(){
-	string $LeftArmroot= `RMObjNameToVar "*LF_leg_jnt*"`;
+	string $LeftArmroot= `RMObjNameToVar "*LF_leg_jnt_rig"`;
 	RMRebuildLeg $LeftArmroot "FK";
 	string $LeftArmrootParent[]=`listRelatives -p $LeftArmroot`;
 	string $LeftArmrootFK=`RMObjNameToVar "*LF_leg_jnt_FK"`;
 	string $LeftCntrls[]=`RMCreateFKControlsLeg $LeftArmrootFK $LeftArmrootParent[0]`;
 	
-	string $RightArmroot = `RMObjNameToVar "*RH_leg_jnt*"`;
+	string $RightArmroot = `RMObjNameToVar "*RH_leg_jnt_rig"`;
 	RMRebuildLeg $RightArmroot "FK";
 	string $RightArmrootParent[]=`listRelatives -p $RightArmroot`;
 	string $RightArmrootFK=`RMObjNameToVar "*RH_leg_jnt_FK"`;
@@ -733,12 +777,12 @@ global proc string [] RMRebuildFKLegs(){
 }
 global proc string[] RMRebuildIKLegs()
 {
-	string $LeftArmroot=`RMObjNameToVar "*LF_leg_jnt*"`;
+	string $LeftArmroot=`RMObjNameToVar "*LF_leg_jnt_rig"`;
 	string $LeftArmrootIK=`RMRebuildLeg $LeftArmroot "IK"`;
 	string $LeftArmrootParent[]=`listRelatives -p $LeftArmroot`;
 	string $LeftCntrls[]=`RMCreateIKControlsLeg $LeftArmrootIK $LeftArmrootParent[0]`;
 	
-	string $RightArmroot=`RMObjNameToVar "*RH_leg_jnt*"`;
+	string $RightArmroot=`RMObjNameToVar "*RH_leg_jnt_rig"`;
 	string $RightArmrootIK=`RMRebuildLeg $RightArmroot "IK"`;
 	string $RightArmrootParent[]=`listRelatives -p $RightArmroot`;
 	string $RightCntrls[]=`RMCreateIKControlsLeg $RightArmrootIK $RightArmrootParent[0]`;
@@ -748,7 +792,7 @@ global proc string[] RMRebuildIKLegs()
 
 global proc RMRebuildJXTLeg(string $side,string $IKControls[],string $FKControls[])
 {
-	string $ORGArmroot=`RMObjNameToVar ("*"+$side+"_leg_jnt_rig")`;
+	string $ORGArmroot = `RMObjNameToVar ("*"+$side+"_leg_jnt_rig")`;
 	
 	RMRebuildLeg $ORGArmroot "JXT";
 	
@@ -777,7 +821,7 @@ global proc RMRebuildJXTLeg(string $side,string $IKControls[],string $FKControls
 	string $JXTArmControlGrp2 = `RMCreateGrouponObj $JXTArmControlGrp 1`;
 
 
-	//	CreaUn Nodo RMAligndo al mundo en la posicion del Pecho para usarlo en el Orient Constraint Y evitar que popee
+	//	CreaUn Nodo Alineado al mundo en la posicion del Pecho para usarlo en el Orient Constraint Y evitar que popee
 	/*	string $JointOriented=`RMCreateGrouponObj $Pecho[0] 0`;
 	string $WorldOriented=`RMUniqueName $JointOriented`;
 	group -em -name $WorldOriented;
@@ -795,6 +839,8 @@ global proc RMRebuildJXTLeg(string $side,string $IKControls[],string $FKControls
 	string $temp[];
 	string $IKArmroot=`RMObjNameToVar ("*"+$side+"_leg_jnt_IK")`;
 	string $FKArmroot=`RMObjNameToVar ("*"+$side+"_leg_jnt_FK")`;
+	//string $IKArmroot=`RMObjNameToVar ("*"+$side+"_UpLeg_jnt_IK")`;
+	//string $FKArmroot=`RMObjNameToVar ("*"+$side+"_UpLeg_jnt_FK")`;
 	for ($n=0;$n<=5;$n++)
 	{
 		RMParentLink $IKArmroot $FKArmroot $JXTArmroot $JXTArmControl;

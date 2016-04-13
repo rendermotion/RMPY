@@ -1055,7 +1055,7 @@ proc SetSkeleton(){
 	select -cl;
 }
 //Crea un grupo nuevo alineado al objeto $obj y emparenta el objeto $Obj a este nuevo grupo
-//La vandera en caso de ser 1, busará al padre de Obj y a este emparentará el nuevo grupo
+//La bandera en caso de ser 1, busará al padre de Obj y a este emparentará el nuevo grupo
 //La función regresa el nuevo grupo
 proc string CreateGrouponObj (string $Obj, int $flag)
 {
@@ -1374,15 +1374,15 @@ proc RebuildJXT(string $side,string $IKControls[],string $FKControls[])
    addAttr -ln AlignedTo  -k on  -at "enum" -en "UpperBack:World:" $JXTArmControl;
   	
   	//Conecta el Control de Aligned To a el ParentConstraint
-   string $Alias[]=`orientConstraint -q -wal $pCClav[0]`;   
-	connectAttr   ($JXTArmControl+".AlignedTo") ($pCClav[0]+"."+$Alias[0]);
-   string $newName=`SetFromName $JXTArmControl 2 "ClavicleOrientReverse"`;
-   $newName=`SetFromName $newName 3 "utl"`;
-   $newName=`SetFromName $newName 4 "rig"`;
-   $newName=`UniqueName  $newName`;
-   shadingNode -name $newName -asUtility reverse;
-   connectAttr   ($JXTArmControl+".AlignedTo") ($newName+".inputX");
-   connectAttr   ($newName+".outputX") ($pCClav[0]+"."+$Alias[1]);
+    string $Alias[]=`orientConstraint -q -wal $pCClav[0]`;   
+    connectAttr   ($JXTArmControl+".AlignedTo") ($pCClav[0]+"."+$Alias[0]);
+    string $newName=`SetFromName $JXTArmControl 2 "ClavicleOrientReverse"`;
+    $newName=`SetFromName $newName 3 "utl"`;
+    $newName=`SetFromName $newName 4 "rig"`;
+    $newName=`UniqueName  $newName`;
+    shadingNode -name $newName -asUtility reverse;
+    connectAttr   ($JXTArmControl+".AlignedTo") ($newName+".inputX");
+    connectAttr   ($newName+".outputX") ($pCClav[0]+"."+$Alias[1]);
 	
  //Alinea El Hueso de la clavicula al Brazo
 	orientConstraint $JXTArmControl $JXTArmrootParent[0];
