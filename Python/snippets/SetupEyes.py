@@ -44,104 +44,125 @@ def LinkM (FaceBlendShapesDic):
 		if cmds.objExists(keys):
 			cmds.blendShape("FacialBS",edit=True, target=["Character",NumBS,keys,1.0])
 			FaceBlendShapesDic[keys]["index"] = NumBS
+			FaceBlendShapesDic[keys]["Exists"] = True
 			NumBS+=1
 		else:
 			print "el objeto" +keys+ " no fue encontrado."
+			FaceBlendShapesDic[keys]["Exists"] = False
 	
-	cmds.blendShape("EyeLashes",name="EyeLashesBS")
-	cmds.blendShape("EyeLashesBS",edit=True, target=["EyeLashes",0,"RHEyeLashesClosed",1.0])
-	cmds.blendShape("EyeLashesBS",edit=True, target=["EyeLashes",1,"LFEyeLashesClosed",1.0])
+	if cmds.objExists("RHEyeLashesClosed") and cmds.objExists("LFEyeLashesClosed") :
+		cmds.blendShape("EyeLashes",name="EyeLashesBS")
+		cmds.blendShape("EyeLashesBS",edit=True, target=["EyeLashes",0,"RHEyeLashesClosed",1.0])
+		cmds.blendShape("EyeLashesBS",edit=True, target=["EyeLashes",1,"LFEyeLashesClosed",1.0])
+
+		connectWithLimits("Character_RH_ReyeCls_ctrl_fc.translateY", "EyeLashesBS.RHEyeLashesClosed",[[0,0],[-2,1]])
+
+		connectWithLimits("Character_LF_LeyeCls_ctrl_fc.translateY", "EyeLashesBS.LFEyeLashesClosed",[[0,0],[-2,1]])
+
+	
+	if FaceBlendShapesDic["REyeCls"]["Exists"]:
+		connectWithLimits("Character_RH_ReyeCls_ctrl_fc.translateY", "FacialBS.REyeCls",[[0,0],[-2,1]])
+	if FaceBlendShapesDic["LEyeCls"]["Exists"]:
+		connectWithLimits("Character_LF_LeyeCls_ctrl_fc.translateY", "FacialBS.LEyeCls",[[0,0],[-2,1]])
 
 
+	if FaceBlendShapesDic["RBrowOutUp"]["Exists"]:
+		connectWithLimits("Character_MD_RBrowOutUpDn_ctrl_fc.translateY", "FacialBS.RBrowOutUp",[[0,0],[1,1]])
+	if FaceBlendShapesDic["RBrowOutDn"]["Exists"]:
+		connectWithLimits("Character_MD_RBrowOutUpDn_ctrl_fc.translateY", "FacialBS.RBrowOutDn",[[0,0],[-1,1]])	
+	if FaceBlendShapesDic["RBrowInUp"]["Exists"]:
+		connectWithLimits("Character_MD_RBrowOutUpDn_ctrl_fc.translateX", "FacialBS.RBrowInUp",[[0,0],[1,1]])
+	if FaceBlendShapesDic["RBrowInDn"]["Exists"]:
+		connectWithLimits("Character_MD_RBrowOutUpDn_ctrl_fc.translateX", "FacialBS.RBrowInDn",[[0,0],[-1,1]])
 
-	connectWithLimits("Character_RH_ReyeCls_ctrl_fc.translateY", "FacialBS.REyeCls",[[0,0],[-2,1]])
-	connectWithLimits("Character_LF_LeyeCls_ctrl_fc.translateY", "FacialBS.LEyeCls",[[0,0],[-2,1]])
+	if FaceBlendShapesDic["LBrowOutUp"]["Exists"]:
+		connectWithLimits("Character_MD_LBrowOutUpDn_ctrl_fc.translateY", "FacialBS.LBrowOutUp",[[0,0],[1,1]])
+	if FaceBlendShapesDic["LBrowOutDn"]["Exists"]:
+		connectWithLimits("Character_MD_LBrowOutUpDn_ctrl_fc.translateY", "FacialBS.LBrowOutDn",[[0,0],[-1,1]])	
+	if FaceBlendShapesDic["LBrowInUp"]["Exists"]:
+		connectWithLimits("Character_MD_LBrowOutUpDn_ctrl_fc.translateX", "FacialBS.LBrowInUp",[[0,0],[1,1]])
+	if FaceBlendShapesDic["LBrowInDn"]["Exists"]:
+		connectWithLimits("Character_MD_LBrowOutUpDn_ctrl_fc.translateX", "FacialBS.LBrowInDn",[[0,0],[-1,1]])
 
-	connectWithLimits("Character_RH_ReyeCls_ctrl_fc.translateY", "EyeLashesBS.RHEyeLashesClosed",[[0,0],[-2,1]])
-	connectWithLimits("Character_LF_LeyeCls_ctrl_fc.translateY", "EyeLashesBS.LFEyeLashesClosed",[[0,0],[-2,1]])
+	if FaceBlendShapesDic["Browsqueeze"]["Exists"]:
+		connectWithLimits("Character_MD_Browsqueeze_ctrl_fc.translateY", "FacialBS.Browsqueeze",[[0,0],[1,1]])
 
+	if FaceBlendShapesDic["UprLipUp"]["Exists"]:
+		connectWithLimits("Character_MD_UprLipUpDn_ctrl_fc.translateY", "FacialBS.UprLipUp",[[0,0],[1,1]])	
+	if FaceBlendShapesDic["UprLipDn"]["Exists"]:
+		connectWithLimits("Character_MD_UprLipUpDn_ctrl_fc.translateY", "FacialBS.UprLipDn",[[0,0],[-1,1]])	
 
-	connectWithLimits("Character_MD_RBrowOutUpDn_ctrl_fc.translateY", "FacialBS.RBrowOutUp",[[0,0],[1,1]])
-	connectWithLimits("Character_MD_RBrowOutUpDn_ctrl_fc.translateY", "FacialBS.RBrowOutDn",[[0,0],[-1,1]])	
-	connectWithLimits("Character_MD_RBrowOutUpDn_ctrl_fc.translateX", "FacialBS.RBrowInUp",[[0,0],[1,1]])
-	connectWithLimits("Character_MD_RBrowOutUpDn_ctrl_fc.translateX", "FacialBS.RBrowInDn",[[0,0],[-1,1]])
+	if FaceBlendShapesDic["Wide"]["Exists"]:
+		connectWithLimits("Character_MD_JawOpen_ctrl_fc.translateX", "FacialBS.Wide",[[0,0],[1,1]])
+	if FaceBlendShapesDic["Narrow"]["Exists"]:
+		connectWithLimits("Character_MD_JawOpen_ctrl_fc.translateX", "FacialBS.Narrow",[[0,0],[-1,1]])
+	if FaceBlendShapesDic["Wide"]["Exists"]:
+		connectWithLimits("Character_MD_JawOpen_ctrl_fc.translateX", "FacialBS.Wide",[[0,0],[1,1]])
 
-	connectWithLimits("Character_MD_LBrowOutUpDn_ctrl_fc.translateY", "FacialBS.LBrowOutUp",[[0,0],[1,1]])
-	connectWithLimits("Character_MD_LBrowOutUpDn_ctrl_fc.translateY", "FacialBS.LBrowOutDn",[[0,0],[-1,1]])	
-	connectWithLimits("Character_MD_LBrowOutUpDn_ctrl_fc.translateX", "FacialBS.LBrowInUp",[[0,0],[1,1]])
-	connectWithLimits("Character_MD_LBrowOutUpDn_ctrl_fc.translateX", "FacialBS.LBrowInDn",[[0,0],[-1,1]])
-
-
-	connectWithLimits("Character_MD_Browsqueeze_ctrl_fc.translateY", "FacialBS.Browsqueeze",[[0,0],[1,1]])
-
-	connectWithLimits("Character_MD_UprLipUpDn_ctrl_fc.translateY", "FacialBS.UprLipUp",[[0,0],[1,1]])	
-	connectWithLimits("Character_MD_UprLipUpDn_ctrl_fc.translateY", "FacialBS.UprLipDn",[[0,0],[-1,1]])	
-
-	connectWithLimits("Character_MD_JawOpen_ctrl_fc.translateX", "FacialBS.Wide",[[0,0],[1,1]])
-	connectWithLimits("Character_MD_JawOpen_ctrl_fc.translateX", "FacialBS.Narrow",[[0,0],[-1,1]])
-
-	connectWithLimits("Character_MD_JawOpen_ctrl_fc.translateY", "Jaw.rotateZ",[[0,0],[-1,-20],[1,7]])
-	connectWithLimits("Character_MD_JawFwd_ctrl_fc.translateX", "Jaw.rotateY",[[0,0],[1,20],[-1,-20]])
-	connectWithLimits("Character_MD_JawFwd_ctrl_fc.translateY", "Jaw.translateX",[[0,0],[1,-1],[-1,1]])
-
-	connectWithLimits("Character_MD_JawOpen_ctrl_fc.translateX", "FacialBS.Wide",[[0,0],[1,1]])
-
-
-
-
-	connectWithLimits("Character_MD_MouthEmotion_ctrl_fc.translateY", "FacialBS.RSmile",[[0,0],[1,1]])
-	connectWithLimits("Character_MD_MouthEmotion_ctrl_fc.translateY", "FacialBS.RFrown",[[0,0],[-1,1]])	
-	connectWithLimits("Character_MD_MouthEmotion_ctrl_fc.translateX", "FacialBS.LSmile",[[0,0],[1,1]])
-	connectWithLimits("Character_MD_MouthEmotion_ctrl_fc.translateX", "FacialBS.LFrown",[[0,0],[-1,1]])
-
-	cmds.expression(name = "RSquintExpresion",unitConversion = "none")
-	script ='''\nfloat $Zval=0;
-		\nfloat $Xval=0;
-		\nif (Character_MD_EyeSquint_ctrl_fc.translateY>=0)
-		\n{$Zval=Character_MD_EyeSquint_ctrl_fc.translateY;}
-		\nelse{$Zval=0;}
-		\nif (Character_MD_EyeSquint_ctrl_fc.translateX<=0) 
-		\n{$Xval=-Character_MD_EyeSquint_ctrl_fc.translateX;}
-		\nelse {$Xval = 0;}
-		\nFacialBS.RSquint = ($Zval-$Xval);'''
-	cmds.expression("RSquintExpresion",edit=True,string=script,unitConversion = "none")
-
-	cmds.expression(name = "LSquintExpresion",unitConversion = "none")
-	script ='''\nfloat $Zval=0;
-		\nfloat $Xval=0;
-		\nif (Character_MD_EyeSquint_ctrl_fc.translateY>=0)
-		\n{$Zval=Character_MD_EyeSquint_ctrl_fc.translateY;}
-		\nelse{$Zval=0;}
-		\nif (Character_MD_EyeSquint_ctrl_fc.translateX>=0) 
-		\n{$Xval=Character_MD_EyeSquint_ctrl_fc.translateX;}
-		\nelse {$Xval = 0;}
-		\nFacialBS.LSquint = ($Zval-$Xval);'''
-	cmds.expression("LSquintExpresion",edit=True,string=script,unitConversion = "none")
+	if cmds.objExists("Jaw"):
+		connectWithLimits("Character_MD_JawOpen_ctrl_fc.translateY", "Jaw.rotateZ",[[0,0],[-1,-20],[1,7]])
+		connectWithLimits("Character_MD_JawFwd_ctrl_fc.translateX", "Jaw.rotateY",[[0,0],[1,20],[-1,-20]])
+		connectWithLimits("Character_MD_JawFwd_ctrl_fc.translateY", "Jaw.translateX",[[0,0],[1,-1],[-1,1]])
 
 
-	cmds.expression(name = "RSneerExpresion",unitConversion = "none")
-	script ='''\nfloat $Zval=0;
-		\nfloat $Xval=0;
-		\nif (Character_MD_EyeSneer_ctrl_fc.translateY>=0)
-		\n{$Zval=Character_MD_EyeSneer_ctrl_fc.translateY;}
-		\nelse{$Zval=0;}
-		\nif (Character_MD_EyeSneer_ctrl_fc.translateX<=0) 
-		\n{$Xval=-Character_MD_EyeSneer_ctrl_fc.translateX;}
-		\nelse {$Xval = 0;}
-		\nFacialBS.RSneer = ($Zval-$Xval);'''
-	cmds.expression("RSneerExpresion",edit=True,string=script,unitConversion = "none")
+	if FaceBlendShapesDic["RSmile"]["Exists"]:
+		connectWithLimits("Character_MD_MouthEmotion_ctrl_fc.translateY", "FacialBS.RSmile",[[0,0],[1,1]])
+	if FaceBlendShapesDic["RFrown"]["Exists"]:
+		connectWithLimits("Character_MD_MouthEmotion_ctrl_fc.translateY", "FacialBS.RFrown",[[0,0],[-1,1]])	
+	if FaceBlendShapesDic["LSmile"]["Exists"]:
+		connectWithLimits("Character_MD_MouthEmotion_ctrl_fc.translateX", "FacialBS.LSmile",[[0,0],[1,1]])
+	if FaceBlendShapesDic["LFrown"]["Exists"]:
+		connectWithLimits("Character_MD_MouthEmotion_ctrl_fc.translateX", "FacialBS.LFrown",[[0,0],[-1,1]])
 
-	cmds.expression(name = "LSneerExpresion",unitConversion = "none")
-	script ='''\nfloat $Zval=0;
-		\nfloat $Xval=0;
-		\nif (Character_MD_EyeSneer_ctrl_fc.translateY>=0)
-		\n{$Zval=Character_MD_EyeSneer_ctrl_fc.translateY;}
-		\nelse{$Zval=0;}
-		\nif (Character_MD_EyeSneer_ctrl_fc.translateX>=0) 
-		\n{$Xval=Character_MD_EyeSquint_ctrl_fc.translateX;}
-		\nelse {$Xval = 0;}
-		\nFacialBS.LSneer = ($Zval-$Xval);'''
-	cmds.expression("LSneerExpresion",edit=True,string=script,unitConversion = "none")
+	if FaceBlendShapesDic["RSquint"]["Exists"]:
+		cmds.expression(name = "RSquintExpresion",unitConversion = "none")
+		script ='''\nfloat $Zval=0;
+			\nfloat $Xval=0;
+			\nif (Character_MD_EyeSquint_ctrl_fc.translateY>=0)
+			\n{$Zval=Character_MD_EyeSquint_ctrl_fc.translateY;}
+			\nelse{$Zval=0;}
+			\nif (Character_MD_EyeSquint_ctrl_fc.translateX<=0) 
+			\n{$Xval=-Character_MD_EyeSquint_ctrl_fc.translateX;}
+			\nelse {$Xval = 0;}
+			\nFacialBS.RSquint = ($Zval-$Xval);'''
+		cmds.expression("RSquintExpresion",edit=True,string=script,unitConversion = "none")
+	if FaceBlendShapesDic["LSquint"]["Exists"]:
+		cmds.expression(name = "LSquintExpresion",unitConversion = "none")
+		script ='''\nfloat $Zval=0;
+			\nfloat $Xval=0;
+			\nif (Character_MD_EyeSquint_ctrl_fc.translateY>=0)
+			\n{$Zval=Character_MD_EyeSquint_ctrl_fc.translateY;}
+			\nelse{$Zval=0;}
+			\nif (Character_MD_EyeSquint_ctrl_fc.translateX>=0) 
+			\n{$Xval=Character_MD_EyeSquint_ctrl_fc.translateX;}
+			\nelse {$Xval = 0;}
+			\nFacialBS.LSquint = ($Zval-$Xval);'''
+		cmds.expression("LSquintExpresion",edit=True,string=script,unitConversion = "none")
+
+	if FaceBlendShapesDic["RSneer"]["Exists"]:
+		cmds.expression(name = "RSneerExpresion",unitConversion = "none")
+		script ='''\nfloat $Zval=0;
+			\nfloat $Xval=0;
+			\nif (Character_MD_EyeSneer_ctrl_fc.translateY>=0)
+			\n{$Zval=Character_MD_EyeSneer_ctrl_fc.translateY;}
+			\nelse{$Zval=0;}
+			\nif (Character_MD_EyeSneer_ctrl_fc.translateX<=0) 
+			\n{$Xval=-Character_MD_EyeSneer_ctrl_fc.translateX;}
+			\nelse {$Xval = 0;}
+			\nFacialBS.RSneer = ($Zval-$Xval);'''
+		cmds.expression("RSneerExpresion",edit=True,string=script,unitConversion = "none")
+	if FaceBlendShapesDic["LSneer"]["Exists"]:
+		cmds.expression(name = "LSneerExpresion",unitConversion = "none")
+		script ='''\nfloat $Zval=0;
+			\nfloat $Xval=0;
+			\nif (Character_MD_EyeSneer_ctrl_fc.translateY>=0)
+			\n{$Zval=Character_MD_EyeSneer_ctrl_fc.translateY;}
+			\nelse{$Zval=0;}
+			\nif (Character_MD_EyeSneer_ctrl_fc.translateX>=0) 
+			\n{$Xval=Character_MD_EyeSquint_ctrl_fc.translateX;}
+			\nelse {$Xval = 0;}
+			\nFacialBS.LSneer = ($Zval-$Xval);'''
+		cmds.expression("LSneerExpresion",edit=True,string=script,unitConversion = "none")
 
 
 
@@ -227,4 +248,5 @@ def SetupEyes():
 #connectWithLimits("LEyeFollow.rotateY","FacialBS.LEyeRollRh",[[0,0],[-16,1]])
 
 
-connectWithLimits("Character_MD_AutoEyeLids_ctrl_fc.translateY","FacialBS.Incisibus",[[0,0],[-2,1]])
+#connectWithLimits("Character_MD_AutoEyeLids_ctrl_fc.translateY","FacialBS.Incisibus",[[0,0],[-2,1]])
+LinkM(FaceBlendShapesDic)

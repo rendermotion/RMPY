@@ -1,19 +1,48 @@
-global proc RMObjLookXAtPoint (string $Obj01, vector $Vector){
-    //print $Vector;
-    //vector $tempo = `dot ($Vector,(<<1,0,1>>))`;
-    float $longitud = (`mag ($Vector)`);
-    float $Ry =0;
-    if ($Vector.x > 0){
-    	float $Ry= asind ($Vector.y/$longitud);
+global proc RMObjLookXAtPoint (string $Obj01, vector $DirVect){
+
+    float $longitud = (`mag (<<$DirVect.x,0,$DirVect.z>>)`);
+
+    if ($longitud == 0)
+    {
+        if ($DirVect.y > 0)
+            {
+                xform -ws -rotation 0 0 90 $Obj01;
+            }
+        else 
+            {
+                xform -ws -rotation 0 0 -90 $Obj01;
+            }
     }
     else{
-    	float $Ry=180 - asind ($Vector.y/$longitud);
+        float $Ry = 0;
+
+        if ($DirVect.x > 0)
+        {
+            //print ($DirVect.z/$longitud);
+
+        	$Ry = asind (float ($DirVect.z)/$longitud);
+            
+        }
+        else
+        {
+
+        	$Ry = 180.0 - asind (float ($DirVect.z)/$longitud);
+        }
+        
+        $longitud= `mag ($DirVect)`;
+        print $longitud;
+        float $Rz = asind(float($DirVect.y)/$longitud);
+        print "\n";
+        print $Rz;
+        //0  
+        xform -ws -rotation 0 (-$Ry) 0 $Obj01;
+        xform -r -os -rotation 0  0 ($Rz) $Obj01;
     }
-    $longitud= `mag ($Vector)`;
-    float $Rz = asind($Vector.z/$longitud);
-    //setAttr ($Obj01+".rotate") -type "double3" (0) (-$Ry) (-$Rz);
-    $Obj01= `rotate -r 0 (-$Ry) (-$Rz)`;
 }
+
+//$value = `getAttr "locator2.translate"`;
+//RMObjLookXAtPoint("locator1",<<$value[0],$value[1],$value[2]>>);
+//RMObjLookXAtPoint("locator1",<<0,1,0>>);
 global proc vector ReturnParentPos (string $Obj[]){
     select -r $Obj;
     string $temp[] = `listRelatives -p`;

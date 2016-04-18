@@ -3,42 +3,43 @@ global proc string[] RMCreateArmPoints (vector $OrigenPoint, vector $DirectionVe
 	vector $upVector = <<0, 1, 0>>;
 	vector $transversalVector = unit (cross ($DirectionVector,$upVector));
 
-	vector $claviclePosition= $OrigenPoint-$DirectionVector*$ArmSize*0.1-$upVector*$ArmSize*0.1;
-	vector $shoulderPosition = $OrigenPoint;
-	vector $wristPosition = $OrigenPoint+$DirectionVector*$ArmSize;
-	vector $elbowPosition;
+	
+    string $claviclePoint[] = `spaceLocator -n ("Character01_"+$Side+"_clavicle_pnt_rfr") `;
+    string $shoulderPoint[] = `spaceLocator -n ("Character01_"+$Side+"_shoulder_pnt_rfr") `;
+    string $elbowPoint[] = `spaceLocator -n ("Character01_"+$Side+"_elbow_pnt_rfr")`;
+    string $wristPoint[] = `spaceLocator -n ("Character01_"+$Side+"_wrist_pnt_rfr")`;
+
+    vector $elbowPosition;
+
     if ($Side=="RH"){
 		$elbowPosition=$OrigenPoint+$DirectionVector*$ArmSize*0.5+$transversalVector*0.05*$ArmSize;
 	}
 	if ($Side=="LF"){
 		$elbowPosition=$OrigenPoint+$DirectionVector*$ArmSize*0.5-$transversalVector*0.05*$ArmSize;
 	}
-
-	string $claviclePoint[] = `spaceLocator -n ("Character01_"+$Side+"_clavicle_pnt_rfr") -p ($claviclePosition.x) ($claviclePosition.y) ($claviclePosition.z)`;
-    xform -cp $claviclePoint[0];
-    ScalePoints ($claviclePoint[0],$ArmSize*0.1);
-    string $shoulderPoint[] = `spaceLocator -n ("Character01_"+$Side+"_shoulder_pnt_rfr") -p ($shoulderPosition.x) ($shoulderPosition.y) ($shoulderPosition.z)`;
-    xform -cp $shoulderPoint[0];
-    ScalePoints ($shoulderPoint[0],$ArmSize*0.1);
-    string $elbowPoint[] = `spaceLocator -n ("Character01_"+$Side+"_elbow_pnt_rfr") -p ($elbowPosition.x) ($elbowPosition.y) ($elbowPosition.z)`;
-    xform -cp $elbowPoint[0];
-    ScalePoints ($elbowPoint[0],$ArmSize*0.1);
-    string $wristPoint[] = `spaceLocator -n ("Character01_"+$Side+"_wrist_pnt_rfr") -p ($wristPosition.x) ($wristPosition.y) ($wristPosition.z)`;
-    xform -cp $wristPoint[0];
-    ScalePoints ($wristPoint[0],$ArmSize*0.1);
-
+    vector $wristPosition = $OrigenPoint + $DirectionVector*$ArmSize;
+    vector $shoulderPosition = $OrigenPoint;
+    vector $claviclePosition = $OrigenPoint-$DirectionVector*$ArmSize*0.1 - $upVector*$ArmSize*0.1;
+    
     RMObjLookXAtPoint ($claviclePoint[0],($shoulderPosition - $claviclePosition));
     RMObjLookXAtPoint ($shoulderPoint[0],($elbowPosition - $shoulderPosition));
     RMObjLookXAtPoint ($elbowPoint[0],($wristPosition - $elbowPosition));
-    //RMObjLookXAtPoint ($wristPoint[0],($wristPosition - $elbowPosition));
+    RMObjLookXAtPoint ($wristPoint[0],($wristPosition - $elbowPosition));
     
+    xform -ws -translation ($claviclePosition.x) ($claviclePosition.y) ($claviclePosition.z) $claviclePoint;
+    xform -ws -translation ($OrigenPoint.x) ($OrigenPoint.y) ($OrigenPoint.z) $shoulderPoint;
+    xform -ws -translation ($elbowPosition.x) ($elbowPosition.y) ($elbowPosition.z) $elbowPoint;
+    xform -ws -translation ($wristPosition.x) ($wristPosition.y) ($wristPosition.z) $wristPoint;
+
     parent ($shoulderPoint[0]) ($claviclePoint[0]);
     parent ($wristPoint[0]) ($elbowPoint[0]);
     parent ($elbowPoint[0]) ($shoulderPoint[0]);
 
     string $Hand[] = RMCreateHandPoints ($wristPosition,(unit($wristPosition-$elbowPosition)),($ArmSize/3), $Side);
-    //xform -cp $Hand[0];
+
     parent ($Hand[0]) ($wristPoint[0]);
 
     return ($claviclePoint);
 }
+
+//RMCreateArmPoints (<<4,4,0>>,<<1,.1,0>>, 10, "RH");

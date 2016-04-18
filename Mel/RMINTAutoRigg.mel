@@ -5,18 +5,17 @@ global proc RMSelectBonesMenu()
 {
     string $Selecter= `window -wh 405 225 -t "RM Select" -menuBar true -vis true -sizeable false`;
     
-
     columnLayout -adjustableColumn true -cal "center";
         //string $SizeValue = `intFieldGrp -v 500 -l Size`;
     float $Spine = 0;
-float $RArm = 0;
-float $LArm = 0;
-float $Neck = 0;
-float $HipLo= 0;
-float $RLeg = 0;
-float $LLeg = 0;
-float $RHan = 0;
-float $LHan = 0;  
+    float $RArm = 0;
+    float $LArm = 0;
+    float $Neck = 0;
+    float $HipLo= 0;
+    float $RLeg = 0;
+    float $LLeg = 0;
+    float $RHan = 0;
+    float $LHan = 0;  
         rowLayout -nc 3;
             
             columnLayout -adjustableColumn true -cal "left";

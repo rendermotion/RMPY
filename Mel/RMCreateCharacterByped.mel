@@ -1,65 +1,122 @@
+source "RMNameConvention.mel";
+source "RMRiggMath.mel";
+
 source "RMCreateArmPoints.mel";
 source "RMCreateHandPoints.mel";
 source "RMCreateHeadPoints.mel";
 source "RMCreateSpinePoints.mel";
 source "RMCreateLegPoints.mel";
-source "RMNameConvention.mel";
-source "RMRiggMath.mel";
 
-global proc string[] CreateBipedCharacter (float $Size ,vector $FrontVector ,vector $UpVector){
+global proc CreateBipedCharacter (float $Size ,vector $FrontVector ,vector $UpVector){
     float $HeadSize = $Size/8;
+
     vector $TransversalVector = unit (cross ($FrontVector,$UpVector));
+
     float $HeadAndNeckSize = $HeadSize*1.2;
     float $LegSize = $HeadSize*4;
     float $ArmSize = $HeadSize*2.8;
     float $SpineSize = $HeadSize*2.8;
+    vector $SpineStart = <<0,$HeadSize*4,0>>;
     
-    string $SpineOrigin[] = RMCreateSpinePoints (<<0,$HeadSize*4,0>>,<<0,1,0>>,$SpineSize);
+    string $SpineOrigin[] = RMCreateSpinePoints ($SpineStart,<<0,1,0>>,$SpineSize);
     
     string $NeckOrigin[] = RMCreateHeadRefPoints (<<0,$HeadSize*4+$SpineSize,0>>,<<0,1,0>>,<<0,0,-1>>, $HeadAndNeckSize);
-    parent ($NeckOrigin[0]) ($SpineOrigin[(size($SpineOrigin)-1)]);
+    parent ($NeckOrigin[0]) ($SpineOrigin[(size($SpineOrigin)-2)]);
 
     string $ArmOriginRH[] = RMCreateArmPoints (<<0,$HeadSize*4+$SpineSize,0>>+($TransversalVector*$HeadSize), $TransversalVector, $ArmSize, "RH");
     string $ArmOriginLF[] = RMCreateArmPoints (<<0,$HeadSize*4+$SpineSize,0>>-($TransversalVector*$HeadSize), -$TransversalVector, $ArmSize, "LF");
 
-    parent ($ArmOriginRH[0]) ($SpineOrigin[(size ($SpineOrigin))-1]);
-    parent ($ArmOriginLF[0]) ($SpineOrigin[(size ($SpineOrigin))-1]);
+    parent ($ArmOriginRH[0]) ($SpineOrigin[(size ($SpineOrigin))-2]);
+    parent ($ArmOriginLF[0]) ($SpineOrigin[(size ($SpineOrigin))-2]);
 
-    //select -r $SpineOrigin[0];
-    vector $temp = <<0,($HeadSize*4),0>>;
-    string $LegOriginRH[] = RMCreateLegPoints (($temp+$TransversalVector*$HeadSize/2), $UpVector*(-1), $FrontVector, $LegSize, "RH");
-    string $LegOriginLF[] = RMCreateLegPoints (($temp-$TransversalVector*$HeadSize/2), $UpVector*(-1), $FrontVector, $LegSize, "LF");
+    string $LegOriginRH[] = RMCreateLegPoints ($SpineStart + ($TransversalVector*$HeadSize/2), $UpVector*(-1), $FrontVector, $LegSize, "RH");
+    string $LegOriginLF[] = RMCreateLegPoints ($SpineStart - ($TransversalVector*$HeadSize/2), $UpVector*(-1), $FrontVector, $LegSize, "LF");
 
-    parent ($LegOriginLF[0]) ($SpineOrigin[(size ($SpineOrigin))-1]);
-    parent ($LegOriginRH[0]) ($SpineOrigin[(size ($SpineOrigin))-1]);
-  /**/
-    return ($SpineOrigin);
+    parent ($LegOriginLF[0]) ($SpineOrigin[0]);
+    parent ($LegOriginRH[0]) ($SpineOrigin[0]);
+  
+    //return ($SpineOrigin);
 }
 
+global proc RMSymTransform (string $Obj01, string $Obj02){
+
+    $translation = `getAttr ( $Obj01 + ".translate")`;
+    $rotation = `getAttr ( $Obj01 + ".rotate")`;
+
+    float $PosmultVec []= {1,1,-1};
+    float $RotmultVec []= {-1,-1,1};
+
+    setAttr ($Obj02 + ".translate") ($PosmultVec[0]*$translation[0]) ($PosmultVec[1]*$translation[1]) ($PosmultVec[2]*$translation[2]);
+    setAttr ($Obj02 + ".rotate") ($rotation[0]*$RotmultVec[0]) ($rotation[1]*$RotmultVec[1]) ($rotation[2]*$RotmultVec[2]);
+
+/*
+    Obj01Position=in coordsys parent Obj01.position
+    Obj01Position=Obj01Position*[1,-1,1]
+    
+    Obj01Rotation=in coordsys parent Obj01.rotation
+    
+    Obj02Rotation = quatToEuler Obj01Rotation
+    
+    Obj02Rotation.x_rotation=Obj02Rotation.x_rotation*-1
+    Obj02Rotation.y_rotation=Obj02Rotation.y_rotation*1
+    Obj02Rotation.z_rotation=Obj02Rotation.z_rotation*-1
+    
+    Obj02.rotation=eulerAngles 0 0 0
+    
+    in coordsys parent Obj02.rotation=Obj02Rotation
+    in coordsys parent Obj02.position=Obj01Position
+*/
+
+}
+/*
 global proc RMSymTransform (string $Obj01[], string $Obj02[]){
     select -r ($Obj01[0]);
-
     vector $Obj01Position=`xform -q -translation`;
-    //print $Obj01Position;
     vector $tempVect = <<-$Obj01Position.x,$Obj01Position.y,$Obj01Position.z>>;
     $Obj01Position=$tempVect;
-    
-    //vector $Obj01Rotation=ReturnParentRotation($Obj01);
     select -r ($Obj01[0]);
     vector $Obj01Rotation=`xform -q -rotation`;
     
     select -r $Obj02;
-    //vector $Obj02Rotation = ReturnParentRotation($Obj02);
     vector $Obj02Rotation= <<($Obj01Rotation.x*(1)),($Obj01Rotation.y*(-1)),($Obj01Rotation.z*(-1))>>;
-    
     select -r $Obj02[0];
-    //string $temp[] = `listRelatives -p`;
-    //select -r $temp[0];
-    //move ($Obj01Position.x) ($Obj01Position.y) ($Obj01Position.z);
+
     setAttr ($Obj02[0]+".translate") -type "double3" ($Obj01Position.x) ($Obj01Position.y) ($Obj01Position.z);
     setAttr ($Obj02[0]+".rotate") -type "double3" ($Obj02Rotation.x) ($Obj02Rotation.y) ($Obj02Rotation.z);
     
 }
+*/
+
+
+global proc RMMirrorPositionPoints ()
+{
+    string $selection[] = `ls -sl`;
+    string $i;
+    for ($i in $selection)
+    {
+        string $ObjectSide=$i;
+        if (RMGetFromName ($ObjectSide,1) == "RH")
+        {
+            $objOpositeSide = RMSetFromName($ObjectSide,1,"LF");
+            RMSymTransform($ObjectSide,$objOpositeSide);
+        }
+        else
+        {
+            if (RMGetFromName ($ObjectSide,1) == "LF")
+                {
+                $objOpositeSide = RMSetFromName($ObjectSide,1,"RH");
+                RMSymTransform ($ObjectSide,$objOpositeSide);
+                }
+            else
+            {
+                print ("No OpositeSide for object ");
+                print ($ObjectSide);
+            }
+        }
+    }
+}
+
+
 global proc int RMIgnoraShape (string $name)
 {
     
@@ -74,17 +131,15 @@ global proc int RMIgnoraShape (string $name)
             return false;
         }
     }
-    /*
-    if (`match $name "Shape" `!="")
-    {
-        return false;
-    }*/
     return true;
 }
-global proc RMMirrorPositionPoints(){
+
+/*global proc RMMirrorPositionPoints(){
     string $temp[] = `ls -sl`;
-    string $temp2[] = `listRelatives -ad`;
+    string $temp2[] = `listRelatives -ad -type "Transform"`;
+    
     $temp2[`size $temp2`]=$temp[0];
+
     string $temp3[] = ReverseArray($temp2);
     
     string $objID="";
@@ -102,7 +157,6 @@ global proc RMMirrorPositionPoints(){
                 //print $Obj;
                 $objOpositeSide[0]=$Obj;
                 RMSymTransform ($objSide1, $objOpositeSide);
-                
             }
             else 
             {
@@ -123,3 +177,4 @@ global proc RMMirrorPositionPoints(){
         }
     }
 }
+*/

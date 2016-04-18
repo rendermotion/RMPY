@@ -1,5 +1,5 @@
-source "RMRiggMath.mel";
 source "RMNameConvention.mel";
+source "RMRiggMath.mel";
 
 global proc RMAlign (string $obj1, string $obj2,int $flag){
     if ($flag==1 || $flag==3){
