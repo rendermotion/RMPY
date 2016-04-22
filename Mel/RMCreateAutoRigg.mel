@@ -17,10 +17,10 @@ source "RMRibbonSystem.mel";
 global proc RMStartAutoRigg()
 {
 	
-	RMCreateSkeleton("Character01_MD_Hip_pnt_rfr");
-	
+	RMCreateSkeleton("Character01_MD_Spine_pnt_rfr");
 
 	RMCreateMainGroupsAndControls();
+
 	RMRebuildSpine();
 	
 	string $FKControls[] = `RMRebuildFK`;

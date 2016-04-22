@@ -1,0 +1,130 @@
+global proc RMRebuildSpine(){
+    RMBuildJointsBased();
+	string $MoveAndScaleMain=`RMObjNameToVar "*Mover2_ctr*"`;
+	string $FKGroup = RMSetFromName ($MoveAndScaleMain, 2, "FKGroup");
+	group -em -n $FKGroup;
+	$IKGroup = RMSetFromName ($MoveAndScaleMain, 2, "IKGroup");
+	group -em -n $IKGroup;
+	$ToonGroup = RMSetFromName ($MoveAndScaleMain, 2, "ToonGroup");
+	group -em -n $ToonGroup;
+	$JXTGroup = RMSetFromName ($MoveAndScaleMain, 2, "JXTGroup");
+	group -em -n $JXTGroup;
+	parent $FKGroup $IKGroup $ToonGroup $JXTGroup $MoveAndScaleMain;
+
+
+	//Obtiene el Nodode La Cadera
+	string $hips=`RMObjNameToVar "*Spine_pnt_rfr"`;
+	string $hipsLow=`RMObjNameToVar "*Hip_pnt_rfr"`;
+
+	string $TempChild[]=`listRelatives -type "transform" -c $hips`;
+	
+	//rotate -r -os 0 0 0 $hips;
+	//string $temp[]=`listRelatives -c $hips`;
+	//Obtiene el Nodo de la columna
+	string $Spine=`RMObjNameToVar "*Spine4_pnt_rfr"`;
+    float $SpineSize=`RMLenghtOfBone $hips`; 
+	//Crea Un control en La cadera
+
+	string $HipsControl=`RMCreaControl $hips $SpineSize`;
+	string $COG =`RMSetFromName $HipsControl 2 "COG"`;
+	$HipsControl=`rename $HipsControl $COG`;
+	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $HipsControl;
+	//Crea Un Ribbon entre La cadera y la columna
+	string $RibbonGroups[]=`RMCreaRibbon $hips $Spine`;
+	//Identifica el NOdo 3 
+	string $spineRibbon=`RMObjNameToVar "*HipToSpine4JointsLookAt3*"`;
+
+	//Crea los controles de la cabeza y los liga Identifica el logo del Cuello
+	string $Neck=`RMObjNameToVar "*neck_jnt*"`;
+	string $Head=`RMObjNameToVar "*head_jnt*"`;
+
+	//string $ControlCabeza = RMCreaControl(`RMObjNameToVar "*head_jnt"`, 3);
+
+	string $temp1[]=`duplicate ControlCabeza`;
+	string $CntrlCabeza=$temp1[0];
+	//Renombra El control de La cabeza a la nomenclatura
+   string $newName=`RMSetFromName $Neck 3 "ctr"`;
+   $newName=`RMSetFromName $newName 4 "rig"`;
+   $newName=`RMSetFromName $newName 2 "HeadControl"`;
+   $newName=`RMUniqueName $newName`;
+   $CntrlCabeza=`rename $CntrlCabeza $newName`;
+	
+   float $HeadSize=`RMLenghtOfBone $Head`;
+
+   scale -scaleXYZ $HeadSize $HeadSize $HeadSize $CntrlCabeza;
+   makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $CntrlCabeza;
+	//RMAlign el control Cabeza al Joint Del cuello      
+	RMAlign $Neck $CntrlCabeza 3;
+	
+	parentConstraint $CntrlCabeza $Neck;
+	
+	string $GrupoCabeza2 = `RMCreateGrouponObj $CntrlCabeza 1`;
+	string $GrupoCabeza  = `RMCreateGrouponObj $CntrlCabeza 1`;
+	
+	parent -world $GrupoCabeza;
+	parent $GrupoCabeza2 $Spine;
+	
+	//Emparenta la parte superior al control inferior del Ribbon
+	parent $RibbonGroups[2] $HipsControl;
+	//select -r $RibbonGroups[0];
+	//string $temp2 = `RMCustomPickWalk $RibbonGroups[0] "joint" 6`;
+	//pointConstraint $spineRibbon $Spine;
+	
+	string $Controls[] =`listRelatives -c $RibbonGroups[2]`;
+	parentConstraint -mo $Controls[2] $Spine;
+	
+	////////////////////
+	//Crea Los Controles Cuadrado
+	//Identifica la RMDistancia entre los controles Circulares del Ribbon
+   float $Height=`RMDistancia $Controls[0] $Controls[1]`;
+   string $SpineFK1=`RMSetFromName $Controls[0] 2 "SpineFK1"`;
+   $SpineFK1=`RMUniqueName $SpineFK1`;
+   RMCreateCubeLine $Height ($Height*1.5) ($Height*1.5) $SpineFK1;
+   
+   $SpineFK2=`RMUniqueName $SpineFK1`;
+   RMCreateCubeLine $Height ($Height*1.5) ($Height*1.5)  $SpineFK2;
+   
+   RMAlign $Controls[0] $SpineFK1 3;
+   RMAlign $Controls[1] $SpineFK2 3;
+   
+   parent $SpineFK1 $RibbonGroups[2];
+   parent $SpineFK2 $SpineFK1;
+   parent $Controls[1] $SpineFK2;
+   parent $Controls[2] $SpineFK2;
+
+   makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $SpineFK1;
+   makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $SpineFK2;
+   
+	string $hipGroup=`RMObjNameToVar "*HipGroup_jnt*"`;
+	parentConstraint $Controls[0] $hipGroup;
+	//Liga la Cabeza al Hueso del cuello
+		
+    //-mo
+	pointConstraint  $GrupoCabeza2 $GrupoCabeza;
+    //-mo
+	string $pCCabeza[]=`orientConstraint $GrupoCabeza2 $GrupoCabeza`;
+	string $Alias[]=`orientConstraint -q -wal $pCCabeza[0]`;
+
+
+	connectAttr   ($CntrlCabeza+".AlignedTo") ($pCCabeza[0]+"."+$Alias[0]);
+	
+    
+	parent $HipsControl $MoveAndScaleMain;
+	setAttr ($hipsLow+".jointOrientZ") -180;
+	setAttr ($hips+".jointOrientZ") 0;
+	string $ScaledData = RMObjNameToVar ("ScaledData");
+	parent $GrupoCabeza $MoveAndScaleMain;
+	parent $hipGroup $ScaledData;
+	
+}
+
+global proc string[] RMBuildJointsBased()
+{
+string $SpineArray[]={"Character01_MD_Spine_pnt_rfr",
+				"Character01_MD_Spine1_pnt_rfr",
+				"Character01_MD_Spine2_pnt_rfr",
+				"Character01_MD_Spine3_pnt_rfr",
+				"Character01_MD_Spine4_pnt_rfr"}
+string $spine[]=RMCreateBonesAtPoints($SpineArray);
+return $spine;
+}

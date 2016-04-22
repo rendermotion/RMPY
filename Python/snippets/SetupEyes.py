@@ -8,6 +8,8 @@ FaceBlendShapesDic={
 				"Narrow":{},
 				"UprLipUp":{},
 				"UprLipDn":{},
+				"LwrLipUp":{},
+				"LwrLipDn":{},
 				"LSmile":{},
 				"RSmile":{},
 				"LFrown" :{},
@@ -92,6 +94,12 @@ def LinkM (FaceBlendShapesDic):
 	if FaceBlendShapesDic["UprLipDn"]["Exists"]:
 		connectWithLimits("Character_MD_UprLipUpDn_ctrl_fc.translateY", "FacialBS.UprLipDn",[[0,0],[-1,1]])	
 
+	if FaceBlendShapesDic["LwrLipUp"]["Exists"]:
+		connectWithLimits("Character_MD_LowerLipUpDn_ctrl_fc.translateY", "FacialBS.LwrLipUp",[[0,0],[1,1]])	
+	if FaceBlendShapesDic["LwrLipDn"]["Exists"]:
+		connectWithLimits("Character_MD_LowerLipUpDn_ctrl_fc.translateY", "FacialBS.LwrLipDn",[[0,0],[-1,1]])	
+
+
 	if FaceBlendShapesDic["Wide"]["Exists"]:
 		connectWithLimits("Character_MD_JawOpen_ctrl_fc.translateX", "FacialBS.Wide",[[0,0],[1,1]])
 	if FaceBlendShapesDic["Narrow"]["Exists"]:
@@ -159,7 +167,7 @@ def LinkM (FaceBlendShapesDic):
 			\n{$Zval=Character_MD_EyeSneer_ctrl_fc.translateY;}
 			\nelse{$Zval=0;}
 			\nif (Character_MD_EyeSneer_ctrl_fc.translateX>=0) 
-			\n{$Xval=Character_MD_EyeSquint_ctrl_fc.translateX;}
+			\n{$Xval=Character_MD_EyeSneer_ctrl_fc.translateX;}
 			\nelse {$Xval = 0;}
 			\nFacialBS.LSneer = ($Zval-$Xval);'''
 		cmds.expression("LSneerExpresion",edit=True,string=script,unitConversion = "none")
@@ -247,6 +255,8 @@ def SetupEyes():
 #connectWithLimits("LEyeFollow.rotateY","FacialBS.LEyeRollLf",[[0,0],[16,1]])
 #connectWithLimits("LEyeFollow.rotateY","FacialBS.LEyeRollRh",[[0,0],[-16,1]])
 
-
+connectWithLimits("Character_RH_ReyeCls_ctrl_fc.translateY", "FacialBS.REyeCls",[[0,0],[-2,1]])
+connectWithLimits("Character_LF_LeyeCls_ctrl_fc.translateY", "FacialBS.LEyeCls",[[0,0],[-2,1]])
 #connectWithLimits("Character_MD_AutoEyeLids_ctrl_fc.translateY","FacialBS.Incisibus",[[0,0],[-2,1]])
-LinkM(FaceBlendShapesDic)
+#SetupEyes()
+#LinkM(FaceBlendShapesDic)

@@ -50,6 +50,21 @@ proc deleteShapeNodes (string $Obj)
         delete $i;   
        }
 }
+/*Funcion que desemparenta todos los objetos de un nodo y los regresa en un arreglo*/
+proc string[] removeChildren(string $obj1){
+    string $children[]=`listRelatives -type "transform" -children $obj1`;
+    
+    for ($i in $children)
+        {
+        parent -w $i;
+        }
+    return $children;
+}
+
+proc parentArray(string $parent, string $Array[]){
+    for ($i in $Array)
+        {parent $i $parent;}
+}
 /*Funcion que inserta en la herarquia un nuevo Objeto
 1 Lo inserta como padre de $Obj
 2 lo inserta como Hijo de $Obj
@@ -68,20 +83,8 @@ proc InsertInHierarchy (string $obj,string $ObjToInsert, int $flag)
         parentArray $ObjToInsert $Children;
     }
 }
-/*Funcion que desemparenta todos los objetos de un nodo y los regresa en un arreglo*/
-proc string[] removeChildren(string $obj1){
-    string $children[]=`listRelatives -type "transform" -children $obj1`;
-    
-    for ($i in $children)
-        {
-        parent -w $i;
-        }
-    return $children;
-}
-proc parentArray(string $parent, string $Array[]){
-    for ($i in $Array)
-        {parent $i $parent;}
-}
+
+
 /*Funcion que regresa la distancia entre dos objetos*/
 proc float distancia (string $Obj1,string $Obj2){
     vector $p1= `xform -a -ws -q -rp $Obj1`;
@@ -396,6 +399,75 @@ proc string[] CreaRibbon (string $obj1,string $obj2){
 	parent $GroupName_Controls $MoveAndScaleMain;
 	return {$skinedBones,$MainSkeleton,$GroupName_Controls};
 }
+
+
+/*Funcion que esconde Atributos */
+proc LockAndHideAttributes(string $obj[],string $BitArray)
+{
+    string $BitArray;
+    string $i;
+    if (`sizeBytes $BitArray` == 10)
+    {
+        for ($i in $obj)
+        {
+            //Position
+            if (`substring $BitArray 1 1`==0)
+                setAttr -k off -l on ($i+".translateX");
+            else
+                if (`substring $BitArray 1 1`==1)
+                    setAttr -k on -l off ($i+".translateX");
+            if (`substring $BitArray 2 2`==0)
+                setAttr -k off -l on ($i+".translateY");
+            else
+                if (`substring $BitArray 2 2`==1)
+                    setAttr -k on -l off ($i+".translateY");
+            if (`substring $BitArray 3 3`==0)
+                setAttr -k off -l on ($i+".translateZ");
+            else
+                if (`substring $BitArray 3 3`==1)
+                    setAttr -k on -l off ($i+".translateZ");
+            //Rotation
+            if (`substring $BitArray 4 4`==0)
+                setAttr -k off -l on ($i+".rotateX");
+            else
+                if (`substring $BitArray 4 4`==1)
+                    setAttr -k on -l off ($i+".rotateX");
+            if (`substring $BitArray 5 5`==0)
+                setAttr -k off -l on ($i+".rotateY");
+            else
+                if (`substring $BitArray 5 5`==1)
+                    setAttr -k on -l off ($i+".rotateY");
+            if (`substring $BitArray 6 6`==0)
+                setAttr -k off -l on ($i+".rotateZ");
+            else
+                if (`substring $BitArray 6 6`==1)
+                    setAttr -k on -l off ($i+".rotateZ");
+            //Scale
+            if (`substring $BitArray 7 7`=="0")
+                setAttr -k off -l on ($i+".scaleX");
+            else
+                if (`substring $BitArray 7 7`==1)
+                    setAttr -k on -l off ($i+".scaleX");
+            if (`substring $BitArray 8 8`=="0")
+                setAttr -k off -l on ($i+".scaleY");
+            else
+                if (`substring $BitArray 8 8`==1)
+                    setAttr -k on -l off ($i+".scaleY");
+            if (`substring $BitArray 9 9`=="0")
+                setAttr -k off -l on ($i+".scaleZ");
+            else
+                if (`substring $BitArray 9 9`==1)
+                    setAttr -k on -l off ($i+".scaleZ");
+            //Visibility
+            if (`substring $BitArray 10 10`=="0")
+                setAttr -k off -l on ($i+".visibility");
+            else
+                if (`substring $BitArray 10 10`==1)
+                    setAttr -k on -l off ($i+".visibility");
+        }
+    }
+}
+
 /***********************************************************************************************/
 /***********************************************************************************************/
 /**************************IKFK Switch Functions********+++++++++++++++++++++++++++++++++++++***/
@@ -826,72 +898,6 @@ proc AddVisibilityControls(string $Object)
 }
 
 
-/*Funcion que esconde Atributos */
-proc LockAndHideAttributes(string $obj[],string $BitArray)
-{
-	string $BitArray;
-	string $i;
-	if (`sizeBytes $BitArray` == 10)
-	{
-		for ($i in $obj)
-		{
-			//Position
-			if (`substring $BitArray 1 1`==0)
-				setAttr -k off -l on ($i+".translateX");
-			else
-				if (`substring $BitArray 1 1`==1)
-					setAttr -k on -l off ($i+".translateX");
-			if (`substring $BitArray 2 2`==0)
-				setAttr -k off -l on ($i+".translateY");
-			else
-				if (`substring $BitArray 2 2`==1)
-					setAttr -k on -l off ($i+".translateY");
-			if (`substring $BitArray 3 3`==0)
-				setAttr -k off -l on ($i+".translateZ");
-			else
-				if (`substring $BitArray 3 3`==1)
-					setAttr -k on -l off ($i+".translateZ");
-			//Rotation
-			if (`substring $BitArray 4 4`==0)
-				setAttr -k off -l on ($i+".rotateX");
-			else
-				if (`substring $BitArray 4 4`==1)
-					setAttr -k on -l off ($i+".rotateX");
-			if (`substring $BitArray 5 5`==0)
-				setAttr -k off -l on ($i+".rotateY");
-			else
-				if (`substring $BitArray 5 5`==1)
-					setAttr -k on -l off ($i+".rotateY");
-			if (`substring $BitArray 6 6`==0)
-				setAttr -k off -l on ($i+".rotateZ");
-			else
-				if (`substring $BitArray 6 6`==1)
-					setAttr -k on -l off ($i+".rotateZ");
-			//Scale
-			if (`substring $BitArray 7 7`=="0")
-				setAttr -k off -l on ($i+".scaleX");
-			else
-				if (`substring $BitArray 7 7`==1)
-					setAttr -k on -l off ($i+".scaleX");
-			if (`substring $BitArray 8 8`=="0")
-				setAttr -k off -l on ($i+".scaleY");
-			else
-				if (`substring $BitArray 8 8`==1)
-					setAttr -k on -l off ($i+".scaleY");
-			if (`substring $BitArray 9 9`=="0")
-				setAttr -k off -l on ($i+".scaleZ");
-			else
-				if (`substring $BitArray 9 9`==1)
-					setAttr -k on -l off ($i+".scaleZ");
-			//Visibility
-			if (`substring $BitArray 10 10`=="0")
-				setAttr -k off -l on ($i+".visibility");
-			else
-				if (`substring $BitArray 10 10`==1)
-					setAttr -k on -l off ($i+".visibility");
-		}
-	}
-}
 /*******************************************************************************/
 /*******************************************************************************
 Funciones para conectar parametros
@@ -1055,8 +1061,8 @@ proc SetSkeleton(){
 	select -cl;
 }
 //Crea un grupo nuevo alineado al objeto $obj y emparenta el objeto $Obj a este nuevo grupo
-//La bandera en caso de ser 1, busar· al padre de Obj y a este emparentar· el nuevo grupo
-//La funciÛn regresa el nuevo grupo
+//La bandera en caso de ser 1, busar√° al padre de Obj y a este emparentar√° el nuevo grupo
+//La funci√≥n regresa el nuevo grupo
 proc string CreateGrouponObj (string $Obj, int $flag)
 {
 	string $NewName = $Obj;
@@ -1148,6 +1154,7 @@ proc string RebuildArm (string $firstBone,string $Prefix){
 	
 	return $Joint1;
 }
+
 
 /*Crea la herarquia de los controles IK*/
 proc string[] CreateIKControls (string $IKroot , string $Systemparent)
@@ -2280,7 +2287,9 @@ for ($i in $dedos)
     ConnectWithLimits ($PalmControl+".PalmCup") ($PinkyCup+".rotateX") (-10) 10 (-20) 20 0;
     ConnectWithLimits ($PalmControl+".PalmCup") ($RingCup+".rotateX") (-10) 10 (-10) 10 0;
     ConnectWithLimits ($PalmControl+".PalmCup") ($IndexCup+".rotateX") (-10) 10 (15) (-15) 0;
-    
+
+    ConnectWithLimits ($PalmControl+".PalmCup") ($ThumbCup+".rotateX") (-10) 10 (15) (-15) 0;
+    //parent $Thumb $ThumbCup;
     
     // Uno a uno Busca el control del dedo que movera el Spread y el Bend y los liga
     //Pinky
@@ -2454,4 +2463,5 @@ string $IKControls[] = `RebuildIKLegs`;
 
 RebuildJXTLeg "LF" ({$IKControls[0],$IKControls[1],$IKControls[2]}) ({$FKControls[0],$FKControls[1],$FKControls[2],$FKControls[3]});
 RebuildJXTLeg "RH" ({$IKControls[3],$IKControls[4],$IKControls[5]}) ({$FKControls[4],$FKControls[5],$FKControls[6],$FKControls[7]});
+
 
