@@ -1,0 +1,108 @@
+
+select -add "Lucas_RH_ForeArm2ToHandRibbonJoint1_jnt_RBN";
+select -add "Lucas_RH_ForeArm2ToHandRibbonJoint2_jnt_RBN";
+select -add "Lucas_LF_ForeArm2ToHandRibbonJoint1_jnt_RBN";
+select -add "Lucas_LF_ForeArm2ToHandRibbonJoint2_jnt_RBN";
+
+select -add "Lucas_LF_ForeArmToHandRibbonJoint23_jnt_RBN";
+select -add "Lucas_LF_ForeArmToHandRibbonJoint24_jnt_RBN";
+
+select -add "Lucas_RH_ForeArmToHandRibbonJoint23_jnt_RBN";
+select -add "Lucas_RH_ForeArmToHandRibbonJoint24_jnt_RBN";
+
+select -add "Lucas_LF_ArmToForeArmRibbonJoint1_jnt_RBN";
+select -add "Lucas_LF_ArmToForeArmRibbonJoint2_jnt_RBN";
+select -add "Lucas_LF_ArmToForeArmRibbonJoint3_jnt_RBN";
+select -add "Lucas_LF_ArmToForeArmRibbonJoint4_jnt_RBN";
+select -add "Lucas_LF_ArmToForeArmRibbonJoint5_jnt_RBN";
+
+select -add "Lucas_RH_ArmToForeArmRibbonJoint1_jnt_RBN";
+select -add "Lucas_RH_ArmToForeArmRibbonJoint2_jnt_RBN";
+select -add "Lucas_RH_ArmToForeArmRibbonJoint3_jnt_RBN";
+select -add "Lucas_RH_ArmToForeArmRibbonJoint4_jnt_RBN";
+select -add "Lucas_RH_ArmToForeArmRibbonJoint5_jnt_RBN";
+
+select -add "Lucas_RH_UpLegToLegRibbonJoint1_jnt_RBN";
+select -add "Lucas_RH_UpLegToLegRibbonJoint2_jnt_RBN";
+
+select -add "Lucas_RH_UpLegToLegRibbonJoint3_jnt_RBN";
+select -add "Lucas_RH_UpLegToLegRibbonJoint4_jnt_RBN";
+select -add "Lucas_RH_UpLegToLegRibbonJoint5_jnt_RBN";
+
+select -add "Lucas_LF_UpLegToLegRibbonJoint1_jnt_RBN";
+select -add "Lucas_LF_UpLegToLegRibbonJoint2_jnt_RBN";
+
+select -add "Lucas_LF_UpLegToLegRibbonJoint3_jnt_RBN";
+select -add "Lucas_LF_UpLegToLegRibbonJoint4_jnt_RBN";
+select -add "Lucas_LF_UpLegToLegRibbonJoint5_jnt_RBN";
+
+select -add "Lucas_MD_HipsToSpineRibbonJoint1_jnt_RBN";
+select -add "Lucas_MD_HipsToSpineRibbonJoint2_jnt_RBN";
+select -add "Lucas_MD_HipsToSpineRibbonJoint3_jnt_RBN";
+select -add "Lucas_MD_HipsToSpineRibbonJoint4_jnt_RBN";
+select -add "Lucas_MD_HipsToSpineRibbonJoint5_jnt_RBN";
+
+select -add "Lucas_LF_Leg2ToFootRibbonJoint1_jnt_RBN";
+select -add "Lucas_LF_Leg2ToFootRibbonJoint2_jnt_RBN";
+select -add "Lucas_LF_LegToFootRibbonJoint23_jnt_RBN";
+select -add "Lucas_LF_LegToFootRibbonJoint24_jnt_RBN";
+
+select -add "Lucas_RH_Leg2ToFootRibbonJoint1_jnt_RBN";
+select -add "Lucas_RH_Leg2ToFootRibbonJoint2_jnt_RBN";
+select -add "Lucas_RH_LegToFootRibbonJoint23_jnt_RBN";
+select -add "Lucas_RH_LegToFootRibbonJoint24_jnt_RBN";
+
+select -add "Lucas_LF_Hand_jnt_JXT";
+select -add "Lucas_RH_Hand_jnt_JXT";
+select -add "Lucas_LF_Foot_jnt_JXT";
+select -add "Lucas_RH_Foot_jnt_JXT";
+select -add "Lucas_LF_ToeBase_jnt_IK";
+select -add "Lucas_RH_ToeBase_jnt_IK";
+
+select -add "Lucas_MD_Spine_jnt"
+select -add "Lucas_LF_Shoulder_jnt";
+select -add "Lucas_RH_Shoulder_jnt";
+select -add "Lucas_MD_HipLow_jnt";
+select -add "Lucas_MD_Neck_jnt";
+
+select -add Lucas_LF_HandIndex1Palm1_jnt ;
+select -add Lucas_LF_HandIndex1_jnt ;
+select -add Lucas_LF_HandIndex2_jnt ;
+select -add Lucas_LF_HandIndex3_jnt ;
+select -add Lucas_LF_HandMiddle1Palm1_jnt ;
+select -add Lucas_LF_HandMiddle1_jnt ;
+select -add Lucas_LF_HandMiddle2_jnt ;
+select -add Lucas_LF_HandMiddle3_jnt ;
+select -add Lucas_LF_HandRing1Palm1_jnt ;
+select -add Lucas_LF_HandRing1_jnt ;
+select -add Lucas_LF_HandRing2_jnt ;
+select -add Lucas_LF_HandRing3_jnt ;
+select -add Lucas_LF_HandPinky1Palm1_jnt ;
+select -add Lucas_LF_HandPinky1_jnt ;
+select -add Lucas_LF_HandPinky2_jnt ;
+select -add Lucas_LF_HandPinky3_jnt ;
+select -add Lucas_LF_HandThumb1Palm1_jnt ;
+select -add Lucas_LF_HandThumb1_jnt ;
+select -add Lucas_LF_HandThumb2_jnt ;
+select -add Lucas_LF_HandThumb3_jnt ;
+
+select -add Lucas_RH_HandIndex1Palm1_jnt ;
+select -add Lucas_RH_HandIndex1_jnt ;
+select -add Lucas_RH_HandIndex2_jnt ;
+select -add Lucas_RH_HandIndex3_jnt ;
+select -add Lucas_RH_HandMiddle1Palm1_jnt ;
+select -add Lucas_RH_HandMiddle1_jnt ;
+select -add Lucas_RH_HandMiddle2_jnt ;
+select -add Lucas_RH_HandMiddle3_jnt ;
+select -add Lucas_RH_HandRing1Palm1_jnt ;
+select -add Lucas_RH_HandRing1_jnt ;
+select -add Lucas_RH_HandRing2_jnt ;
+select -add Lucas_RH_HandRing3_jnt ;
+select -add Lucas_RH_HandPinky1Palm1_jnt ;
+select -add Lucas_RH_HandPinky1_jnt ;
+select -add Lucas_RH_HandPinky2_jnt ;
+select -add Lucas_RH_HandPinky3_jnt ;
+select -add Lucas_RH_HandThumb1Palm1_jnt ;
+select -add Lucas_RH_HandThumb1_jnt ;
+select -add Lucas_RH_HandThumb2_jnt ;
+select -add Lucas_RH_HandThumb3_jnt ;
