@@ -52,6 +52,61 @@ global proc RMblendShapeRebuilder(string $BSNode)
 	$AliasIndex+=1;
 	}
 }
+
+
+global proc RMblendShapeRebuilderFromBS(string $BSNode)
+{
+	string $BSWeight[]= (`listAttr ($BSNode +".weight")`);
+
+	string $BSWeightAlias[]=`listAttr -m ($BSNode +".weight")`;
+	int $TargetIdx[]=`getAttr -mi ($BSNode+".inputTarget")`;
+	
+	print "Input Target Index\n";
+	print $TargetIdx;
+	int $InputTargetGroup[]= `getAttr -mi ($BSNode+".inputTarget["+$TargetIdx[0]+"].inputTargetGroup")`;
+
+	for ($EachBS in $BSWeightAlias){
+		print $EachBS;	
+		print (`getAttr ($BSNode+"."+$EachBS)`);
+		print "\n";
+	}
+	int $AliasIndex=0;
+	for ($EachTargetGroup in $InputTargetGroup)
+	{
+		print "\n\tInput Target Group\n\t";
+		print $EachTargetGroup;
+		int $TargetItems[]= `getAttr -mi ($BSNode+".inputTarget["+$TargetIdx[0]+"].inputTargetGroup["+$EachTargetGroup+"].inputTargetItem")`;
+		int $Intermediate = 0;
+
+		string $TargetGroupAlias = `listAttr -m ($BSNode+".weight["+$EachTargetGroup+"]")`;
+		print "\n\t Target Group Alias ";
+		//print $TargetGroupAlias;
+		
+		for ($EachTarget in $TargetItems)
+		{
+			print "\n\t\tTargetsItems\n\t\t";
+			print $EachTarget;
+			string $Connections[]=(`listConnections ($BSNode+".inputTarget["+$TargetIdx[0]+"].inputTargetGroup["+$EachTargetGroup+"].inputTargetItem["+$EachTarget+"].inputGeomTarget")`);
+			if (`size($Connections)`==0)
+			{
+				while (`objExists ($BSWeightAlias[$AliasIndex] + "BS"+ $Intermediate)`) 
+					{
+						$Intermediate+=1;
+					}
+				if ($BSWeightAlias[$AliasIndex]!="weight[36]")
+				{
+					setAttr ($BSNode+"."+$BSWeightAlias[$AliasIndex]) (($EachTarget-5000)/1000);
+					//$RebuildBlendShape = RMduplicateOutputMesh($BSNode,($BSWeightAlias[$AliasIndex] + "BS"+ $Intermediate));
+					setAttr ($BSNode+"."+$BSWeightAlias[$AliasIndex]) 0;
+					print("\nNo connection Found on: "+ $BSWeightAlias[$AliasIndex] +" with index  Number"+$AliasIndex);
+					//connectAttr -f ($RebuildBlendShape+".outMesh") ($BSNode+".inputTarget["+$TargetIdx[0]+"].inputTargetGroup["+$EachTargetGroup+"].inputTargetItem["+$EachTarget+"].inputGeomTarget");
+				}
+			}
+		}
+	$AliasIndex+=1;
+	}
+}
+
 /*This procedure creates an sphere and reconnects the input geometry from another object*/
 global proc string  RMduplicateOutputMesh (string $Node,string $ObjName)
 {
@@ -94,5 +149,6 @@ global proc string RMGetGPInputShape(string $Node){
 	}
 }
 
+RMblendShapeRebuilderFromBS("asFaceBS");
 
 

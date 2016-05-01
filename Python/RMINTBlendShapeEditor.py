@@ -126,7 +126,7 @@ class RMBlendShapeEditor(QtGui.QDialog):
 		mel.eval('''
 		source RMcomponents.mel;
 		string $selection[] = `ls -sl`;
-		vertexPositionTransfer($selection,'''+Txt+''');
+		vertexPositionTransfer($selection,'''+ Txt +''');
 		''')
 
 if __name__ == '__main__':
