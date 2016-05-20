@@ -8,7 +8,7 @@ global proc int[] RMcomponentRange( string $select )
 
   $elements[0] = int($buffer[1]);
 
-  if ( $tokens > 2 )
+  if ( size ($buffer) > 2 )
    	{
    	$elements[1] = int($buffer[2]);
 	}
@@ -26,11 +26,20 @@ global proc int[] RMcomponentArray(string $CompArray[])
   for ($strings in $CompArray)
   {
     int $TempArray[] = RMcomponentRange($strings);
-    for ($i in $TempArray)
+
+    if (size($TempArray)==2)
     {
-    $ResultArray[`size($ResultArray)`]=$i;
+      int $i;
+      for ($i=$TempArray[0];$i <= $TempArray[1];$i++)
+      {
+        $ResultArray[`size($ResultArray)`]=$i;
+      }
     }
-  }
+    else
+    { 
+      $ResultArray[`size($ResultArray)`]=$TempArray[0] ;
+    }
+}
   return $ResultArray;
 }
 
@@ -68,7 +77,3 @@ global proc vertexPositionTransfer(string $vertexArray[],string $DestObjects[])
     }
   }
 }
-/*string $selection[] = `ls -sl`;
-$destObjects={"pSphere2","pSphere3","pSphere4"};
-vertexPositionTransfer($selection,$destObjects);
-print "Loaded";*/
