@@ -29,18 +29,37 @@ class RMBlendShapeEditor(QtGui.QDialog):
 		
 		self.ui.LoadSelectionBtn.clicked.connect(self.LoadSelectionBtnPressed)
 		self.ui.CorrectVtxBtn.clicked.connect(self.CorrectVtxBtnPressed)
-
+		self.ui.RebuildSelectedTargets.clicked.connect(self.RebuildSelectedTargets)
+			
+		self.ui.InputTargetGroupAlias.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
 		self.ui.listWidget.setSelectionMode(QtGui.QAbstractItemView.NoSelection)
+		
 		self.BlendShapeDic={}
 		self.currentBS ={}
 	def UpdateBlendShapeTargets(self):
 		CurrentItem = self.ui.InputTargetGroupAlias.currentItem()
 		if (CurrentItem):
+			CurrentItemKey = CurrentItem.text().split()
 			for keys in self.BlendShapeDic:
-				self.currentBS = self.BlendShapeDic[keys][CurrentItem.text()]
+				self.currentBS = self.BlendShapeDic[keys][CurrentItemKey[1]]
 				self.ui.TargetList.clear()
 				for i in self.currentBS["Items"]:
 					self.ui.TargetList.addItem("BS At:"+ unicode(float(i-5000)/1000))
+	def RebuildSelectedTargets(self):
+		Array=self.ui.InputTargetGroupAlias.selectedItems()
+		BSNode = self.ui.BlendShapeNodeNamelbl.text()
+		if BSNode == "":
+			BSNodeArray = mel.eval('''source RMDeformers.mel;\nstring $BSNode[]=GetDeformer("'''+selection[0]+'''","blendShape");''')
+			self.ui.BlendShapeNodeNamelbl.setText(BSNodeArray[0])
+			for g in (Array):
+				SelectedItemText = g.text().split()
+				print SelectedItemText[1]
+				if len(BSNodeArray)>=0:
+					mel.eval('''source "RMBlendShapeTools.mel";\RMrebuildBSTarget("'''+BSNode+'''","'''+SelectedItemText[1]+'''");''')
+		else:
+			for g in (Array):
+				SelectedItemText = g.text().split()
+				mel.eval('''source RMBlendShapeTools.mel;\RMrebuildBSTarget("'''+BSNode+'''","'''+SelectedItemText[1]+'''");''')
 
 	def GetBlendshapeBtnPressed(self):
 		selection = cmds.ls(sl=True)
@@ -56,8 +75,12 @@ class RMBlendShapeEditor(QtGui.QDialog):
 		flag=0
 		index=0
 		self.ui.InputTargetGroupAlias.clear()
-		for i in self.BlendShapeDic[BSNode[0]]:
-			self.ui.InputTargetGroupAlias.addItem(i)
+		orderdic={}
+		for keys in self.BlendShapeDic[BSNode[0]]:
+			orderdic[keys]=self.BlendShapeDic[BSNode[0]][keys]["TargetGroup"]
+
+		for i in sorted(self.BlendShapeDic[BSNode[0]],key = orderdic.__getitem__ ): # self.BlendShapeDic[BSNode[0]]:
+			self.ui.InputTargetGroupAlias.addItem(str(self.BlendShapeDic[BSNode[0]][i]["TargetGroup"])  +" "+i)
 			if flag == index:
 				self.currentBS = self.BlendShapeDic[BSNode[0]][i]
 				CurrentItem = self.ui.InputTargetGroupAlias.item(index)
@@ -92,6 +115,7 @@ class RMBlendShapeEditor(QtGui.QDialog):
 		CurrentGroup = self.ui.InputTargetGroupAlias.currentItem()
 		CurrentTarget = self.ui.TargetList.currentItem()
 		if (CurrentGroup):
+			CurrentItemKey = CurrentGroup.text().split()
 			print CurrentGroup.text()
 			if (CurrentTarget):
 				TargetStr = CurrentTarget.text()
@@ -100,11 +124,11 @@ class RMBlendShapeEditor(QtGui.QDialog):
 				selection = cmds.ls(sl=True)
 				if (len(selection)>0):
 					if cmds.objectType(selection[0])=='mesh':
-						cmds.connectAttr(selection[0]+".outMesh",(BSNode +".inputTarget[0].inputTargetGroup[" + str(self.BlendShapeDic[BSNode][CurrentGroup.text()]["TargetGroup"]) + "].inputTargetItem["+ str(int(BSTargetNum*1000+5000))+"].inputGeomTarget"),f=True)
+						cmds.connectAttr(selection[0]+".outMesh",(BSNode +".inputTarget[0].inputTargetGroup[" + str(self.BlendShapeDic[BSNode][CurrentItemKey[1]]["TargetGroup"]) + "].inputTargetItem["+ str(int(BSTargetNum*1000+5000))+"].inputGeomTarget"),f=True)
 					elif cmds.objectType(selection[0])=='transform':
 						Shapes = cmds.listRelatives(selection[0],s=True)
 						if len(Shapes) > 0:
-							cmds.connectAttr(Shapes[0]+".outMesh",(BSNode +".inputTarget[0].inputTargetGroup[" +str(self.BlendShapeDic[BSNode][CurrentGroup.text()]["TargetGroup"])+ "].inputTargetItem["+ str(int(BSTargetNum*1000+5000))+"].inputGeomTarget") , f=True)
+							cmds.connectAttr(Shapes[0]+".outMesh",(BSNode +".inputTarget[0].inputTargetGroup[" +str(self.BlendShapeDic[BSNode][CurrentItemKey[1]]["TargetGroup"])+ "].inputTargetItem["+ str(int(BSTargetNum*1000+5000))+"].inputGeomTarget") , f=True)
 	def LoadSelectionBtnPressed(self):
 		self.ui.listWidget.clear()
 		selection = cmds.ls(sl=True)
@@ -126,7 +150,7 @@ class RMBlendShapeEditor(QtGui.QDialog):
 		mel.eval('''
 		source RMcomponents.mel;
 		string $selection[] = `ls -sl`;
-		vertexPositionTransfer($selection,'''+ Txt +''');
+		vertexPositionTransfer($selection,'''+Txt+''');
 		''')
 
 if __name__ == '__main__':

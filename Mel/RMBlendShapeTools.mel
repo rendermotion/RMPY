@@ -17,7 +17,7 @@ global proc int RMGetTargetIndex(string $BSNode,string $Target)
 		}
 	return -1;
 }
-global proc RMrebuildBSTarget(string $BSNode,string $Target,int $mode)
+global proc RMrebuildBSTarget(string $BSNode,string $Target)
 {
 	
 	string $BSWeight[]= (`listAttr ($BSNode +".weight")`);
@@ -68,62 +68,11 @@ global proc RMrebuildBSTarget(string $BSNode,string $Target,int $mode)
 
 global proc RMblendShapeRebuilder(string $BSNode)
 {
-	//string $BSWeight[]= (`listAttr ($BSNode +".weight")`);
-
 	string $BSWeightAlias[]=`listAttr -m ($BSNode +".weight")`;
-	//int $TargetIdx[]=`getAttr -mi ($BSNode+".inputTarget")`;
 	for ($EachWeightAlias in $BSWeightAlias)
 	{
-		RMrebuildBSTarget($BSNode,$EachWeightAlias,1);
+		RMrebuildBSTarget($BSNode,$EachWeightAlias);
 	}
-
-
-/*	
-	print "Input Target Index\n";
-	print $TargetIdx;
-	int $InputTargetGroup[]= `getAttr -mi ($BSNode+".inputTarget["+$TargetIdx[0]+"].inputTargetGroup")`;
-
-	for ($EachBS in $BSWeightAlias){
-		print $EachBS;	
-		print (`getAttr ($BSNode+"."+$EachBS)`);
-		print "\n";
-	}
-	int $AliasIndex=0;
-	for ($EachTargetGroup in $InputTargetGroup)
-	{
-		print "\n\tInput Target Group\n\t";
-		print $EachTargetGroup;
-		int $TargetItems[]= `getAttr -mi ($BSNode+".inputTarget["+$TargetIdx[0]+"].inputTargetGroup["+$EachTargetGroup+"].inputTargetItem")`;
-		int $Intermediate=0;
-		for ($EachTarget in $TargetItems)
-		{
-			print "\n\t\tTargetsItems\n\t\t";
-			print $EachTarget;
-			string $Connections[]=(`listConnections ($BSNode+".inputTarget["+$TargetIdx[0]+"].inputTargetGroup["+$EachTargetGroup+"].inputTargetItem["+$EachTarget+"].inputGeomTarget")`);
-			if (`size($Connections)`==0)
-			{
-				setAttr ($BSNode+".envelope") 0;
-				while (`objExists ($BSWeightAlias[$AliasIndex] + "BS"+ $Intermediate)`) 
-					{
-						$Intermediate+=1;
-					}
-				$RebuildBlendShape = RMduplicateOutputMesh($BSNode,($BSWeightAlias[$AliasIndex] + "BS"+ $Intermediate));
-				setAttr ($BSNode+".envelope") 1;
-				print("\nNo connection Found on: "+ $BSWeightAlias[$AliasIndex]);
-				float $VtxValues[]= `getAttr ($BSNode+".inputTarget["+$TargetIdx[0]+"].inputTargetGroup["+$EachTargetGroup+"].inputTargetItem["+$EachTarget+"].inputPointsTarget")`;
-				string $VtxComp[] = (`getAttr ($BSNode+".inputTarget["+$TargetIdx[0]+"].inputTargetGroup["+$EachTargetGroup+"].inputTargetItem["+$EachTarget+"].inputComponentsTarget")`);
-				$VtxList = RMcomponentArray($VtxComp);
-				int $VtxIndex=0;
-				for ($Vtx in $VtxList)
-				{
-					xform -translation ($VtxValues[$VtxIndex*4]) ($VtxValues[$VtxIndex*4 + 1]) ($VtxValues[$VtxIndex*4+2]) -relative ($RebuildBlendShape+".vtx["+$Vtx+"]");
-					$VtxIndex+=1;
-				}
-				connectAttr -f ($RebuildBlendShape+".outMesh") ($BSNode+".inputTarget["+$TargetIdx[0]+"].inputTargetGroup["+$EachTargetGroup+"].inputTargetItem["+$EachTarget+"].inputGeomTarget");
-			}
-		}
-	$AliasIndex+=1;
-	}*/
 }
 
 
@@ -221,8 +170,3 @@ global proc string RMGetGPInputShape(string $Node){
 			return "";
 	}
 }
-
-//RMblendShapeRebuilderFromBS("asFaceBS");
-//RMrebuildBSTarget("asFaceBS","eye_shut_L",1);
-
-//RMblendShapeRebuilder("asFaceBS");

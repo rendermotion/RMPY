@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'RMblendShapeEditor.ui'
 #
-# Created: Mon Apr 11 16:15:29 2016
+# Created: Thu May 26 14:30:13 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(533, 416)
+        Form.resize(786, 730)
         self.horizontalLayout_4 = QtGui.QHBoxLayout(Form)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.verticalLayout_5 = QtGui.QVBoxLayout()
@@ -61,8 +61,10 @@ class Ui_Form(object):
         self.horizontalLayout.addLayout(self.verticalLayout)
         self.verticalLayout_2 = QtGui.QVBoxLayout()
         self.verticalLayout_2.setObjectName("verticalLayout_2")
-        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
-        self.verticalLayout_2.addItem(spacerItem)
+        self.RebuildSelectedTargets = QtGui.QPushButton(Form)
+        self.RebuildSelectedTargets.setMinimumSize(QtCore.QSize(0, 40))
+        self.RebuildSelectedTargets.setObjectName("RebuildSelectedTargets")
+        self.verticalLayout_2.addWidget(self.RebuildSelectedTargets)
         self.TargetGroupsLbl = QtGui.QLabel(Form)
         self.TargetGroupsLbl.setObjectName("TargetGroupsLbl")
         self.verticalLayout_2.addWidget(self.TargetGroupsLbl)
@@ -124,6 +126,7 @@ class Ui_Form(object):
         self.ReplaceBlendShapeInputBtn.setText(QtGui.QApplication.translate("Form", "Replace BS Input \n"
 " with selection", None, QtGui.QApplication.UnicodeUTF8))
         self.BlendShapeNodesLbl.setText(QtGui.QApplication.translate("Form", "BlendShape Nodes", None, QtGui.QApplication.UnicodeUTF8))
+        self.RebuildSelectedTargets.setText(QtGui.QApplication.translate("Form", "Rebuild selected targets", None, QtGui.QApplication.UnicodeUTF8))
         self.TargetGroupsLbl.setText(QtGui.QApplication.translate("Form", "Target Groups Alias", None, QtGui.QApplication.UnicodeUTF8))
         self.ReplaceTargetWithSelBtn.setText(QtGui.QApplication.translate("Form", "Replace Selected Target \n"
 "With Selection", None, QtGui.QApplication.UnicodeUTF8))
