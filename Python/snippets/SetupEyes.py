@@ -255,8 +255,15 @@ def SetupEyes():
 #connectWithLimits("LEyeFollow.rotateY","FacialBS.LEyeRollLf",[[0,0],[16,1]])
 #connectWithLimits("LEyeFollow.rotateY","FacialBS.LEyeRollRh",[[0,0],[-16,1]])
 
-connectWithLimits("Character_RH_ReyeCls_ctrl_fc.translateY", "FacialBS.REyeCls",[[0,0],[-2,1]])
-connectWithLimits("Character_LF_LeyeCls_ctrl_fc.translateY", "FacialBS.LEyeCls",[[0,0],[-2,1]])
+#connectWithLimits("Character_RH_ReyeCls_ctrl_fc.translateY", "FacialBS.REyeCls",[[0,0],[-2,1]])
+#connectWithLimits("Character_LF_LeyeCls_ctrl_fc.translateY", "FacialBS.LEyeCls",[[0,0],[-2,1]])
 #connectWithLimits("Character_MD_AutoEyeLids_ctrl_fc.translateY","FacialBS.Incisibus",[[0,0],[-2,1]])
+
+
+connectWithLimits("Character_MD_UprLipUpDn_ctrl_fc.translateY", "FacialBS.UpperLipUp",[[0,0],[1,1]])	
+connectWithLimits("Character_MD_UprLipUpDn_ctrl_fc.translateY", "FacialBS.UpperLipDn",[[0,0],[-1,1]])	
+connectWithLimits("Character_MD_LowerLipUpDn_ctrl_fc.translateY", "FacialBS.LowerLipUp",[[0,0],[1,1]])	
+connectWithLimits("Character_MD_LowerLipUpDn_ctrl_fc.translateY", "FacialBS.LowerLipDn",[[0,0],[-1,1]])	
+
 #SetupEyes()
 #LinkM(FaceBlendShapesDic)
