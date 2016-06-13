@@ -69,3 +69,20 @@ def ignoreNamespace(Name):
 				return None
 		else:
 			return None
+def ExtractGeometry():
+
+	selected = cmds.ls(sl=True)
+	sphere = cmds.polySphere(name=selected[0] +"Extracted",constructionHistory=False)
+	sphereShape = cmds.listRelatives(sphere,shapes=True)
+
+	if cmds.objectType(selected[0]) == "mesh":
+	    cmds.connectAttr(selected[0]+ ".outMesh",sphereShape[0]+".inMesh")
+
+	elif cmds.objectType(selected[0]) == "groupParts":
+		cmds.connectAttr(selected[0]+ ".outputGeometry",sphereShape[0]+".inMesh")
+
+	elif cmds.objectType(selected[0]) == "blendShape" or cmds.objectType(selected[0]) == "skinCluster" :
+		cmds.connectAttr(selected[0]+ ".outputGeometry[0]",sphereShape[0]+".inMesh")
+	else:
+		print "El tipo de objeto no fue identificado"
+

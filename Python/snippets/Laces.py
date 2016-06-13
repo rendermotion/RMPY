@@ -9,6 +9,9 @@ def RMCreateClustersOnCurve(curve):
 	degree = cmds.getAttr (curve+".degree")
 	spans = cmds.getAttr (curve+".spans")
 	form = cmds.getAttr (curve+".form")
+	print ("degree:%s",degree)
+	print ("spans:%s",spans)
+	print ("form:%s",form)
 	#	Form (open = 0, closed = 1, periodic = 2)
 	clusterList=[]
 	print form
@@ -42,9 +45,9 @@ def RMJointsOnCurve(curve,JointNumber):
 		jointArray.append(Newjoint)
 	step = 0.0
 	if form == 0 or form ==1:
-		step =  float(1) / (JointNumber-1)
+		step =  float(spans) / (JointNumber-1)
 	else:
-		step = float(1) /(JointNumber)
+		step = float(spans) /(JointNumber)
 
 	print "this is the first Step"
 	print step
@@ -86,6 +89,11 @@ def lacesSystem(curve , jointNumber):
 		cmds.parent(eachControl,cntrls)
 
 #spans = cmds.getAttr (nurbsCircle1+".spans")
+
 #print spans
-lacesSystem("LibraryString",5)
+
+lacesSystem("curve3",5)
+lacesSystem("curve4",5)
+#lacesSystem("nurbsCircle1",5)
+#lacesSystem("curve1",5)
 #lacesSystem("BridleSecondaryCurve",10)

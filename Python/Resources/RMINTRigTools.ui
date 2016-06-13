@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>487</width>
-    <height>738</height>
+    <width>864</width>
+    <height>797</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -209,6 +209,13 @@
         </widget>
        </item>
        <item>
+        <widget class="QPushButton" name="ConstShapeLblBtn">
+         <property name="text">
+          <string>Const Shape Lbl</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer name="verticalSpacer_2">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -239,6 +246,20 @@
          </property>
          <property name="text">
           <string>Move Attributes</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="MiscLabel">
+         <property name="text">
+          <string>Misc</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="ExtractGeoBtn">
+         <property name="text">
+          <string>ExtractGeometry</string>
          </property>
         </widget>
        </item>

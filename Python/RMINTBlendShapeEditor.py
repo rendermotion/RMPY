@@ -55,11 +55,11 @@ class RMBlendShapeEditor(QtGui.QDialog):
 				SelectedItemText = g.text().split()
 				print SelectedItemText[1]
 				if len(BSNodeArray)>=0:
-					mel.eval('''source "RMBlendShapeTools.mel";\RMrebuildBSTarget("'''+BSNode+'''","'''+SelectedItemText[1]+'''");''')
+					mel.eval('''source "RMBlendShapeTools.mel";\nRMrebuildBSTarget("'''+BSNode+'''","'''+SelectedItemText[1]+'''");''')
 		else:
 			for g in (Array):
 				SelectedItemText = g.text().split()
-				mel.eval('''source RMBlendShapeTools.mel;\RMrebuildBSTarget("'''+BSNode+'''","'''+SelectedItemText[1]+'''");''')
+				mel.eval('''source RMBlendShapeTools.mel;\nRMrebuildBSTarget("'''+BSNode+'''","'''+SelectedItemText[1]+'''");''')
 
 	def GetBlendshapeBtnPressed(self):
 		selection = cmds.ls(sl=True)

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'RMINTRigTools.ui'
 #
-# Created: Thu May 26 14:30:11 2016
+# Created: Mon May 30 11:18:18 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(487, 738)
+        Form.resize(709, 738)
         self.horizontalLayout_4 = QtGui.QHBoxLayout(Form)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.verticalLayout_6 = QtGui.QVBoxLayout()
@@ -109,6 +109,9 @@ class Ui_Form(object):
         self.SCCombineButton = QtGui.QPushButton(Form)
         self.SCCombineButton.setObjectName("SCCombineButton")
         self.verticalLayout_7.addWidget(self.SCCombineButton)
+        self.ConstShapeLblBtn = QtGui.QPushButton(Form)
+        self.ConstShapeLblBtn.setObjectName("ConstShapeLblBtn")
+        self.verticalLayout_7.addWidget(self.ConstShapeLblBtn)
         spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_7.addItem(spacerItem1)
         self.horizontalLayout_3.addLayout(self.verticalLayout_7)
@@ -121,6 +124,12 @@ class Ui_Form(object):
         self.AttributeTransferBtn.setToolTip("")
         self.AttributeTransferBtn.setObjectName("AttributeTransferBtn")
         self.verticalLayout_8.addWidget(self.AttributeTransferBtn)
+        self.MiscLabel = QtGui.QLabel(Form)
+        self.MiscLabel.setObjectName("MiscLabel")
+        self.verticalLayout_8.addWidget(self.MiscLabel)
+        self.ExtractGeoBtn = QtGui.QPushButton(Form)
+        self.ExtractGeoBtn.setObjectName("ExtractGeoBtn")
+        self.verticalLayout_8.addWidget(self.ExtractGeoBtn)
         spacerItem2 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_8.addItem(spacerItem2)
         self.horizontalLayout_3.addLayout(self.verticalLayout_8)
@@ -150,6 +159,9 @@ class Ui_Form(object):
         self.SelectJoints.setText(QtGui.QApplication.translate("Form", "Select Joints", None, QtGui.QApplication.UnicodeUTF8))
         self.labelShapeControls.setText(QtGui.QApplication.translate("Form", "Shape Controls", None, QtGui.QApplication.UnicodeUTF8))
         self.SCCombineButton.setText(QtGui.QApplication.translate("Form", "Combine", None, QtGui.QApplication.UnicodeUTF8))
+        self.ConstShapeLblBtn.setText(QtGui.QApplication.translate("Form", "Const Shape Lbl", None, QtGui.QApplication.UnicodeUTF8))
         self.Attributeslabel.setText(QtGui.QApplication.translate("Form", "Attributes", None, QtGui.QApplication.UnicodeUTF8))
         self.AttributeTransferBtn.setText(QtGui.QApplication.translate("Form", "Move Attributes", None, QtGui.QApplication.UnicodeUTF8))
+        self.MiscLabel.setText(QtGui.QApplication.translate("Form", "Misc", None, QtGui.QApplication.UnicodeUTF8))
+        self.ExtractGeoBtn.setText(QtGui.QApplication.translate("Form", "ExtractGeometry", None, QtGui.QApplication.UnicodeUTF8))
 

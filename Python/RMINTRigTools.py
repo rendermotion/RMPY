@@ -8,6 +8,7 @@ import os
 #sys.path.append(os.path.dirname(__file__))
 from ui import RMFormRigTools
 reload(RMFormRigTools)
+import RMUncategorized
 
 def getMayaWindow():
 	ptr = mui.MQtUtil.mainWindow()
@@ -32,6 +33,8 @@ class RMRigTools(QtGui.QDialog):
 		self.ui.SelectJoints.clicked.connect(self.SelectJointsBtnPressed)
 		self.ui.SCCombineButton.clicked.connect(self.SCCombineButtonPressed)
 		self.ui.AttributeTransferBtn.clicked.connect(self.AttributeTransferBtnPressed)
+		self.ui.ExtractGeoBtn.clicked.connect(self.ExtractGeoFunct)
+		#self.ui.ConstShapeLblBtn.clicked.connect(self.AttributeTransferBtnPressed)
 
 		#support Multiple selections on qwidgets
 		self.ui.listWidget.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
@@ -89,6 +92,12 @@ class RMRigTools(QtGui.QDialog):
 		mel.eval('''source RMAttributes.mel;
 		string $temp[]=`ls -sl`;
 		TransferAllAttr $temp[0] $temp[1];''')
+
+	def ExtractGeoFunct(self):
+		RMUncategorized.ExtractGeometry()
+
+
+
 
 
 
