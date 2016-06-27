@@ -33,15 +33,39 @@ def SetObjectTransformDic(OTDic):
 		FocusObject = ignoreNamespace(keys)
 		if FocusObject:
 			try:
-				cmds.setAttr(FocusObject+".t",OTDic[keys]["t"][0],OTDic[keys]["t"][1],OTDic[keys]["t"][2])
+				cmds.setAttr(FocusObject+".translateX",OTDic[keys]["t"][0])
 			except:
 				None
 			try:
-				cmds.setAttr(FocusObject+".r",OTDic[keys]["r"][0],OTDic[keys]["r"][1],OTDic[keys]["r"][2])
+				cmds.setAttr(FocusObject+".translateY",OTDic[keys]["t"][1])
 			except:
 				None
 			try:
-				cmds.setAttr(FocusObject+".s",OTDic[keys]["s"][0],OTDic[keys]["s"][1],OTDic[keys]["s"][2])
+				cmds.setAttr(FocusObject+".translateZ",OTDic[keys]["t"][2])
+			except:
+				None
+			try:
+				cmds.setAttr(FocusObject+".rotateX",OTDic[keys]["r"][0])
+			except:
+				None
+			try:
+				cmds.setAttr(FocusObject+".rotateY",OTDic[keys]["r"][1])
+			except:
+				None
+			try:
+				cmds.setAttr(FocusObject+".rotateZ",OTDic[keys]["r"][2])
+			except:
+				None
+			try:
+				cmds.setAttr(FocusObject+".scaleX",OTDic[keys]["s"][0])
+			except:
+				None
+			try:
+				cmds.setAttr(FocusObject+".scaleY",OTDic[keys]["s"][1])
+			except:
+				None
+			try:
+				cmds.setAttr(FocusObject+".scaleZ",OTDic[keys]["s"][2])
 			except:
 				None
 		else:

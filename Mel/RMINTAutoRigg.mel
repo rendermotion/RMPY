@@ -17,7 +17,6 @@ global proc RMSelectBonesMenu()
     float $RHan = 0;
     float $LHan = 0;  
         rowLayout -nc 3;
-            
             columnLayout -adjustableColumn true -cal "left";
                 checkBox -label "Spine"    -v $Spine -onc "$Spine= 1" -ofc "$Spine=0";
                 checkBox -label "Right Arm"    -v $RArm -onc "$RArm= 1" -ofc "$RArm=0";
@@ -29,12 +28,10 @@ global proc RMSelectBonesMenu()
                 checkBox -label "Right Leg"    -v $RLeg -onc "$RLeg= 1" -ofc "$RLeg=0";
                 checkBox -label "Left Leg"    -v $LLeg -onc "$LLeg= 1" -ofc "$LLeg=0";
             setParent ..;
-
             columnLayout -adjustableColumn true -cal "right";
                 checkBox -label "Neck" -align "center" -v $Neck -onc "$Neck= 1" -ofc "$Neck=0" ;
                 checkBox -label "Right Hand"    -v $RHan -onc "$RHan= 1" -ofc "$RHan=0";
                 checkBox -label "Left Hand"    -v $LHan -onc "$LHan= 1" -ofc "$LHan=0";
-                
             setParent ..;
 
         setParent ..;
@@ -44,8 +41,9 @@ global proc RMSelectBonesMenu()
     setParent ..;
 }
 //x: 172
+global proc autoRigg ()
+{
 string $Test= `window -wh 405 225 -t "RM Rigg" -menuBar true -vis true -sizeable false`;
-    
 frameLayout -collapsable true -l "Biped Character";
     columnLayout -adjustableColumn true -cal "center";
         //string $SizeValue = `intFieldGrp -v 500 -l Size`;
@@ -68,3 +66,4 @@ frameLayout -collapsable true -l "Rig Tools";
         button -label "Leg Creation" ;
     setParent ..;
 setParent ..;
+}

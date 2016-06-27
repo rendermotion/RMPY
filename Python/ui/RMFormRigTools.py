@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'RMINTRigTools.ui'
 #
-# Created: Mon May 30 11:18:18 2016
+# Created: Mon Jun 13 11:19:26 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(709, 738)
+        Form.resize(864, 797)
         self.horizontalLayout_4 = QtGui.QHBoxLayout(Form)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.verticalLayout_6 = QtGui.QVBoxLayout()

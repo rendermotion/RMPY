@@ -26,13 +26,5 @@ def connectWithLimits(AttrX,AttrY,keys):
     for eachKey  in keys:
         cmds.setDrivenKeyframe(AttrY, currentDriver = AttrX,dv = eachKey[0],v =eachKey[1])
 
-#AlignedCam="Shot0050BakedCamera"
-#RMAlign("Shot0050_cam",AlignedCam,3)
-#localTransform = cmds.xform("Shot0050_cam",q=True,os=True ,rotatePivot=True)
-#localTransform=localTransform*-1;
-#cmds.xform(AlignedCam,os=True,ws=False,rt=localTransform,worldSpaceDistance=True)
-#cmds.select(AlignedCam)
-#RMAlign("Shot0130BakedCamera1","Shot0130BakedCamera",3)
-
 
 
