@@ -1,4 +1,5 @@
 import maya.cmds as cmds
+import RMNameConvention
 
 def RMAlign(obj1,obj2,flag):
     if (flag==1 or flag == 3):
@@ -27,4 +28,54 @@ def connectWithLimits(AttrX,AttrY,keys):
         cmds.setDrivenKeyframe(AttrY, currentDriver = AttrX,dv = eachKey[0],v =eachKey[1])
 
 
+def RMCreateGroupOnObj(Obj,Type="world"):
+    '''
+    "world","child","parent","inserted"
+    '''
+    Group = cmds.group(RMUniqueName(Obj),empty=True)
+    Group = RMGuessTypeInName(Group)
+    RMAlign(Obj,Group,3)
+    Parent = cmds.listRelatives(Obj,parent=True)
+    
+    if Type == "parent":
+        cmds.parent(Obj,Group)
+        if len(Parent)>0:
+            cmds.parent(Parent,Group)
+    if Type == "child":
+        cmds.parent(Group,Obj)
+    return Group
+
+    
+def RMLenghtOfBone(Joint):
+    children = cmds.listRelatives(Joint,children=True)
+    if(len(children)>0 and cmds.objectType != "locator"):
+        return getAttr(children[0]+".translateX")
+    else:
+        return 1.0
+
+def RMInsertInHierarchy(Obj,InsertObj,InsertType="Parent"):
+    if InsertType == "Parent":
+        print Obj
+        Parent = cmds.listRelatives(Obj , parent=True)
+        if Parent:
+            cmds.parent (InsertObj, Parent)
+        cmds.parent (Obj, InsertObj)
+    else:
+        children = RMRemoveChildren(Obj)
+        Parent = cmds.listRelatives (Obj, parent=True)
+        cmds.parent (InsertObj , Obj)
+        RMParentArray (InsertObj, children)
+
+def RMRemoveChildren(Node):
+    Children = cmds.listRelatives(Node,children=True)
+    returnArray=[]
+    for eachChildren in Children:
+        if cmds.objectType(eachChildren) != "mesh" and cmds.objectType(eachChildren) != "nurbsCurve":
+            cmds.parent(eachChildren , world = True)
+            returnArray.append(eachChildren)
+    return Children
+
+def RMParentArray(Parent,Array):
+    for objects in Array:
+        cmds.parent(objects,Parent)
 
