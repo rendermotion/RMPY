@@ -75,7 +75,28 @@ def RMRemoveChildren(Node):
             returnArray.append(eachChildren)
     return Children
 
-def RMParentArray(Parent,Array):
+def RMParentArray (Parent, Array):
     for objects in Array:
         cmds.parent(objects,Parent)
 
+
+def RMCreateLineBetwenPoints (Point1, Point2):
+
+    Curve = cmds.curve (degree=1, p=[[0,0,0],[1,0,0]])
+    
+    NumCVs = cmds.getAttr (Curve+".controlPoints" , size=True)
+
+    Cluster1,Cluster1Handle = cmds.cluster (Curve+".cv[0]", relative=True)
+
+    Cluster2,Cluster2Handle = cmds.cluster (Curve+".cv[1]", relative=True)
+    print Cluster1
+    print Cluster1Handle
+    print (str(cmds.objectType(Cluster1)))
+    print (str(cmds.objectType(Cluster1Handle)))
+
+
+
+
+
+
+RMCreateLineBetwenPoints("locator1","locator2")

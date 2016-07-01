@@ -9,6 +9,11 @@ NameConvention  = {
 }
 
 TypeDictionaray = {
+"joint":"jnt",
+"undefined":"UDF",
+"nurbsCurve":"shp",
+"mesh":"msh"
+"transform":"grp"
 
 }
 def RMGetFromName(ObjName,Token):
@@ -58,24 +63,21 @@ def RMIsNameInFormat(ObjName):
 	return False
 
 def RMGuessObjType(Obj):
-	Type='UDF'
+	Type=TypeDictionary["undefined"]
 	ObjType = cmds.objectType(currentName)
-	if ObjType == "transform":
+	for Types in TypeDictionaray:
+		if ObjType ==Types:
+			Type = TypeDictionaray[Types]
+	if ObjType=="transform":
 		children = cmds.listRelatives(currentName,shapes=True)
 		if len(children) > 0:
 			ShapeType = cmds.objectType(children[0])
-			if ShapeType=="nurbsCurve":
+			if ShapeType == "nurbsCurve":
 				Type="shp"
-			elif ShapeType =="mesh":
+			elif ShapeType == "mesh":
 				Type="msh"
-			else: 
-				Type="grp"
-		else:
-			Type = "grp"
-	elif ObjType =="joint":
-		Type = "jnt"
-	else:
-		Type = "UDF"
+			else:
+				Type="SHPUNDEF"
 	return Type
 
 def RMGuessTypeInName(currentName):
