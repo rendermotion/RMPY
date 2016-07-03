@@ -3,105 +3,144 @@ import RMRigTools
 
 
 class GenericFacial():
-	self.FaceBlendShapesDic={
-				"REyeCls":{},
-				"LEyeCls":{},
-				"Wide":{}, 
-				"Narrow":{},
-				"UprLipUp":{},
-				"UprLipDn":{},
-				"LwrLipUp":{},
-				"LwrLipDn":{},
-				"LSmile":{},
-				"RSmile":{},
-				"LFrown" :{},
-				"RFrown":{}, 
-				"LBrowOutUp":{},
-				"RBrowOutUp":{},
-				"LBrowOutDn":{}, 
-				"RBrowOutDn" :{},
-				"LBrowInUp":{},
-				"RBrowInUp":{},
-				"LBrowInDn":{}, 
-				"RBrowInDn":{} ,
-				"Browsqueeze":{},
-				"LSquint":{},
-		        "RSquint":{},
-				"REyeRollLf":{},
-				"REyeRollRh":{},
-				"LEyeRollLf":{},
-				"LEyeRollRh":{},
-				"LSneer":{},
-				"RSneer":{},
-				"Incisibus":{}
-				}
-	def LinkM (self):
-		cmds.blendShape("Character",name="FacialBS")
+	def __init__(self):
+		self.FaceBlendShapeDic={
+		"REyeCls":{},
+		"LEyeCls":{},
+		"Wide":{}, 
+		"Narrow":{},
+		"UprLipUp":{},
+		"UprLipDn":{},
+		"LwrLipUp":{},
+		"LwrLipDn":{},
+		"LSmile":{},
+		"RSmile":{},
+		"LFrown" :{},
+		"RFrown":{}, 
+		"LBrowOutUp":{},
+		"RBrowOutUp":{},
+		"LBrowOutDn":{}, 
+		"RBrowOutDn" :{},
+		"LBrowInUp":{},
+		"RBrowInUp":{},
+		"LBrowInDn":{}, 
+		"RBrowInDn":{} ,
+		"Browsqueeze":{},
+		"LSquint":{},
+        "RSquint":{},
+		"REyeRollLf":{},
+		"REyeRollRh":{},
+		"LEyeRollLf":{},
+		"LEyeRollRh":{},
+		"LSneer":{},
+		"RSneer":{},
+		"Incisibus":{}}
+		self.IntermediateBlendShapeDic={
+		"LEyeHalfCls":{},
+		"REyeHalfCls":{}
+		}
+		self.JawDic={
+		"Jaw":{}
+		}
+		self.EyesDic={
+		"LEye":{},
+		"REye":{}#,
+		#"REyeGeo":{},
+		#"LEyeGeo":{},
+		}
+
+
+	def checkDicExistance(self,Dictionary):
+		for keys in sorted(Dictionary.iterkeys()):
+			if cmds.objExists(keys):
+				Dictionary[keys]["Exists"] = True
+			else:
+				Dictionary[keys]["Exists"] = False
+
+	def checkExistance(self):
+		self.checkDicExistance(self.FaceBlendShapeDic)
+		self.checkDicExistance(self.IntermediateBlendShapeDic)
+		self.checkDicExistance(self.JawDic)
+		self.checkDicExistance(self.EyesDic)
+
+	def LinkFacial (self,BSname = "CharacterFacialBS" ):
+		self.checkExistance()
+		cmds.bl
+endShape("Character",name = BSname)
 		NumBS=0
 		for keys in sorted(self.FaceBlendShapeDic.iterkeys()):
 			if cmds.objExists(keys):
-				cmds.blendShape("FacialBS",edit=True, target=["Character",NumBS,keys,1.0])
+				cmds.blendShape(BSname,edit=True, target=["Character",NumBS,keys,1.0])
 				self.FaceBlendShapeDic[keys]["index"] = NumBS
 				self.FaceBlendShapeDic[keys]["Exists"] = True
+
+				if keys =="LEyeCls" and cmds.objExists("LEyeHalfCls"):
+					cmds.blendShape(BSname,edit=True, target=["Character",NumBS,keys,.5])
+				if keys=="REyeCls" and cmds.objExists("REyeHalfCls"):
+					cmds.blendShape(BSname,edit=True, target=["Character",NumBS,keys,.5])
 				NumBS+=1
 			else:
 				print "el objeto" + keys + " no fue encontrado."
 				self.FaceBlendShapeDic[keys]["Exists"] = False
-		
-		if cmds.objExists("RHEyeLashesClosed") and cmds.objExists("LFEyeLashesClosed") :
-			cmds.blendShape("EyeLashes",name="EyeLashesBS")
-			cmds.blendShape("EyeLashesBS",edit=True, target=["EyeLashes",0,"RHEyeLashesClosed",1.0])
-			cmds.blendShape("EyeLashesBS",edit=True, target=["EyeLashes",1,"LFEyeLashesClosed",1.0])
 
-			("Character_RH_ReyeCls_ctrl_fc.translateY", "EyeLashesBS.RHEyeLashesClosed",[[0,0],[-2,1]])
-
-			RMRigTools.connectWithLimits("Character_LF_LeyeCls_ctrl_fc.translateY", "EyeLashesBS.LFEyeLashesClosed",[[0,0],[-2,1]])
-
-		
+		if self.FaceBlendShapeDic["Incisibus"]["Exists"]:
+			RMRigTools.connectWithLimits("Character_MD_AutoEyeLids_ctrl_fc.translateY",BSname+".Incisibus",[[0,0],[-2,1]])
+	
 		if self.FaceBlendShapeDic["REyeCls"]["Exists"]:
-			RMRigTools.connectWithLimits("Character_RH_ReyeCls_ctrl_fc.translateY", "FacialBS.REyeCls",[[0,0],[-2,1]])
+			RMRigTools.connectWithLimits("Character_RH_ReyeCls_ctrl_fc.translateY", BSname+".REyeCls",[[0,0],[-2,1]])
 		if self.FaceBlendShapeDic["LEyeCls"]["Exists"]:
-			RMRigTools.connectWithLimits("Character_LF_LeyeCls_ctrl_fc.translateY", "FacialBS.LEyeCls",[[0,0],[-2,1]])
+			RMRigTools.connectWithLimits("Character_LF_LeyeCls_ctrl_fc.translateY", BSname+".LEyeCls",[[0,0],[-2,1]])
 
 
 		if self.FaceBlendShapeDic["RBrowOutUp"]["Exists"]:
-			RMRigTools.connectWithLimits("Character_MD_RBrowOutUpDn_ctrl_fc.translateY", "FacialBS.RBrowOutUp",[[0,0],[1,1]])
+			RMRigTools.connectWithLimits("Character_MD_RBrowOutUpDn_ctrl_fc.translateY", BSname+".RBrowOutUp",[[0,0],[1,1]])
 		if self.FaceBlendShapeDic["RBrowOutDn"]["Exists"]:
-			RMRigTools.connectWithLimits("Character_MD_RBrowOutUpDn_ctrl_fc.translateY", "FacialBS.RBrowOutDn",[[0,0],[-1,1]])	
+			RMRigTools.connectWithLimits("Character_MD_RBrowOutUpDn_ctrl_fc.translateY", BSname+".RBrowOutDn",[[0,0],[-1,1]])	
 		if self.FaceBlendShapeDic["RBrowInUp"]["Exists"]:
-			RMRigTools.connectWithLimits("Character_MD_RBrowOutUpDn_ctrl_fc.translateX", "FacialBS.RBrowInUp",[[0,0],[1,1]])
+			RMRigTools.connectWithLimits("Character_MD_RBrowOutUpDn_ctrl_fc.translateX", BSname+".RBrowInUp",[[0,0],[1,1]])
 		if self.FaceBlendShapeDic["RBrowInDn"]["Exists"]:
-			RMRigTools.connectWithLimits("Character_MD_RBrowOutUpDn_ctrl_fc.translateX", "FacialBS.RBrowInDn",[[0,0],[-1,1]])
+			RMRigTools.connectWithLimits("Character_MD_RBrowOutUpDn_ctrl_fc.translateX", BSname+".RBrowInDn",[[0,0],[-1,1]])
 
 		if self.FaceBlendShapeDic["LBrowOutUp"]["Exists"]:
-			RMRigTools.connectWithLimits("Character_MD_LBrowOutUpDn_ctrl_fc.translateY", "FacialBS.LBrowOutUp",[[0,0],[1,1]])
+			RMRigTools.connectWithLimits("Character_MD_LBrowOutUpDn_ctrl_fc.translateY", BSname+".LBrowOutUp",[[0,0],[1,1]])
 		if self.FaceBlendShapeDic["LBrowOutDn"]["Exists"]:
-			RMRigTools.connectWithLimits("Character_MD_LBrowOutUpDn_ctrl_fc.translateY", "FacialBS.LBrowOutDn",[[0,0],[-1,1]])	
+			RMRigTools.connectWithLimits("Character_MD_LBrowOutUpDn_ctrl_fc.translateY", BSname+".LBrowOutDn",[[0,0],[-1,1]])	
 		if self.FaceBlendShapeDic["LBrowInUp"]["Exists"]:
-			RMRigTools.connectWithLimits("Character_MD_LBrowOutUpDn_ctrl_fc.translateX", "FacialBS.LBrowInUp",[[0,0],[1,1]])
+			RMRigTools.connectWithLimits("Character_MD_LBrowOutUpDn_ctrl_fc.translateX", BSname+".LBrowInUp",[[0,0],[1,1]])
 		if self.FaceBlendShapeDic["LBrowInDn"]["Exists"]:
-			RMRigTools.connectWithLimits("Character_MD_LBrowOutUpDn_ctrl_fc.translateX", "FacialBS.LBrowInDn",[[0,0],[-1,1]])
+			RMRigTools.connectWithLimits("Character_MD_LBrowOutUpDn_ctrl_fc.translateX", BSname+".LBrowInDn",[[0,0],[-1,1]])
 
 		if self.FaceBlendShapeDic["Browsqueeze"]["Exists"]:
-			RMRigTools.connectWithLimits("Character_MD_Browsqueeze_ctrl_fc.translateY", "FacialBS.Browsqueeze",[[0,0],[1,1]])
+			RMRigTools.connectWithLimits("Character_MD_Browsqueeze_ctrl_fc.translateY", BSname+".Browsqueeze",[[0,0],[1,1]])
 
 		if self.FaceBlendShapeDic["UprLipUp"]["Exists"]:
-			RMRigTools.connectWithLimits("Character_MD_UprLipUpDn_ctrl_fc.translateY", "FacialBS.UprLipUp",[[0,0],[1,1]])	
+			RMRigTools.connectWithLimits("Character_MD_UprLipUpDn_ctrl_fc.translateY", BSname+".UprLipUp",[[0,0],[1,1]])	
 		if self.FaceBlendShapeDic["UprLipDn"]["Exists"]:
-			RMRigTools.connectWithLimits("Character_MD_UprLipUpDn_ctrl_fc.translateY", "FacialBS.UprLipDn",[[0,0],[-1,1]])	
+			RMRigTools.connectWithLimits("Character_MD_UprLipUpDn_ctrl_fc.translateY", BSname+".UprLipDn",[[0,0],[-1,1]])	
 
 		if self.FaceBlendShapeDic["LwrLipUp"]["Exists"]:
-			RMRigTools.connectWithLimits("Character_MD_LowerLipUpDn_ctrl_fc.translateY", "FacialBS.LwrLipUp",[[0,0],[1,1]])	
+			RMRigTools.connectWithLimits("Character_MD_LowerLipUpDn_ctrl_fc.translateY", BSname+".LwrLipUp",[[0,0],[1,1]])	
 		if self.FaceBlendShapeDic["LwrLipDn"]["Exists"]:
-			RMRigTools.connectWithLimits("Character_MD_LowerLipUpDn_ctrl_fc.translateY", "FacialBS.LwrLipDn",[[0,0],[-1,1]])	
+			RMRigTools.connectWithLimits("Character_MD_LowerLipUpDn_ctrl_fc.translateY", BSname+".LwrLipDn",[[0,0],[-1,1]])	
+
+		if self.FaceBlendShapeDic["REyeRollLf"]["Exists"]:
+			RMRigTools.connectWithLimits("REyeFollow.rotateY",BSname+".REyeRollLf",[[0,0],[16,1]])
+		if self.FaceBlendShapeDic["REyeRollRh"]["Exists"]:			
+			RMRigTools.connectWithLimits("REyeFollow.rotateY",BSname+".REyeRollRh",[[0,0],[-16,1]])
+		if self.FaceBlendShapeDic["LEyeRollLf"]["Exists"]:				
+			RMRigTools.connectWithLimits("LEyeFollow.rotateY",BSname+".LEyeRollLf",[[0,0],[16,1]])
+		if self.FaceBlendShapeDic["LEyeRollRh"]["Exists"]:				
+			RMRigTools.connectWithLimits("LEyeFollow.rotateY",BSname+".LEyeRollRh",[[0,0],[-16,1]])
+
+
 
 
 		if self.FaceBlendShapeDic["Wide"]["Exists"]:
-			RMRigTools.connectWithLimits("Character_MD_JawOpen_ctrl_fc.translateX", "FacialBS.Wide",[[0,0],[1,1]])
+			RMRigTools.connectWithLimits("Character_MD_JawOpen_ctrl_fc.translateX", BSname+".Wide",[[0,0],[1,1]])
 		if self.FaceBlendShapeDic["Narrow"]["Exists"]:
-			RMRigTools.connectWithLimits("Character_MD_JawOpen_ctrl_fc.translateX", "FacialBS.Narrow",[[0,0],[-1,1]])
+			RMRigTools.connectWithLimits("Character_MD_JawOpen_ctrl_fc.translateX", BSname+".Narrow",[[0,0],[-1,1]])
 		if self.FaceBlendShapeDic["Wide"]["Exists"]:
-			RMRigTools.connectWithLimits("Character_MD_JawOpen_ctrl_fc.translateX", "FacialBS.Wide",[[0,0],[1,1]])
+			RMRigTools.connectWithLimits("Character_MD_JawOpen_ctrl_fc.translateX", BSname+".Wide",[[0,0],[1,1]])
 
 		if cmds.objExists("Jaw"):
 			RMRigTools.connectWithLimits("Character_MD_JawOpen_ctrl_fc.translateY", "Jaw.rotateZ",[[0,0],[-1,-20],[1,7]])
@@ -110,13 +149,13 @@ class GenericFacial():
 
 
 		if self.FaceBlendShapeDic["RSmile"]["Exists"]:
-			RMRigTools.connectWithLimits("Character_MD_MouthEmotion_ctrl_fc.translateY", "FacialBS.RSmile",[[0,0],[1,1]])
+			RMRigTools.connectWithLimits("Character_MD_MouthEmotion_ctrl_fc.translateY", BSname+".RSmile",[[0,0],[1,1]])
 		if self.FaceBlendShapeDic["RFrown"]["Exists"]:
-			RMRigTools.connectWithLimits("Character_MD_MouthEmotion_ctrl_fc.translateY", "FacialBS.RFrown",[[0,0],[-1,1]])	
+			RMRigTools.connectWithLimits("Character_MD_MouthEmotion_ctrl_fc.translateY", BSname+".RFrown",[[0,0],[-1,1]])	
 		if self.FaceBlendShapeDic["LSmile"]["Exists"]:
-			RMRigTools.connectWithLimits("Character_MD_MouthEmotion_ctrl_fc.translateX", "FacialBS.LSmile",[[0,0],[1,1]])
+			RMRigTools.connectWithLimits("Character_MD_MouthEmotion_ctrl_fc.translateX", BSname+".LSmile",[[0,0],[1,1]])
 		if self.FaceBlendShapeDic["LFrown"]["Exists"]:
-			RMRigTools.connectWithLimits("Character_MD_MouthEmotion_ctrl_fc.translateX", "FacialBS.LFrown",[[0,0],[-1,1]])
+			RMRigTools.connectWithLimits("Character_MD_MouthEmotion_ctrl_fc.translateX", BSname+".LFrown",[[0,0],[-1,1]])
 
 		if self.FaceBlendShapeDic["RSquint"]["Exists"]:
 			cmds.expression(name = "RSquintExpresion",unitConversion = "none")
@@ -168,14 +207,24 @@ class GenericFacial():
 				\nelse {$Xval = 0;}
 				\nFacialBS.LSneer = ($Zval-$Xval);'''
 			cmds.expression("LSneerExpresion",edit=True,string=script,unitConversion = "none")
+
+	def JawSetup(self):
+			if cmds.objExists("Jaw"):
+				RMRigTools.connectWithLimits("Character_MD_JawOpen_ctrl_fc.translateY", "Jaw.rotateZ",[[0,0],[-1,-20],[1,7]])
+				RMRigTools.connectWithLimits("Character_MD_JawFwd_ctrl_fc.translateX", "Jaw.rotateY",[[0,0],[1,20],[-1,-20]])
+				RMRigTools.connectWithLimits("Character_MD_JawFwd_ctrl_fc.translateY", "Jaw.translateX",[[0,0],[1,-1],[-1,1]])
+
 	def SetupEyes(self):
+
 		if cmds.objExists("LEye") and cmds.objExists("REye"):
 			cmds.group(em=True,name="ReyeOrientacion")
+			cmds.joint(name="REyeJoint")
 			cmds.group(em=True,name="ReyeBase")
 			cmds.group(em=True,name="ReyeLookAt")
 			cmds.group(em=True,name="ReyePointLookAt")
-			
+
 			cmds.group(em=True,name="LeyeOrientacion")
+			cmds.joint(name="LEyeJoint")
 			cmds.group(em=True,name="LeyeBase")
 			cmds.group(em=True,name="LeyeLookAt")
 			cmds.group(em=True,name="LeyePointLookAt")
@@ -233,29 +282,23 @@ class GenericFacial():
 			cmds.parent("LEye","LeyeOrientacion");
 			cmds.parent("REye","ReyeOrientacion");
 			
-			
+			'''if cmds.objExists("*REyeGeo*"):
+				EyeGeo=cmds.ls("*REyeGeo*",type="transform")
+				for geo in EyeGeo:
+					cmds.bindSkin(geo,"REyeJoint")
+
+			if cmds.objExists("*LEyeGeo*"):
+				EyeGeo=cmds.ls("*LEyeGeo*",type="transform")
+				for geo in EyeGeo:
+					cmds.bindSkin(geo,"LEyeJoint")
+			'''
+
 			cmds.parent("OjosLookAt",EyeParent);
 
 			cmds.parent("LeyePointLookAt","OjosLookAt_L");
 			cmds.parent("ReyePointLookAt","OjosLookAt_R");
-
 		else:
 			print "No existen los objetos LEye y REye"
-
-#RMRigTools.connectWithLimits("REyeFollow.rotateY","FacialBS.REyeRollLf",[[0,0],[16,1]])
-#RMRigTools.connectWithLimits("REyeFollow.rotateY","FacialBS.REyeRollRh",[[0,0],[-16,1]])
-#RMRigTools.connectWithLimits("LEyeFollow.rotateY","FacialBS.LEyeRollLf",[[0,0],[16,1]])
-#RMRigTools.connectWithLimits("LEyeFollow.rotateY","FacialBS.LEyeRollRh",[[0,0],[-16,1]])
-
-#RMRigTools.connectWithLimits("Character_RH_ReyeCls_ctrl_fc.translateY", "FacialBS.REyeCls",[[0,0],[-2,1]])
-#RMRigTools.connectWithLimits("Character_LF_LeyeCls_ctrl_fc.translateY", "FacialBS.LEyeCls",[[0,0],[-2,1]])
-#RMRigTools.connectWithLimits("Character_MD_AutoEyeLids_ctrl_fc.translateY","FacialBS.Incisibus",[[0,0],[-2,1]])
-
-
-RMRigTools.connectWithLimits("Character_MD_UprLipUpDn_ctrl_fc.translateY", "FacialBS.UpperLipUp",[[0,0],[1,1]])	
-RMRigTools.connectWithLimits("Character_MD_UprLipUpDn_ctrl_fc.translateY", "FacialBS.UpperLipDn",[[0,0],[-1,1]])	
-RMRigTools.connectWithLimits("Character_MD_LowerLipUpDn_ctrl_fc.translateY", "FacialBS.LowerLipUp",[[0,0],[1,1]])	
-RMRigTools.connectWithLimits("Character_MD_LowerLipUpDn_ctrl_fc.translateY", "FacialBS.LowerLipDn",[[0,0],[-1,1]])	
 
 #SetupEyes()
 #LinkM(self.FaceBlendShapeDic)

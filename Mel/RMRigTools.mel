@@ -289,8 +289,8 @@ global proc string [] RMCreateBonesAtPoints (string $PointArray[])
     vector $Obj2position=`xform -ws -q -rp $PointArray[1]`;
     vector $InitVector=$Obj2position-$Obj1position;
     vector $CurrentVector;
-    float $FirsBoneAngle=angle ($InitVector,<<0,1,0>>);
-    float $Angle;
+    float $FirsBoneAngle = angle($InitVector,<<0,1,0>>);
+    float $Angle=$FirsBoneAngle;
     float $Angle02;
     print (rad_to_deg($Angle));
     for ($i in $PointArray)
@@ -315,14 +315,31 @@ global proc string [] RMCreateBonesAtPoints (string $PointArray[])
 	    makeIdentity -apply true -t 1 -r 1 -s 0 $jointArray[$index];
 	    if ($index>0)
 	        {
-	        $Obj1position=`xform -ws -q -rp $PointArray[$index-1]`;
-	        $Obj2position=`xform -ws -q -rp $PointArray[$index]`;
+	        parent $jointArray[$index] $jointArray[$index-1];
+	        joint -e -oj xyz -sao "yup" $jointArray[$index-1];
+	        if ($index > 1) 
+	        	{
+	        	$ParentOrient = `joint -q -orientation $jointArray[$index-1]`;
+	        	print $ParentOrient;
+	        	if (($ParentOrient[0])> 90)
+	        		{
+	        			joint -e -orientation ($ParentOrient[0]-180) ($ParentOrient[1]) ($ParentOrient[2]) $jointArray[$index-1];
+	        		}
+	        	else{
+	        		if(($ParentOrient[0])<(-90))
+	        			{
+	        			joint -e -orientation ($ParentOrient[0]+180) ($ParentOrient[1]) ($ParentOrient[2]) $jointArray[$index-1];
+	        			}
+	        		}
+	        	}
+	        /*
+	        //$Obj1position=`xform -ws -q -rp $PointArray[$index-1]`;
+	        //$Obj2position=`xform -ws -q -rp $PointArray[$index]`;
+	        $Obj1position=`xform -ws -q -t $PointArray[$index-1]`;
+	        $Obj2position=`xform -ws -q -t $PointArray[$index]`;
 	        $CurrentVector=$Obj2position-$Obj1position;
 	        $Angle=angle ($CurrentVector,<<0,1,0>>);
 	        $Angle02=angle($InitVector,$CurrentVector);
-
-//	        print ("\nAngulo "+$index+"\n");
-//    		print (rad_to_deg($Angle)+" ANG2="+rad_to_deg($Angle02));
 
 	        parent $jointArray[$index] $jointArray[$index-1];
 			joint -e -oj xyz -sao "yup" $jointArray[$index-1];
@@ -330,11 +347,9 @@ global proc string [] RMCreateBonesAtPoints (string $PointArray[])
 			if (rad_to_deg($FirsBoneAngle + $Angle02)>180)
 	            {
 	            	joint -e -oj xyz -sao "ydown" $jointArray[$index-1];
-	            	//rotate -r -os -fo -pcp 180 0 0 $jointArray[$index-1];
 	            }
-
-
-	        }
+	        */
+	    	}
 	    $index=$index+1;
 	    } 
     RMCreateGrouponObj $jointArray[0] 1;
@@ -353,3 +368,5 @@ global proc RMParent (string $Obj01,string $Obj02)
 		parent $Obj01 $Obj02;	
 	}
 }
+//$sel = `ls -sl`;
+//RMCreateBonesAtPoints($sel);

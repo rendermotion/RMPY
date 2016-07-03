@@ -1,6 +1,82 @@
 source "RMDeformers.mel";
 source "RMcomponents.mel";
+
+global proc int RMGetTargetIndex(string $BSNode,string $Target)
+{
+	int $TargetIdx[]=`getAttr -mi ($BSNode+".inputTarget")`;
+	int $InputTargetGroup[]= `getAttr -mi ($BSNode+".inputTarget["+$TargetIdx[0]+"].inputTargetGroup")`;
+
+	for ($EachTargetGroup in $InputTargetGroup)
+		{
+			$CurrentTarget = `listAttr -m ($BSNode+".weight["+$EachTargetGroup+"]")`;
+
+			if ($CurrentTarget[0] == $Target)
+			{
+				return $EachTargetGroup;
+			}
+		}
+	return -1;
+}
+global proc RMrebuildBSTarget(string $BSNode,string $Target)
+{
+	
+	string $BSWeight[]= (`listAttr ($BSNode +".weight")`);
+	string $BSWeightAlias[]=`listAttr -m ($BSNode +".weight")`;
+	int $TargetIdx[]=`getAttr -mi ($BSNode+".inputTarget")`;
+	
+
+	$TargetIndex = RMGetTargetIndex($BSNode,$Target);
+
+	if ($TargetIndex >= 0)
+	{
+		int $TargetItems[]= `getAttr -mi ($BSNode+".inputTarget["+$TargetIdx[0]+"].inputTargetGroup["+$TargetIndex+"].inputTargetItem")`;
+
+		int $Intermediate=0;
+		for ($EachTarget in $TargetItems)
+		{
+			string $Connections[]=(`listConnections ($BSNode+".inputTarget["+$TargetIdx[0]+"].inputTargetGroup["+$TargetIndex+"].inputTargetItem["+$EachTarget+"].inputGeomTarget")`);
+			if (`size($Connections)`==0)
+			{
+				setAttr ($BSNode+".envelope") 0;
+				while (`objExists ($BSWeightAlias[$TargetIndex] + "BS"+ $Intermediate)`) 
+					{
+						$Intermediate+=1;
+					}
+				$RebuildBlendShape = RMduplicateOutputMesh($BSNode,($BSWeightAlias[$TargetIndex] + "BS"+ $Intermediate));
+				setAttr ($BSNode+".envelope") 1;
+				print("\nNo connection Found on: "+ $BSWeightAlias[$TargetIndex]);
+
+				float $VtxValues[]= `getAttr ($BSNode+".inputTarget["+$TargetIdx[0]+"].inputTargetGroup["+$TargetIndex+"].inputTargetItem["+$EachTarget+"].inputPointsTarget")`;
+				string $VtxComp[] = (`getAttr ($BSNode+".inputTarget["+$TargetIdx[0]+"].inputTargetGroup["+$TargetIndex+"].inputTargetItem["+$EachTarget+"].inputComponentsTarget")`);
+				$VtxList = RMcomponentArray($VtxComp);
+				int $VtxIndex = 0;
+				for ($Vtx in $VtxList)
+				{
+					xform -translation ($VtxValues[$VtxIndex*4]) ($VtxValues[$VtxIndex*4 + 1]) ($VtxValues[$VtxIndex*4+2]) -relative ($RebuildBlendShape+".vtx["+$Vtx+"]");
+					$VtxIndex+=1;
+				}
+				connectAttr -f ($RebuildBlendShape+".outMesh") ($BSNode+".inputTarget["+$TargetIdx[0]+"].inputTargetGroup["+$TargetIndex+"].inputTargetItem["+$EachTarget+"].inputGeomTarget");
+			}
+		}
+	}
+	else 
+	{
+		print ("Target not found: " + $Target);
+	}
+}
+
+
 global proc RMblendShapeRebuilder(string $BSNode)
+{
+	string $BSWeightAlias[]=`listAttr -m ($BSNode +".weight")`;
+	for ($EachWeightAlias in $BSWeightAlias)
+	{
+		RMrebuildBSTarget($BSNode,$EachWeightAlias);
+	}
+}
+
+
+global proc RMblendShapeRebuilderFromBS(string $BSNode)
 {
 	string $BSWeight[]= (`listAttr ($BSNode +".weight")`);
 
@@ -22,7 +98,12 @@ global proc RMblendShapeRebuilder(string $BSNode)
 		print "\n\tInput Target Group\n\t";
 		print $EachTargetGroup;
 		int $TargetItems[]= `getAttr -mi ($BSNode+".inputTarget["+$TargetIdx[0]+"].inputTargetGroup["+$EachTargetGroup+"].inputTargetItem")`;
-		int $Intermediate=0;
+		int $Intermediate = 0;
+
+		string $TargetGroupAlias = `listAttr -m ($BSNode+".weight["+$EachTargetGroup+"]")`;
+		print "\n\t Target Group Alias ";
+		//print $TargetGroupAlias;
+		
 		for ($EachTarget in $TargetItems)
 		{
 			print "\n\t\tTargetsItems\n\t\t";
@@ -30,28 +111,24 @@ global proc RMblendShapeRebuilder(string $BSNode)
 			string $Connections[]=(`listConnections ($BSNode+".inputTarget["+$TargetIdx[0]+"].inputTargetGroup["+$EachTargetGroup+"].inputTargetItem["+$EachTarget+"].inputGeomTarget")`);
 			if (`size($Connections)`==0)
 			{
-				setAttr ($BSNode+".envelope") 0;
 				while (`objExists ($BSWeightAlias[$AliasIndex] + "BS"+ $Intermediate)`) 
 					{
 						$Intermediate+=1;
 					}
-				$RebuildBlendShape = RMduplicateOutputMesh($BSNode,($BSWeightAlias[$AliasIndex] + "BS"+ $Intermediate));
-				setAttr ($BSNode+".envelope") 1;
-				print("\nNo connection Found on: "+ $BSWeightAlias[$AliasIndex]);
-				float $VtxValues[]= `getAttr ($BSNode+".inputTarget["+$TargetIdx[0]+"].inputTargetGroup["+$EachTargetGroup+"].inputTargetItem["+$EachTarget+"].inputPointsTarget")`;
-				string $VtxComp[] = (`getAttr ($BSNode+".inputTarget["+$TargetIdx[0]+"].inputTargetGroup["+$EachTargetGroup+"].inputTargetItem["+$EachTarget+"].inputComponentsTarget")`);
-				$VtxList = RMcomponentArray($VtxComp);
-				int $VtxIndex=0;
-				for ($Vtx in $VtxList)
+				if ($BSWeightAlias[$AliasIndex]!="weight[36]")
 				{
-					xform -translation ($VtxValues[$VtxIndex*4]) ($VtxValues[$VtxIndex*4 + 1]) ($VtxValues[$VtxIndex*4+2]) -relative ($RebuildBlendShape+".vtx["+$Vtx+"]");
+					setAttr ($BSNode+"."+$BSWeightAlias[$AliasIndex]) (($EachTarget-5000)/1000);
+					//$RebuildBlendShape = RMduplicateOutputMesh($BSNode,($BSWeightAlias[$AliasIndex] + "BS"+ $Intermediate));
+					setAttr ($BSNode+"."+$BSWeightAlias[$AliasIndex]) 0;
+					print("\nNo connection Found on: "+ $BSWeightAlias[$AliasIndex] +" with index  Number"+$AliasIndex);
+					//connectAttr -f ($RebuildBlendShape+".outMesh") ($BSNode+".inputTarget["+$TargetIdx[0]+"].inputTargetGroup["+$EachTargetGroup+"].inputTargetItem["+$EachTarget+"].inputGeomTarget");
 				}
-				connectAttr -f ($RebuildBlendShape+".outMesh") ($BSNode+".inputTarget["+$TargetIdx[0]+"].inputTargetGroup["+$EachTargetGroup+"].inputTargetItem["+$EachTarget+"].inputGeomTarget");
 			}
 		}
 	$AliasIndex+=1;
 	}
 }
+
 /*This procedure creates an sphere and reconnects the input geometry from another object*/
 global proc string  RMduplicateOutputMesh (string $Node,string $ObjName)
 {
@@ -93,6 +170,3 @@ global proc string RMGetGPInputShape(string $Node){
 			return "";
 	}
 }
-
-
-

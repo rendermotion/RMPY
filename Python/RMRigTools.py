@@ -22,14 +22,9 @@ def RMAlign(obj1,obj2,flag):
             Obj1rotacion=cmds.xform(obj1,q=True,ws=True,ro=True)
             cmds.xform(obj2,ws=True,ro=Obj1rotacion)
 
-
-#AlignedCam="Shot0050BakedCamera"
-#RMAlign("Shot0050_cam",AlignedCam,3)
-#localTransform = cmds.xform("Shot0050_cam",q=True,os=True ,rotatePivot=True)
-#localTransform=localTransform*-1;
-#cmds.xform(AlignedCam,os=True,ws=False,rt=localTransform,worldSpaceDistance=True)
-#cmds.select(AlignedCam)
-#RMAlign("Shot0130BakedCamera1","Shot0130BakedCamera",3)
+def connectWithLimits(AttrX,AttrY,keys):
+    for eachKey  in keys:
+        cmds.setDrivenKeyframe(AttrY, currentDriver = AttrX,dv = eachKey[0],v =eachKey[1])
 
 
 

@@ -3,17 +3,13 @@ global proc string stringToCharArray(string $input, int $letter){
     for($i=1;$i<=size($input);$i++){
         $output[size($output)]= substring ($input, $i, $i);
     }
-    
     return $output[$letter];
 }
-
-
 global proc string[] stringToArray(string $input){
     string $output[] = {};
     for($i=1;$i<=size($input);$i++){
         $output[size($output)]= substring ($input, $i, $i);
     }
-    
     return $output;
 }
 
