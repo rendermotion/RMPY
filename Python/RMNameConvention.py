@@ -12,7 +12,7 @@ TypeDictionaray = {
 "joint":"jnt",
 "undefined":"UDF",
 "nurbsCurve":"shp",
-"mesh":"msh"
+"mesh":"msh",
 "transform":"grp"
 
 }

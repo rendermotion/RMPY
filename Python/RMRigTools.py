@@ -1,6 +1,7 @@
 import maya.cmds as cmds
 import RMNameConvention
-import numpy
+import maya.api.OpenMaya as om
+
 
 def RMAlign(obj1,obj2,flag):
     if (flag==1 or flag == 3):
@@ -142,6 +143,14 @@ def RMCreateBonesAtPoints(PointArray):
     jointArray = []
     Obj1Position = cmds.xform(PointArray[0], rp=True, ws=True, q=True)
     Obj2Position = cmds.xform(PointArray[1], rp=True, ws=True, q=True)
-    #for values in Obj1Position:
-    #    values-Obj2Position[]
+    V1 , V2 = om.MVector(Obj1Position) , om.MVector(Obj2Position)
+    
+    print list(V1)
+
+
+array = cmds.ls(sl=True,type="transform")
+
+RMCreateBonesAtPoints(array)
+
+
 
