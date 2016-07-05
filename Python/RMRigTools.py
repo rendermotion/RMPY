@@ -1,6 +1,8 @@
 import maya.cmds as cmds
 import RMNameConvention
+reload (RMNameConvention)
 import maya.api.OpenMaya as om
+import math
 
 
 def RMAlign(obj1,obj2,flag):
@@ -29,21 +31,28 @@ def connectWithLimits(AttrX,AttrY,keys):
     for eachKey  in keys:
         cmds.setDrivenKeyframe(AttrY, currentDriver = AttrX,dv = eachKey[0],v =eachKey[1])
 
-def RMCreateGroupOnObj(Obj,Type="world"):
+def RMCreateGroupOnObj(Obj,Type="inserted", NameConv = None):
     '''
     "world","child","parent","inserted"
     '''
-    Group = cmds.group(RMUniqueName(Obj),empty=True)
-    Group = RMGuessTypeInName(Group)
+    if not NameConv:
+        NameConv = RMNameConvention.RMNameConvention()
+
+    Group = cmds.group( empty = True)
+
+    Group = NameConv.RMRenameBasedOnBaseName(Obj,Group)
+
     RMAlign(Obj,Group,3)
     Parent = cmds.listRelatives(Obj,parent=True)
-    
-    if Type == "parent":
-        cmds.parent(Obj,Group)
-        if len(Parent)>0:
-            cmds.parent(Parent,Group)
-    if Type == "child":
-        cmds.parent(Group,Obj)
+
+    if not (Type == "world"):
+        if Type == "inserted":
+            RMInsertInHierarchy(Obj,Group)
+        elif Type == "parent":
+            cmds.parent(Obj,Group)
+        elif Type == "child":
+            cmds.parent(Group,Obj)
+
     return Group
 
 def RMLenghtOfBone(Joint):
@@ -55,7 +64,6 @@ def RMLenghtOfBone(Joint):
 
 def RMInsertInHierarchy(Obj,InsertObj,InsertType="Parent"):
     if InsertType == "Parent":
-        print Obj
         Parent = cmds.listRelatives(Obj , parent=True)
         if Parent:
             cmds.parent (InsertObj, Parent)
@@ -73,7 +81,7 @@ def RMRemoveChildren(Node):
         if cmds.objectType(eachChildren) != "mesh" and cmds.objectType(eachChildren) != "nurbsCurve":
             cmds.parent(eachChildren , world = True)
             returnArray.append(eachChildren)
-    return Children
+    return returnArray
 
 def RMParentArray (Parent, Array):
     for objects in Array:
@@ -88,6 +96,7 @@ def RMCreateLineBetwenPoints (Point1, Point2):
     Cluster1,Cluster1Handle = cmds.cluster (Curve+".cv[0]", relative=True)
 
     Cluster2,Cluster2Handle = cmds.cluster (Curve+".cv[1]", relative=True)
+    
     print Cluster1
     print Cluster1Handle
     print (str(cmds.objectType(Cluster1)))
@@ -139,18 +148,57 @@ def RMIsInHierarchy(Obj1,Obj2):
                 return True
     return False
 
-def RMCreateBonesAtPoints(PointArray):
+def RMCreateBonesAtPoints(PointArray,NameConv = None):
+    if not NameConv:
+        NameConv = RMNameConvention.RMNameConvention()
+
     jointArray = []
     Obj1Position = cmds.xform(PointArray[0], rp=True, ws=True, q=True)
     Obj2Position = cmds.xform(PointArray[1], rp=True, ws=True, q=True)
+
     V1 , V2 = om.MVector(Obj1Position) , om.MVector(Obj2Position)
+
+    initVector = V1 - V2
+
+    firstJntAngle = V1.angle(om.MVector([0,1,0]))
+
+    Angle = firstJntAngle
     
-    print list(V1)
+    for index in range(0,len(PointArray)) :
+
+        cmds.makeIdentity (PointArray[index], apply=True, t=1, r=1, s=1)
+        cmds.select(cl=True)
+        
+        if (NameConv.RMIsNameInFormat (PointArray[index])):
+            
+            newJoint = cmds.joint (p = [0,0,0])
+            jointArray.append (NameConv.RMRenameBasedOnBaseName (PointArray[index], newJoint))
+        else:
+            jointArray.append(cmds.joint (p = [0,0,0], name = NameConv.RMSetNameInFormat("joint", "Character", "MD", "jnt", "rig")))
+        
+        RMAlign (PointArray[index], jointArray[index],3)
+        cmds.makeIdentity (jointArray[index], apply=True, t=1, r=1, s=0)
+
+        if (index > 1) :
+
+            parentOrient = cmds.joint (jointArray[index-1], q=True, orientation=True)
+
+            print parentOrient
+            if parentOrient[0] > 90 :
+
+                cmds.joint (jointArray[index-1], e = True, orientatation = [parentOrient[0]-180, parentOrient[1], parentOrient[2]])
+
+            else:
+
+                if parentOrient[0] < -90:
+
+                    cmds.joint (jointArray[index-1], e = True, orientatation = [parentOrient[0]+180, parentOrient[1], parentOrient[2]])
+    print jointArray
+    RMCreateGroupOnObj (jointArray[0])
 
 
-array = cmds.ls(sl=True,type="transform")
-
-RMCreateBonesAtPoints(array)
+#array = cmds.ls(sl=True,type="transform")
+RMCreateBonesAtPoints(["locator1","locator2","locator3","locator4"])
 
 
 

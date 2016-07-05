@@ -290,7 +290,7 @@ global proc string [] RMCreateBonesAtPoints (string $PointArray[])
     vector $InitVector=$Obj2position-$Obj1position;
     vector $CurrentVector;
     float $FirsBoneAngle = angle($InitVector,<<0,1,0>>);
-    float $Angle=$FirsBoneAngle;
+    float $Angle = $FirsBoneAngle;
     float $Angle02;
     print (rad_to_deg($Angle));
     for ($i in $PointArray)
