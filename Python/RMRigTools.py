@@ -27,9 +27,23 @@ def RMAlign(obj1,obj2,flag):
             Obj1rotacion=cmds.xform(obj1,q=True,ws=True,ro=True)
             cmds.xform(obj2,ws=True,ro=Obj1rotacion)
 
+
 def connectWithLimits(AttrX,AttrY,keys):
     for eachKey  in keys:
         cmds.setDrivenKeyframe(AttrY, currentDriver = AttrX,dv = eachKey[0],v =eachKey[1])
+
+
+def RMCustomPickWalk(Obj, Class, Depth):
+    childs=cmds.listRelatives(Obj,children=True,type = Class)
+    returnValue = [Obj]
+    if childs:
+        if not (Depth == 0 or len(childs) == 0):
+            for eachChildren in childs:
+                if cmds.nodeType (eachChildren) == Class:
+                    returnValue.extend( RMCustomPickWalk (eachChildren, Class, Depth-1))
+    return returnValue
+
+
 
 def RMCreateGroupOnObj(Obj,Type="inserted", NameConv = None):
     '''
@@ -40,7 +54,13 @@ def RMCreateGroupOnObj(Obj,Type="inserted", NameConv = None):
 
     Group = cmds.group( empty = True)
 
-    Group = NameConv.RMRenameBasedOnBaseName(Obj,Group)
+    if NameConv.RMIsNameInFormat(Obj):
+
+        Group = NameConv.RMRenameBasedOnBaseName (Obj, Group)
+
+    else:
+        NewName = NameConv.RMSetNameInFormat(Name = NameConv.RMAddToNumberedString(Obj , "Group"))
+        Group = cmds.rename (Group, NewName)
 
     RMAlign(Obj,Group,3)
     Parent = cmds.listRelatives(Obj,parent=True)
@@ -57,8 +77,8 @@ def RMCreateGroupOnObj(Obj,Type="inserted", NameConv = None):
 
 def RMLenghtOfBone(Joint):
     children = cmds.listRelatives(Joint,children=True)
-    if(len(children)>0 and cmds.objectType != "locator"):
-        return getAttr(children[0]+".translateX")
+    if(len(children) > 0 and cmds.objectType(children[0]) != "locator"):
+        return cmds.getAttr(children[0]+".translateX")
     else:
         return 1.0
 
@@ -86,21 +106,6 @@ def RMRemoveChildren(Node):
 def RMParentArray (Parent, Array):
     for objects in Array:
         cmds.parent(objects,Parent)
-
-def RMCreateLineBetwenPoints (Point1, Point2):
-
-    Curve = cmds.curve (degree=1, p=[[0,0,0],[1,0,0]])
-    
-    NumCVs = cmds.getAttr (Curve+".controlPoints" , size=True)
-
-    Cluster1,Cluster1Handle = cmds.cluster (Curve+".cv[0]", relative=True)
-
-    Cluster2,Cluster2Handle = cmds.cluster (Curve+".cv[1]", relative=True)
-    
-    print Cluster1
-    print Cluster1Handle
-    print (str(cmds.objectType(Cluster1)))
-    print (str(cmds.objectType(Cluster1Handle)))
 
 def RMLockAndHideAttributes(ObjArray,BitString):
     InfoDic = {".translateX":0,
@@ -153,8 +158,8 @@ def RMCreateBonesAtPoints(PointArray,NameConv = None):
         NameConv = RMNameConvention.RMNameConvention()
 
     jointArray = []
-    Obj1Position = cmds.xform(PointArray[0], rp=True, ws=True, q=True)
-    Obj2Position = cmds.xform(PointArray[1], rp=True, ws=True, q=True)
+    Obj1Position = cmds.xform(PointArray[0],q=True, rp=True, ws=True)
+    Obj2Position = cmds.xform(PointArray[1],q=True, rp=True, ws=True)
 
     V1 , V2 = om.MVector(Obj1Position) , om.MVector(Obj2Position)
 
@@ -163,10 +168,12 @@ def RMCreateBonesAtPoints(PointArray,NameConv = None):
     firstJntAngle = V1.angle(om.MVector([0,1,0]))
 
     Angle = firstJntAngle
+
+    ParentJoint = RMCreateGroupOnObj (PointArray[0],Type="world")
     
     for index in range(0,len(PointArray)) :
 
-        cmds.makeIdentity (PointArray[index], apply=True, t=1, r=1, s=1)
+        #cmds.makeIdentity (PointArray[index], apply=True, t=1, r=0, s=1)
         cmds.select(cl=True)
         
         if (NameConv.RMIsNameInFormat (PointArray[index])):
@@ -175,30 +182,69 @@ def RMCreateBonesAtPoints(PointArray,NameConv = None):
             jointArray.append (NameConv.RMRenameBasedOnBaseName (PointArray[index], newJoint))
         else:
             jointArray.append(cmds.joint (p = [0,0,0], name = NameConv.RMSetNameInFormat("joint", "Character", "MD", "jnt", "rig")))
+
+            if index==0:
+                cmds.parent (jointArray[0], ParentJoint)
         
         RMAlign (PointArray[index], jointArray[index],3)
         cmds.makeIdentity (jointArray[index], apply=True, t=1, r=1, s=0)
 
-        if (index > 1) :
+        if (index > 0) :
+            cmds.parent (jointArray[index], jointArray[index-1])
 
-            parentOrient = cmds.joint (jointArray[index-1], q=True, orientation=True)
+            cmds.joint(jointArray[index-1], edit=True, orientJoint="xyz")
+            #, sao="yup" )
 
-            print parentOrient
-            if parentOrient[0] > 90 :
+            if index > 1:
+                parentOrient = cmds.joint (jointArray[index-1], q=True, orientation=True)
+                if parentOrient[0] > 90 :
+                    cmds.joint (jointArray[index-1], e = True, orientation = [parentOrient[0]-180, parentOrient[1], parentOrient[2]])
 
-                cmds.joint (jointArray[index-1], e = True, orientatation = [parentOrient[0]-180, parentOrient[1], parentOrient[2]])
+                else:
 
-            else:
+                    if parentOrient[0] < -90:
 
-                if parentOrient[0] < -90:
-
-                    cmds.joint (jointArray[index-1], e = True, orientatation = [parentOrient[0]+180, parentOrient[1], parentOrient[2]])
+                        cmds.joint (jointArray[index-1], e = True, orientation = [parentOrient[0]+180, parentOrient[1], parentOrient[2]])
+        
+        if index == len(PointArray)-1:
+            RMAlign( jointArray[index-1], jointArray[index],2)
+            cmds.makeIdentity (jointArray[index], apply=True, t=0, r=1, s=0)
     print jointArray
-    RMCreateGroupOnObj (jointArray[0])
+    
+def RMCreateLineBetwenPoints (Point1, Point2,NameConv = None):
+    if not NameConv:
+        NameConv = RMNameConvention.RMNameConvention()
+
+    Curve = cmds.curve (degree=1, p=[[0,0,0],[1,0,0]], name = "curveLineBetweenPnts")
+    print type(Curve)
+    Curve = NameConv.RMRenameNameInFormat(Curve)[0]
+
+    NumCVs = cmds.getAttr (Curve + ".controlPoints" , size = True)
+    
+    Cluster1, Cluster1Handle = cmds.cluster (Curve+".cv[0]", relative=True, name = "clusterLineBetweenPnts")
+    Cluster1, Cluster1Handle = NameConv.RMRenameNameInFormat ([Cluster1,Cluster1Handle])
+    Cluster2, Cluster2Handle = cmds.cluster (Curve+".cv[1]", relative=True, name = "clusterLineBetweenPnts")
+    Cluster2, Cluster2Handle = NameConv.RMRenameNameInFormat ([Cluster2,Cluster2Handle])
+
+    cmds.setAttr(Curve+".overrideEnabled",1)
+    cmds.setAttr(Curve+".overrideDisplayType",1)
+
+    RMAlign (Point1, Cluster1Handle, 1)
+    RMAlign (Point2, Cluster1Handle, 1)
+
+    PointConstraint1 = cmds.pointConstraint (Point1, Cluster1Handle, name = "PointConstraintLineBetweenPnts")
+    PointConstraint1 = NameConv.RMRenameNameInFormat (PointConstraint1)    
+    PointConstraint2 = cmds.pointConstraint (Point2, Cluster2Handle, name = "PointConstraintLineBetweenPnts")
+    PointConstraint2 = NameConv.RMRenameNameInFormat (PointConstraint2)    
+
+    DataGroup = cmds.group (em = True,name = "DataLineBetweenPnts")
+    DataGroup = NameConv.RMRenameNameInFormat (DataGroup)[0]
+    cmds.parent (Cluster1Handle, DataGroup)
+    cmds.parent (Cluster2Handle, DataGroup)
+    cmds.parent (Curve, DataGroup)
+    return DataGroup
 
 
-#array = cmds.ls(sl=True,type="transform")
-RMCreateBonesAtPoints(["locator1","locator2","locator3","locator4"])
 
 
 

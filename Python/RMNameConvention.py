@@ -1,20 +1,34 @@
 import re
 import maya.cmds as cmds
 
-class RMNameConvention ():
-	def __init__(self):
-		self.NameConvention  = {	"LastName":0,
-						"Side":1,
+class RMNameConvention (object):
+	def __init__(self,LastName = "Character", Side = "MD", Name = "Object", Type = "UDF", System = "Rig"):
+
+		self.NameConvention  ={
+						"LastName":0,
 						"Name":2,
+						"Side":1,
 						"Type":3,
 						"System":4
 	 					}
+
 		self.TypeDictionary = {"joint":"jnt",
 		"undefined":"UDF",
 		"nurbsCurve":"shp",
 		"mesh":"msh",
-		"transform":"grp"
+		"transform":"grp",
+		"pointConstraint":"pnc",
+		"control":"ctr",
+		"locator":"loc"
 		}
+		self.DefaultNames = {	
+				"LastName":LastName,
+				"Side":Side,
+				"Name":Name,
+				"Type":Type,
+				"System":System
+				}
+
 
 	def RMGetTypeString(self, Obj):
 		if cmds.objectType(Obj) in self.TypeDictionary:
@@ -40,6 +54,9 @@ class RMNameConvention ():
 		else:
 			Number = "0"
 		return Name + Number.zfill(2)
+	def RMAddToNumberedString(self, Name, AddName):
+		Value = re.split(r"([0-9]+$)",ObjName)
+		return Value[0] + AddName + Value[0]
 
 	def RMUniqueName(self, currentName):
 		ObjName=self.RMGetFromName(currentName,'Name')
@@ -51,13 +68,30 @@ class RMNameConvention ():
 			Name = self.RMStringPlus1(Name)
 			currentName = self.RMSetFromName(currentName,Name,'Name')
 		return currentName
+	def RMGetTypeFromKey(self,Type):
+		if Type in self.TypeDictionary:
+			return self.TypeDictionary[Type]
+		else:
+			return self.TypeDictionary['undefined']
 
-	def RMSetNameInFormat(self, Name,LastName,Side,Type,System):
+	
+	def RMSetNameInFormat(self, Name=None , LastName=None, Side=None, Type=None, System=None):
+		if not Name:
+			Name = self.DefaultNames["Name"] 
+		if not LastName:
+			LastName = self.DefaultNames["LastName"] 
+		if not Side:
+			Side = self.DefaultNames["Side"] 
+		if not Type:
+			Type = self.DefaultNames["Type"] 
+		if not System:
+			System = self.DefaultNames["System"] 
+
 		NameDic = {
 		"LastName":LastName,
 		"Name":Name,
 		"Side":Side,
-		"Type":Type,
+		"Type":self.RMGetTypeFromKey(Type),
 		"System":System
 		}
 		returnName = []
@@ -66,28 +100,54 @@ class RMNameConvention ():
 		ReturnNameInFormat = "_".join(returnName)
 		return self.RMUniqueName(ReturnNameInFormat)
 
-	def RMIsNameInFormat(self, ObjName):
+	def RMRenameNameInFormat (self, Name, LastName=None, Side=None, Type=None, System=None):
+			NewNameArray = ()
+			NameList = []
+			if type(Name) == list:
+				NameList = Name
+			elif type(Name) in [str,unicode]:
+				NameList = [Name]
+
+			else:
+				print 'Error no Valid type on RMRenameNameInFromat should be string or list'
+			for Names in NameList:
+				NewName = self.RMSetNameInFormat(Name=Names, LastName=LastName, Side=Side, Type=Type, System=System)
+				Names = cmds.rename(Names,NewName)
+				if not Type:
+					NewNameArray += tuple([self.RMRenameGuessTypeInName (Names)])
+				else :
+					NewNameArray += tuple([Names])
+
+			return NewNameArray
+
+	def RMIsNameInFormat (self, ObjName):
 		splitString = ObjName.split("_")
 		if len(splitString)==len(self.NameConvention.keys()):
 			return True
 		return False
 
 	def RMGuessObjType(self, Obj):
-		Type=self.TypeDictionary["undefined"]
+		Type=""
+		
 		ObjType = cmds.objectType(Obj)
-		for Types in self.TypeDictionary:
-			if ObjType ==Types:
-				Type = self.TypeDictionary[Types]
-		if ObjType=="transform":
+
+		if ObjType in self.TypeDictionary: 
+			Type = self.TypeDictionary[ObjType]
+		else:
+			Type = self.TypeDictionary["undefined"]
+
+		if ObjType == "transform":
 			children = cmds.listRelatives(Obj, shapes=True)
 			if children:
 				ShapeType = cmds.objectType(children[0])
 				if ShapeType == "nurbsCurve":
-					Type="shp"
+					Type = self.TypeDictionary["nurbsCurve"]
 				elif ShapeType == "mesh":
-					Type="msh"
+					Type = self.TypeDictionary["mesh"]
+				elif ShapeType == "locator":
+					Type = self.TypeDictionary["locator"]
 				else:
-					Type="SHPUNDEF"
+					Type=self.TypeDictionary["transform"]
 		return Type
 
 	def RMRenameGuessTypeInName(self, currentName):
@@ -96,28 +156,25 @@ class RMNameConvention ():
 			if self.RMIsNameInFormat(NewName):
 				Type = self.RMGuessObjType(currentName)
 				NewName = self.RMSetFromName(NewName,Type,"Type")
-		cmds.rename(currentName, self.RMUniqueName(NewName))
-
+		NewName=self.RMUniqueName(NewName)
+		cmds.rename (currentName, NewName)
+		return NewName
 
 	def RMRenameBasedOnBaseName (self, BaseName, ObjToRename, NewName = None, LastName = None,Type = None, System = None, Side = None):
 
 		if not NewName:
 			NewName = self.RMGetFromName (BaseName, "Name")
-			print NewName
 		if not LastName:
 			LastName = self.RMGetFromName (BaseName, "LastName")
-			print LastName
 		if not System:
 			System = self.RMGetFromName (BaseName, "System")
-			print System
 		if not Side:
 			Side = self.RMGetFromName (BaseName, "Side")
-			print Side
 		if not Type:
 			Type = self.RMGuessObjType(ObjToRename)
 			print Type
 		if cmds.objExists(ObjToRename):
-			NewName = self.RMSetNameInFormat(NewName, LastName, Side, Type, System)
+			NewName = self.RMSetNameInFormat(Name = NewName, LastName = LastName,Side = Side,Type = Type, System = System)
 			cmds.rename (ObjToRename , NewName)
 			return NewName
 		else :

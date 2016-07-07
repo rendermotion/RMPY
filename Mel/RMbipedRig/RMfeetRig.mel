@@ -217,4 +217,4 @@ global proc StandardReverseFeet(string $originPoint){
 
 }
 
-StandardReverseFeet ("Character01_LF_ankleFeet_pnt_rfr");
+//StandardReverseFeet ("Character01_LF_ankleFeet_pnt_rfr");
