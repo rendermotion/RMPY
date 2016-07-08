@@ -158,33 +158,28 @@ def RMCreateBonesAtPoints(PointArray,NameConv = None):
         NameConv = RMNameConvention.RMNameConvention()
 
     jointArray = []
-    Obj1Position = cmds.xform(PointArray[0],q=True, rp=True, ws=True)
-    Obj2Position = cmds.xform(PointArray[1],q=True, rp=True, ws=True)
+    Obj1Position = cmds.xform(PointArray[0], q=True, rp=True, ws=True)
+    Obj2Position = cmds.xform(PointArray[1], q=True, rp=True, ws=True)
 
     V1 , V2 = om.MVector(Obj1Position) , om.MVector(Obj2Position)
 
     initVector = V1 - V2
 
-    firstJntAngle = V1.angle(om.MVector([0,1,0]))
+    firstJntAngle = V1.angle( om.MVector([0,1,0]))
 
     Angle = firstJntAngle
 
-    ParentJoint = RMCreateGroupOnObj (PointArray[0],Type="world")
+    ParentJoint = RMCreateGroupOnObj ( PointArray[0], Type="world")
     
-    for index in range(0,len(PointArray)) :
+    for index in range( 0, len(PointArray)) :
 
-        #cmds.makeIdentity (PointArray[index], apply=True, t=1, r=0, s=1)
         cmds.select(cl=True)
         
-        if (NameConv.RMIsNameInFormat (PointArray[index])):
-            
-            newJoint = cmds.joint (p = [0,0,0])
-            jointArray.append (NameConv.RMRenameBasedOnBaseName (PointArray[index], newJoint))
-        else:
-            jointArray.append(cmds.joint (p = [0,0,0], name = NameConv.RMSetNameInFormat("joint", "Character", "MD", "jnt", "rig")))
+        newJoint = cmds.joint (p = [0,0,0],name="joint")
+        jointArray.append (NameConv.RMRenameBasedOnBaseName (PointArray[index], newJoint))
 
-            if index==0:
-                cmds.parent (jointArray[0], ParentJoint)
+        if index==0:
+            cmds.parent (jointArray[0], ParentJoint)
         
         RMAlign (PointArray[index], jointArray[index],3)
         cmds.makeIdentity (jointArray[index], apply=True, t=1, r=1, s=0)
@@ -209,8 +204,10 @@ def RMCreateBonesAtPoints(PointArray,NameConv = None):
         if index == len(PointArray)-1:
             RMAlign( jointArray[index-1], jointArray[index],2)
             cmds.makeIdentity (jointArray[index], apply=True, t=0, r=1, s=0)
-    print jointArray
     
+    return  ParentJoint , jointArray
+
+
 def RMCreateLineBetwenPoints (Point1, Point2,NameConv = None):
     if not NameConv:
         NameConv = RMNameConvention.RMNameConvention()

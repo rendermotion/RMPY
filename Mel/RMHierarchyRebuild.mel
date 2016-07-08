@@ -726,7 +726,7 @@ global proc string[] RMLinkFinguer(string $rootFinguer){
     string $FingerCntrl = `RMSetFromName $rootFinguer 3 "ctr"`;
     $FingerCntrl =`RMSetFromName $FingerCntrl 4 "rig"`;
     $FingerCntrl = `RMAddToName $FingerCntrl "Control"`;
-	//Crea el Control del Dedo     
+	//Crea el Control del Dedo
     $FingerCntrl=`RMCreateCubeLine ($FingerLenght/2) ($FingerLenght/2) ($FingerLenght/2) $FingerCntrl`;
     move -r ($FingerLenght/6) 0 0 ($FingerCntrl+".scalePivot") ($FingerCntrl+".rotatePivot");
     move -rpr -a 0 0 0 $FingerCntrl;

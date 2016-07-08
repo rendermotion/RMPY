@@ -12,15 +12,16 @@ class RMNameConvention (object):
 						"System":4
 	 					}
 
-		self.TypeDictionary = {"joint":"jnt",
-		"undefined":"UDF",
-		"nurbsCurve":"shp",
-		"mesh":"msh",
-		"transform":"grp",
-		"pointConstraint":"pnc",
-		"control":"ctr",
-		"locator":"loc"
-		}
+		self.TypeDictionary = { 
+							"joint":"jnt",
+						    "undefined":"UDF",
+							"nurbsCurve":"shp",
+							"mesh":"msh",
+							"transform":"grp",
+							"pointConstraint":"pnc",
+							"control":"ctr",
+							"locator":"loc"
+							}
 		self.DefaultNames = {	
 				"LastName":LastName,
 				"Side":Side,
@@ -91,7 +92,7 @@ class RMNameConvention (object):
 		"LastName":LastName,
 		"Name":Name,
 		"Side":Side,
-		"Type":self.RMGetTypeFromKey(Type),
+		"Type":Type,
 		"System":System
 		}
 		returnName = []
@@ -162,17 +163,29 @@ class RMNameConvention (object):
 
 	def RMRenameBasedOnBaseName (self, BaseName, ObjToRename, NewName = None, LastName = None,Type = None, System = None, Side = None):
 
-		if not NewName:
-			NewName = self.RMGetFromName (BaseName, "Name")
-		if not LastName:
-			LastName = self.RMGetFromName (BaseName, "LastName")
-		if not System:
-			System = self.RMGetFromName (BaseName, "System")
-		if not Side:
-			Side = self.RMGetFromName (BaseName, "Side")
-		if not Type:
-			Type = self.RMGuessObjType(ObjToRename)
-			print Type
+		if self.RMIsNameInFormat (BaseName):
+			if not NewName:
+				NewName = self.RMGetFromName (BaseName, "Name")
+			if not LastName:
+				LastName = self.RMGetFromName (BaseName, "LastName")
+			if not System:
+				System = self.DefaultNames["System"]
+			if not Side:
+				Side = self.RMGetFromName (BaseName, "Side")
+			if not Type:
+				Type = self.RMGuessObjType(ObjToRename)
+		else:
+			if not NewName:
+				NewName = ObjToRename
+			if not LastName:
+				LastName = self.DefaultNames("LastName")
+			if not System:
+				System = self.DefaultNames("System")
+			if not Side:
+				Side = self.DefaultNames("Side")
+			if not Type:
+				Type = self.RMGuessObjType(ObjToRename)
+
 		if cmds.objExists(ObjToRename):
 			NewName = self.RMSetNameInFormat(Name = NewName, LastName = LastName,Side = Side,Type = Type, System = System)
 			cmds.rename (ObjToRename , NewName)
