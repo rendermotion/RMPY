@@ -10,6 +10,7 @@ def RMTurnToOne (curveArray):
 		for eachShape in shapesInCurve:
 			cmds.parent (eachShape, curveArray[0], shape=True, add=True)
 			cmds.delete(eachCurve)
+
 def RMCreateCubeLine (height, length, width):
 	CubeCurve = []
 	CubeCurve.append(cmds.curve (d = 1, p = [[0     , -length/2,  width/2],[0     , -length/2, -width/2]], name = "cubeControl"))
@@ -34,9 +35,8 @@ def RMCreateBoxCtrl (Obj, NameConv=None):
 	if (JntLength != 1.0):
 		Ctrl = RMCreateCubeLine (JntLength, JntLength/4, JntLength/4)
 	else:
-		Parents = cmds.listRelatives (Obj, parents = True)
+		Parents = cmds.listRelatives (Obj, parent = True)
 		if len(Parents)!= 0:
-			print Parents[0]
 			LenghtJoint = RMRigTools.RMLenghtOfBone (Parents[0])
 		else :
 			LenghtJoint = 1
@@ -54,8 +54,6 @@ def RMCircularControl (Obj, radius = 1,NameConv = None):
 	Ctrl = NameConv.RMRenameNameInFormat (Ctrl, Type = "control")
 	RMAlign(Obj,Ctrl,3)
 	return Ctrl
-RMCreateBoxCtrl('joint1')
-
 
 
 

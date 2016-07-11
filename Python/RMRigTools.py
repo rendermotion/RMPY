@@ -32,6 +32,9 @@ def connectWithLimits(AttrX,AttrY,keys):
     for eachKey  in keys:
         cmds.setDrivenKeyframe(AttrY, currentDriver = AttrX,dv = eachKey[0],v =eachKey[1])
 
+def RMConnectWithLimits(AttrX,AttrY,keys):
+    for eachKey  in keys:
+        cmds.setDrivenKeyframe(AttrY, currentDriver = AttrX,dv = eachKey[0],v =eachKey[1])
 
 def RMCustomPickWalk(Obj, Class, Depth):
     childs=cmds.listRelatives(Obj,children=True,type = Class)
@@ -77,9 +80,19 @@ def RMCreateGroupOnObj(Obj,Type="inserted", NameConv = None):
 
 def RMLenghtOfBone(Joint):
     children = cmds.listRelatives(Joint,children=True)
-    if(len(children) > 0 and cmds.objectType(children[0]) != "locator"):
-        return cmds.getAttr(children[0]+".translateX")
+    if children:
+        if(len(children) > 0 and cmds.objectType(children[0]) != "locator"):
+            return cmds.getAttr(children[0]+".translateX")
+        else:
+            return RMJointSize(Joint)
     else:
+        return RMJointSize(Joint)
+
+def RMJointSize(Joint):
+    if type(Joint)=="joint":
+        radius = cmds.getAttr(Joint + ".radius")
+        return (radius * 2)
+    else: 
         return 1.0
 
 def RMInsertInHierarchy(Obj,InsertObj,InsertType="Parent"):
@@ -107,24 +120,39 @@ def RMParentArray (Parent, Array):
     for objects in Array:
         cmds.parent(objects,Parent)
 
-def RMLockAndHideAttributes(ObjArray,BitString):
+def RMLockAndHideAttributes(Obj, BitString):
+
+    ObjArray = []
+    if type( Obj) in [str,unicode]:
+        ObjArray=[Obj]
+    elif type( Obj) == list:
+        ObjArray = Obj
+    else:
+        print "error in LockAndHideAttr not valid Type of Obj"
+        return False
     InfoDic = {".translateX":0,
-                ".translateY":1,
-                ".translateZ":2,
-                ".rotateX":3,
-                ".rotateY":4,
-                ".rotateZ":5,
-                ".scaleX":6,
-                ".scaleY":7,
-                ".scaleZ":8,
-                ".visibility":9}
+               ".translateY":1,
+               ".translateZ":2,
+               ".rotateX":3,
+               ".rotateY":4,
+               ".rotateZ":5,
+               ".scaleX":6,
+               ".scaleY":7,
+               ".scaleZ":8,
+               ".visibility":9}
     if (len(BitString)==10):
+        print ObjArray
         for eachObj in ObjArray:
             for parameter in InfoDic:
-                if BitString[InfoDic[parameter]]==0:
-                    cmds.setAttr(eachObj+parameter,k=False,l=True)
+                
+                if BitString[InfoDic[parameter]] == "0":
+                    cmds.setAttr(eachObj + parameter,k=False,l=True)
                 else:
-                    cmds.setAttr(eachObj+parameter,k=True,l=False)
+                    cmds.setAttr(eachObj + parameter,k=True,l=False)
+    else:
+        print "error in LockAndHideAttr Not valid Len on BitString"
+        return False
+    return True
 
 def RMLinkHerarchyRotation(jntStart, jntEnd, Ctrl,X=True ,Y=True ,Z=True):
     children = cmds.listRelatives(jntStart,children=True)
@@ -158,6 +186,7 @@ def RMCreateBonesAtPoints(PointArray,NameConv = None):
         NameConv = RMNameConvention.RMNameConvention()
 
     jointArray = []
+
     Obj1Position = cmds.xform(PointArray[0], q=True, rp=True, ws=True)
     Obj2Position = cmds.xform(PointArray[1], q=True, rp=True, ws=True)
 
@@ -185,13 +214,28 @@ def RMCreateBonesAtPoints(PointArray,NameConv = None):
         cmds.makeIdentity (jointArray[index], apply=True, t=1, r=1, s=0)
 
         if (index > 0) :
-            cmds.parent (jointArray[index], jointArray[index-1])
+            if index == 1:
+                AxisOrientJoint = cmds.joint()
+                cmds.parent(AxisOrientJoint, ParentJoint)
+                RMAlign(PointArray[0],AxisOrientJoint,3)
+                cmds.makeIdentity (AxisOrientJoint, apply=True, t=1, r=1, s=0)
+                cmds.xform( AxisOrientJoint, translation = [0,1,0], objectSpace = True)
+                cmds.parent( jointArray[0], AxisOrientJoint)
+                cmds.parent ( jointArray[index], jointArray[index-1])
+                cmds.joint( jointArray[index-1], edit = True, orientJoint = "xzy")
 
-            cmds.joint(jointArray[index-1], edit=True, orientJoint="xyz")
+                cmds.parent ( jointArray[index-1], ParentJoint)
+                cmds.delete (AxisOrientJoint)
+
+
+            else :
+                cmds.parent (jointArray[index], jointArray[index-1])
+                cmds.joint(jointArray[index-1], edit=True, orientJoint="xzy")
             #, sao="yup" )
 
             if index > 1:
                 parentOrient = cmds.joint (jointArray[index-1], q=True, orientation=True)
+
                 if parentOrient[0] > 90 :
                     cmds.joint (jointArray[index-1], e = True, orientation = [parentOrient[0]-180, parentOrient[1], parentOrient[2]])
 
@@ -240,8 +284,4 @@ def RMCreateLineBetwenPoints (Point1, Point2,NameConv = None):
     cmds.parent (Cluster2Handle, DataGroup)
     cmds.parent (Curve, DataGroup)
     return DataGroup
-
-
-
-
 

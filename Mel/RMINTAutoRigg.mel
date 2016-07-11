@@ -40,7 +40,6 @@ global proc RMSelectBonesMenu()
         //button  -label "Create Reference Points"  -command ("print $SizeVal2");
     setParent ..;
 }
-//x: 172
 global proc autoRigg ()
 {
 string $Test= `window -wh 405 225 -t "RM Rigg" -menuBar true -vis true -sizeable false`;

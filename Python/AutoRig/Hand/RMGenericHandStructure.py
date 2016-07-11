@@ -13,22 +13,28 @@ class GenericHandJointStructure(object):
 		else:
 			self.NameConv = NameConv
 		self.palmJoint = ""
-		self.fingerArray = []
+		self.fingerRoots = []
+		self.fingers = []
 	def CreateHandJointStructure (self,Palm):
-		fingerRoots = cmds.listRelatives(Palm,children=True, type="transform")
+		self.fingerRoots = cmds.listRelatives(Palm,children=True, type="transform")
+		print self.fingerRoots
 		palmJoint = cmds.joint(name = self.NameConv.RMGetFromName(Palm,"Name"))
+
 		RMRigTools.RMAlign(Palm, palmJoint,3)
 		palmJoint = self.NameConv.RMRenameBasedOnBaseName (Palm, palmJoint,System="rig")
-		self.fingerArray=[]
-		for eachPoint in fingerRoots :
+		self.fingers = []
+
+		for eachPoint in self.fingerRoots :
 			fingerPoints = RMRigTools.RMCustomPickWalk (eachPoint, "transform", -1)
 			FingerRoot , fingerJoints  = RMRigTools.RMCreateBonesAtPoints(fingerPoints,self.NameConv)
 			cmds.parent (FingerRoot, palmJoint )
-			self.fingerArray.append(fingerJoints)
+			self.fingers.append(fingerJoints)
 		self.palmJoint = palmJoint
 		return palmJoint
 
 #GHSt = GenericHandJointStructure()
+#GHSt.CreateHandJointStructure("Character01_LF_palm_pnt_rfr")
+
 
 
 

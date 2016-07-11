@@ -29,23 +29,36 @@ class RMNameConvention (object):
 				"Type":Type,
 				"System":System
 				}
-
-
-	def RMGetTypeString(self, Obj):
-		if cmds.objectType(Obj) in self.TypeDictionary:
-			return self.TypeDictionary[cmds.objectType(Obj)]
+	def RMTypeValidation(self, Obj):
+		if Obj in self.TypeDictionary.values():
+			return Obj
 		else:
-			return self.TypeDictionary["undefined"]
+			if Obj in self.TypeDictionary.keys():
+				return self.TypeDictionary[Obj]
+			else:
+				return self.TypeDictionary["undefined"]
 
 	def RMGetFromName(self, ObjName,Token):
 		splitString = ObjName.split("_")
 		return splitString[self.NameConvention[Token]]
 
 	def RMSetFromName(self, ObjName, TextString, Token):
+		returnTuple = ()
+		if (type (ObjName) == str) or (type (ObjName) == unicode):
+			ObjectList = [ObjName]
+		elif (type(ObjName) == list):
+			ObjectList = ObjName
+		else :
+			ObjectList=[]
 
-		splitString = ObjName.split("_")
-		splitString[self.NameConvention[Token]]=TextString
-		return "_".join(splitString)
+		for eachObj in ObjectList:
+			splitString = eachObj.split("_")
+			splitString[self.NameConvention[Token]]=TextString
+			returnTuple += tuple(  ["_".join(splitString)] )
+		if len(returnTuple) == 1:
+			return str(returnTuple[0])
+		else:
+			return returnTuple
 
 	def RMStringPlus1 (self, NameString):
 		Value = re.split(r"([0-9]+$)",NameString)
@@ -63,12 +76,12 @@ class RMNameConvention (object):
 		ObjName=self.RMGetFromName(currentName,'Name')
 		Value = re.split(r"([0-9]+$)",ObjName)
 		Name = Value[0]
-
 		currentName = self.RMSetFromName (currentName, self.RMStringPlus1(Name), 'Name')
 		while(cmds.objExists(currentName)):
 			Name = self.RMStringPlus1(Name)
 			currentName = self.RMSetFromName(currentName,Name,'Name')
 		return currentName
+
 	def RMGetTypeFromKey(self,Type):
 		if Type in self.TypeDictionary:
 			return self.TypeDictionary[Type]
@@ -88,6 +101,8 @@ class RMNameConvention (object):
 		if not System:
 			System = self.DefaultNames["System"] 
 
+		Type = self.RMTypeValidation(Type)
+		
 		NameDic = {
 		"LastName":LastName,
 		"Name":Name,
@@ -108,7 +123,6 @@ class RMNameConvention (object):
 				NameList = Name
 			elif type(Name) in [str,unicode]:
 				NameList = [Name]
-
 			else:
 				print 'Error no Valid type on RMRenameNameInFromat should be string or list'
 			for Names in NameList:
@@ -118,7 +132,8 @@ class RMNameConvention (object):
 					NewNameArray += tuple([self.RMRenameGuessTypeInName (Names)])
 				else :
 					NewNameArray += tuple([Names])
-
+			if (len(NewNameArray) == 1):
+				return NewNameArray[0]
 			return NewNameArray
 
 	def RMIsNameInFormat (self, ObjName):
@@ -132,10 +147,7 @@ class RMNameConvention (object):
 		
 		ObjType = cmds.objectType(Obj)
 
-		if ObjType in self.TypeDictionary: 
-			Type = self.TypeDictionary[ObjType]
-		else:
-			Type = self.TypeDictionary["undefined"]
+		ObjType = self.RMTypeValidation(ObjType)
 
 		if ObjType == "transform":
 			children = cmds.listRelatives(Obj, shapes=True)
@@ -193,4 +205,11 @@ class RMNameConvention (object):
 		else :
 			return False
 
+#NameConv = RMNameConvention()
+#NewName = NameConv.RMUniqueName("Character01_LF_pinky_jnt_Rig")
 
+
+
+
+#
+#print NameConv.RMSetFromName ("Character01_LF_pinky00_jnt_Rig",NameConv.RMStringPlus1("pinky"), 'Name')
