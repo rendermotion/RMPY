@@ -42,7 +42,8 @@ class RMNameConvention (object):
 		splitString = ObjName.split("_")
 		return splitString[self.NameConvention[Token]]
 
-	def RMSetFromName(self, ObjName, TextString, Token):
+	def RMSetFromName(self, ObjName, TextString, Token, mode = "regular"):
+		'Valid Modes are regular and add'
 		returnTuple = ()
 		if (type (ObjName) == str) or (type (ObjName) == unicode):
 			ObjectList = [ObjName]
@@ -50,15 +51,27 @@ class RMNameConvention (object):
 			ObjectList = ObjName
 		else :
 			ObjectList=[]
-
 		for eachObj in ObjectList:
 			splitString = eachObj.split("_")
-			splitString[self.NameConvention[Token]]=TextString
+			if mode == 'regular':
+				if Token == "Type":
+					splitString[self.NameConvention[Token]] = self.TypeDictionary[TextString]
+				else:
+					splitString[self.NameConvention[Token]] = TextString
+			elif mode == 'add':
+				splitString[self.NameConvention[Token]] = self.RMAddToNumberedString( splitString[self.NameConvention[Token]], TextString)
 			returnTuple += tuple(  ["_".join(splitString)] )
 		if len(returnTuple) == 1:
 			return str(returnTuple[0])
 		else:
 			return returnTuple
+
+	def RMRenameSetFromName (self, ObjName, TextString, Token, mode = "regular"):
+		newName = self.RMSetFromName( ObjName, TextString, Token, mode = mode)
+		newName = self.RMUniqueName( newName)
+		cmds.rename (ObjName, newName)
+		return newName
+
 
 	def RMStringPlus1 (self, NameString):
 		Value = re.split(r"([0-9]+$)",NameString)
@@ -68,9 +81,10 @@ class RMNameConvention (object):
 		else:
 			Number = "0"
 		return Name + Number.zfill(2)
+
 	def RMAddToNumberedString(self, Name, AddName):
-		Value = re.split(r"([0-9]+$)",ObjName)
-		return Value[0] + AddName + Value[0]
+		Value = re.split(r"([0-9]+$)",Name)
+		return Value[0] + (AddName.title()) + Value[1]
 
 	def RMUniqueName(self, currentName):
 		ObjName=self.RMGetFromName(currentName,'Name')
@@ -102,7 +116,7 @@ class RMNameConvention (object):
 			System = self.DefaultNames["System"] 
 
 		Type = self.RMTypeValidation(Type)
-		
+
 		NameDic = {
 		"LastName":LastName,
 		"Name":Name,
@@ -143,7 +157,7 @@ class RMNameConvention (object):
 		return False
 
 	def RMGuessObjType(self, Obj):
-		Type=""
+		ObjType=""
 		
 		ObjType = cmds.objectType(Obj)
 
@@ -154,14 +168,16 @@ class RMNameConvention (object):
 			if children:
 				ShapeType = cmds.objectType(children[0])
 				if ShapeType == "nurbsCurve":
-					Type = self.TypeDictionary["nurbsCurve"]
+					ObjType = self.TypeDictionary["nurbsCurve"]
 				elif ShapeType == "mesh":
-					Type = self.TypeDictionary["mesh"]
+					ObjType = self.TypeDictionary["mesh"]
 				elif ShapeType == "locator":
-					Type = self.TypeDictionary["locator"]
+					ObjType = self.TypeDictionary["locator"]
 				else:
-					Type=self.TypeDictionary["transform"]
-		return Type
+					ObjType=self.TypeDictionary["transform"]
+			else :
+				return ObjType
+		return ObjType
 
 	def RMRenameGuessTypeInName(self, currentName):
 		NewName = currentName
@@ -202,11 +218,11 @@ class RMNameConvention (object):
 			NewName = self.RMSetNameInFormat(Name = NewName, LastName = LastName,Side = Side,Type = Type, System = System)
 			cmds.rename (ObjToRename , NewName)
 			return NewName
-		else :
+		else:
 			return False
 
 #NameConv = RMNameConvention()
-#NewName = NameConv.RMUniqueName("Character01_LF_pinky_jnt_Rig")
+#NewName = NameConv.RMGuessObjType("joint1")
 
 
 

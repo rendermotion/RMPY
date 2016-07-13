@@ -95,9 +95,9 @@ def RMJointSize(Joint):
     else: 
         return 1.0
 
-def RMInsertInHierarchy(Obj,InsertObj,InsertType="Parent"):
+def RMInsertInHierarchy(Obj, InsertObj, InsertType = "Parent"):
     if InsertType == "Parent":
-        Parent = cmds.listRelatives(Obj , parent=True)
+        Parent = cmds.listRelatives(Obj , parent = True)
         if Parent:
             cmds.parent (InsertObj, Parent)
         cmds.parent (Obj, InsertObj)
@@ -107,7 +107,7 @@ def RMInsertInHierarchy(Obj,InsertObj,InsertType="Parent"):
         cmds.parent (InsertObj , Obj)
         RMParentArray (InsertObj, children)
 
-def RMRemoveChildren(Node):
+def RMRemoveChildren (Node):
     Children = cmds.listRelatives(Node,children=True)
     returnArray=[]
     for eachChildren in Children:
@@ -121,7 +121,6 @@ def RMParentArray (Parent, Array):
         cmds.parent(objects,Parent)
 
 def RMLockAndHideAttributes(Obj, BitString):
-
     ObjArray = []
     if type( Obj) in [str,unicode]:
         ObjArray=[Obj]
@@ -180,6 +179,21 @@ def RMIsInHierarchy(Obj1,Obj2):
             if RMIsInHierarchy(eachChild,Obj2):
                 return True
     return False
+def RMChangeRotateOrder(Object,rotationOrder):
+    rotateOrderDic={
+    'xyz':0,
+    'yzx':1,
+    'zxy':2,
+    'xzy':3,
+    'yxz':4,
+    'zyx':5
+    }
+    if type (Object) in [str,unicode]:
+        ObjList = [Object]
+    else:
+        ObjList = Object
+    for eachObject in ObjList:
+        cmds.setAttr(eachObject + ".rotateOrder",rotateOrderDic[rotationOrder])
 
 def RMCreateBonesAtPoints(PointArray,NameConv = None):
     if not NameConv:
@@ -227,23 +241,19 @@ def RMCreateBonesAtPoints(PointArray,NameConv = None):
                 cmds.parent ( jointArray[index-1], ParentJoint)
                 cmds.delete (AxisOrientJoint)
 
-
             else :
                 cmds.parent (jointArray[index], jointArray[index-1])
                 cmds.joint(jointArray[index-1], edit=True, orientJoint="xzy")
             #, sao="yup" )
 
-            if index > 1:
+            if index >= 2:
                 parentOrient = cmds.joint (jointArray[index-1], q=True, orientation=True)
-
-                if parentOrient[0] > 90 :
-                    cmds.joint (jointArray[index-1], e = True, orientation = [parentOrient[0]-180, parentOrient[1], parentOrient[2]])
-
-                else:
-
-                    if parentOrient[0] < -90:
-
-                        cmds.joint (jointArray[index-1], e = True, orientation = [parentOrient[0]+180, parentOrient[1], parentOrient[2]])
+                cmds.joint (jointArray[index-1], e = True, orientation = [0, parentOrient[1], parentOrient[2]])
+                #if parentOrient[0] > 90 :
+                    #cmds.joint (jointArray[index-1], e = True, orientation = [parentOrient[0]-180, parentOrient[1], parentOrient[2]])
+                #else:
+                    #if parentOrient[0] < -90:
+                        #cmds.joint (jointArray[index-1], e = True, orientation = [parentOrient[0]+180, parentOrient[1], parentOrient[2]])
         
         if index == len(PointArray)-1:
             RMAlign( jointArray[index-1], jointArray[index],2)

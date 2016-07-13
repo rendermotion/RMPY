@@ -72,12 +72,14 @@ class RMRigTools(QtGui.QDialog):
 		string $temp[]=`ls -sl`;
 		RMAlign $temp[1] $temp[0] 3;''')
 	def ListConnectedJointsBtnPressed(self):
-		returned=mel.eval('''source RMRigSkinTools.mel;
-			string $var[]=`ls -sl`;
-		getSkinInfluence($var[0]);''')
 		self.ui.listWidget.clear()
-		for i in returned:
-			self.ui.listWidget.addItem(i)
+		selection = cmds.ls(sl = True)
+		for eachObject in selection: 
+			returned=mel.eval('''source RMRigSkinTools.mel;
+			getSkinInfluence("'''+eachObject+ '''");''')
+			for i in returned:
+				self.ui.listWidget.addItem(i)
+
 	def SelectJointsBtnPressed(self):
 		Array=self.ui.listWidget.selectedItems()
 		cmds.select(clear=True)
