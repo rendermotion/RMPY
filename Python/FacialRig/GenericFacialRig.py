@@ -116,9 +116,9 @@ class GenericFacial():
 			RMRigTools.connectWithLimits("Character_MD_LBrowOutUpDn_ctrl_fc.translateX", BSname+".LBrowInDn",[[0,0],[-1,1]])
 
 		if self.FaceBlendShapeDic["LBrowsqueeze"]["Exists"]:
-			RMRigTools.connectWithLimits("Character_MD_Browsqueeze_ctrl_fc.translateY", BSname+".LBrowsqueeze",[[-1,-1][0,0],[1,1]])
+			RMRigTools.connectWithLimits("Character_MD_Browsqueeze_ctrl_fc.translateY", (BSname + ".LBrowsqueeze"),[[-1,-1],[0,0],[1,1]])
 		if self.FaceBlendShapeDic["RBrowsqueeze"]["Exists"]:
-			RMRigTools.connectWithLimits("Character_MD_Browsqueeze_ctrl_fc.translateX", BSname+".RBrowsqueeze",[[-1,-1],[0,0],[1,1]])
+			RMRigTools.connectWithLimits("Character_MD_Browsqueeze_ctrl_fc.translateX", (BSname + ".RBrowsqueeze"),[[-1,-1],[0,0],[1,1]])
 
 		if self.FaceBlendShapeDic["UprLipUp"]["Exists"]:
 			RMRigTools.connectWithLimits("Character_MD_UprLipUpDn_ctrl_fc.translateY", BSname+".UprLipUp",[[0,0],[1,1]])	

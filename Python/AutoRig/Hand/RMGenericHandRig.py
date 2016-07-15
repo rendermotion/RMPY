@@ -113,10 +113,11 @@ class RMGenericHandRig(object):
 
 
 	def CreateFingerSquareRig(self,Finger):
-		if self.NameConv.RMGetFromName(Finger,"Side")=="LF"
-			sideVariation=1
-		else 
-			sideVariation=-1
+		if self.NameConv.RMGetFromName(Finger[0],"Side")=="LF":
+			sideVariation = 1
+		else:
+			sideVariation = -1
+
 		BoxControl = RMRigShapeControls.RMCreateBoxCtrl(Finger[len(Finger)-1])
 		self.RMaddFinguerControls(BoxControl)
 		
@@ -169,7 +170,10 @@ class RMGenericHandRig(object):
 		cmds.addAttr(Object,at="float",ln="Spread"  , hnv = 1,hxv = 1, h = 0, k = 1, smn = -10, smx = 10)
 		cmds.addAttr(Object,at="float",ln="Twist"   , hnv = 1,hxv = 1, h = 0, k = 1, smn = -10, smx = 10)
 
+
 GHrig = RMGenericHandRig()
 GHrig.CreateHandRig("Character01_RH_palm_pnt_rfr")
 
+GHrig = RMGenericHandRig()
+GHrig.CreateHandRig("Character01_LF_palm_pnt_rfr")
 

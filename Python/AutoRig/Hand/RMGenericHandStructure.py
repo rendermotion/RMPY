@@ -17,6 +17,7 @@ class GenericHandJointStructure(object):
 		self.palmJoint = ""
 		self.fingerRoots = []
 		self.fingers = []
+
 	def CreateHandJointStructure (self,Palm):
 		referenceRoots = cmds.listRelatives(Palm, children=True, type="transform")
 		palmJoint = cmds.joint(name = self.NameConv.RMGetFromName(Palm,"Name"))
@@ -32,6 +33,8 @@ class GenericHandJointStructure(object):
 			self.fingerRoots.append(FingerRoot)
 			self.fingers.append(fingerJoints)
 		self.palmJoint = palmJoint
+		if not cmds.listRelatives(self.palmJoint, parent=True):
+			cmds.parent (self.palmJoint, world=True)
 		return palmJoint
 
 	def fingerJointsByName (self,NameString):
