@@ -1,6 +1,8 @@
 import maya.cmds as cmds
 import RMNameConvention
+reload (RMNameConvention)
 import maya.api.OpenMaya as om
+import math
 
 
 def RMAlign(obj1,obj2,flag):
@@ -25,38 +27,77 @@ def RMAlign(obj1,obj2,flag):
             Obj1rotacion=cmds.xform(obj1,q=True,ws=True,ro=True)
             cmds.xform(obj2,ws=True,ro=Obj1rotacion)
 
+
 def connectWithLimits(AttrX,AttrY,keys):
     for eachKey  in keys:
         cmds.setDrivenKeyframe(AttrY, currentDriver = AttrX,dv = eachKey[0],v =eachKey[1])
 
-def RMCreateGroupOnObj(Obj,Type="world"):
+def RMConnectWithLimits(AttrX,AttrY,keys):
+    for eachKey  in keys:
+        cmds.setDrivenKeyframe(AttrY, currentDriver = AttrX,dv = eachKey[0],v =eachKey[1])
+
+def RMCustomPickWalk(Obj, Class, Depth):
+    childs=cmds.listRelatives(Obj,children=True,type = Class)
+    returnValue = [Obj]
+    if childs:
+        if not (Depth == 0 or len(childs) == 0):
+            for eachChildren in childs:
+                if cmds.nodeType (eachChildren) == Class:
+                    returnValue.extend( RMCustomPickWalk (eachChildren, Class, Depth-1))
+    return returnValue
+
+
+
+def RMCreateGroupOnObj(Obj,Type="inserted", NameConv = None):
     '''
     "world","child","parent","inserted"
     '''
-    Group = cmds.group(RMUniqueName(Obj),empty=True)
-    Group = RMGuessTypeInName(Group)
+    if not NameConv:
+        NameConv = RMNameConvention.RMNameConvention()
+
+    Group = cmds.group( empty = True)
+
+    if NameConv.RMIsNameInFormat(Obj):
+
+        Group = NameConv.RMRenameBasedOnBaseName (Obj, Group)
+
+    else:
+        NewName = NameConv.RMSetNameInFormat(Name = NameConv.RMAddToNumberedString(Obj , "Group"))
+        Group = cmds.rename (Group, NewName)
+
     RMAlign(Obj,Group,3)
     Parent = cmds.listRelatives(Obj,parent=True)
-    
-    if Type == "parent":
-        cmds.parent(Obj,Group)
-        if len(Parent)>0:
-            cmds.parent(Parent,Group)
-    if Type == "child":
-        cmds.parent(Group,Obj)
+
+    if not (Type == "world"):
+        if Type == "inserted":
+            RMInsertInHierarchy(Obj,Group)
+        elif Type == "parent":
+            cmds.parent(Obj,Group)
+        elif Type == "child":
+            cmds.parent(Group,Obj)
+
     return Group
 
 def RMLenghtOfBone(Joint):
     children = cmds.listRelatives(Joint,children=True)
-    if(len(children)>0 and cmds.objectType != "locator"):
-        return getAttr(children[0]+".translateX")
+    if children:
+        if(len(children) > 0 and cmds.objectType(children[0]) != "locator"):
+            return cmds.getAttr(children[0]+".translateX")
+        else:
+            return RMJointSize(Joint)
     else:
+        return RMJointSize(Joint)
+
+def RMJointSize(Joint):
+    if type(Joint)=="joint":
+        radius = cmds.getAttr(Joint + ".radius")
+        return (radius * 2)
+    else: 
         return 1.0
 
-def RMInsertInHierarchy(Obj,InsertObj,InsertType="Parent"):
+def RMInsertInHierarchy(Obj, InsertObj, InsertType = "Parent"):
     if InsertType == "Parent":
-        print Obj
-        Parent = cmds.listRelatives(Obj , parent=True)
+        Parent = cmds.listRelatives(Obj , parent = True)
         if Parent:
             cmds.parent (InsertObj, Parent)
         cmds.parent (Obj, InsertObj)
@@ -66,51 +107,51 @@ def RMInsertInHierarchy(Obj,InsertObj,InsertType="Parent"):
         cmds.parent (InsertObj , Obj)
         RMParentArray (InsertObj, children)
 
-def RMRemoveChildren(Node):
+def RMRemoveChildren (Node):
     Children = cmds.listRelatives(Node,children=True)
     returnArray=[]
     for eachChildren in Children:
         if cmds.objectType(eachChildren) != "mesh" and cmds.objectType(eachChildren) != "nurbsCurve":
             cmds.parent(eachChildren , world = True)
             returnArray.append(eachChildren)
-    return Children
+    return returnArray
 
 def RMParentArray (Parent, Array):
     for objects in Array:
         cmds.parent(objects,Parent)
 
-def RMCreateLineBetwenPoints (Point1, Point2):
-
-    Curve = cmds.curve (degree=1, p=[[0,0,0],[1,0,0]])
-    
-    NumCVs = cmds.getAttr (Curve+".controlPoints" , size=True)
-
-    Cluster1,Cluster1Handle = cmds.cluster (Curve+".cv[0]", relative=True)
-
-    Cluster2,Cluster2Handle = cmds.cluster (Curve+".cv[1]", relative=True)
-    print Cluster1
-    print Cluster1Handle
-    print (str(cmds.objectType(Cluster1)))
-    print (str(cmds.objectType(Cluster1Handle)))
-
-def RMLockAndHideAttributes(ObjArray,BitString):
+def RMLockAndHideAttributes(Obj, BitString):
+    ObjArray = []
+    if type( Obj) in [str,unicode]:
+        ObjArray=[Obj]
+    elif type( Obj) == list:
+        ObjArray = Obj
+    else:
+        print "error in LockAndHideAttr not valid Type of Obj"
+        return False
     InfoDic = {".translateX":0,
-                ".translateY":1,
-                ".translateZ":2,
-                ".rotateX":3,
-                ".rotateY":4,
-                ".rotateZ":5,
-                ".scaleX":6,
-                ".scaleY":7,
-                ".scaleZ":8,
-                ".visibility":9}
+               ".translateY":1,
+               ".translateZ":2,
+               ".rotateX":3,
+               ".rotateY":4,
+               ".rotateZ":5,
+               ".scaleX":6,
+               ".scaleY":7,
+               ".scaleZ":8,
+               ".visibility":9}
     if (len(BitString)==10):
+        print ObjArray
         for eachObj in ObjArray:
             for parameter in InfoDic:
-                if BitString[InfoDic[parameter]]==0:
-                    cmds.setAttr(eachObj+parameter,k=False,l=True)
+                
+                if BitString[InfoDic[parameter]] == "0":
+                    cmds.setAttr(eachObj + parameter,k=False,l=True)
                 else:
-                    cmds.setAttr(eachObj+parameter,k=True,l=False)
+                    cmds.setAttr(eachObj + parameter,k=True,l=False)
+    else:
+        print "error in LockAndHideAttr Not valid Len on BitString"
+        return False
+    return True
 
 def RMLinkHerarchyRotation(jntStart, jntEnd, Ctrl,X=True ,Y=True ,Z=True):
     children = cmds.listRelatives(jntStart,children=True)
@@ -138,19 +179,119 @@ def RMIsInHierarchy(Obj1,Obj2):
             if RMIsInHierarchy(eachChild,Obj2):
                 return True
     return False
+def RMChangeRotateOrder(Object,rotationOrder):
+    rotateOrderDic={
+    'xyz':0,
+    'yzx':1,
+    'zxy':2,
+    'xzy':3,
+    'yxz':4,
+    'zyx':5
+    }
+    if type (Object) in [str,unicode]:
+        ObjList = [Object]
+    else:
+        ObjList = Object
+    for eachObject in ObjList:
+        cmds.setAttr(eachObject + ".rotateOrder",rotateOrderDic[rotationOrder])
 
-def RMCreateBonesAtPoints(PointArray):
+def RMCreateBonesAtPoints(PointArray,NameConv = None):
+    if not NameConv:
+        NameConv = RMNameConvention.RMNameConvention()
+
     jointArray = []
-    Obj1Position = cmds.xform(PointArray[0], rp=True, ws=True, q=True)
-    Obj2Position = cmds.xform(PointArray[1], rp=True, ws=True, q=True)
+
+    Obj1Position = cmds.xform(PointArray[0], q=True, rp=True, ws=True)
+    Obj2Position = cmds.xform(PointArray[1], q=True, rp=True, ws=True)
+
     V1 , V2 = om.MVector(Obj1Position) , om.MVector(Obj2Position)
+
+    initVector = V1 - V2
+
+    firstJntAngle = V1.angle( om.MVector([0,1,0]))
+
+    Angle = firstJntAngle
+
+    ParentJoint = RMCreateGroupOnObj ( PointArray[0], Type="world")
     
-    print list(V1)
+    for index in range( 0, len(PointArray)) :
+
+        cmds.select(cl=True)
+        
+        newJoint = cmds.joint (p = [0,0,0],name="joint")
+        jointArray.append (NameConv.RMRenameBasedOnBaseName (PointArray[index], newJoint))
+
+        if index==0:
+            cmds.parent (jointArray[0], ParentJoint)
+        
+        RMAlign (PointArray[index], jointArray[index],3)
+        cmds.makeIdentity (jointArray[index], apply=True, t=1, r=1, s=0)
+
+        if (index > 0) :
+            if index == 1:
+                AxisOrientJoint = cmds.joint()
+                cmds.parent(AxisOrientJoint, ParentJoint)
+                RMAlign(PointArray[0],AxisOrientJoint,3)
+                cmds.makeIdentity (AxisOrientJoint, apply=True, t=1, r=1, s=0)
+                cmds.xform( AxisOrientJoint, translation = [0,1,0], objectSpace = True)
+                cmds.parent( jointArray[0], AxisOrientJoint)
+                cmds.parent ( jointArray[index], jointArray[index-1])
+                cmds.joint( jointArray[index-1], edit = True, orientJoint = "xzy")
+
+                cmds.parent ( jointArray[index-1], ParentJoint)
+                cmds.delete (AxisOrientJoint)
+
+            else :
+                cmds.parent (jointArray[index], jointArray[index-1])
+                cmds.joint(jointArray[index-1], edit=True, orientJoint="xzy")
+            #, sao="yup" )
+
+            if index >= 2:
+                parentOrient = cmds.joint (jointArray[index-1], q=True, orientation=True)
+                cmds.joint (jointArray[index-1], e = True, orientation = [0, parentOrient[1], parentOrient[2]])
+                #if parentOrient[0] > 90 :
+                    #cmds.joint (jointArray[index-1], e = True, orientation = [parentOrient[0]-180, parentOrient[1], parentOrient[2]])
+                #else:
+                    #if parentOrient[0] < -90:
+                        #cmds.joint (jointArray[index-1], e = True, orientation = [parentOrient[0]+180, parentOrient[1], parentOrient[2]])
+        
+        if index == len(PointArray)-1:
+            RMAlign( jointArray[index-1], jointArray[index],2)
+            cmds.makeIdentity (jointArray[index], apply=True, t=0, r=1, s=0)
+    
+    return  ParentJoint , jointArray
 
 
-array = cmds.ls(sl=True,type="transform")
+def RMCreateLineBetwenPoints (Point1, Point2,NameConv = None):
+    if not NameConv:
+        NameConv = RMNameConvention.RMNameConvention()
 
-RMCreateBonesAtPoints(array)
+    Curve = cmds.curve (degree=1, p=[[0,0,0],[1,0,0]], name = "curveLineBetweenPnts")
+    print type(Curve)
+    Curve = NameConv.RMRenameNameInFormat(Curve)[0]
 
+    NumCVs = cmds.getAttr (Curve + ".controlPoints" , size = True)
+    
+    Cluster1, Cluster1Handle = cmds.cluster (Curve+".cv[0]", relative=True, name = "clusterLineBetweenPnts")
+    Cluster1, Cluster1Handle = NameConv.RMRenameNameInFormat ([Cluster1,Cluster1Handle])
+    Cluster2, Cluster2Handle = cmds.cluster (Curve+".cv[1]", relative=True, name = "clusterLineBetweenPnts")
+    Cluster2, Cluster2Handle = NameConv.RMRenameNameInFormat ([Cluster2,Cluster2Handle])
 
+    cmds.setAttr(Curve+".overrideEnabled",1)
+    cmds.setAttr(Curve+".overrideDisplayType",1)
+
+    RMAlign (Point1, Cluster1Handle, 1)
+    RMAlign (Point2, Cluster1Handle, 1)
+
+    PointConstraint1 = cmds.pointConstraint (Point1, Cluster1Handle, name = "PointConstraintLineBetweenPnts")
+    PointConstraint1 = NameConv.RMRenameNameInFormat (PointConstraint1)    
+    PointConstraint2 = cmds.pointConstraint (Point2, Cluster2Handle, name = "PointConstraintLineBetweenPnts")
+    PointConstraint2 = NameConv.RMRenameNameInFormat (PointConstraint2)    
+
+    DataGroup = cmds.group (em = True,name = "DataLineBetweenPnts")
+    DataGroup = NameConv.RMRenameNameInFormat (DataGroup)[0]
+    cmds.parent (Cluster1Handle, DataGroup)
+    cmds.parent (Cluster2Handle, DataGroup)
+    cmds.parent (Curve, DataGroup)
+    return DataGroup
 

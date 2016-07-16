@@ -145,6 +145,7 @@ global proc string[] RMCreateLineBetwenPoints (string $p1,string $p2)
 	string $nombre = `RMGetFromName $Cluster2 2`;
 	string $NewName = `RMSetFromName ($Cluster1+"Handle") 3 "HND"`;
 	string $Cluster2Handle =`rename ($Cluster2+"Handle") $NewName`;
+	
 	RMAlign $p1 $Cluster1Handle 1;
 	RMAlign $p2 $Cluster2Handle 1;
 	pointConstraint -name $POC1 $p1 $Cluster1Handle;
@@ -279,6 +280,7 @@ global proc int RMIsInHierarchy(string $Obj1,string $Obj2){
 	}
 	return $n;
 }
+
 global proc string [] RMCreateBonesAtPoints (string $PointArray[])
 {
   
@@ -290,7 +292,7 @@ global proc string [] RMCreateBonesAtPoints (string $PointArray[])
     vector $InitVector=$Obj2position-$Obj1position;
     vector $CurrentVector;
     float $FirsBoneAngle = angle($InitVector,<<0,1,0>>);
-    float $Angle=$FirsBoneAngle;
+    float $Angle = $FirsBoneAngle;
     float $Angle02;
     print (rad_to_deg($Angle));
     for ($i in $PointArray)

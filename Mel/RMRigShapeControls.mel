@@ -1,18 +1,20 @@
 global proc string RMCreateCubeLine(float $height,float $lenght,float $width,string $name)
 {
     string $shapes[];
-    $shapes[0]=`curve -d 1 -p 0 (-$lenght/2) ($width/2) -p 0 (-$lenght/2) (-$width/2) -n $name`;
+    $shapes[0]=`curve -d 1 -p 0         (-$lenght/2) ($width/2) -p 0         (-$lenght/2) (-$width/2) -n $name`;
     $shapes[1]=`curve -d 1 -p ($height) (-$lenght/2) ($width/2) -p ($height) (-$lenght/2) (-$width/2) -n ($name+"_1")`;
-    $shapes[2]=`curve -d 1 -p 0 ($lenght/2) ($width/2) -p 0 ($lenght/2) (-$width/2) -n ($name+"_2") `;
-    $shapes[3]=`curve -d 1 -p ($height) ($lenght/2) ($width/2) -p ($height) ($lenght/2) (-$width/2) -n ($name+"_3")`;
-    $shapes[4]=`curve -d 1 -p 0 (-$lenght/2) ($width/2) -p $height (-$lenght/2) ($width/2) -n ($name+"_4")`;
-    $shapes[5]=`curve -d 1 -p 0 ($lenght/2) (-$width/2) -p $height ($lenght/2) (-$width/2) -n ($name+"_5")`;
+    $shapes[2]=`curve -d 1 -p 0          ($lenght/2) ($width/2) -p 0         ($lenght/2) (-$width/2) -n ($name+"_2") `;
+    $shapes[3]=`curve -d 1 -p ($height) ($lenght/2)  ($width/2) -p ($height)  ($lenght/2) (-$width/2) -n ($name+"_3")`;
+
+    $shapes[4]=`curve -d 1 -p 0 (-$lenght/2) ($width/2) -p  $height (-$lenght/2) ($width/2) -n ($name+"_4")`;
+    $shapes[5]=`curve -d 1 -p 0 ($lenght/2)  (-$width/2) -p $height ($lenght/2)  (-$width/2) -n ($name+"_5")`;
     $shapes[6]=`curve -d 1 -p 0 (-$lenght/2) (-$width/2) -p $height (-$lenght/2) (-$width/2) -n ($name+"_6")`;
-    $shapes[7]=`curve -d 1 -p 0 ($lenght/2) ($width/2) -p $height ($lenght/2) ($width/2) -n ($name+"_7")`;
-    $shapes[8]=`curve -d 1 -p 0 (-$lenght/2) (-$width/2) -p 0 ($lenght/2) (-$width/2) -n ($name+"_8")`;
-    $shapes[9]=`curve -d 1 -p 0 (-$lenght/2) ($width/2) -p 0 ($lenght/2) ($width/2) -n ($name+"_9")`;
+    $shapes[7]=`curve -d 1 -p 0 ($lenght/2)  ($width/2) -p  $height ($lenght/2)  ($width/2) -n ($name+"_7")`;
+
+    $shapes[8]=`curve -d 1 -p 0          (-$lenght/2) (-$width/2) -p 0         ($lenght/2) (-$width/2) -n ($name+"_8")`;
+    $shapes[9]=`curve -d 1 -p 0          (-$lenght/2) ($width/2)  -p 0         ($lenght/2) ($width/2) -n ($name+"_9")`;
     $shapes[10]=`curve -d 1 -p ($height) (-$lenght/2) (-$width/2) -p ($height) ($lenght/2) (-$width/2) -n ($name+"_10")`;
-    $shapes[11]=`curve -d 1 -p ($height) (-$lenght/2) ($width/2) -p ($height) ($lenght/2) ($width/2) -n ($name+"_11")`;
+    $shapes[11]=`curve -d 1 -p ($height) (-$lenght/2) ($width/2)  -p ($height) ($lenght/2) ($width/2) -n ($name+"_11")`;
     RMTurnToOne $shapes;
     return $shapes[0];
 }
