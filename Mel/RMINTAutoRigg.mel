@@ -37,7 +37,6 @@ global proc RMSelectBonesMenu()
         setParent ..;
         //int $SizeV = `intField -q -v Size`;
         button  -l "Select" -c ("RMSelectSkinBones($Spine,$Neck,$HipLo,$RArm,$LArm,$RLeg,$LLeg,$RHan,$LHan)");
-        //button  -label "Create Reference Points"  -command ("print $SizeVal2");
     setParent ..;
 }
 global proc autoRigg ()
@@ -48,11 +47,10 @@ frameLayout -collapsable true -l "Biped Character";
         //string $SizeValue = `intFieldGrp -v 500 -l Size`;
         float $SizeVal =75;
         float $SizeVal2 = 1;
-        floatSliderGrp  -field true -l Size -minValue 1 -maxValue 1000 -v $SizeVal -cc "$SizeVal = #1; $SizeVal =(\"#1\")";
+        floatSliderGrp  -field true -l Size -minValue 1 -maxValue 1000 -v $SizeVal -cc "$SizeVal = `floatSliderGrp -q -value slider1`; " slider1;
         //int $SizeV = `intField -q -v Size`;
-        button  -label "Create Reference Points" -ann "Si editas el valor desde la casilla, Presiona Enter al terminar."  -c ("print $SizeVal; CreateBipedCharacter($SizeVal,<<0,0,1>>,<<0,1,0>>);");
+        button  -label "Create Reference Points" -ann "Si editas el valor desde la casilla, Presiona Enter al terminar."  -c ("$SizeVal=`floatSliderGrp -q -value slider1`; CreateBipedCharacter($SizeVal,<<0,0,1>>,<<0,1,0>>);");
         button -l "Mirror LF to RH" -c ("RMMirrorPositionPoints()");
-        //button  -label "Create Reference Points"  -command ("print $SizeVal2");
     setParent ..;
         columnLayout -adjustableColumn true -cal "center";
         

@@ -20,7 +20,12 @@ class RMNameConvention (object):
 							"transform":"grp",
 							"pointConstraint":"pnc",
 							"control":"ctr",
-							"locator":"loc"
+							"locator":"loc",
+							"ikHandle":"ikh",
+							"ikEffector":"ikf",
+							"parentConstraint":"prc"
+
+
 							}
 		self.DefaultNames = {	
 				"LastName":LastName,

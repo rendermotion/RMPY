@@ -36,14 +36,20 @@ def RMConnectWithLimits(AttrX,AttrY,keys):
     for eachKey  in keys:
         cmds.setDrivenKeyframe(AttrY, currentDriver = AttrX,dv = eachKey[0],v =eachKey[1])
 
-def RMCustomPickWalk(Obj, Class, Depth):
-    childs=cmds.listRelatives(Obj,children=True,type = Class)
+def RMCustomPickWalk(Obj, Class, Depth,Direction = "down"):
+    
+    '''Valid Values of Direction ar up and down'''
+
+    if Direction == "down":
+        childs = cmds.listRelatives(Obj, children = True,type = Class)
+    else :
+        childs = cmds.listRelatives(Obj, parent = True, type = Class)
     returnValue = [Obj]
     if childs:
         if not (Depth == 0 or len(childs) == 0):
             for eachChildren in childs:
                 if cmds.nodeType (eachChildren) == Class:
-                    returnValue.extend( RMCustomPickWalk (eachChildren, Class, Depth-1))
+                    returnValue.extend( RMCustomPickWalk (eachChildren, Class, Depth-1, Direction = Direction))
     return returnValue
 
 
@@ -89,7 +95,7 @@ def RMLenghtOfBone(Joint):
         return RMJointSize(Joint)
 
 def RMJointSize(Joint):
-    if type(Joint)=="joint":
+    if cmds.objectType(Joint) == "joint":
         radius = cmds.getAttr(Joint + ".radius")
         return (radius * 2)
     else: 

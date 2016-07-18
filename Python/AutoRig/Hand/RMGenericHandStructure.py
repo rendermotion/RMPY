@@ -6,8 +6,6 @@ reload (RMNameConvention)
 
 import maya.cmds as cmds
 
-
-
 class GenericHandJointStructure(object):
 	def __init__ (self,NameConv = None):
 		if not NameConv:
@@ -33,8 +31,8 @@ class GenericHandJointStructure(object):
 			self.fingerRoots.append(FingerRoot)
 			self.fingers.append(fingerJoints)
 		self.palmJoint = palmJoint
-		if not cmds.listRelatives(self.palmJoint, parent=True):
-			cmds.parent (self.palmJoint, world=True)
+		if cmds.listRelatives(self.palmJoint, parent = True):
+			cmds.parent (self.palmJoint, world = True)
 		return palmJoint
 
 	def fingerJointsByName (self,NameString):
