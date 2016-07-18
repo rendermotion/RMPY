@@ -28,19 +28,17 @@ def RMCreateCubeLine (height, length, width):
 	RMTurnToOne(CubeCurve)
 	return CubeCurve[0]
 
-def RMCreateBoxCtrl (Obj, NameConv=None):
+def RMCreateBoxCtrl (Obj, NameConv = None):
 	if not NameConv:
 		NameConv = RMNameConvention.RMNameConvention()
-	JntLength = RMRigTools.RMLenghtOfBone(Obj)
-	if (JntLength != 1.0):
-		Ctrl = RMCreateCubeLine (JntLength, JntLength/4, JntLength/4)
+	Parents = cmds.listRelatives (Obj, parent = True)
+
+	if len(Parents) != 0:
+		JntLength = RMRigTools.RMLenghtOfBone (Parents[0])
+		Ctrl = RMCreateCubeLine (JntLength/3, JntLength/3, JntLength/3)
 	else:
-		Parents = cmds.listRelatives (Obj, parent = True)
-		if len(Parents)!= 0:
-			LenghtJoint = RMRigTools.RMLenghtOfBone (Parents[0])
-		else :
-			LenghtJoint = 1
-		Ctrl = RMCreateCubeLine (JntLength/4, JntLength/4, JntLength/4)
+		JntLength = RMRigTools.RMLenghtOfBone(Obj)
+		Ctrl = RMCreateCubeLine (JntLength, JntLength, JntLength)
 
 	Ctrl = NameConv.RMRenameBasedOnBaseName(Obj,Ctrl)
 	Ctrl = NameConv.RMRenameSetFromName (Ctrl,"control","Type")

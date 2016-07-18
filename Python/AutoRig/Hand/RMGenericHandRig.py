@@ -21,8 +21,6 @@ class RMGenericHandRig(object):
 			self.NameConv = NameConv
 		self.GHS = RMGenericHandStructure.GenericHandJointStructure(NameConv = NameConv)
 		
-
-
 		self.fingerRoot={
 		"middle":None,
 		"ring":None,
@@ -59,6 +57,12 @@ class RMGenericHandRig(object):
 		self.IdentifyJoints(self.GHS.fingerRoots)
 
 	def CreatePalmRig(self):
+		
+		if self.NameConv.RMGetFromName(self.GHS.palmJoint,"Side") == "LF":
+			sideVariation = 1
+		else:
+			sideVariation = -1
+
 		self.CreatePalmReferencePoints()
 		self.PalmControl = RMRigShapeControls.RMCircularControl(self.GHS.palmJoint)
 		self.RMaddPalmControls (self.PalmControl)
@@ -66,41 +70,40 @@ class RMGenericHandRig(object):
 		
 		pinky = self.GHS.fingerJointsByName("pinky")
 		if pinky:
-			self.PalmFingerControlGrp["pinky"] = RMCreateGroupOnObj(pinky[0])
+			self.PalmFingerControlGrp["pinky"] = RMRigTools.RMCreateGroupOnObj(pinky[0])
 			RMRigTools.RMChangeRotateOrder(pinky,"yxz")
-			RMRigTools.RMConnectWithLimits(self.PalmControl + ".Spread",self.PalmFingerControlGrp["pinky"] + '.rotateY', [[-10,-10] ,[0,0],[10,60]])
+			RMRigTools.RMConnectWithLimits(self.PalmControl + ".Spread",self.PalmFingerControlGrp["pinky"] + '.rotateY', [[-10,sideVariation * -10] ,[0,0],[10,sideVariation * 60]])
 		ring = self.GHS.fingerJointsByName("ring")
 		if ring:
-			self.PalmFingerControlGrp["ring"] = RMCreateGroupOnObj(ring[0])
+			self.PalmFingerControlGrp["ring"] = RMRigTools.RMCreateGroupOnObj(ring[0])
 			RMRigTools.RMChangeRotateOrder(ring,"yxz")
-			RMRigTools.RMConnectWithLimits(self.PalmControl + ".Spread",self.PalmFingerControlGrp["ring"] + '.rotateY',  [[-10,-5] ,[0,0],[10,30]])
+			RMRigTools.RMConnectWithLimits(self.PalmControl + ".Spread",self.PalmFingerControlGrp["ring"] + '.rotateY',  [[-10,sideVariation * -5] ,[0,0],[10,sideVariation * 30]])
 		middle = self.GHS.fingerJointsByName("middle")
 		if middle:
-			self.PalmFingerControlGrp["middle"] = RMCreateGroupOnObj(middle[0])
+			self.PalmFingerControlGrp["middle"] = RMRigTools.RMCreateGroupOnObj(middle[0])
 			RMRigTools.RMChangeRotateOrder(middle,"yxz")
-			RMRigTools.RMConnectWithLimits(self.PalmControl + ".Spread",self.PalmFingerControlGrp["middle"] + '.rotateY',[[-10,0]  ,[0,0],[10,5]])
+			RMRigTools.RMConnectWithLimits(self.PalmControl + ".Spread",self.PalmFingerControlGrp["middle"] + '.rotateY',[[-10,0]  ,[0,0],[10,sideVariation * 5]])
 		index = self.GHS.fingerJointsByName("index")
 		if index:
-			self.PalmFingerControlGrp["index"] = RMCreateGroupOnObj(index[0])
+			self.PalmFingerControlGrp["index"] = RMRigTools.RMCreateGroupOnObj(index[0])
 			RMRigTools.RMChangeRotateOrder(index,"yxz")
-			RMRigTools.RMConnectWithLimits(self.PalmControl + ".Spread",self.PalmFingerControlGrp["index"] + '.rotateY', [[-10,5],[0,0],[10,-30]])
+			RMRigTools.RMConnectWithLimits(self.PalmControl + ".Spread",self.PalmFingerControlGrp["index"] + '.rotateY', [[-10,sideVariation * 5],[0,0],[10,sideVariation * -30]])
 		thumb = self.GHS.fingerJointsByName("thumb")
 		if thumb:
-			self.PalmFingerControlGrp["thumb"] = RMCreateGroupOnObj(thumb[0])
+			self.PalmFingerControlGrp["thumb"] = RMRigTools.RMCreateGroupOnObj(thumb[0])
 			RMRigTools.RMChangeRotateOrder(thumb,"yxz")
-			RMRigTools.RMConnectWithLimits(self.PalmControl + ".Spread",self.PalmFingerControlGrp["thumb"] + '.rotateY', [[-10,10],[0,0],[10,-60]])
+			RMRigTools.RMConnectWithLimits(self.PalmControl + ".Spread",self.PalmFingerControlGrp["thumb"] + '.rotateY', [[-10,sideVariation * 10],[0,0],[10,sideVariation * -60]])
 
 		for eachFingerName in self.fingerRoot:
 			if eachFingerName != 'thumb':
-				RMRigTools.RMConnectWithLimits(self.PalmControl+".PalmBend",self.PalmFingerControlGrp[eachFingerName]+'.rotateZ',[[-10,-90],[0,0],[10,90]])
-				RMRigTools.RMConnectWithLimits(self.PalmControl+".Twist",self.PalmReferencePoints[eachFingerName]+'.rotateX',[[-10,-45],[0,0],[10,45]])
+				RMRigTools.RMConnectWithLimits(self.PalmControl+".PalmBend",self.PalmFingerControlGrp[eachFingerName]+'.rotateZ',[[-10,90],[0,0],[10,-90]])
+				RMRigTools.RMConnectWithLimits(self.PalmControl+".Twist",self.PalmReferencePoints[eachFingerName]+'.rotateX',[[-10,sideVariation * 45],[0,0],[10,sideVariation * -45]])
 
-		RMRigTools.RMConnectWithLimits(self.PalmControl+".PalmCup",self.PalmReferencePoints ["pinky"]+'.rotateX', [[0,0],[10,-50]])
-		RMRigTools.RMConnectWithLimits(self.PalmControl+".PalmCup",self.PalmReferencePoints ["ring"]+'.rotateX',  [[0,0],[10,-25]])
-		RMRigTools.RMConnectWithLimits(self.PalmControl+".PalmCup",self.PalmReferencePoints ["middle"]+'.rotateX',[[0,0],[10,-5]])
-		RMRigTools.RMConnectWithLimits(self.PalmControl+".PalmCup",self.PalmReferencePoints ["index"]+'.rotateX', [[0,0],[10,30]])
-		RMRigTools.RMConnectWithLimits(self.PalmControl+".PalmCup",self.PalmReferencePoints ["thumb"]+'.rotateX', [[0,0],[10,60]])
-
+		RMRigTools.RMConnectWithLimits(self.PalmControl+".PalmCup",self.PalmReferencePoints ["pinky"]+'.rotateX', [[0,0],[10,sideVariation * -50]])
+		RMRigTools.RMConnectWithLimits(self.PalmControl+".PalmCup",self.PalmReferencePoints ["ring"]+'.rotateX',  [[0,0],[10,sideVariation * -25]])
+		RMRigTools.RMConnectWithLimits(self.PalmControl+".PalmCup",self.PalmReferencePoints ["middle"]+'.rotateX',[[0,0],[10,sideVariation * -5]])
+		RMRigTools.RMConnectWithLimits(self.PalmControl+".PalmCup",self.PalmReferencePoints ["index"]+'.rotateX', [[0,0],[10,sideVariation * 30]])
+		RMRigTools.RMConnectWithLimits(self.PalmControl+".PalmCup",self.PalmReferencePoints ["thumb"]+'.rotateX', [[0,0],[10,sideVariation * 60]])
 
 
 	def CreatePalmReferencePoints(self):
@@ -113,6 +116,7 @@ class RMGenericHandRig(object):
 
 
 	def CreateFingerSquareRig(self,Finger):
+
 		if self.NameConv.RMGetFromName(Finger[0],"Side")=="LF":
 			sideVariation = 1
 		else:
@@ -126,14 +130,14 @@ class RMGenericHandRig(object):
 
 		RMRigTools.RMLockAndHideAttributes(BoxControl,"0000000000")
 
-		RMRigTools.RMConnectWithLimits (BoxControl + ".MidUD",    Finger[0] + ".rotateY", [[-10,-100],[0,0],[10,100]])
-		RMRigTools.RMConnectWithLimits (BoxControl + ".MidLR",    Finger[0] + ".rotateZ", [[-10,-120],[0,0],[10,127]])
-		RMRigTools.RMConnectWithLimits (BoxControl + ".MidTwist", Finger[0] + ".rotateX" ,[[-10, -90],[0,0],[10,90]])
+		RMRigTools.RMConnectWithLimits (BoxControl + ".MidUD",    Finger[0] + ".rotateY", [[-10,100],[0,0],[10,-100]])
+		RMRigTools.RMConnectWithLimits (BoxControl + ".MidLR",    Finger[0] + ".rotateZ", [[-10,sideVariation * 120],[0,0],[10,sideVariation * -127]])
+		RMRigTools.RMConnectWithLimits (BoxControl + ".MidTwist", Finger[0] + ".rotateX" ,[[-10,sideVariation * 90],[0,0],[10,sideVariation * -90]])
 		index = 1
 		for eachjoint in range(0,len(Finger)-1):
-			RMRigTools.RMConnectWithLimits (BoxControl + ".UD" + str(index),    Finger[eachjoint] + ".rotateY", [[-10,-100],[0,0],[10,100]])
-			RMRigTools.RMConnectWithLimits (BoxControl + ".LR" + str(index),    Finger[eachjoint] + ".rotateZ", [[-10,-120],[0,0],[10,127]])
-			RMRigTools.RMConnectWithLimits (BoxControl + ".Twist" + str(index), Finger[eachjoint] + ".rotateX" ,[[-10, -90],[0,0],[10, 90]])
+			RMRigTools.RMConnectWithLimits (BoxControl + ".UD" + str(index),    Finger[eachjoint] + ".rotateY", [[-10,100],[0,0],[10,-100]])
+			RMRigTools.RMConnectWithLimits (BoxControl + ".LR" + str(index),    Finger[eachjoint] + ".rotateZ", [[-10,sideVariation * 120],[0,0],[10,sideVariation * -127]])
+			RMRigTools.RMConnectWithLimits (BoxControl + ".Twist" + str(index), Finger[eachjoint] + ".rotateX" ,[[-10, sideVariation * 90],[0,0],[10, sideVariation * -90]])
 			index += 1
 
 		self.fingerContols.append(BoxControl)
@@ -176,4 +180,4 @@ GHrig.CreateHandRig("Character01_RH_palm_pnt_rfr")
 
 GHrig = RMGenericHandRig()
 GHrig.CreateHandRig("Character01_LF_palm_pnt_rfr")
-
+print "Executed"
