@@ -159,8 +159,8 @@ def RMLockAndHideAttributes(Obj, BitString):
         return False
     return True
 
-def RMLinkHerarchyRotation(jntStart, jntEnd, Ctrl,X=True ,Y=True ,Z=True):
-    children = cmds.listRelatives(jntStart,children=True)
+def RMLinkHerarchyRotation (jntStart, jntEnd, Ctrl,X=True ,Y=True ,Z=True):
+    children = cmds.listRelatives (jntStart, children=True)
     if(jntStart == jntEnd):
         return True
     else:
@@ -178,7 +178,7 @@ def RMLinkHerarchyRotation(jntStart, jntEnd, Ctrl,X=True ,Y=True ,Z=True):
 
 def RMIsInHierarchy(Obj1,Obj2):
     children=cmds.listRelatives(Obj1,children=True)
-    if Obj1 == Obj02:
+    if Obj1 == Obj2:
         return True
     else:
         for eachChild in children:
@@ -201,7 +201,7 @@ def RMChangeRotateOrder(Object,rotationOrder):
     for eachObject in ObjList:
         cmds.setAttr(eachObject + ".rotateOrder",rotateOrderDic[rotationOrder])
 
-def RMCreateBonesAtPoints(PointArray,NameConv = None):
+def RMCreateBonesAtPoints(PointArray, NameConv = None, ZAxisOrientation = "Y"):
     if not NameConv:
         NameConv = RMNameConvention.RMNameConvention()
 
@@ -210,7 +210,7 @@ def RMCreateBonesAtPoints(PointArray,NameConv = None):
     Obj1Position = cmds.xform(PointArray[0], q=True, rp=True, ws=True)
     Obj2Position = cmds.xform(PointArray[1], q=True, rp=True, ws=True)
 
-    V1 , V2 = om.MVector(Obj1Position) , om.MVector(Obj2Position)
+    V1 , V2 = om.MVector( Obj1Position) , om.MVector( Obj2Position)
 
     initVector = V1 - V2
 
@@ -239,7 +239,13 @@ def RMCreateBonesAtPoints(PointArray,NameConv = None):
                 cmds.parent(AxisOrientJoint, ParentJoint)
                 RMAlign(PointArray[0],AxisOrientJoint,3)
                 cmds.makeIdentity (AxisOrientJoint, apply=True, t=1, r=1, s=0)
-                cmds.xform( AxisOrientJoint, translation = [0,1,0], objectSpace = True)
+
+                if ZAxisOrientation in "Yy":
+                    cmds.xform( AxisOrientJoint, translation = [0,1,0], objectSpace = True)
+                
+                elif ZAxisOrientation in "Zz":
+                    cmds.xform( AxisOrientJoint, translation = [0,0,1], objectSpace = True)
+
                 cmds.parent( jointArray[0], AxisOrientJoint)
                 cmds.parent ( jointArray[index], jointArray[index-1])
                 cmds.joint( jointArray[index-1], edit = True, orientJoint = "xzy")

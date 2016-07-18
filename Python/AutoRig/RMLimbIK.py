@@ -3,44 +3,81 @@ import RMRigTools
 reload (RMRigTools)
 import RMRigShapeControls
 reload (RMRigShapeControls)
+import RMNameConvention
+reload (RMNameConvention)
 
 
-
-class RMLimbIK(object):
-    def __init__(self,NameConv = None):
+class RMLimbIKFK(object):
+    def __init__(self, NameConv = None):
         if not NameConv:
             self.NameConv = RMNameConvention.RMNameConvention()
-        
         else:
             self.NameConv = NameConv
-    def RMLimbJointEstructure(self,OriginPoint):
-        LimbReferencePonits = RMRigTools.RMCustomPickWalk(OriginPoint,'locator',2)
-        
 
-        #RMRigTools.RMCreateBonesAtPoints( )
+        self.IKjointStructure = None
+        self.IKparentGroup = None
+
+        self.FKjointStructure = None
+        self.FKparentGroup = None
+
+        self.SknJointStructure = None
+        self.SknparentGroup = None
+
+    def RMLimbJointEstructure(self,OriginPoint,ZAxisOrientation = "z", ):
+        LimbReferencePonits = RMRigTools.RMCustomPickWalk(OriginPoint,'transform',2)
+        return RMRigTools.RMCreateBonesAtPoints(LimbReferencePonits,NameConv = self.NameConv, ZAxisOrientation = ZAxisOrientation)
+
 
     def RMMakeIkStretchy(self,ikHandle):
         endJoint = cmds.ikHandle(ikHandle, q = True, endEffector = True)
-        parents = RMRigTools.RMCustomPickWalk (endJoint,'joint', 2, Direction = "up")
+        parents = RMRigTools.RMCustomPickWalk (endJoint, 'joint', 2, Direction = "up")
 
-    def RMMakeLimbJoints(self):
+    def RMLimbRig(self,RootReferencePoint):
 
-        
-    def RMCreateIKControls(self,IKRootJnt,depth):
-        joints = RMRigTools.RMCustomPickWalk (IKRootJnt, 'joint', depth)
+        self.IKparentGroup , self.IKjointStructure = self.RMLimbJointEstructure(RootReferencePoint)
+        self.RMCreateIKControls()
+        #self.FKparentGroup , self.FKjointStructure = self.RMLimbJointEstructure(RootReferencePoint)        
+        #self.RMCreateFKControls()
+    
+    def RMCreateFKControls(self,AxisFree = "Y"):
+        FKFirstLimbControl = RMRigShapeControls.RMCreateBoxCtrl(self.FKjointStructure[0],Xratio=1,Yratio=.3,Zratio=.3)
+        ArmParent = RMRigTools.RMCreateGroupOnObj(FKFirstLimbControl)
+        RMRigTools.RMLinkHerarchyRotation (self.FKjointStructure[0], self.FKjointStructure[1],FKFirstLimbControl)
 
-        ikControl = RMRigShapeControls.RMCreateBoxCtrl(joints[len(joints)-1])
+        RMRigTools.RMLockAndHideAttributes (FKFirstLimbControl,'0000111000')
 
-        IKHandle, effector = cmds.ikHandle (sj = joints[0], ee = joints[len(joints)-1], name = "LimbIKHandle")
+        FKSecondLimbControl = RMRigShapeControls.RMCreateBoxCtrl(self.FKjointStructure[1],Xratio=1,Yratio=.3,Zratio=.3)
+        SecondLimbParent = RMRigTools.RMCreateGroupOnObj(FKSecondLimbControl)
+        cmds.parent(SecondLimbParent, FKFirstLimbControl)
 
-        ikControl = RMRigShapeControls.RMCreateBoxCtrl(joints[len(joints)-1])
+        RMRigTools.RMLinkHerarchyRotation (self.FKjointStructure[1], self.FKjointStructure[2], FKSecondLimbControl)
+        if AxisFree == "Y":
+            RMRigTools.RMLockAndHideAttributes (FKSecondLimbControl,'0000100000')
+        if AxisFree == "Z":
+            RMRigTools.RMLockAndHideAttributes (FKSecondLimbControl,'0000010000')
 
-        PontConstraint = cmds.pointConstraint (ikControl,IKHandle, name="LimbCntrlHandleLink")
+    def RMCreateIKControls(self):
+        #joints = RMRigTools.RMCustomPickWalk (IKRootJnt, 'joint', depth)
+        ikControl = RMRigShapeControls.RMCreateBoxCtrl(self.IKjointStructure[len(self.IKjointStructure)-1], Xratio = .3, Yratio = .3, Zratio = .3, ParentBaseSize = True)
+        IKHandle, effector = cmds.ikHandle (sj = self.IKjointStructure[0], ee = self.IKjointStructure[len(self.IKjointStructure)-1], name = "LimbIKHandle")
+        #ikControl = RMRigShapeControls.RMCreateBoxCtrl( joints[len(joints)-1])
+        PontConstraint = cmds.pointConstraint (ikControl, IKHandle, name = "LimbCntrlHandleLink")
 
 
+LimbArmRight = RMLimbIKFK()
+LimbArmRight.RMLimbRig("Character01_RH_shoulder_pnt_rfr")
+LimbArmLeft = RMLimbIKFK()
+LimbArmLeft.RMLimbRig("Character01_LF_shoulder_pnt_rfr")
 
+LimbLegRight = RMLimbIKFK()
+LimbLegRight.RMLimbRig("Character01_LF_leg_pnt_rfr")
+LimbLegLeft = RMLimbIKFK()
+LimbLegLeft.RMLimbRig("Character01_RH_leg_pnt_rfr")
+#Limb.RMLimbJointEstructure("Character01_RH_shoulder_pnt_rfr")
+#Limb.RMLimbJointEstructure("Character01_LF_leg_pnt_rfr")
+#Limb.RMLimbJointEstructure("Character01_RH_leg_pnt_rfr")
 
-RMCreateIKControls("Character01_MD_Leg_jnt_FK",2)
+#RMCreateIKControls("Character01_MD_Leg_jnt_FK",2)
 #RMMakeIkStretchy('ikHandle1')
 '''
 global proc RMMakeIkStretchy (string $ikHandle)
