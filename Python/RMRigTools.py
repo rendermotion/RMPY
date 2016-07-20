@@ -27,6 +27,11 @@ def RMAlign(obj1,obj2,flag):
             Obj1rotacion=cmds.xform(obj1,q=True,ws=True,ro=True)
             cmds.xform(obj2,ws=True,ro=Obj1rotacion)
 
+def RMPointDistance(Point01,Point02):
+        Position01,Position02 = cmds.xform(Point01,q=True,ws=True,rp=True) , cmds.xform(Point02,q=True,ws=True,rp=True)
+        Vector01 , Vector02 = om.MVector(Position01),om.MVector(Position02)
+        ResultVector = Vector01 - Vector02
+        return om.MVector(ResultVector).length()
 
 def connectWithLimits(AttrX,AttrY,keys):
     for eachKey  in keys:
@@ -51,7 +56,20 @@ def RMCustomPickWalk(Obj, Class, Depth,Direction = "down"):
                 if cmds.nodeType (eachChildren) == Class:
                     returnValue.extend( RMCustomPickWalk (eachChildren, Class, Depth-1, Direction = Direction))
     return returnValue
-
+def FindInHieararchy (Obj,GrandSon):
+    returnArray=[Obj]
+    if Obj == GrandSon:
+        return returnArray
+    allDescendents = cmds.listRelatives (Obj, allDescendents=True)
+    if allDescendents:
+        if GrandSon in allDescendents:
+            Children = cmds.listRelatives (Obj, children = True)
+            if Children:
+                for eachChildren in Children:
+                    Family = FindInHieararchy(eachChildren,GrandSon)
+                    returnArray.extend(Family)
+                return returnArray
+    return []
 
 
 def RMCreateGroupOnObj(Obj,Type="inserted", NameConv = None):
@@ -64,7 +82,6 @@ def RMCreateGroupOnObj(Obj,Type="inserted", NameConv = None):
     Group = cmds.group( empty = True)
 
     if NameConv.RMIsNameInFormat(Obj):
-
         Group = NameConv.RMRenameBasedOnBaseName (Obj, Group)
 
     else:
@@ -81,7 +98,6 @@ def RMCreateGroupOnObj(Obj,Type="inserted", NameConv = None):
             cmds.parent(Obj,Group)
         elif Type == "child":
             cmds.parent(Group,Obj)
-
     return Group
 
 def RMLenghtOfBone(Joint):
