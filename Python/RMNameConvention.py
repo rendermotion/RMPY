@@ -26,7 +26,7 @@ class RMNameConvention (object):
 							"ikEffector":"ikf",
 							"parentConstraint":"prc",
 							"reverse":"rvs",
-							"multiplyDivide":"mul"
+							"multiplyDivide":"mult",
 							"condition":"cnd"
 							}
 		self.DefaultNames = {	
@@ -239,6 +239,12 @@ class RMNameConvention (object):
 			return NewName
 		else:
 			return False
+	def RMGetAShortName(Node):
+		if self.RMIsNameInFormat(Node):
+			return self.RMGetFromName(Node,'Name')
+		else:
+			return Node
+
 
 #NameConv = RMNameConvention()
 #NewName = NameConv.RMGuessObjType("joint1")
