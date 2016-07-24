@@ -160,10 +160,10 @@ class GenericFacial():
 			cmds.connectAttr("ReyeOrientacion.rotateX","REyesVerticalFinalRotationPlus.input1D[1]")
 
 			if self.FaceBlendShapeDic["REyeRollUp"]["Exists"]:
-				RMRigTools.connectWithLimits("REyesVerticalFinalRotationPlus.output1D",BSname+".REyeRollUp",[[0,0],[45,1]])
+				RMRigTools.connectWithLimits("REyesVerticalFinalRotationPlus.output1D",BSname+".REyeRollUp",[[0,0],[-45,1]])
 			
 			if self.FaceBlendShapeDic["REyeRollDn"]["Exists"]:
-				RMRigTools.connectWithLimits("REyesVerticalFinalRotationPlus.output1D",BSname+".REyeRollDn",[[0,0],[-45,1]])
+				RMRigTools.connectWithLimits("REyesVerticalFinalRotationPlus.output1D",BSname+".REyeRollDn",[[0,0],[45,1]])
 		
 		if cmds.objExists("LeyeLookAt") and cmds.objExists("LeyeOrientacion") and self.FaceBlendShapeDic["LEyeRollDn"]["Exists"] and self.FaceBlendShapeDic["LEyeRollUp"]["Exists"]:
 
@@ -172,10 +172,10 @@ class GenericFacial():
 			cmds.connectAttr("LeyeOrientacion.rotateX","LEyesVerticalFinalRotationPlus.input1D[1]")
 
 			if self.FaceBlendShapeDic["LEyeRollUp"]["Exists"]:
-				RMRigTools.connectWithLimits("LEyesVerticalFinalRotationPlus.output1D",BSname+".LEyeRollUp",[[0,0],[45,1]])
+				RMRigTools.connectWithLimits("LEyesVerticalFinalRotationPlus.output1D",BSname+".LEyeRollUp",[[0,0],[-45,1]])
 			
 			if self.FaceBlendShapeDic["LEyeRollDn"]["Exists"]:
-				RMRigTools.connectWithLimits("LEyesVerticalFinalRotationPlus.output1D",BSname+".LEyeRollDn",[[0,0],[-45,1]])
+				RMRigTools.connectWithLimits("LEyesVerticalFinalRotationPlus.output1D",BSname+".LEyeRollDn",[[0,0],[45,1]])
 
 
 		if self.FaceBlendShapeDic["Wide"]["Exists"]:

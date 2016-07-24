@@ -17,15 +17,17 @@ class RMNameConvention (object):
 						    "undefined":"UDF",
 							"nurbsCurve":"shp",
 							"mesh":"msh",
+							"renderMesh":"rmsh",
 							"transform":"grp",
 							"pointConstraint":"pnc",
 							"control":"ctr",
 							"locator":"loc",
 							"ikHandle":"ikh",
 							"ikEffector":"ikf",
-							"parentConstraint":"prc"
-
-
+							"parentConstraint":"prc",
+							"reverse":"rvs",
+							"multiplyDivide":"mult",
+							"condition":"cnd"
 							}
 		self.DefaultNames = {	
 				"LastName":LastName,
@@ -47,7 +49,7 @@ class RMNameConvention (object):
 		splitString = ObjName.split("_")
 		return splitString[self.NameConvention[Token]]
 
-	def RMSetFromName(self, ObjName, TextString, Token, mode = "regular"):
+	def RMSetFromName(self, ObjName, TextString, Token , mode = "regular"):
 		'Valid Modes are regular and add'
 		returnTuple = ()
 		if (type (ObjName) == str) or (type (ObjName) == unicode):
@@ -60,11 +62,13 @@ class RMNameConvention (object):
 			splitString = eachObj.split("_")
 			if mode == 'regular':
 				if Token == "Type":
-					splitString[self.NameConvention[Token]] = self.TypeDictionary[TextString]
+					splitString[self.NameConvention[Token]] = self.RMTypeValidation(TextString)
 				else:
 					splitString[self.NameConvention[Token]] = TextString
 			elif mode == 'add':
 				splitString[self.NameConvention[Token]] = self.RMAddToNumberedString( splitString[self.NameConvention[Token]], TextString)
+			elif mode == 'prefix':
+				splitString[self.NameConvention[Token]] = self.RMAddToNumberedString( TextString , splitString[self.NameConvention[Token]])
 			returnTuple += tuple(  ["_".join(splitString)] )
 		if len(returnTuple) == 1:
 			return str(returnTuple[0])
@@ -89,7 +93,7 @@ class RMNameConvention (object):
 
 	def RMAddToNumberedString(self, Name, AddName):
 		Value = re.split(r"([0-9]+$)",Name)
-		return Value[0] + (AddName.title()) + Value[1]
+		return Value[0].title() + (AddName.title()) + Value[1]
 
 	def RMUniqueName(self, currentName):
 		ObjName=self.RMGetFromName(currentName,'Name')
@@ -145,7 +149,11 @@ class RMNameConvention (object):
 			else:
 				print 'Error no Valid type on RMRenameNameInFromat should be string or list'
 			for Names in NameList:
-				NewName = self.RMSetNameInFormat(Name=Names, LastName=LastName, Side=Side, Type=Type, System=System)
+				NamesList = Names.split("_")
+				NewName = ""
+				for names in NamesList:
+					NewName += names
+				NewName = self.RMSetNameInFormat(Name = NewName, LastName = LastName, Side = Side, Type = Type, System=System)
 				Names = cmds.rename(Names,NewName)
 				if not Type:
 					NewNameArray += tuple([self.RMRenameGuessTypeInName (Names)])
@@ -163,13 +171,12 @@ class RMNameConvention (object):
 
 	def RMGuessObjType(self, Obj):
 		ObjType=""
-		
 		ObjType = cmds.objectType(Obj)
 
 		ObjType = self.RMTypeValidation(ObjType)
 
-		if ObjType == "transform":
-			children = cmds.listRelatives(Obj, shapes=True)
+		if ObjType == "grp":
+			children = cmds.listRelatives(Obj, shapes = True)
 			if children:
 				ShapeType = cmds.objectType(children[0])
 				if ShapeType == "nurbsCurve":
@@ -182,6 +189,8 @@ class RMNameConvention (object):
 					ObjType=self.TypeDictionary["transform"]
 			else :
 				return ObjType
+		if ObjType == self.TypeDictionary['undefined']:
+			print 'Type not identified:', cmds.objectType(Obj)
 		return ObjType
 
 	def RMRenameGuessTypeInName(self, currentName):
@@ -197,6 +206,7 @@ class RMNameConvention (object):
 	def RMRenameBasedOnBaseName (self, BaseName, ObjToRename, NewName = None, LastName = None,Type = None, System = None, Side = None):
 
 		if self.RMIsNameInFormat (BaseName):
+			
 			if not NewName:
 				NewName = self.RMGetFromName (BaseName, "Name")
 			if not LastName:
@@ -207,9 +217,13 @@ class RMNameConvention (object):
 				Side = self.RMGetFromName (BaseName, "Side")
 			if not Type:
 				Type = self.RMGuessObjType(ObjToRename)
+			
 		else:
 			if not NewName:
-				NewName = ObjToRename
+				NamesList = ObjToRename.split("_")
+				NewName=""
+				for names in NamesList:
+					NewName += names
 			if not LastName:
 				LastName = self.DefaultNames("LastName")
 			if not System:
@@ -225,6 +239,12 @@ class RMNameConvention (object):
 			return NewName
 		else:
 			return False
+	def RMGetAShortName(Node):
+		if self.RMIsNameInFormat(Node):
+			return self.RMGetFromName(Node,'Name')
+		else:
+			return Node
+
 
 #NameConv = RMNameConvention()
 #NewName = NameConv.RMGuessObjType("joint1")

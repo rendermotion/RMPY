@@ -114,7 +114,6 @@ class RMGenericHandRig(object):
 			cmds.parentConstraint(childGroup, self.fingerRoot[keys], maintainOffset = True)
 			self.PalmReferencePoints[keys] = childGroup
 
-
 	def CreateFingerSquareRig(self,Finger):
 
 		if self.NameConv.RMGetFromName(Finger[0],"Side")=="LF":
