@@ -1,5 +1,6 @@
 import maya.cmds as cmds
 import RMRigTools
+import os 
 reload (RMRigTools)
 import RMNameConvention
 reload (RMNameConvention)
@@ -57,6 +58,34 @@ def RMCircularControl (Obj, radius = 1,NameConv = None):
 
 	RMRigTools.RMAlign(Obj,Ctrl,3)
 	return Ctrl
+
+def RMImportMoveControl(Obj, scale = 1,NameConv = None):
+	if not NameConv:
+		NameConv = RMNameConvention.RMNameConvention()
+	path = os.path.dirname(RMRigTools.__file__)
+	print path
+	RMMel=os.path.split(path)
+	FinalPath = os.path.join(RMMel[0],"Python\AutoRig\RigShapes","ControlMover.mb")
+	if os.path.isfile(FinalPath):
+		cmds.file(FinalPath,i=True,type="mayaBinary",ignoreVersion=True,mergeNamespacesOnClash=False,rpr="Control",pr=False)
+	else:
+		print "archivo no encontrado"
+		return None
+	Ctrl =  "ControlCross"
+	cmds.setAttr(Ctrl + ".scale",scale,scale,scale)
+
+	cmds.makeIdentity(Ctrl, apply = True, t = 1, r = 1, s = 1)
+
+	Ctrl = NameConv.RMRenameBasedOnBaseName(Obj,Ctrl)
+
+	Ctrl = NameConv.RMRenameSetFromName (Ctrl,"control","Type")
+
+	RMRigTools.RMAlign(Obj,Ctrl,3)
+	ParentGroup = RMRigTools.RMCreateGroupOnObj(Ctrl)
+
+	return ParentGroup , Ctrl
+
+
 
 
 

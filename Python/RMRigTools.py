@@ -71,7 +71,6 @@ def FindInHieararchy (Obj,GrandSon):
                 return returnArray
     return []
 
-
 def RMCreateGroupOnObj(Obj,Type="inserted", NameConv = None):
     '''
     "world","child","parent","inserted"
@@ -236,7 +235,7 @@ def RMCreateBonesAtPoints(PointArray, NameConv = None, ZAxisOrientation = "Y"):
 
     ParentJoint = RMCreateGroupOnObj ( PointArray[0], Type="world")
     
-    for index in range( 0, len(PointArray)) :
+    for index in range( 0, len(PointArray)):
 
         cmds.select(cl=True)
         
@@ -266,8 +265,10 @@ def RMCreateBonesAtPoints(PointArray, NameConv = None, ZAxisOrientation = "Y"):
                 cmds.parent ( jointArray[index], jointArray[index-1])
                 cmds.joint( jointArray[index-1], edit = True, orientJoint = "xzy")
 
-                cmds.parent ( jointArray[index-1], ParentJoint)
+                cmds.parent ( jointArray[index-1],world = True)
                 cmds.delete (AxisOrientJoint)
+                RMAlign(jointArray[index-1],ParentJoint,3)
+                cmds.parent ( jointArray[index-1], ParentJoint)
 
             else :
                 cmds.parent (jointArray[index], jointArray[index-1])
@@ -322,4 +323,46 @@ def RMCreateLineBetwenPoints (Point1, Point2,NameConv = None):
     cmds.parent (Cluster2Handle, DataGroup)
     cmds.parent (Curve, DataGroup)
     return DataGroup
+
+def RMCreateClustersOnCurve(curve,NameConv = None):
+    if not NameConv:
+        NameConv = RMNameConvention.RMNameConvention()
+
+    degree = cmds.getAttr (curve+".degree")
+    spans = cmds.getAttr (curve+".spans")
+    form = cmds.getAttr (curve+".form")
+    print ("degree:%s",degree)
+    print ("spans:%s",spans)
+    print ("form:%s",form)
+    #   Form (open = 0, closed = 1, periodic = 2)
+    clusterList=[]
+    print form
+    if form == 0 or form ==1:
+        print "Open Line"
+        for i in range(0 , (degree + spans)):
+            Cluster2Handle, cluster = cmds.cluster(curve + ".cv["+str(i)+"]",name = "ClusterOnCurve")
+            if NameConv.RMIsNameInFormat(curve):
+                cluster = NameConv.RMRenameBasedOnBaseName(curve, cluster, NewName = cluster)
+                #Cluster2Handle = NameConv.RMRenameBasedOnBaseName(curve, Cluster2Handle, NewName = Cluster2Handle)
+            else:
+                cluster = NameConv.RMRenameNameInFormat(cluster)
+                #Cluster2Handle = NameConv.RMRenameNameInFormat(Cluster2Handle)
+            clusterList.append(cluster)
+            cmds.setAttr(cluster+".visibility",0)
+            ##cmds.cluster(cluster,edit=True,geometry = curve + ".["+str(i)+"]")
+    if form == 2:
+        print "periodic Line"
+        for i in range(0,spans):
+            Cluster2Handle, cluster  = cmds.cluster(curve+".cv["+str(i)+"]",name= "ClusterOnCurve")
+            print cluster
+            if NameConv.RMIsNameInFormat(curve):
+                cluster = NameConv.RMRenameBasedOnBaseName(curve, cluster, NewName = cluster)
+                #Cluster2Handle = NameConv.RMRenameBasedOnBaseName(curve, Cluster2Handle, NewName = Cluster2Handle)
+            else:
+                cluster = NameConv.RMRenameNameInFormat(cluster)
+                #Cluster2Handle = NameConv.RMRenameNameInFormat(Cluster2Handle)
+            clusterList.append(cluster)
+            cmds.setAttr(cluster + ".visibility",0)
+            #cmds.cluster(cluster,edit=True,geometry = curve + ".["+str(i)+"]")
+    return clusterList
 
