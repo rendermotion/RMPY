@@ -64,7 +64,8 @@ class RMGenericHandRig(object):
 			sideVariation = -1
 
 		self.CreatePalmReferencePoints()
-		self.PalmControl = RMRigShapeControls.RMCircularControl(self.GHS.palmJoint)
+		palmResetPoint , self.PalmControl = RMRigShapeControls.RMCircularControl(self.GHS.palmJoint)
+
 		self.RMaddPalmControls (self.PalmControl)
 		RMRigTools.RMLockAndHideAttributes(self.PalmControl,"0000000000")
 		

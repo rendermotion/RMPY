@@ -37,7 +37,7 @@ class RMFacialLink(QtGui.QDialog):
 	def importFacialControls(self):
 		path = os.path.dirname(RMUncategorized.__file__)
 		RMMel=os.path.split(path)
-		FinalPath = os.path.join(RMMel[0],"Mel","FacialControls.mb")
+		FinalPath = os.path.join(RMMel[0],"Mel","FacialControlsV2.mb")
 		if os.path.isfile(FinalPath):
 			cmds.file(FinalPath,i=True,type="mayaBinary",ignoreVersion=True,mergeNamespacesOnClash=False,rpr="FacialControls",pr=False)
 		else:

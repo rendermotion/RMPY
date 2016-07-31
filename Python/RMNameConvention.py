@@ -27,8 +27,17 @@ class RMNameConvention (object):
 							"parentConstraint":"prc",
 							"reverse":"rvs",
 							"multiplyDivide":"mult",
-							"condition":"cnd"
+							"condition":"cnd",
+							"baseLattice":"blt",
+							"curveInfo":"cui"
+
 							}
+		self.ShapeDictionary = {
+							"nurbsCurve":"shp",
+							"mesh":"msh",
+							"baseLattice":"blt",
+							"locator":"loc"
+		}
 		self.DefaultNames = {	
 				"LastName":LastName,
 				"Side":Side,
@@ -179,12 +188,8 @@ class RMNameConvention (object):
 			children = cmds.listRelatives(Obj, shapes = True)
 			if children:
 				ShapeType = cmds.objectType(children[0])
-				if ShapeType == "nurbsCurve":
-					ObjType = self.TypeDictionary["nurbsCurve"]
-				elif ShapeType == "mesh":
-					ObjType = self.TypeDictionary["mesh"]
-				elif ShapeType == "locator":
-					ObjType = self.TypeDictionary["locator"]
+				if ShapeType in self.ShapeDictionary:
+					ObjType = self.TypeDictionary[ShapeType]
 				else:
 					ObjType=self.TypeDictionary["transform"]
 			else :
@@ -225,11 +230,11 @@ class RMNameConvention (object):
 				for names in NamesList:
 					NewName += names
 			if not LastName:
-				LastName = self.DefaultNames("LastName")
+				LastName = self.DefaultNames["LastName"]
 			if not System:
-				System = self.DefaultNames("System")
+				System = self.DefaultNames["System"]
 			if not Side:
-				Side = self.DefaultNames("Side")
+				Side = self.DefaultNames["Side"]
 			if not Type:
 				Type = self.RMGuessObjType(ObjToRename)
 
@@ -239,7 +244,7 @@ class RMNameConvention (object):
 			return NewName
 		else:
 			return False
-	def RMGetAShortName(Node):
+	def RMGetAShortName(self,Node):
 		if self.RMIsNameInFormat(Node):
 			return self.RMGetFromName(Node,'Name')
 		else:

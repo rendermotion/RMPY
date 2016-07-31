@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'RMblendShapeEditor.ui'
 #
-# Created: Thu Jul 21 12:16:05 2016
+# Created: Tue Jul 26 12:43:46 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!

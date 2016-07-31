@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>451</width>
-    <height>504</height>
+    <width>505</width>
+    <height>553</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -31,14 +31,6 @@
          </property>
         </widget>
        </item>
-       <item>
-        <widget class="QPushButton" name="LoadSpaceSwitchBtn">
-         <property name="text">
-          <string>Load SpaceSwitch 
-from selected control</string>
-         </property>
-        </widget>
-       </item>
       </layout>
      </item>
      <item>
@@ -57,35 +49,8 @@ from selected control</string>
            </widget>
           </item>
           <item>
-           <widget class="QListWidget" name="listWidget">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>20</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>20</height>
-             </size>
-            </property>
-            <property name="autoScroll">
-             <bool>false</bool>
-            </property>
-            <property name="resizeMode">
-             <enum>QListView::Fixed</enum>
-            </property>
-            <property name="currentRow">
-             <number>-1</number>
-            </property>
-            <property name="sortingEnabled">
+           <widget class="QLineEdit" name="ControllineEdit">
+            <property name="enabled">
              <bool>false</bool>
             </property>
            </widget>
@@ -114,7 +79,7 @@ from selected control</string>
              </size>
             </property>
             <property name="text">
-             <string>Remove list selected 
+             <string>Remove selected 
 from object space list</string>
             </property>
             <property name="iconSize">
@@ -134,7 +99,7 @@ to object space list</string>
            </widget>
           </item>
           <item>
-           <widget class="QListWidget" name="listWidget_2"/>
+           <widget class="QListWidget" name="ObjectSpaceListView"/>
           </item>
          </layout>
         </widget>
@@ -164,7 +129,7 @@ to object space list</string>
          </size>
         </property>
         <property name="text">
-         <string>Remove list selected 
+         <string>Remove selected 
 from constrained Object list</string>
         </property>
         <property name="iconSize">
@@ -184,15 +149,12 @@ to object constrained list</string>
        </widget>
       </item>
       <item>
-       <widget class="QListView" name="listView"/>
+       <widget class="QListWidget" name="ConstrainedObjectListView"/>
       </item>
      </layout>
     </widget>
    </item>
   </layout>
-  <zorder>ControlObjectGroupBox</zorder>
-  <zorder>verticalLayoutWidget_2</zorder>
-  <zorder>ConstrainedObjectSpaceSwitch</zorder>
  </widget>
  <resources/>
  <connections/>

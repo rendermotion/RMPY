@@ -33,6 +33,27 @@ def RMPointDistance(Point01,Point02):
         ResultVector = Vector01 - Vector02
         return om.MVector(ResultVector).length()
 
+def RMCreateNLocatorsBetweenObjects(Obj01, Obj02, NumberOfPoints, name = "locator",align ="FirstObj" ):
+    '''Valid Values in align are FirstObj, SecondObject, and World'''
+
+    locatorList = []
+    Position01,Position02 = cmds.xform(Obj01,q=True,ws=True,rp=True) , cmds.xform(Obj02,q=True,ws=True,rp=True)
+    Vector01 , Vector02 = om.MVector(Position01),om.MVector(Position02)
+    ResultVector = Vector02 - Vector01 
+    Distance = om.MVector(ResultVector).length()
+    DeltaVector = (Distance/(NumberOfPoints+1))*ResultVector.normal()
+    for index in range(0, NumberOfPoints):
+        locatorList.append(cmds.spaceLocator(name = name)[0])
+        Obj1position = Vector01 + DeltaVector * (index + 1)
+        cmds.xform(locatorList[index],ws=True, t = Obj1position)
+        if align == "FirstObj":
+            RMAlign(Obj01,locatorList[index], 2)
+        elif align == "SecondObject":
+            RMAlign(Obj02,locatorList[index], 2)
+
+    return locatorList
+
+
 def connectWithLimits(AttrX,AttrY,keys):
     for eachKey  in keys:
         cmds.setDrivenKeyframe(AttrY, currentDriver = AttrX,dv = eachKey[0],v =eachKey[1])
