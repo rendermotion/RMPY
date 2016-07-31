@@ -1,4 +1,4 @@
-import maya.cmds
+import maya.cmds as cmds
 import maya.api.OpenMaya as om
 import RMNameConvention
 reload(RMNameConvention)
@@ -52,8 +52,8 @@ class RMSpaceSwitch(object):
         and it is compatible with the add and remove from Space Switch functions.
         '''
         SpaceObjectShortName =[]
-        for i in SpaceObjects:
-            SpaceObjectShortName.append(self.NameConv.RMGetAShortName(SpaceObjects))
+        for eachObject in SpaceObjects:
+            SpaceObjectShortName.append(self.NameConv.RMGetAShortName(eachObject))
 
         self.AddEnumParameters(SpaceObjectShortName, ControlObject, Name = Name)
 
@@ -79,59 +79,116 @@ class RMSpaceSwitch(object):
             index += 1
         
         if self.NameConv.RMIsNameInFormat(AfectedObject):
-            parentConstraint[0] = self.NameConv.RMRenameBasedOnBaseName(AfectedObject,reverse, NewName = parentConstraint[0])
+            parentConstraint[0] = self.NameConv.RMRenameBasedOnBaseName(AfectedObject,parentConstraint[0], NewName = parentConstraint[0])
         else:
             parentConstraint[0] = self.NameConv.RMRenameNameInFormat(parentConstraint[0])
+    
+    def IsSpaceSwitch(self, Control, SpaceSwitchName = "spaceSwitch"):
+        AttributeList = cmds.listAttr(Control)
+        if SpaceSwitchName  in AttributeList:
+            if cmds.getAttr (Control + "." + SpaceSwitchName, type=True) == 'enum':
+                Connections = cmds.listConnections (Control + "." + SpaceSwitchName)
+                if Connections != None:
+                    for eachConnection in Connections:
+                        if cmds.objectType(eachConnection) == 'condition':
+                            ConstraintsConnections = cmds.listConnections(eachConnection+'.outColorR')
+                            for eachConstraint in ConstraintsConnections:
+                                if cmds.objectType(eachConstraint) == 'parentConstraint':
+                                    return True
+        return False
 
     def GetSpaceSwitchDic(self, control, SpaceSwitchName = "spaceSwitch"):
-        Enums = self.getControlEnumsRelations(Node)
-        ConstraintDictionary = self.ConstraintsDictionary (Enums[Enums.keys()[0]]['condition'])
+        Enums = self.getControlEnumsRelations(control,SpaceSwitchName = "spaceSwitch")
+
+        ConstraintDictionary = self.ConstraintsDictionary(Enums[Enums.keys()[0]] ['condition'])
 
         return {'enums' : Enums , 'constraints' : ConstraintDictionary }
 
 
     def GetAfectedObjectsList(self,ControlObject,SpaceSwitchName = "spaceSwitch"):
-        SpaceSwDic = GetSpaceSwitchDic(ControlObject, SpaceSwitchName = SpaceSwitchName)
+        SpaceSwDic = self.GetSpaceSwitchDic(ControlObject, SpaceSwitchName = SpaceSwitchName)
         ReturnObjectsList=[]
-        for keys in SpaceSwDic[constraints]:
-            ReturnObjectsList.append(SpaceSwDic[constraints][keys]['object'])
+        for keys in SpaceSwDic['constraints']:
+            ReturnObjectsList.append(SpaceSwDic['constraints'][keys]['object'])
         return ReturnObjectsList
 
     def AddAffectedObject(self,ControlObject, AfectedObject,SpaceSwitchName = "spaceSwitch"):
-        SpaceSwDic = GetSpaceSwitchDic(ControlObject,SpaceSwitchName = SpaceSwitchName)
+        SpaceSwDic = self.GetSpaceSwitchDic(ControlObject,SpaceSwitchName = SpaceSwitchName)
         index = 0
         for eachEnum in SpaceSwDic['enums']:
             parentConstraint = cmds.parentConstraint (SpaceSwDic['enums'][eachEnum]['object'], AfectedObject, mo = True, name = self.NameConv.RMGetAShortName(AfectedObject) + "SpaceSwitchConstraint")
             WA = cmds.parentConstraint (parentConstraint[0], q = True, weightAliasList = True)
             cmds.connectAttr (SpaceSwDic['enums'][eachEnum]['condition'] + ".outColorR", parentConstraint[0] + "." + WA[index])
             index += 1
-    def RemoveAffectedObject(self,ControlObject, AfectedObject, SpaceSwitchName = "spaceSwitch"):
-        SpaceSwDic = GetSpaceSwitchDic(ControlObject, SpaceSwitchName = SpaceSwitchName)
+    def RemoveAffectedObject(self, ControlObject, AfectedObject, SpaceSwitchName = "spaceSwitch"):
+
+        SpaceSwDic = self.GetSpaceSwitchDic(ControlObject, SpaceSwitchName = SpaceSwitchName)
         
         for allConstraints in SpaceSwDic['constraints']:
             if SpaceSwDic['constraints'][allConstraints]['object'] == AfectedObject:
                 cmds.delete(allConstraints)
-        if len(SpaceSwDic['constraints'].keys()) > 1:
+
+        if len(SpaceSwDic['constraints'].keys()) == 1:
             for eachPlug in SpaceSwDic['enums']:
                 cmds.delete(SpaceSwDic['enums'][eachPlug]['condition'])
 
-    def SpaceObjectsList(self,ControlObject, SpaceSwitchName = "spaceSwitch"):
-        SpaceSwDic = GetSpaceSwitchDic( ControlObject, SpaceSwitchName = SpaceSwitchName)
+            self.DeleteSpaceSwitchAttr(ControlObject, SpaceSwitchName)
+            
+
+
+    def AddSpaceObject(self, ControlObject, SpaceObject, SpaceSwitchName = "spaceSwitch"):
+        SpaceSwDic = self.GetSpaceSwitchDic( ControlObject, SpaceSwitchName = SpaceSwitchName)
+        
+        EnumDic = self.AddEnumParameters([self.NameConv.RMGetAShortName(SpaceObject)],ControlObject)
+        #if EnumDic
+        Switch = cmds.shadingNode('condition', asUtility=True, name = SpaceSwitchName + "SWCondition")
+        cmds.connectAttr(ControlObject + "." + SpaceSwitchName, Switch + ".firstTerm")
+        cmds.setAttr (Switch +".secondTerm", EnumDic[self.NameConv.RMGetAShortName(SpaceObject)])
+        cmds.setAttr (Switch +".operation", 0)
+        cmds.setAttr (Switch +".colorIfTrueR", 1)
+        cmds.setAttr (Switch +".colorIfFalseR", 0)
+
+        if self.NameConv.RMIsNameInFormat(ControlObject):
+            Switch = self.NameConv.RMRenameBasedOnBaseName(ControlObject, Switch, NewName = Switch)
+        else:
+            Switch = self.NameConv.RMRenameNameInFormat(Switch)
+
+        for eachConstraint in SpaceSwDic['constraints']:
+            Object = SpaceSwDic['constraints'][eachConstraint]['object']
+            parentConstraint = cmds.parentConstraint (SpaceObject, Object, mo = True)
+            WA = cmds.parentConstraint (parentConstraint, q = True, weightAliasList = True)
+            TL = cmds.parentConstraint (parentConstraint, q = True, targetList = True)
+            if SpaceObject in TL:
+                cmds.connectAttr (Switch + ".outColorR", parentConstraint[0] + "." + WA[TL.index(SpaceObject)])
+            else:
+                print "Error, cant find spaceobject in constraint targetList"
+
+    def RemoveSpaceObject(self, ControlObject, SpaceObject, SpaceSwitchName = "spaceSwitch"):
+        SpaceSwDic = self.GetSpaceSwitchDic( ControlObject, SpaceSwitchName = SpaceSwitchName)
+
+        for eachConstraint in SpaceSwDic['constraints']:
+            Object = SpaceSwDic['constraints'][eachConstraint]['object']
+            cmds.parentConstraint (SpaceObject, Object, remove = True)
+
+        for eachEnum in SpaceSwDic['enums']:
+            if  SpaceSwDic['enums'][eachEnum]['object'] == SpaceObject:
+                self.deleteEnumParameter(ControlObject,eachEnum)
+                cmds.delete(SpaceSwDic['enums'][eachEnum]['condition'])
+        
+        enumDic = self.getEnumDictionary ( ControlObject, SpaceSwitchName = SpaceSwitchName)
+
+        if enumDic:
+            for eachEnum in enumDic:
+                if eachEnum in SpaceSwDic['enums']:
+                    EnumCond = SpaceSwDic['enums'][eachEnum]['condition']
+                    cmds.setAttr (EnumCond +".secondTerm", enumDic[eachEnum])
+
+    def GetSpaceObjectsList(self, ControlObject, SpaceSwitchName = "spaceSwitch"):
+        SpaceSwDic = self.GetSpaceSwitchDic( ControlObject, SpaceSwitchName = SpaceSwitchName)
         ObjList=[]
         for eachEnum in SpaceSwDic['enums']:
              ObjList.append(SpaceSwDic['enums'][eachEnum]['object'])
         return ObjList
-
-    def AddSpaceObject(self, ControlObject, SpaceObject):
-                
-
-    def RemoveSpaceObject(self):
-        pass
-
-
-
-
-
 
     def AddNumericParameter(self,Object, Name = 'spaceSwitch', valueRange = [0,10]):
         AttributeList = cmds.listAttr(Object)
@@ -140,18 +197,29 @@ class RMSpaceSwitch(object):
         else :
             cmds.addAttr(Object,at = "float", ln = Name,  hnv = 1, hxv = 1, h = 0, k = 1, smn = valueRange[0], smx = valueRange[1])
 
+    def deleteEnumParameter(self, Object, Enum, SpaceSwitchName = 'spaceSwitch'):
+        AttributeList = cmds.listAttr(Object)
+        if SpaceSwitchName in AttributeList:
+            if cmds.getAttr (Object + "." + SpaceSwitchName,type=True)=='enum':
+                getControlEnums =self.getControlEnums(Object,SpaceSwitchName = SpaceSwitchName)
+                if len(getControlEnums) > 1:
+                    if Enum in getControlEnums:
+                        getControlEnums.remove(Enum)
+                        cmds.addAttr(Object + '.' + SpaceSwitchName, e=True, en =":".join(getControlEnums))
+                else:
+                    self.DeleteSpaceSwitchAttr(Object, SpaceSwitchName)
 
     def AddEnumParameters(self, Enum, Object, Name = 'spaceSwitch'):
         AttributeList = cmds.listAttr(Object)
         if Name  in AttributeList:
             if cmds.getAttr (Object + "." + Name,type=True)=='enum':
                 print "the Object Allready has an spaceSwitch"
-                print "Current Valid types are",cmds.addAttr (Object + "." + Name,q = True,enumName=True)
+                print "Current Valid types are", cmds.addAttr (Object + "." + Name,q = True,enumName=True)
                 EnumsInObject = self.getControlEnums(Object)
                 for eachEnum in Enum:
                     if not eachEnum in EnumsInObject:
                         EnumsInObject.append(eachEnum)
-                cmds.addAttr(Object + '.' + Name,e=True,ln = Name, en =":".join(EnumsInObject))
+                cmds.addAttr(Object + '.' + Name, e=True,ln = Name, en =":".join(EnumsInObject))
                 index = 0
                 returnIndexDic = {}
                 for eachEnum in EnumsInObject:
@@ -161,7 +229,6 @@ class RMSpaceSwitch(object):
         else :
             cmds.addAttr(Object , at = "enum" , ln = Name , k = 1, en =":".join(Enum))
         return None
-
 
     def DeleteSpaceSwitchAttr (self, Object, Name = 'spaceSwitch'):
         AttributeList = cmds.listAttr(Object)
@@ -174,7 +241,7 @@ class RMSpaceSwitch(object):
         returnedDic = {}
         ObjectsConnected = cmds.listConnections(Condition +'.outColorR')
         for eachConstraint in ObjectsConnected:
-            returnedDic[eachConstraint] = SW.getParentConstraintDic(eachConstraint)
+            returnedDic[eachConstraint] = self.getParentConstraintDic(eachConstraint)
         return returnedDic
 
 
@@ -197,12 +264,26 @@ class RMSpaceSwitch(object):
             for eachWAIndex in range(0,len(WA)):
                 aliasDic[WA[eachWAIndex]] = TL[eachWAIndex]
         
-        returnedDic["object"] = cmds.listConnections(parentConstraint + ".constraintRotateX")
+        returnedDic["object"] = cmds.listConnections(parentConstraint + ".constraintRotateX")[0]
         returnedDic["alias"] = aliasDic
         return returnedDic
 
+    def getEnumDictionary(self,Node,SpaceSwitchName = 'spaceSwitch'):
+        AttributeList = cmds.listAttr(Node)
+        if SpaceSwitchName  in AttributeList:
+            if cmds.getAttr (Node + "." + SpaceSwitchName,type=True)=='enum':
+                ValidValues = cmds.addAttr(Node+"."+SpaceSwitchName,q = True,enumName=True)
+                returnDictionary = {}
+                index = 0
+                for eachValue in ValidValues.split(":"):
+                    returnDictionary[eachValue] = index
+                    index+=1
+                return returnDictionary
+        return None
 
-    def getControlEnums(self, Node, SpaceSwitchName = 'spaceSwitch'):
+
+
+    def getControlEnums (self, Node, SpaceSwitchName = 'spaceSwitch'):
         AttributeList = cmds.listAttr(Node)
         if SpaceSwitchName  in AttributeList:
             if cmds.getAttr (Node + "." + SpaceSwitchName,type=True)=='enum':
@@ -213,7 +294,6 @@ class RMSpaceSwitch(object):
             return []
 
     def getControlEnumsRelations(self, Node, SpaceSwitchName = 'spaceSwitch'):
-        
         EnumRelationDic = {}
         AsummedConditions = cmds.listConnections( Node+'.'+SpaceSwitchName)
         enumList = self.getControlEnums(Node, SpaceSwitchName = 'spaceSwitch')
@@ -224,7 +304,7 @@ class RMSpaceSwitch(object):
                 EnumRelationDic[enumList[int(index)]]['condition']= eachAssumedCondition
                 EnumRelationDic[enumList[int(index)]]['index'] = int(index)
         for eachCondition in EnumRelationDic:
-            EnumRelationDic[eachCondition]['plugs'] = SW.getSwitchPlugsDictionary(EnumRelationDic[eachCondition]['condition'])
+            EnumRelationDic[eachCondition]['plugs'] = self.getSwitchPlugsDictionary(EnumRelationDic[eachCondition]['condition'])
         
 
 
@@ -242,17 +322,19 @@ class RMSpaceSwitch(object):
 
 
 
-SW = RMSpaceSwitch()
+#SW = RMSpaceSwitch()
 #SW.DeletSpaceSwitchAttr('pCube1')
 #SW.CreateSpaceSwitch('group1',['pSphere1','pSphere2'], 'pCube1')
-
 #Node = "pCube1"
 
 #SW.DeleteSpaceSwitchAttr(Node)
 
 #SpaceSwitchName = "spaceSwitch"
 
-pprint.pprint (SW.GetSpaceSwitchDic(Node))
+#pprint.pprint (SW.GetSpaceSwitchDic(Node))
+
+#print SW.IsSpaceSwitch("pSphere2")
+# 
 
 #SW.AddEnumParameters(["Hola","Mundo"], Node, SpaceSwitchName)
 

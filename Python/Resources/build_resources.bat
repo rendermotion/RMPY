@@ -3,5 +3,5 @@ pyside-uic --from-imports RMRigDisplay.ui > ../UI/RMFormRigDisplay.py
 pyside-uic --from-imports RMblendShapeEditor.ui > ../UI/RMFormBlendShapeEditor.py
 pyside-uic --from-imports RMCopyPosition.ui > ../UI/RMFormCopyPosition.py
 pyside-uic --from-imports FacialLink.ui > ../UI/RMFormFacialLink.py
-pyside-uic --from-imports RMSpaceSwitchTool.ui > ../UI/RMSpaceSwitchTool.py
+pyside-uic --from-imports RMSpaceSwitchTool.ui > ../UI/RMFormSpaceSwitch.py
 

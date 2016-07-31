@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'RMSpaceSwitchTool.ui'
 #
-# Created: Thu Jul 21 12:16:08 2016
+# Created: Tue Jul 26 12:43:48 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(451, 504)
+        Form.resize(450, 553)
         self.horizontalLayout_2 = QtGui.QHBoxLayout(Form)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.verticalLayout_5 = QtGui.QVBoxLayout()
@@ -36,18 +36,10 @@ class Ui_Form(object):
         self.LoadSelectionAsCntrlObjPushBtn = QtGui.QPushButton(self.ControlObjectGroupBox)
         self.LoadSelectionAsCntrlObjPushBtn.setObjectName("LoadSelectionAsCntrlObjPushBtn")
         self.verticalLayout.addWidget(self.LoadSelectionAsCntrlObjPushBtn)
-        self.listWidget = QtGui.QListWidget(self.ControlObjectGroupBox)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.listWidget.sizePolicy().hasHeightForWidth())
-        self.listWidget.setSizePolicy(sizePolicy)
-        self.listWidget.setMinimumSize(QtCore.QSize(20, 0))
-        self.listWidget.setMaximumSize(QtCore.QSize(16777215, 20))
-        self.listWidget.setAutoScroll(False)
-        self.listWidget.setResizeMode(QtGui.QListView.Fixed)
-        self.listWidget.setObjectName("listWidget")
-        self.verticalLayout.addWidget(self.listWidget)
+        self.ControllineEdit = QtGui.QLineEdit(self.ControlObjectGroupBox)
+        self.ControllineEdit.setEnabled(False)
+        self.ControllineEdit.setObjectName("ControllineEdit")
+        self.verticalLayout.addWidget(self.ControllineEdit)
         self.verticalLayout_3.addWidget(self.ControlObjectGroupBox)
         self.ObjectSpaceGroup = QtGui.QGroupBox(Form)
         self.ObjectSpaceGroup.setObjectName("ObjectSpaceGroup")
@@ -62,9 +54,9 @@ class Ui_Form(object):
         self.AddToObjectSpacePushBtn = QtGui.QPushButton(self.ObjectSpaceGroup)
         self.AddToObjectSpacePushBtn.setObjectName("AddToObjectSpacePushBtn")
         self.verticalLayout_2.addWidget(self.AddToObjectSpacePushBtn)
-        self.listWidget_2 = QtGui.QListWidget(self.ObjectSpaceGroup)
-        self.listWidget_2.setObjectName("listWidget_2")
-        self.verticalLayout_2.addWidget(self.listWidget_2)
+        self.ObjectSpaceListView = QtGui.QListWidget(self.ObjectSpaceGroup)
+        self.ObjectSpaceListView.setObjectName("ObjectSpaceListView")
+        self.verticalLayout_2.addWidget(self.ObjectSpaceListView)
         self.verticalLayout_3.addWidget(self.ObjectSpaceGroup)
         self.verticalLayout_5.addLayout(self.verticalLayout_3)
         self.horizontalLayout_2.addLayout(self.verticalLayout_5)
@@ -81,13 +73,12 @@ class Ui_Form(object):
         self.AddToConstrainListPushBtn = QtGui.QPushButton(self.ConstrainedObjectSpaceSwitch)
         self.AddToConstrainListPushBtn.setObjectName("AddToConstrainListPushBtn")
         self.verticalLayout_4.addWidget(self.AddToConstrainListPushBtn)
-        self.listView = QtGui.QListView(self.ConstrainedObjectSpaceSwitch)
-        self.listView.setObjectName("listView")
-        self.verticalLayout_4.addWidget(self.listView)
+        self.ConstrainedObjectListView = QtGui.QListWidget(self.ConstrainedObjectSpaceSwitch)
+        self.ConstrainedObjectListView.setObjectName("ConstrainedObjectListView")
+        self.verticalLayout_4.addWidget(self.ConstrainedObjectListView)
         self.horizontalLayout_2.addWidget(self.ConstrainedObjectSpaceSwitch)
 
         self.retranslateUi(Form)
-        self.listWidget.setCurrentRow(-1)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
@@ -97,7 +88,6 @@ class Ui_Form(object):
 "from selected control", None, QtGui.QApplication.UnicodeUTF8))
         self.ControlObjectGroupBox.setTitle(QtGui.QApplication.translate("Form", "Control Object", None, QtGui.QApplication.UnicodeUTF8))
         self.LoadSelectionAsCntrlObjPushBtn.setText(QtGui.QApplication.translate("Form", "LoadSelection as Control Object", None, QtGui.QApplication.UnicodeUTF8))
-        self.listWidget.setSortingEnabled(False)
         self.ObjectSpaceGroup.setTitle(QtGui.QApplication.translate("Form", "Object Space", None, QtGui.QApplication.UnicodeUTF8))
         self.RemoveFromObjectSpaceBtn.setText(QtGui.QApplication.translate("Form", "Remove list selected \n"
 "from object space list", None, QtGui.QApplication.UnicodeUTF8))

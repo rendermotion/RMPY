@@ -74,7 +74,7 @@ class RMLimbIKFK(object):
         cmds.setAttr(multiplyDivide + ".input2X",totalDistance)
         cmds.setAttr(multiplyDivide + ".operation",2)
         for joints in self.IKjointStructure[:-1]:
-            cmds.connectAttr(multiplyDivide + ".outputX",joints+".scaleX",force=True)
+            cmds.connectAttr( multiplyDivide + ".outputX", joints + ".scaleX",force = True)
 
     def RMLimbRig(self,RootReferencePoint):
 
@@ -113,9 +113,6 @@ class RMLimbIKFK(object):
 
         PointConstraint = cmds.pointConstraint (self.ikControl, self.IkHandle, name = "LimbCntrlHandleConstraint")
         PointConstraint = self.NameConv.RMRenameBasedOnBaseName(self.IKjointStructure[len(self.IKjointStructure)-1],PointConstraint[0])
-
-
-
         
 
 
