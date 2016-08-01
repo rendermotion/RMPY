@@ -11,25 +11,38 @@ class RMTwistJoints(object):
         else:
             self.NameConv = NameConv
 
+        self.TwistJoints = None
+        self.TwistResetPoint = None
+    def RMCreateTwistJoints(self, TwistJoint, LookAtObject,  NumberOfTB = 5):
+        LookAtObject = cmds.listRelatives(TwistJoint,type = "transform",children=True)
 
-    def RMCreateTwistJoints(self,TwistJoint, NumberOfTB = 5):
-        Children = cmds.listRelatives(TwistJoint,type = "transform",children=True)
-        print Children
-        if Children:
+    
 
-            positionA = cmds.xform(TwistJoint ,q=True,ws=True,rp=True)
-            positionB = cmds.xform(Children[0] ,q=True,ws=True,rp=True)
+        positionA = cmds.xform(TwistJoint ,q=True,ws=True,rp=True)
+        positionB = cmds.xform(LookAtObject ,q=True,ws=True,rp=True)
 
-            vectorA = om.MVector(positionA)
-            vectorB = om.MVector(positionB)
-            
-            self.RMCreateBonesBetweenPoints(vectorA,vectorB,NumberOfTB,AlignObject = TwistJoint)
+        vectorA = om.MVector(positionA)
+        vectorB = om.MVector(positionB)
+        
+        self.RMCreateBonesBetweenPoints(vectorA,vectorB,NumberOfTB, AlignObject = TwistJoint)
+
+        control = cmds.RMRigShapeControls.RMCreateBoxCtrl('')
+        xform(control, ls=True, relative=True,  t = [0,1,0])
+        cmds.lookAtConstraint(self.TwistJoints[0], aim = [1,0,0], upVector = [0,0,0], wut = control)
+
+        TwistJointDivide = cmds.shadingNode( asUtility = "MultiplyDivide",name = "TwistJoint" + self.NameConv.RMGetAShortName(TwistJoint))
+        TwistJointDivide = self.NameConv.RMRenameNameInFormat(TwistJointDivide)
+        
+
+
+
+
+
+
+
+
 
             '''
-            RMAsigntoLayer "SkinedBones" TwistBoneArray AvoidNub:TRUE
-             
-            
-            MakeStretchyBones TwistBoneArray
             TwistPoint=RMCreateChildPoint #(TwistBone)
             TwistPoint.name=uniquename("TwistPoint")
             TwistBoneArray[1].parent=TwistPoint
@@ -59,12 +72,13 @@ class RMTwistJoints(object):
                 --Los Upnodes de Los puntos que controlan el Twist
                 -- El origen de los twistBones
             return #(#(TwistCntrlPntOrig,TwistCntrlPntEnd),#(upNode1,upNode2),TwistCntrlPntOrig)'''
+
     def RMCreateBonesBetweenPoints(self,InitialPoint, FinalPoint, NumberOfTB,AlignObject = None):
         DirectionVector  = FinalPoint-InitialPoint
         TotalLength = DirectionVector.length()
         Step = TotalLength / NumberOfTB
         StepVector = DirectionVector.normal() * Step
-        locatorsList=[]
+        locatorsList = []
 
         for count in range(0,NumberOfTB + 1):
             Locator = cmds.spaceLocator()
@@ -74,7 +88,8 @@ class RMTwistJoints(object):
             locatorsList.append(Locator[0])
             cmds.xform(Locator[0], translation = list(InitialPoint + (StepVector * count)), worldSpace=True)
             RMRigTools.RMAlign(AlignObject,Locator[0],2)
-        RMRigTools.RMCreateBonesAtPoints(locatorsList)
+        self.TwistResetPoint , self.TwistJoints = RMRigTools.RMCreateBonesAtPoints(locatorsList)
+        return self.TwistJoints
 
 
 
