@@ -122,11 +122,11 @@ class RMGenericHandRig(object):
 		else:
 			sideVariation = -1
 
-		BoxControl = RMRigShapeControls.RMCreateBoxCtrl(Finger[len(Finger)-1])
+		BoxResetPoint , BoxControl = RMRigShapeControls.RMCreateBoxCtrl(Finger[len(Finger)-1])
 		self.RMaddFinguerControls(BoxControl)
 		
 		cmds.makeIdentity(BoxControl, apply = True , r = False, t = True, s = True, n = 0)
-		cmds.parentConstraint(Finger[len(Finger)-1],BoxControl)
+		cmds.parentConstraint(Finger[len(Finger)-1],BoxResetPoint)
 
 		RMRigTools.RMLockAndHideAttributes(BoxControl,"0000000000")
 

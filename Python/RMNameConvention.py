@@ -29,7 +29,9 @@ class RMNameConvention (object):
 							"multiplyDivide":"mult",
 							"condition":"cnd",
 							"baseLattice":"blt",
-							"curveInfo":"cui"
+							"curveInfo":"cui",
+							"distanceBetween":"dbtw",
+							"cluster":"cls"
 
 							}
 		self.ShapeDictionary = {

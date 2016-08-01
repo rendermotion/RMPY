@@ -20,17 +20,35 @@ class RMSpine(object):
         self.spineJoints = None
         self.rootSpine = None
         self.spineCurve = None
+        self.chestJoint = None
         self.COG = None
+        self.rootHip = None
+        self.hipJoints = None
+        self.SpineLength = None
+        self.secondaryControls = []
 
-    def RMCreateSpineRig(self,SpineRef):
 
-        self. rootSpine, self.spineJoints = self.RMCreateJointStructure(SpineRef)
 
+    def RMCreateSpineRig(self,SpineRef,HipRefPnts):
+        self.rootSpine,  self.spineJoints, self.chestJoint = self.RMCreateSpineJointStructure(SpineRef)
         self.RMCreateSpineIKSystem()
+        self.rootHip,  self.hipJoints = self.RMCreateHipJointStructure(HipRefPnts)
+        self.RMCreateHipSystem()
 
-    def RMCreateJointStructure(self,SpineRef):
+    def RMCreateSpineJointStructure(self,SpineRef):
         rootSpine , joints = RMRigTools.RMCreateBonesAtPoints(SpineRef,ZAxisOrientation = "z")
-        return rootSpine , joints
+
+        SpineLength = RMRigTools.RMPointDistance(joints[0],joints[len(joints) - 1])
+        chestJoint = cmds.joint(name = "chest")
+        print chestJoint
+        chestJoint = self.NameConv.RMRenameNameInFormat(chestJoint)
+
+        RMRigTools.RMAlign(joints[len(joints)-1],chestJoint,3)
+        #cmds.parent(chestJoint, joints[len(joints)-1])
+        cmds.makeIdentity(chestJoint, apply = True , r = False, t = True, s = True, n = 0)
+        cmds.xform(chestJoint,t=[SpineLength/4,0,0],os=True, relative=True )
+        return rootSpine, joints, chestJoint
+
 
     
     def RMCreateSpineIKSystem(self):
@@ -45,14 +63,15 @@ class RMSpine(object):
         RMRigTools.RMParentArray(ClustersGroup,Clusters[1:])
 
 
-        COG = RMRigShapeControls.RMCreateBoxCtrl(self.spineJoints[0],Yratio=3,Zratio=3)
+        ResetCOG, COG = RMRigShapeControls.RMCreateBoxCtrl(self.spineJoints[0],Yratio=3,Zratio=3)
         COG = self.NameConv.RMRenameSetFromName(COG,"COG","Name")
-        ResetCOG = RMRigTools.RMCreateGroupOnObj(COG)
+        
 
 
-        Chest = RMRigShapeControls.RMCreateBoxCtrl(self.spineJoints[len(self.spineJoints) - 1],Yratio=3,Zratio=3)
+        ResetChest, Chest = RMRigShapeControls.RMCreateBoxCtrl(self.spineJoints[len(self.spineJoints) - 1],Yratio=3,Zratio=3)
         Chest = self.NameConv.RMRenameSetFromName(Chest,"Chest","Name")
-        ResetChest = RMRigTools.RMCreateGroupOnObj(Chest)
+
+        cmds.parentConstraint(Chest , self.chestJoint, mo = True)
         
         #cmds.parent(ResetChest,COG)
 
@@ -75,13 +94,17 @@ class RMSpine(object):
         spineControlGroup = self.NameConv.RMRenameNameInFormat(spineControlGroup)
 
 
+        self.secondaryControls
         for eachPosition in locators:
             ControlGroup , NewControl = RMRigShapeControls.RMImportMoveControl(eachPosition, scale = SpineLength)
+            self.secondaryControls.append(NewControl)
             ChestGroups.append(ControlGroup)
             ChestControls.append(NewControl)
             AllSpine.append(NewControl)
             ResetTransformGroup = RMRigTools.RMCreateGroupOnObj(ControlGroup)
             cmds.parent(ResetTransformGroup,spineControlGroup)
+            cmds.delete(eachPosition)
+            RMRigTools.RMLockAndHideAttr(NewControl,"1110000000")
 
         AllSpine.append(Chest)
         
@@ -108,19 +131,72 @@ class RMSpine(object):
         cmds.connectAttr(curveInfoOriginal + ".arcLength", curveScaleRatio + ".input2X" )
         cmds.setAttr (curveScaleRatio + ".operation",2)
 
+        #preparation for Scale multiplication function of each spine joint
+        cmds.addAttr(Chest, at="float",sn = "ssf", ln = "spineSquashFactor",   hnv = 1, hxv = 1, h = 0, k = 1, smn = -10, smx = 10)
+
+        GaussLen = len(spineJoints)
+        center = len(spineJoints)/2
+        powMaxValue = 5
+        powRate = powMaxValue/center
+        index = 1
+
         for eachJoint in self.spineJoints[1:]:
-            SpineStretchMult = cmds.shadingNode( 'multiplyDivide', asUtility=True, name = "SpineStretchMult" + self.NameConv.RMGetAShortName(eachJoint))
+            #translate stretch multiplication functions of each spine joint
+            SpineStretchMult = cmds.shadingNode( 'multiplyDivide', asUtility=True, name = "SpineTranslateStretchMult" + self.NameConv.RMGetAShortName(eachJoint))
             SpineStretchMult = self.NameConv.RMRenameNameInFormat( SpineStretchMult)
             CurrentXPosition = cmds.getAttr( eachJoint + ".translateX")
             cmds.setAttr(SpineStretchMult + ".input2X", CurrentXPosition)
-            cmds.connectAttr( curveScaleRatio + ".outputX ", SpineStretchMult + ".input1X")
+            cmds.connectAttr( curveScaleRatio + ".outputX", SpineStretchMult + ".input1X")
             cmds.connectAttr( SpineStretchMult + ".outputX", eachJoint + ".translateX")
+            
+            #Scale multiplication function of each spine joint
+            
+            if index >= center:
+                PowValue = (GaussLen - 1 - index) 
+            else:
+                PowValue = index
+
+            SpineStretchRatio = cmds.shadingNode( 'multiplyDivide', asUtility = True, name = "SpineStretchRatio" + self.NameConv.RMGetAShortName(eachJoint))
+            cmds.connectAttr(Chest+".spineSquashFactor ", SpineStretchRatio + ".input1X")
+            cmds.setAttr(SpineStretchRatio + ".input2X", PowValue)
+            cmds.setAttr(SpineStretchRatio + ".operation", 1)
+
+            SpineScaleStretchPow = cmds.shadingNode( 'multiplyDivide', asUtility = True, name = "SpineScaleStretchPow" + self.NameConv.RMGetAShortName(eachJoint))
+            cmds.connectAttr(curveScaleRatio+".outputX ", SpineScaleStretchPow + ".input1X")
+            cmds.connectAttr(SpineStretchRatio + ".outputX ", SpineScaleStretchPow + ".input2X")
+            cmds.setAttr(SpineScaleStretchPow + ".operation", 3)
+
+            SpineInversScaleRatio = cmds.shadingNode( 'multiplyDivide', asUtility=True, name = "SpineInverseScaleRatio")
+            SpineInversScaleRatio = self.NameConv.RMRenameNameInFormat( SpineInversScaleRatio)
+            cmds.connectAttr(SpineScaleStretchPow+".outputX ",SpineInversScaleRatio + ".input1X")
+            cmds.setAttr(SpineInversScaleRatio + ".input2X", -1)
+            cmds.setAttr(SpineInversScaleRatio + ".operation", 3)
+
+            cmds.connectAttr( SpineInversScaleRatio + ".outputX", eachJoint + ".scaleY")
+            cmds.connectAttr( SpineInversScaleRatio + ".outputX", eachJoint + ".scaleZ")
+            index += 1
+
 
         resetWaist, waist = RMRigShapeControls.RMCircularControl( AllSpine[1], radius = SpineLength*.8,name = "waist")
         cmds.parent( ResetChest, waist)
         cmds.parent( resetWaist, COG)
-        resetHip , hip = RMRigShapeControls.RMCircularControl(COG,radius = SpineLength *.7,name = "waist")
-        
+
+
+        self.COG = COG
+        self.SpineLength = SpineLength
+
+    def RMCreateHipJointStructure(self,HipRefPnts):
+        rootHip , hipJoints = RMRigTools.RMCreateBonesAtPoints(HipRefPnts,ZAxisOrientation = "z")
+        return rootHip , hipJoints
+    
+    def RMCreateHipSystem(self):
+
+        resetHipControl, hipControl = RMRigShapeControls.RMCircularControl(self.rootHip,radius = self.SpineLength *.7,name = "hip")
+        cmds.parent(resetHipControl,self.COG)
+        cmds.parentConstraint(hipControl,self.hipJoints[0])
+        #self.rootHip
+        #self.hipJoints
+      
 
     def RMRedistributeConstraint(self,ListOfDrivers, ListOfConstrained, MaxInfluences, KeepBorders = True, ConstraintType = "parent"):
 
@@ -163,8 +239,10 @@ class RMSpine(object):
 
 
 RSP = RMSpine()
+
 spineJoints = ["Character01_MD_Spine_pnt_rfr","Character01_MD_Spine1_pnt_rfr","Character01_MD_Spine2_pnt_rfr","Character01_MD_Spine3_pnt_rfr","Character01_MD_Spine4_pnt_rfr"]
-RSP.RMCreateSpineRig(spineJoints)
+hip = ["Character01_MD_Spine_pnt_rfr","Character01_MD_Hip_pnt_rfr"]
+RSP.RMCreateSpineRig(spineJoints,hip)
 
 #reverse = self.NameConv.RMRenameNameInFormat(reverse)
 #parentConstraint[0] = self.NameConv.RMRenameNameInFormat (parentConstraint[0])

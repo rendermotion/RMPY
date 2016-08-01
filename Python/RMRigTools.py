@@ -317,8 +317,8 @@ def RMCreateLineBetwenPoints (Point1, Point2,NameConv = None):
         NameConv = RMNameConvention.RMNameConvention()
 
     Curve = cmds.curve (degree=1, p=[[0,0,0],[1,0,0]], name = "curveLineBetweenPnts")
-    print type(Curve)
-    Curve = NameConv.RMRenameNameInFormat(Curve)[0]
+    print Curve
+    Curve = NameConv.RMRenameNameInFormat(Curve)
 
     NumCVs = cmds.getAttr (Curve + ".controlPoints" , size = True)
     
@@ -333,13 +333,13 @@ def RMCreateLineBetwenPoints (Point1, Point2,NameConv = None):
     RMAlign (Point1, Cluster1Handle, 1)
     RMAlign (Point2, Cluster1Handle, 1)
 
-    PointConstraint1 = cmds.pointConstraint (Point1, Cluster1Handle, name = "PointConstraintLineBetweenPnts")
+    PointConstraint1 = cmds.pointConstraint (Point1, Cluster1Handle, name = "PointConstraintLineBetweenPnts")[0]
     PointConstraint1 = NameConv.RMRenameNameInFormat (PointConstraint1)    
-    PointConstraint2 = cmds.pointConstraint (Point2, Cluster2Handle, name = "PointConstraintLineBetweenPnts")
+    PointConstraint2 = cmds.pointConstraint (Point2, Cluster2Handle, name = "PointConstraintLineBetweenPnts")[0]
     PointConstraint2 = NameConv.RMRenameNameInFormat (PointConstraint2)    
 
     DataGroup = cmds.group (em = True,name = "DataLineBetweenPnts")
-    DataGroup = NameConv.RMRenameNameInFormat (DataGroup)[0]
+    DataGroup = NameConv.RMRenameNameInFormat(DataGroup)
     cmds.parent (Cluster1Handle, DataGroup)
     cmds.parent (Cluster2Handle, DataGroup)
     cmds.parent (Curve, DataGroup)
