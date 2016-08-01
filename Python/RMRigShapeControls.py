@@ -12,43 +12,63 @@ def RMTurnToOne (curveArray):
 			cmds.parent (eachShape, curveArray[0], shape=True, add=True)
 			cmds.delete(eachCurve)
 
-def RMCreateCubeLine (height, length, width,centered = False,offsetX = 0 ,offsetY = 0, offsetZ = 0):
+def RMCreateCubeLine (height, length, width,centered = False,offsetX = 0 ,offsetY = 0, offsetZ = 0,name=""):
 	if centered == True:
 		offsetX = -height/2
+	if name=="":
+		defaultName = "CubeLine"
+	else :
+		defaultName = name
+
 	CubeCurve = []
-	CubeCurve.append(cmds.curve (d = 1, p = [[0     + offsetX, -length/2+ offsetY,  width/2+ offsetZ],[0     + offsetX, -length/2+ offsetY, -width/2+ offsetZ]], name = "cubeControl"))
-	CubeCurve.append(cmds.curve (d = 1, p = [[height+ offsetX, -length/2+ offsetY,  width/2+ offsetZ],[height+ offsetX, -length/2+ offsetY, -width/2+ offsetZ]], name = "cubeControl"))
-	CubeCurve.append(cmds.curve (d = 1, p = [[0     + offsetX,  length/2+ offsetY,  width/2+ offsetZ],[0     + offsetX,  length/2+ offsetY, -width/2+ offsetZ]], name = "cubeControl"))
-	CubeCurve.append(cmds.curve (d = 1, p = [[height+ offsetX,  length/2+ offsetY,  width/2+ offsetZ],[height+ offsetX,  length/2+ offsetY, -width/2+ offsetZ]], name = "cubeControl"))
-	CubeCurve.append(cmds.curve (d = 1, p = [[0     + offsetX, -length/2+ offsetY,  width/2+ offsetZ],[height+ offsetX, -length/2+ offsetY,  width/2+ offsetZ]], name = "cubeControl"))
-	CubeCurve.append(cmds.curve (d = 1, p = [[0     + offsetX,  length/2+ offsetY, -width/2+ offsetZ],[height+ offsetX,  length/2+ offsetY, -width/2+ offsetZ]], name = "cubeControl"))
-	CubeCurve.append(cmds.curve (d = 1, p = [[0     + offsetX, -length/2+ offsetY, -width/2+ offsetZ],[height+ offsetX, -length/2+ offsetY, -width/2+ offsetZ]], name = "cubeControl"))
-	CubeCurve.append(cmds.curve (d = 1, p = [[0     + offsetX,  length/2+ offsetY,  width/2+ offsetZ],[height+ offsetX,  length/2+ offsetY,  width/2+ offsetZ]], name = "cubeControl"))
-	CubeCurve.append(cmds.curve (d = 1, p = [[0     + offsetX, -length/2+ offsetY, -width/2+ offsetZ],[0     + offsetX,  length/2+ offsetY, -width/2+ offsetZ]], name = "cubeControl"))
-	CubeCurve.append(cmds.curve (d = 1, p = [[0     + offsetX, -length/2+ offsetY,  width/2+ offsetZ],[0     + offsetX,  length/2+ offsetY,  width/2+ offsetZ]], name = "cubeControl"))
-	CubeCurve.append(cmds.curve (d = 1, p = [[height+ offsetX, -length/2+ offsetY, -width/2+ offsetZ],[height+ offsetX,  length/2+ offsetY, -width/2+ offsetZ]], name = "cubeControl"))
-	CubeCurve.append(cmds.curve (d = 1, p = [[height+ offsetX, -length/2+ offsetY,  width/2+ offsetZ],[height+ offsetX,  length/2+ offsetY,  width/2+ offsetZ]], name = "cubeControl"))
+	CubeCurve.append(cmds.curve (d = 1, p = [[0     + offsetX, -length/2+ offsetY,  width/2+ offsetZ],[0     + offsetX, -length/2+ offsetY, -width/2+ offsetZ]], name = defaultName))
+	CubeCurve.append(cmds.curve (d = 1, p = [[height+ offsetX, -length/2+ offsetY,  width/2+ offsetZ],[height+ offsetX, -length/2+ offsetY, -width/2+ offsetZ]], name = defaultName))
+	CubeCurve.append(cmds.curve (d = 1, p = [[0     + offsetX,  length/2+ offsetY,  width/2+ offsetZ],[0     + offsetX,  length/2+ offsetY, -width/2+ offsetZ]], name = defaultName))
+	CubeCurve.append(cmds.curve (d = 1, p = [[height+ offsetX,  length/2+ offsetY,  width/2+ offsetZ],[height+ offsetX,  length/2+ offsetY, -width/2+ offsetZ]], name = defaultName))
+	CubeCurve.append(cmds.curve (d = 1, p = [[0     + offsetX, -length/2+ offsetY,  width/2+ offsetZ],[height+ offsetX, -length/2+ offsetY,  width/2+ offsetZ]], name = defaultName))
+	CubeCurve.append(cmds.curve (d = 1, p = [[0     + offsetX,  length/2+ offsetY, -width/2+ offsetZ],[height+ offsetX,  length/2+ offsetY, -width/2+ offsetZ]], name = defaultName))
+	CubeCurve.append(cmds.curve (d = 1, p = [[0     + offsetX, -length/2+ offsetY, -width/2+ offsetZ],[height+ offsetX, -length/2+ offsetY, -width/2+ offsetZ]], name = defaultName))
+	CubeCurve.append(cmds.curve (d = 1, p = [[0     + offsetX,  length/2+ offsetY,  width/2+ offsetZ],[height+ offsetX,  length/2+ offsetY,  width/2+ offsetZ]], name = defaultName))
+	CubeCurve.append(cmds.curve (d = 1, p = [[0     + offsetX, -length/2+ offsetY, -width/2+ offsetZ],[0     + offsetX,  length/2+ offsetY, -width/2+ offsetZ]], name = defaultName))
+	CubeCurve.append(cmds.curve (d = 1, p = [[0     + offsetX, -length/2+ offsetY,  width/2+ offsetZ],[0     + offsetX,  length/2+ offsetY,  width/2+ offsetZ]], name = defaultName))
+	CubeCurve.append(cmds.curve (d = 1, p = [[height+ offsetX, -length/2+ offsetY, -width/2+ offsetZ],[height+ offsetX,  length/2+ offsetY, -width/2+ offsetZ]], name = defaultName))
+	CubeCurve.append(cmds.curve (d = 1, p = [[height+ offsetX, -length/2+ offsetY,  width/2+ offsetZ],[height+ offsetX,  length/2+ offsetY,  width/2+ offsetZ]], name = defaultName))
 	RMTurnToOne(CubeCurve)
 	return CubeCurve[0]
 
-def RMCreateBoxCtrl (Obj, NameConv = None, Xratio = 1 ,Yratio = 1 ,Zratio = 1, ParentBaseSize = False ):
+def RMCreateBoxCtrl (Obj, NameConv = None, Xratio = 1 ,Yratio = 1 ,Zratio = 1, ParentBaseSize = False, customSize = 0,  name = ""):
 	if not NameConv:
 		NameConv = RMNameConvention.RMNameConvention()
+	if name=="":
+		defaultName = "BoxControl"
+	else:
+		defaultName = name
 
 	Parents = cmds.listRelatives (Obj, parent = True)
 
-	if len(Parents) != 0 and ParentBaseSize == True:
+	if Parents and len(Parents) != 0 and ParentBaseSize == True:
 		JntLength = RMRigTools.RMLenghtOfBone (Parents[0])
-		Ctrl = RMCreateCubeLine (JntLength * Xratio, JntLength * Yratio, JntLength * Zratio)
+		Ctrl = RMCreateCubeLine (JntLength * Xratio, JntLength * Yratio, JntLength * Zratio, name = defaultName)
 	else:
-		JntLength = RMRigTools.RMLenghtOfBone(Obj)
-		Ctrl = RMCreateCubeLine (JntLength * Xratio, JntLength * Yratio, JntLength * Zratio)
+		if customSize!=0:
+			JntLength = customSize
 
-	Ctrl = NameConv.RMRenameBasedOnBaseName(Obj,Ctrl)
+		elif cmds.objectType(Obj) == joint:
+			JntLength = RMRigTools.RMLenghtOfBone(Obj)
+
+		else:
+			JntLength = 1
+		Ctrl = RMCreateCubeLine (JntLength * Xratio, JntLength * Yratio, JntLength * Zratio, name = defaultName)
+
+	if name == '' and NameConv.RMIsNameInFormat(Obj):
+		Ctrl = NameConv.RMRenameBasedOnBaseName(Obj,Ctrl)
+	else:
+		Ctrl = NameConv.RMRenameNameInFormat(Ctrl)
 	Ctrl = NameConv.RMRenameSetFromName (Ctrl,"control","Type")
 
 	RMRigTools.RMAlign(Obj, Ctrl, 3)
-	return Ctrl
+	ResetGroup = RMRigTools.RMCreateGroupOnObj(Ctrl)
+	return ResetGroup , Ctrl
 
 def RMCircularControl (Obj, radius = 1,NameConv = None, axis = "X", name = ""):
 	if not NameConv:
