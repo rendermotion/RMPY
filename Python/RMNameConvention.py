@@ -14,6 +14,8 @@ class RMNameConvention (object):
 
 		self.TypeDictionary = { 
 							"joint":"jnt",
+							"nub":"nub",
+							"skin":"skn",
 						    "undefined":"UDF",
 							"nurbsCurve":"shp",
 							"mesh":"msh",
