@@ -53,7 +53,7 @@ def RMCreateBoxCtrl (Obj, NameConv = None, Xratio = 1 ,Yratio = 1 ,Zratio = 1, P
 		if customSize!=0:
 			JntLength = customSize
 
-		elif cmds.objectType(Obj) == joint:
+		elif cmds.objectType(Obj) == "joint":
 			JntLength = RMRigTools.RMLenghtOfBone(Obj)
 
 		else:

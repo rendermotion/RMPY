@@ -89,10 +89,24 @@ class RMNameConvention (object):
 			return returnTuple
 
 	def RMRenameSetFromName (self, ObjName, TextString, Token, mode = "regular"):
-		newName = self.RMSetFromName( ObjName, TextString, Token, mode = mode)
-		newName = self.RMUniqueName( newName)
-		cmds.rename (ObjName, newName)
-		return newName
+		if (type (ObjName) == str) or (type (ObjName) == unicode):
+			ObjectList = [ObjName]
+			returnListType = False
+		elif (type(ObjName) == list):
+			ObjectList = ObjName
+			returnListType = True 
+		else :
+			ObjectList=[]
+		returnList = []
+		for eachObj in ObjectList:
+			newName = self.RMSetFromName( eachObj, TextString, Token, mode = mode)
+			newName = self.RMUniqueName( newName)
+			cmds.rename (eachObj, newName)
+			returnList.append(newName)
+		if returnListType == True:
+			return returnList
+		else:
+			return newName
 
 
 	def RMStringPlus1 (self, NameString):

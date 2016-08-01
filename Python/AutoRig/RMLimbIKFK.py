@@ -7,6 +7,7 @@ reload (RMRigShapeControls)
 import RMNameConvention
 reload (RMNameConvention)
 from AutoRig import RMSpaceSwitch
+reload (RMSpaceSwitch)
 import math
 
 
@@ -25,19 +26,20 @@ class RMLimbIKFK(object):
 
         self.FKjointStructure = None
         self.FKparentGroup = None
-        
+
         self.IKResetPoint=None 
+
         self.SknJointStructure = None
-        self.SknparentGroup = None
+        self.SknParentGroup = None
 
         self.PoleVectorResetPnt = None
         self.PoleVector = None
 
 
 
-    def RMLimbJointEstructure(self,OriginPoint,ZAxisOrientation = "z", ):
+    def RMLimbJointEstructure(self,OriginPoint,ZAxisOrientation = "z"):
         LimbReferencePonits = RMRigTools.RMCustomPickWalk(OriginPoint,'transform',2)
-        return RMRigTools.RMCreateBonesAtPoints(LimbReferencePonits,NameConv = self.NameConv, ZAxisOrientation = ZAxisOrientation)
+        return RMRigTools.RMCreateBonesAtPoints(LimbReferencePonits, NameConv = self.NameConv, ZAxisOrientation = ZAxisOrientation)
 
     def RMIdentifyIKJoints(self,ikHandle):
         endEffector = cmds.ikHandle(ikHandle, q = True, endEffector = True)
@@ -72,7 +74,6 @@ class RMLimbIKFK(object):
         distanceNode = cmds.shadingNode("distanceBetween", asUtility=True, name = "IKBaseDistanceNode")
         distanceNode = self.NameConv.RMRenameNameInFormat(distanceNode)
 
-
         cmds.connectAttr(transformStartPoint + ".worldPosition[0]", distanceNode + ".point1",f=True)
         cmds.connectAttr(transformEndPoint + ".worldPosition[0]", distanceNode + ".point2",f=True)
         
@@ -105,12 +106,31 @@ class RMLimbIKFK(object):
     def RMLimbRig(self,RootReferencePoint):
 
         self.IKparentGroup , self.IKjointStructure = self.RMLimbJointEstructure(RootReferencePoint)
+        self.IKjointStructure = self.NameConv.RMRenameSetFromName(self.IKjointStructure,"IK" ,"System")
+        self.IKparentGroup = self.NameConv.RMRenameSetFromName(self.IKparentGroup,"IK" ,"System")
+
         self.RMCreateIKControls()
         self.RMMakeIkStretchy(self.IkHandle)
         self.RMCreatePoleVector(self.IkHandle)
 
-        #self.FKparentGroup , self.FKjointStructure = self.RMLimbJointEstructure(RootReferencePoint)        
-        #self.RMCreateFKControls()
+        self.FKparentGroup , self.FKjointStructure = self.RMLimbJointEstructure(RootReferencePoint)        
+        self.FKjointStructure = self.NameConv.RMRenameSetFromName(self.IKjointStructure,"FK" ,"System")
+        self.FKparentGroup = self.NameConv.RMRenameSetFromName(self.FKparentGroup,"FK" ,"System")
+        self.RMCreateFKControls()
+
+        self.SknParentGroup , self.SknJointStructure = self.RMLimbJointEstructure(RootReferencePoint)        
+        self.SknJointStructure = self.NameConv.RMRenameSetFromName(self.IKjointStructure,"skn" ,"System")
+        self.SknParentGroup = self.NameConv.RMRenameSetFromName(self.SknParentGroup,"skn" ,"System")
+
+    def RMSkinSpaceSwitch ():
+        BoxControl = RMRigShapeControls.RMCreateBoxCtrl( self.SknJointStructure[len(self.SknJointStructure)-1], name = "IKFKSwitch")
+        LongitudBrazo = RMRigTools.RMLenghtOfBone(self.SknJointStructure[1])
+        cmds.xform(BoxControl, objectSpace = True,relative = True ,t=[LongitudBrazo/2,0,0])
+
+        self.SPSW.RMCreateListConstraintSwitch( self.SknJointStructure, self.IKjointStructure, BoxControl, SpaceSwitchName="IKFKSwitch")
+        self.SPSW.RMCreateListConstraintSwitch( self.SknJointStructure, self.FKjointStructure, BoxControl, SpaceSwitchName="IKFKSwitch",reverse = True)
+        RMRigTools.RMLockAndHideAttributes(BoxControl,"0000000000")
+
     
     def RMCreateFKControls(self,AxisFree = "Y"):
         ArmParent ,FKFirstLimbControl = RMRigShapeControls.RMCreateBoxCtrl(self.FKjointStructure[0],Xratio=1,Yratio=.3,Zratio=.3)

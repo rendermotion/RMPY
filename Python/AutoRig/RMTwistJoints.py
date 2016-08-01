@@ -3,6 +3,9 @@ import maya.api.OpenMaya as om
 import RMNameConvention
 reload (RMNameConvention)
 import RMRigTools
+reload (RMRigTools)
+import RMRigShapeControls
+reload (RMRigShapeControls)
 
 class RMTwistJoints(object):
     def __init__(self, NameConv = None):
@@ -13,11 +16,20 @@ class RMTwistJoints(object):
 
         self.TwistJoints = None
         self.TwistResetPoint = None
-    def RMCreateTwistJoints(self, TwistJoint, LookAtObject,  NumberOfTB = 5):
+        self.TwistControl = None
+        self.TwistOrigin = None
+        self.TwistEnd = None
+
+    def RMCreateTwistJoints(self, TwistJoint, LookAtObject,NumberOfTB = 3 ):
+        self.RMCreateTwist( TwistJoint, LookAtObject,NumberOfTB = NumberOfTB)
+        self.TwistOrigin =  TwistJoint
+        self.TwistEnd =  LookAtObject
+        self.RMStretchyTwistJoints()
+
+
+    def RMCreateTwist(self, TwistJoint, LookAtObject,  NumberOfTB = 3):
         LookAtObject = cmds.listRelatives(TwistJoint,type = "transform",children=True)
-
     
-
         positionA = cmds.xform(TwistJoint ,q=True,ws=True,rp=True)
         positionB = cmds.xform(LookAtObject ,q=True,ws=True,rp=True)
 
@@ -25,53 +37,66 @@ class RMTwistJoints(object):
         vectorB = om.MVector(positionB)
         
         self.RMCreateBonesBetweenPoints(vectorA,vectorB,NumberOfTB, AlignObject = TwistJoint)
+        Distance = RMRigTools.RMPointDistance( TwistJoint, LookAtObject)
+        resetPoint , control = RMRigShapeControls.RMCreateBoxCtrl(self.TwistJoints[0], Xratio = .1, Yratio = .1, Zratio = .1, customSize = Distance/5 ,name = "TwistOrigin" + self.NameConv.RMGetAShortName (TwistJoint).title() )
+        control = self.NameConv.RMRenameBasedOnBaseName(TwistJoint , control,  NewName = self.NameConv.RMGetAShortName(control))
+        resetPoint = self.NameConv.RMRenameBasedOnBaseName(TwistJoint , resetPoint,  NewName = self.NameConv.RMGetAShortName(resetPoint))
 
-        control = cmds.RMRigShapeControls.RMCreateBoxCtrl('')
-        xform(control, ls=True, relative=True,  t = [0,1,0])
-        cmds.lookAtConstraint(self.TwistJoints[0], aim = [1,0,0], upVector = [0,0,0], wut = control)
-
-        TwistJointDivide = cmds.shadingNode( asUtility = "MultiplyDivide",name = "TwistJoint" + self.NameConv.RMGetAShortName(TwistJoint))
-        TwistJointDivide = self.NameConv.RMRenameNameInFormat(TwistJointDivide)
+        cmds.xform(resetPoint, os = True, relative=True,  t = [0,0,Distance/5])
+        cmds.aimConstraint(LookAtObject,self.TwistJoints[0], aim = [1,0,0], worldUpVector = [0,0,1], worldUpType = "object", worldUpObject = control)
+        TwistJointDivide = cmds.shadingNode( "multiplyDivide", asUtility = True,name = "TwistJoint" + self.NameConv.RMGetAShortName(TwistJoint).title())
+        TwistJointDivide = self.NameConv.RMRenameNameInFormat( TwistJointDivide)
+        TwistJointDivide = self.NameConv.RMRenameBasedOnBaseName(TwistJoint , TwistJointDivide,  NewName = self.NameConv.RMGetAShortName(TwistJointDivide))
         
 
+        cmds.connectAttr(self.TwistJoints[0]+".rotateX", TwistJointDivide + ".input1X")
+        cmds.setAttr(TwistJointDivide + ".input2X", -(len(self.TwistJoints) - 1))
+        cmds.setAttr(TwistJointDivide + ".operation", 2 )
+        for eachJoint in self.TwistJoints[1:]:
+            cmds.connectAttr(TwistJointDivide+".outputX", eachJoint + ".rotateX")
 
+        self.TwistResetPoint = resetPoint
+        self.TwistControl = control
 
+    def RMDistanceBetweenPointsMeasure(self, Point01, Point02, name = ""):
+        if name != "":
+            transformStartPoint = "start" + name
+            transformEndPoint = "end" + name
+        else:
+            transformStartPoint = "startPoint"
+            transformEndPoint = "endPoint"
 
+        transformStartPoint = cmds.spaceLocator(name=transformStartPoint)[0]
+        transformStartPoint = self.NameConv.RMRenameNameInFormat(transformStartPoint)
+        transformEndPoint  = cmds.spaceLocator (name=transformEndPoint)[0]
+        transformEndPoint = self.NameConv.RMRenameNameInFormat(transformEndPoint)
 
+        StartPointConstraint = cmds.pointConstraint (Point01, transformStartPoint)
+        EndPointConstraint = cmds.pointConstraint (Point02, transformEndPoint)
 
+        distanceNode = cmds.shadingNode("distanceBetween", asUtility=True, name = "DistanceNode")
+        distanceNode = self.NameConv.RMRenameBasedOnBaseName( Point01, distanceNode, NewName = distanceNode)
 
+        cmds.connectAttr(transformStartPoint + ".worldPosition[0]", distanceNode + ".point1",f=True)
+        cmds.connectAttr(transformEndPoint + ".worldPosition[0]", distanceNode + ".point2",f=True)
 
+        return [transformStartPoint,transformEndPoint] , distanceNode
 
-            '''
-            TwistPoint=RMCreateChildPoint #(TwistBone)
-            TwistPoint.name=uniquename("TwistPoint")
-            TwistBoneArray[1].parent=TwistPoint
-            
-            TwistCntrlPntOrig=RMCreateChildPoint #(TwistBone)
-            TwistCntrlPntOrig.name=uniquename("TwistControlOrigin")
-            
-            TwistCntrlPntEnd=RMCreateChildPoint #(TwistBone)
-            TwistCntrlPntEnd.name=uniquename("TwistControlEnd")
-            in coordsys local move TwistCntrlPntEnd [((distance PuntoInicial PuntoFinal)*(NumberOfTB-1)/NumberOfTB),0,0]
-            
-            for n=2 to  TwistBoneArray.count do
-                paramWire.connect TwistBone.children[1].position.controller[#X_Position]   TwistBoneArray[n].position.controller[#X_Position] "X_Position/3"
-            
-            --RMAttachToPoints TwistBoneArray[1] TwistBoneArray[3] TwistBoneArray[2] flag:2
-            upNode1=RMLookAtConstraint TwistCntrlPntOrig TwistBone.children[1] Axis:"Y" UpNodeValue:-1
-            upNode2=RMLookAtConstraint TwistCntrlPntEnd TwistBone.children[1] Axis:"Y" UpNodeValue:-1
-            for n=1 to NumberOfTB do
-                (
-                  RMAttachToPoints   TwistCntrlPntOrig TwistCntrlPntEnd  TwistBoneArray[n] flag:2 weightNeg:(1.0-(n-1.0)/(NumberOfTB-1.0)) weightPos:((n-1.0)/(NumberOfTB-1.0)) wireWeight:False
-                )
-            if TwistBone.parent != undefined do 
-                upNode1.parent=TwistBone.parent
-            upNode2.parent=TwistBone
-            --Regresa 
-                -- Los Punos que controlan el Twist
-                --Los Upnodes de Los puntos que controlan el Twist
-                -- El origen de los twistBones
-            return #(#(TwistCntrlPntOrig,TwistCntrlPntEnd),#(upNode1,upNode2),TwistCntrlPntOrig)'''
+    def RMStretchyTwistJoints(self):
+        locators , distanceNode = self.RMDistanceBetweenPointsMeasure(self.TwistOrigin, self.TwistEnd,"Twist" + self.NameConv.RMGetAShortName(self.TwistOrigin).title())
+
+        TwistJointDivide = cmds.shadingNode( "multiplyDivide", asUtility = True, name = "StretchyTwistJoint" + self.NameConv.RMGetAShortName(self.TwistOrigin).title())
+        TwistJointDivide = self.NameConv.RMRenameNameInFormat( TwistJointDivide)
+        TwistJointDivide = self.NameConv.RMRenameBasedOnBaseName(self.TwistOrigin , TwistJointDivide,  NewName = self.NameConv.RMGetAShortName(TwistJointDivide))
+
+        cmds.connectAttr(distanceNode+".distance", TwistJointDivide + ".input1X")
+        cmds.setAttr(TwistJointDivide + ".input2X", (len(self.TwistJoints) - 1))
+        cmds.setAttr(TwistJointDivide + ".operation", 2)
+
+        for eachJoint in self.TwistJoints[1:]:
+            cmds.connectAttr(TwistJointDivide + ".outputX", eachJoint + ".translateX")
+
+        
 
     def RMCreateBonesBetweenPoints(self,InitialPoint, FinalPoint, NumberOfTB,AlignObject = None):
         DirectionVector  = FinalPoint-InitialPoint
@@ -93,8 +118,8 @@ class RMTwistJoints(object):
 
 
 
-TJ = RMTwistJoints()
-TJ.RMCreateTwistJoints("Character01_LF_shoulder_pnt_rfr")
+#TJ = RMTwistJoints()
+#TJ.RMCreateTwistJoints("Character01_LF_shoulder_pnt_rfr","Character01_LF_elbow_pnt_rfr")
 
 
 
