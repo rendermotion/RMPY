@@ -1,6 +1,5 @@
 source "RMNameConvention.mel";
 source "RMRiggMath.mel";
-
 source "RMCreateArmPoints.mel";
 source "RMCreateHandPoints.mel";
 source "RMCreateHeadPoints.mel";
