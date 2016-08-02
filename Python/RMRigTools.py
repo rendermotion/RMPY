@@ -25,7 +25,7 @@ def RMAlign(obj1,obj2,flag):
             cmds.delete(Null)
         else:
             Obj1rotacion=cmds.xform(obj1,q=True,ws=True,ro=True)
-            cmds.xform(obj2,ws=True,ro=Obj1rotacion)
+            cmds.xform(obj2,ws=True,ro = Obj1rotacion)
 
 def RMPointDistance(Point01,Point02):
         Position01,Position02 = cmds.xform(Point01,q=True,ws=True,rp=True) , cmds.xform(Point02,q=True,ws=True,rp=True)
@@ -109,15 +109,19 @@ def RMCreateGroupOnObj(Obj,Type="inserted", NameConv = None):
         Group = cmds.rename (Group, NewName)
 
     RMAlign(Obj,Group,3)
-    Parent = cmds.listRelatives(Obj,parent=True)
 
+    Parent = cmds.listRelatives(Obj, parent=True)
     if not (Type == "world"):
         if Type == "inserted":
-            RMInsertInHierarchy(Obj,Group)
+            if Parent:
+                RMInsertInHierarchy(Obj,Group)
+            else:
+                cmds.parent(Obj,Group)
         elif Type == "parent":
             cmds.parent(Obj,Group)
         elif Type == "child":
             cmds.parent(Group,Obj)
+
     return Group
 
 def RMLenghtOfBone(Joint):
@@ -140,7 +144,7 @@ def RMJointSize(Joint):
 def RMInsertInHierarchy(Obj, InsertObj, InsertType = "Parent"):
     if InsertType == "Parent":
         Parent = cmds.listRelatives(Obj , parent = True)
-        if Parent:
+        if Parent and len(Parent)>0:
             cmds.parent (InsertObj, Parent)
         cmds.parent (Obj, InsertObj)
     else:

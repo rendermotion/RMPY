@@ -16,6 +16,7 @@ class RMSpine(object):
             self.NameConv = RMNameConvention.RMNameConvention()
         else:
             self.NameConv = NameConv
+
         self.spineIK = None
         self.spineJoints = None
         self.rootSpine = None
@@ -101,7 +102,7 @@ class RMSpine(object):
             ChestGroups.append(ControlGroup)
             ChestControls.append(NewControl)
             AllSpine.append(NewControl)
-            ResetTransformGroup = RMRigTools.RMCreateGroupOnObj(ControlGroup)
+            ResetTransformGroup = RMRigTools.RMCreateGroupOnObj ( ControlGroup)
             cmds.parent(ResetTransformGroup,spineControlGroup)
             cmds.delete(eachPosition)
             RMRigTools.RMLockAndHideAttr(NewControl,"1110000000")
@@ -192,8 +193,8 @@ class RMSpine(object):
     def RMCreateHipSystem(self):
 
         resetHipControl, hipControl = RMRigShapeControls.RMCircularControl(self.rootHip,radius = self.SpineLength *.7,name = "hip")
-        cmds.parent(resetHipControl,self.COG)
-        cmds.parentConstraint(hipControl,self.hipJoints[0])
+        cmds.parent( resetHipControl, self.COG)
+        cmds.parentConstraint( hipControl, self.hipJoints[0])
         #self.rootHip
         #self.hipJoints
       
@@ -239,7 +240,6 @@ class RMSpine(object):
 
 
 RSP = RMSpine()
-
 spineJoints = ["Character01_MD_Spine_pnt_rfr","Character01_MD_Spine1_pnt_rfr","Character01_MD_Spine2_pnt_rfr","Character01_MD_Spine3_pnt_rfr","Character01_MD_Spine4_pnt_rfr"]
 hip = ["Character01_MD_Spine_pnt_rfr","Character01_MD_Hip_pnt_rfr"]
 RSP.RMCreateSpineRig(spineJoints,hip)

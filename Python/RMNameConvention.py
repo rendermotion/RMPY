@@ -14,6 +14,7 @@ class RMNameConvention (object):
 
 		self.TypeDictionary = { 
 							"joint":"jnt",
+							"skinjoint":"sknjnt",
 							"nub":"nub",
 							"skin":"skn",
 						    "undefined":"UDF",
@@ -22,6 +23,7 @@ class RMNameConvention (object):
 							"renderMesh":"rmsh",
 							"transform":"grp",
 							"pointConstraint":"pnc",
+							"poleVectorConstraint":"pvc",
 							"control":"ctr",
 							"locator":"loc",
 							"ikHandle":"ikh",
@@ -119,7 +121,12 @@ class RMNameConvention (object):
 		return Name + Number.zfill(2)
 
 	def RMAddToNumberedString(self, Name, AddName):
+		print "#"*5
+		print "NumberedString"
+		print Name
+		print AddName
 		Value = re.split(r"([0-9]+$)",Name)
+		print Value
 		return Value[0].title() + (AddName.title()) + Value[1]
 
 	def RMUniqueName(self, currentName):

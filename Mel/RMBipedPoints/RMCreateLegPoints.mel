@@ -18,7 +18,7 @@ global proc string[] RMCreateLegPoints (vector $OrigenPoint, vector $DirectionVe
 */
     vector $legPosition = $OrigenPoint;
     vector $kneePosition = $OrigenPoint + $DirectionVector*$legSize*0.5 + $FrontVector*0.05*$legSize;
-    vector $anklePosition = $OrigenPoint+$DirectionVector*$legSize;
+    vector $anklePosition = $OrigenPoint + $DirectionVector*$legSize;
   /*  vector $ballPosition = $anklePosition + $FrontVector*0.1*$legSize+$DirectionVector*$legSize*0.05;
     vector $toePosition = $ballPosition + $FrontVector*0.1*$legSize;
 
@@ -61,6 +61,10 @@ global proc string[] RMCreateLegPoints (vector $OrigenPoint, vector $DirectionVe
 */
     parent ($AnklePoint[0]) ($KneePoint[0]);
     parent ($KneePoint[0]) ($LegPoint[0]);
+
+    string $AnkleFeet = RMCreateFeetPoints($anklePosition, $DirectionVector, $FrontVector, $legSize, $Side);
+    parent $AnkleFeet ($AnklePoint[0]);
+
     /*parent ($ToePoint[0]) ($BallPoint[0]);
     parent ($BallPoint[0]) ($AnklePoint[0]);
 
@@ -70,13 +74,13 @@ global proc string[] RMCreateLegPoints (vector $OrigenPoint, vector $DirectionVe
     return ($LegPoint);
 }
 
-global proc RMCreateFeetPoints(vector $OriginPoint, vector $DirectionVector,vector $FrontVector, float $Size, string $Side){
+global proc string RMCreateFeetPoints(vector $OriginPoint, vector $DirectionVector,vector $FrontVector, float $Size, string $Side){
     vector $transversalVector = unit (cross($DirectionVector,$FrontVector));
     //vector $FrontVector = unit (cross($transversalVector,$DirectionVector));
 
     vector $anklePosition = $OriginPoint;
-    vector $ballPosition = $anklePosition + $FrontVector*0.1*$Size+$DirectionVector*$Size*0.05;
-    vector $toePosition = $ballPosition + $FrontVector*0.1*$Size;
+    vector $ballPosition = $anklePosition + $FrontVector * 0.1 * $Size + $DirectionVector * $Size * 0.05;
+    vector $toePosition = $ballPosition + $FrontVector * 0.1 * $Size;
 
     vector $FootLimitBackPosition = $anklePosition+$DirectionVector*$Size*0.05;
     vector $FootLimitLeftPosition;
@@ -119,5 +123,7 @@ global proc RMCreateFeetPoints(vector $OriginPoint, vector $DirectionVector,vect
     parent ($FootLimitBackPoint[0]) ($BallPoint[0]);
     parent ($FootLimitLeftPoint[0]) ($BallPoint[0]);
     parent ($FootLimitRightPoint[0]) ($BallPoint[0]);
+
+    return ($AnklePoint[0]);
 }
 

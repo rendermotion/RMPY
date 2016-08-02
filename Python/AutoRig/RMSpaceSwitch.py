@@ -191,7 +191,7 @@ class RMSpaceSwitch(object):
     def AddNumericParameter(self,Object, Name = 'spaceSwitch', valueRange = [0,10]):
         AttributeList = cmds.listAttr(Object)
         if Name  in AttributeList:
-            print "the Object Allready has an Attribute with this name, the type is:",cmds.getAttr (Object + "." + Name,type=True)
+            print "the Object Allready has an Attribute with this name, the type is:",cmds.getAttr (Object + "." + Name,type = True)
             return False
         else :
             cmds.addAttr(Object,at = "float", ln = Name,  hnv = 1, hxv = 1, h = 0, k = 1, smn = valueRange[0], smx = valueRange[1])

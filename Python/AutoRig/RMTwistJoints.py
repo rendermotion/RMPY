@@ -1,4 +1,4 @@
-import maya.cmds
+import maya.cmds as cmds
 import maya.api.OpenMaya as om
 import RMNameConvention
 reload (RMNameConvention)
@@ -13,22 +13,24 @@ class RMTwistJoints(object):
             self.NameConv = RMNameConvention.RMNameConvention()
         else:
             self.NameConv = NameConv
-
+        self.kinematics = []
         self.TwistJoints = None
-        self.TwistResetPoint = None
+        self.TwistResetJoints = None
+        self.TwistControlResetPoint = None
         self.TwistControl = None
         self.TwistOrigin = None
         self.TwistEnd = None
 
-    def RMCreateTwistJoints(self, TwistJoint, LookAtObject,NumberOfTB = 3 ):
-        self.RMCreateTwist( TwistJoint, LookAtObject,NumberOfTB = NumberOfTB)
+    def RMCreateTwistJoints(self, TwistJoint, LookAtObject, NumberOfTB = 3, LookAtAxis = "Y"):
+        
+        self.RMCreateTwist( TwistJoint, LookAtObject,NumberOfTB = NumberOfTB, LookAtAxis = LookAtAxis)
         self.TwistOrigin =  TwistJoint
         self.TwistEnd =  LookAtObject
         self.RMStretchyTwistJoints()
 
 
-    def RMCreateTwist(self, TwistJoint, LookAtObject,  NumberOfTB = 3):
-        LookAtObject = cmds.listRelatives(TwistJoint,type = "transform",children=True)
+    def RMCreateTwist(self, TwistJoint, LookAtObject,  NumberOfTB = 3, LookAtAxis = "Y"):
+        #LookAtObject = cmds.listRelatives( TwistJoint,type = "transform",children=True)[]
     
         positionA = cmds.xform(TwistJoint ,q=True,ws=True,rp=True)
         positionB = cmds.xform(LookAtObject ,q=True,ws=True,rp=True)
@@ -37,13 +39,31 @@ class RMTwistJoints(object):
         vectorB = om.MVector(positionB)
         
         self.RMCreateBonesBetweenPoints(vectorA,vectorB,NumberOfTB, AlignObject = TwistJoint)
+
         Distance = RMRigTools.RMPointDistance( TwistJoint, LookAtObject)
-        resetPoint , control = RMRigShapeControls.RMCreateBoxCtrl(self.TwistJoints[0], Xratio = .1, Yratio = .1, Zratio = .1, customSize = Distance/5 ,name = "TwistOrigin" + self.NameConv.RMGetAShortName (TwistJoint).title() )
+        
+        cmds.parentConstraint (TwistJoint,self.TwistResetJoints)
+
+        resetPoint , control = RMRigShapeControls.RMCreateBoxCtrl(self.TwistJoints[0], Xratio = .1, Yratio = .1, Zratio = .1, customSize = Distance/5 ,name = "TwistOrigin" + self.NameConv.RMGetAShortName (TwistJoint).title())
         control = self.NameConv.RMRenameBasedOnBaseName(TwistJoint , control,  NewName = self.NameConv.RMGetAShortName(control))
         resetPoint = self.NameConv.RMRenameBasedOnBaseName(TwistJoint , resetPoint,  NewName = self.NameConv.RMGetAShortName(resetPoint))
+        
+        sign = 1
+        MoveDistance = Distance/5
+        if "-" in LookAtAxis:
+            sign = -1
+        if "Z" in LookAtAxis or "z" in LookAtAxis:
+            MoveList = [0,0, MoveDistance * sign]
+            WUV = [0,0,sign]
+        elif "Y" in LookAtAxis or "y" in LookAtAxis:
+            MoveList = [0,MoveDistance * sign,0 ]
+            WUV = [0,sign,0]
 
-        cmds.xform(resetPoint, os = True, relative=True,  t = [0,0,Distance/5])
-        cmds.aimConstraint(LookAtObject,self.TwistJoints[0], aim = [1,0,0], worldUpVector = [0,0,1], worldUpType = "object", worldUpObject = control)
+        cmds.xform( resetPoint, os = True, relative=True,  t = MoveList)
+
+        cmds.aimConstraint( LookAtObject,self.TwistJoints[0], aim = [1,0,0], worldUpVector = [0,0,1], worldUpType = "object", worldUpObject = control)
+
+
         TwistJointDivide = cmds.shadingNode( "multiplyDivide", asUtility = True,name = "TwistJoint" + self.NameConv.RMGetAShortName(TwistJoint).title())
         TwistJointDivide = self.NameConv.RMRenameNameInFormat( TwistJointDivide)
         TwistJointDivide = self.NameConv.RMRenameBasedOnBaseName(TwistJoint , TwistJointDivide,  NewName = self.NameConv.RMGetAShortName(TwistJointDivide))
@@ -55,7 +75,7 @@ class RMTwistJoints(object):
         for eachJoint in self.TwistJoints[1:]:
             cmds.connectAttr(TwistJointDivide+".outputX", eachJoint + ".rotateX")
 
-        self.TwistResetPoint = resetPoint
+        self.TwistControlResetPoint = resetPoint
         self.TwistControl = control
 
     def RMDistanceBetweenPointsMeasure(self, Point01, Point02, name = ""):
@@ -96,8 +116,6 @@ class RMTwistJoints(object):
         for eachJoint in self.TwistJoints[1:]:
             cmds.connectAttr(TwistJointDivide + ".outputX", eachJoint + ".translateX")
 
-        
-
     def RMCreateBonesBetweenPoints(self,InitialPoint, FinalPoint, NumberOfTB,AlignObject = None):
         DirectionVector  = FinalPoint-InitialPoint
         TotalLength = DirectionVector.length()
@@ -113,8 +131,14 @@ class RMTwistJoints(object):
             locatorsList.append(Locator[0])
             cmds.xform(Locator[0], translation = list(InitialPoint + (StepVector * count)), worldSpace=True)
             RMRigTools.RMAlign(AlignObject,Locator[0],2)
-        self.TwistResetPoint , self.TwistJoints = RMRigTools.RMCreateBonesAtPoints(locatorsList)
-        return self.TwistJoints
+        self.TwistResetJoints , self.TwistJoints = RMRigTools.RMCreateBonesAtPoints(locatorsList)
+        self.deleteList(locatorsList)
+        return self.TwistResetJoints, self.TwistJoints
+
+    def deleteList (self,listToDelete):
+        for eachObject in listToDelete:
+            cmds.delete(eachObject)
+
 
 
 
