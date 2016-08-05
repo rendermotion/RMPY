@@ -35,7 +35,8 @@ class RMNameConvention (object):
 							"baseLattice":"blt",
 							"curveInfo":"cui",
 							"distanceBetween":"dbtw",
-							"cluster":"cls"
+							"cluster":"cls",
+							"plusMinusAverage":"pma"
 
 							}
 		self.ShapeDictionary = {
@@ -91,6 +92,7 @@ class RMNameConvention (object):
 			return returnTuple
 
 	def RMRenameSetFromName (self, ObjName, TextString, Token, mode = "regular"):
+		returnListType = False
 		if (type (ObjName) == str) or (type (ObjName) == unicode):
 			ObjectList = [ObjName]
 			returnListType = False
@@ -100,6 +102,7 @@ class RMNameConvention (object):
 		else :
 			ObjectList=[]
 		returnList = []
+		newName = ""
 		for eachObj in ObjectList:
 			newName = self.RMSetFromName( eachObj, TextString, Token, mode = mode)
 			newName = self.RMUniqueName( newName)
@@ -121,12 +124,7 @@ class RMNameConvention (object):
 		return Name + Number.zfill(2)
 
 	def RMAddToNumberedString(self, Name, AddName):
-		print "#"*5
-		print "NumberedString"
-		print Name
-		print AddName
 		Value = re.split(r"([0-9]+$)",Name)
-		print Value
 		return Value[0].title() + (AddName.title()) + Value[1]
 
 	def RMUniqueName(self, currentName):
@@ -271,9 +269,11 @@ class RMNameConvention (object):
 			return False
 	def RMGetAShortName(self,Node):
 		if self.RMIsNameInFormat(Node):
-			return self.RMGetFromName(Node,'Name')
+			Value = re.split(r"([0-9]+$)",self.RMGetFromName(Node,'Name'))
+			return Value[0]
 		else:
-			return Node
+			Value = re.split(r"([0-9]+$)",Node)
+			return Value[0]
 
 
 #NameConv = RMNameConvention()

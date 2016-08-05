@@ -42,6 +42,7 @@ class RMGenericHandRig(object):
 		"index":None,
 		"thumb":None
 		}
+		self.PalmResetPoint =None
 		self.PalmControl = None
 		self.fingerControlsReset = []
 		self.fingerContols=[]
@@ -57,14 +58,15 @@ class RMGenericHandRig(object):
 		palmLen = RMRigTools.RMPointDistance( self.PalmControl, self.GHS.fingerRoots[0])
 		cmds.parentConstraint(self.MainKinematics,self.GHS.palmJoint)
 		cmds.parentConstraint(self.MainKinematics,self.MainControl)
+		
+		self.GHS.palmJoint = self.NameConv.RMRenameSetFromName(self.GHS.palmJoint, "sknjnt", "Type")
+		for eachFinger in self.GHS.fingers:
+			eachFinger = self.NameConv.RMRenameSetFromName(eachFinger[:-1], "sknjnt", "Type")
+		print self.GHS.fingers
+
 
 		#self.PalmControl
 		#RMRigShapeControls.RMCreateBoxCtrl(self.GHS.palmJoint, Yratio = .5, size = palmLen, NameConv =  NameConv)
-
-
-
-
-
 
 	def CreateHandStructure(self,PalmReferencePoint):
 		self.GHS.CreateHandJointStructure(PalmReferencePoint)
@@ -79,8 +81,9 @@ class RMGenericHandRig(object):
 
 		self.CreatePalmReferencePoints()
 		palmResetPoint , self.PalmControl = RMRigShapeControls.RMCircularControl(self.GHS.palmJoint)
+		self.PalmResetPoint = palmResetPoint
 
-		palmResetPoint = self.NameConv.RMRenameSetFromName(palmResetPoint,"palmControls","Name")
+		#palmResetPoint = self.NameConv.RMRenameSetFromName(palmResetPoint,"palmControls","Name")
 
 		self.RMaddPalmControls (self.PalmControl)
 		RMRigTools.RMLockAndHideAttributes(self.PalmControl,"0000000000")
@@ -143,7 +146,7 @@ class RMGenericHandRig(object):
 		else:
 			sideVariation = -1
 
-		BoxResetPoint , BoxControl = RMRigShapeControls.RMCreateBoxCtrl(Finger[len(Finger)-1])
+		BoxResetPoint , BoxControl = RMRigShapeControls.RMCreateBoxCtrl(Finger[len(Finger)-1], ParentBaseSize = True, Xratio = .5 ,Yratio = .5 ,Zratio = .5)
 		self.RMaddFinguerControls(BoxControl)
 		
 		cmds.makeIdentity(BoxControl, apply = True , r = False, t = True, s = True, n = 0)

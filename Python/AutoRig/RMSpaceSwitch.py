@@ -16,7 +16,7 @@ class RMSpaceSwitch(object):
         self.AfectedObjectList = []
         self.SpaceObjectsList = []
 
-    def CreateSpaceSwitchReverse(self,AfectedObject, SpaceObjects, ControlObject, Name = "spaceSwitch", sswtype = "enum"):
+    def CreateSpaceSwitchReverse(self, AfectedObject, SpaceObjects, ControlObject, Name = "spaceSwitch", sswtype = "enum"):
         '''
         Creates a simple space Switch that uses a reverse for simple solution it can only hold 2 spaces
 
@@ -361,6 +361,39 @@ class RMSpaceSwitch(object):
             ConstraintIndex = TL.index(Constraint[index])
             cmds.connectAttr(Connection, constraint + "." + WA[ConstraintIndex])
             index +=  1
+    def ConstraintVisibility(self, Objects , ControlObject , SpaceSwitchName = 'spaceSwitch', reverse = False ):
+        if (self.AddNumericParameter (ControlObject, Name = SpaceSwitchName)):
+            SWMultDiv = cmds.shadingNode("multiplyDivide",asUtility = True ,name = SpaceSwitchName + "SWMultDivide" )
+            SWMultDiv = self.NameConv.RMRenameBasedOnBaseName(ControlObject, SWMultDiv, NewName = SWMultDiv)
+            cmds.connectAttr(ControlObject+"."+SpaceSwitchName ,SWMultDiv+".input1X")
+            cmds.setAttr(SWMultDiv+".input2X",10)
+            cmds.setAttr(SWMultDiv+".operation",2)
+        else:
+            SWMultDiv = cmds.listConnections(ControlObject + "." + SpaceSwitchName, type = "multiplyDivide")[0]
+
+        if reverse == True:
+            ConnectionsList = cmds.listConnections (SWMultDiv + ".outputX", type = "revese")
+            reverseSW = ""
+            if ConnectionsList and len(ConnectionsList) >= 1:
+                reverseSW = ConnectionsList[0]
+            else :
+                reverseSW = cmds.shadingNode('reverse', asUtility=True, name = SpaceSwitchName + "SWReverse")
+                reverseSW = self.NameConv.RMRenameBasedOnBaseName(ControlObject, reverseSW, NewName ="SWReverse")
+                cmds.connectAttr( SWMultDiv + ".outputX", reverseSW + ".inputX")
+
+                if self.NameConv.RMIsNameInFormat (ControlObject):
+                    reverseSW = self.NameConv.RMRenameBasedOnBaseName(ControlObject,reverseSW, NewName = reverseSW)
+                else:
+                    reverseSW = self.NameConv.RMRenameNameInFormat(reverseSW)
+            for eachObject in Objects:
+                cmds.connectAttr(reverseSW + ".outputX", eachObject + ".visibility")
+        
+        else:
+            for eachObject in Objects:
+                cmds.connectAttr(SWMultDiv + ".outputX", eachObject + ".visibility")
+
+
+
 #SW.DeletSpaceSwitchAttr('pCube1')
 #SW.CreateSpaceSwitch('group1',['pSphere1','pSphere2'], 'pCube1')
 #Node = "pCube1"

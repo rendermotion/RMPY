@@ -28,6 +28,7 @@ global proc string StandardReverseFeetJoints(string $AnklePoint){
 
 	RMAlign $Ball[0] $BallJoint 3;
 	string $ToeJoint = `joint -n (RMSetFromName($AnkleJoint,2,"Toe"))`;
+
 	RMAlign $Toe $ToeJoint 3;
 	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 -pn 1 $BallJoint;
 	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 -pn 1 $ToeJoint;
@@ -75,6 +76,7 @@ global proc StandardReverseFeet(string $originPoint){
 			$FootIn=$Node;
 		}
 	}
+
    	float $Length = RMDistancia($Toe,$FootBK);
 	float $Width = RMDistancia($FootIn,$FootOut);
 
@@ -149,9 +151,9 @@ global proc StandardReverseFeet(string $originPoint){
     string $CharacterName = `RMGetFromName $SideInGrp 0`;
 
        
-    RMAlign ($CharacterName+"_"+$Side+"_footLimitInner_pnt_rfr") $SideInGrp 1;
-    RMAlign ($CharacterName+"_"+$Side+"_footLimitOuter_pnt_rfr") $SideOutGrp 1;
-    RMAlign ($CharacterName+"_"+$Side+"_footLimitBack_pnt_rfr") $TapGrp 1;
+    RMAlign ($CharacterName + "_" + $Side + "_footLimitInner_pnt_rfr") $SideInGrp 1;
+    RMAlign ($CharacterName + "_" + $Side + "_footLimitOuter_pnt_rfr") $SideOutGrp 1;
+    RMAlign ($CharacterName + "_" + $Side + "_footLimitBack_pnt_rfr") $TapGrp 1;
 
  	//parent $IKname $Ball;Esta instrucion debe de emparentar en algun
    	// otro lado el Ik de la pierna al Ball del pie

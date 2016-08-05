@@ -72,6 +72,7 @@ global proc string RMCreateGrouponObj (string $Obj, int $flag)
 	select $Obj;
 	return $NewName;
 }
+
 //Crea un grupo nuevo alineado al objeto $obj y emparenta el objeto $Obj a este nuevo grupo
 //La vandera en caso de ser 1, busará al padre de Obj y a este emparentará el nuevo grupo
 //La función regresa el nuevo grupo

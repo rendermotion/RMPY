@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'RMSpaceSwitchTool.ui'
 #
-# Created: Tue Jul 26 12:43:48 2016
+# Created: Thu Aug 04 16:19:55 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(450, 553)
+        Form.resize(505, 553)
         self.horizontalLayout_2 = QtGui.QHBoxLayout(Form)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.verticalLayout_5 = QtGui.QVBoxLayout()
@@ -23,9 +23,6 @@ class Ui_Form(object):
         self.CreateSpaceSwitchBtn.setMinimumSize(QtCore.QSize(0, 34))
         self.CreateSpaceSwitchBtn.setObjectName("CreateSpaceSwitchBtn")
         self.horizontalLayout.addWidget(self.CreateSpaceSwitchBtn)
-        self.LoadSpaceSwitchBtn = QtGui.QPushButton(Form)
-        self.LoadSpaceSwitchBtn.setObjectName("LoadSpaceSwitchBtn")
-        self.horizontalLayout.addWidget(self.LoadSpaceSwitchBtn)
         self.verticalLayout_5.addLayout(self.horizontalLayout)
         self.verticalLayout_3 = QtGui.QVBoxLayout()
         self.verticalLayout_3.setObjectName("verticalLayout_3")
@@ -84,17 +81,15 @@ class Ui_Form(object):
     def retranslateUi(self, Form):
         Form.setWindowTitle(QtGui.QApplication.translate("Form", "Form", None, QtGui.QApplication.UnicodeUTF8))
         self.CreateSpaceSwitchBtn.setText(QtGui.QApplication.translate("Form", "Create SpaceSwitch", None, QtGui.QApplication.UnicodeUTF8))
-        self.LoadSpaceSwitchBtn.setText(QtGui.QApplication.translate("Form", "Load SpaceSwitch \n"
-"from selected control", None, QtGui.QApplication.UnicodeUTF8))
         self.ControlObjectGroupBox.setTitle(QtGui.QApplication.translate("Form", "Control Object", None, QtGui.QApplication.UnicodeUTF8))
         self.LoadSelectionAsCntrlObjPushBtn.setText(QtGui.QApplication.translate("Form", "LoadSelection as Control Object", None, QtGui.QApplication.UnicodeUTF8))
         self.ObjectSpaceGroup.setTitle(QtGui.QApplication.translate("Form", "Object Space", None, QtGui.QApplication.UnicodeUTF8))
-        self.RemoveFromObjectSpaceBtn.setText(QtGui.QApplication.translate("Form", "Remove list selected \n"
+        self.RemoveFromObjectSpaceBtn.setText(QtGui.QApplication.translate("Form", "Remove selected \n"
 "from object space list", None, QtGui.QApplication.UnicodeUTF8))
         self.AddToObjectSpacePushBtn.setText(QtGui.QApplication.translate("Form", "Add object selection \n"
 "to object space list", None, QtGui.QApplication.UnicodeUTF8))
         self.ConstrainedObjectSpaceSwitch.setTitle(QtGui.QApplication.translate("Form", "Constrained objects", None, QtGui.QApplication.UnicodeUTF8))
-        self.RemoveFromConstrainedBtn.setText(QtGui.QApplication.translate("Form", "Remove list selected \n"
+        self.RemoveFromConstrainedBtn.setText(QtGui.QApplication.translate("Form", "Remove selected \n"
 "from constrained Object list", None, QtGui.QApplication.UnicodeUTF8))
         self.AddToConstrainListPushBtn.setText(QtGui.QApplication.translate("Form", "Add object selection \n"
 "to object constrained list", None, QtGui.QApplication.UnicodeUTF8))
