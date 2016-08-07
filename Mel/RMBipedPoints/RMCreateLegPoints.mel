@@ -1,4 +1,3 @@
-
 global proc string[] RMCreateLegPoints (vector $OrigenPoint, vector $DirectionVector,vector $FrontVector, float $legSize, string $Side){
     string $LegPointsArray[]={};
 
@@ -18,7 +17,7 @@ global proc string[] RMCreateLegPoints (vector $OrigenPoint, vector $DirectionVe
 */
     vector $legPosition = $OrigenPoint;
     vector $kneePosition = $OrigenPoint + $DirectionVector*$legSize*0.5 + $FrontVector*0.05*$legSize;
-    vector $anklePosition = $OrigenPoint+$DirectionVector*$legSize;
+    vector $anklePosition = $OrigenPoint + $DirectionVector*$legSize;
   /*  vector $ballPosition = $anklePosition + $FrontVector*0.1*$legSize+$DirectionVector*$legSize*0.05;
     vector $toePosition = $ballPosition + $FrontVector*0.1*$legSize;
 
@@ -59,8 +58,24 @@ global proc string[] RMCreateLegPoints (vector $OrigenPoint, vector $DirectionVe
     xform -ws -translation ($FootLimitLeftPosition.x) ($FootLimitLeftPosition.y) ($FootLimitLeftPosition.z) $FootLimitLeftPoint[0];
     xform -ws -translation ($FootLimitRightPosition.x) ($FootLimitRightPosition.y) ($FootLimitRightPosition.z) $FootLimitRightPoint[0];
 */
-    parent ($AnklePoint[0]) ($KneePoint[0]);
     parent ($KneePoint[0]) ($LegPoint[0]);
+    float $rotationKnee = `getAttr ($KneePoint[0] + ".rotateX")`;
+    print "Trunking";
+    print "######################################################";
+    if ((($rotationKnee > -181) && ($rotationKnee < -179)) || (($rotationKnee > 179)&&($rotationKnee < 181))) 
+    {
+       setAttr ($KneePoint[0] + ".rotateX") 0;
+    }
+
+
+    parent ($AnklePoint[0]) ($KneePoint[0]);
+    
+
+    RMAlign $KneePoint[0] $AnklePoint[0] 2;
+
+    string $AnkleFeet = RMCreateFeetPoints($anklePosition, $DirectionVector, $FrontVector, $legSize, $Side);
+    parent $AnkleFeet ($AnklePoint[0]);
+
     /*parent ($ToePoint[0]) ($BallPoint[0]);
     parent ($BallPoint[0]) ($AnklePoint[0]);
 
@@ -70,13 +85,13 @@ global proc string[] RMCreateLegPoints (vector $OrigenPoint, vector $DirectionVe
     return ($LegPoint);
 }
 
-global proc RMCreateFeetPoints(vector $OriginPoint, vector $DirectionVector,vector $FrontVector, float $Size, string $Side){
+global proc string RMCreateFeetPoints(vector $OriginPoint, vector $DirectionVector,vector $FrontVector, float $Size, string $Side){
     vector $transversalVector = unit (cross($DirectionVector,$FrontVector));
     //vector $FrontVector = unit (cross($transversalVector,$DirectionVector));
 
     vector $anklePosition = $OriginPoint;
-    vector $ballPosition = $anklePosition + $FrontVector*0.1*$Size+$DirectionVector*$Size*0.05;
-    vector $toePosition = $ballPosition + $FrontVector*0.1*$Size;
+    vector $ballPosition = $anklePosition + $FrontVector * 0.1 * $Size + $DirectionVector * $Size * 0.05;
+    vector $toePosition = $ballPosition + $FrontVector * 0.1 * $Size;
 
     vector $FootLimitBackPosition = $anklePosition+$DirectionVector*$Size*0.05;
     vector $FootLimitLeftPosition;
@@ -93,25 +108,32 @@ global proc RMCreateFeetPoints(vector $OriginPoint, vector $DirectionVector,vect
         $FootLimitRightPosition = $ballPosition+($transversalVector*0.05*$Size);
     }
     
-    string $BallPoint[] = `spaceLocator -n ("Character01_"+$Side+"_ball_pnt_rfr") -p ($ballPosition.x) ($ballPosition.y) ($ballPosition.z)`;
-    xform -cp $BallPoint[0];
-    ScalePoints ($BallPoint[0],$Size*0.1);
-    string $ToePoint[] = `spaceLocator -n ("Character01_"+$Side+"_toe_pnt_rfr") -p ($toePosition.x) ($toePosition.y) ($toePosition.z)`;
-    xform -cp $ToePoint[0];
-    ScalePoints ($ToePoint[0],$Size*0.1);
+    string $BallPoint[] = `spaceLocator -n ("Character01_" + $Side + "_ball_pnt_rfr")`;
+    xform  -ws -t ($ballPosition.x) ($ballPosition.y) ($ballPosition.z) $BallPoint[0];
+    //ScalePoints ($BallPoint[0],$Size*0.1);
+    string $ToePoint[] = `spaceLocator -n ("Character01_" + $Side + "_toe_pnt_rfr")`;
+    xform  -ws -t ($toePosition.x) ($toePosition.y) ($toePosition.z) $ToePoint[0];
+    //ScalePoints ($ToePoint[0],$Size*0.1);
 
+    string $AnklePoint[] = `spaceLocator -n ("Character01_" + $Side + "_ankleFeet_pnt_rfr")`;
+    xform  -ws -t ($anklePosition.x) ($anklePosition.y) ($anklePosition.z) $AnklePoint[0];
+    
+    string $FootLimitBackPoint[] = `spaceLocator -n ("Character01_" + $Side + "_footLimitBack_pnt_rfr")`;
+    xform  -ws -t ($FootLimitBackPosition.x) ($FootLimitBackPosition.y) ($FootLimitBackPosition.z) $FootLimitBackPoint[0];
+    //ScalePoints ($FootLimitBackPoint[0],$Size*0.1);
+    string $FootLimitLeftPoint[] = `spaceLocator -n ("Character01_" + $Side + "_footLimitOuter_pnt_rfr")`;
+    xform  -ws -t ($FootLimitLeftPosition.x) ($FootLimitLeftPosition.y) ($FootLimitLeftPosition.z) $FootLimitLeftPoint[0];
+    //ScalePoints ($FootLimitLeftPoint[0],$Size*0.1);
+    string $FootLimitRightPoint[] = `spaceLocator -n ("Character01_"+$Side+"_footLimitInner_pnt_rfr")`;
+    xform  -ws -t ($FootLimitRightPosition.x) ($FootLimitRightPosition.y) ($FootLimitRightPosition.z) $FootLimitRightPoint[0];
+    //ScalePoints ($FootLimitRightPoint[0],$Size*0.1);
+    RMObjLookXAtPoint ($AnklePoint[0], $ballPosition - $anklePosition);
+    RMObjLookXAtPoint ($BallPoint[0], $toePosition - $ballPosition);
 
-    string $AnklePoint[] = `spaceLocator -n ("Character01_"+$Side+"_ankleFeet_pnt_rfr") -p ($anklePosition.x) ($anklePosition.y) ($anklePosition.z)`;
-    xform -cp $AnklePoint[0];
-    string $FootLimitBackPoint[] = `spaceLocator -n ("Character01_"+$Side+"_footLimitBack_pnt_rfr") -p ($FootLimitBackPosition.x) ($FootLimitBackPosition.y) ($FootLimitBackPosition.z)`;
-    xform -cp $FootLimitBackPoint[0];
-    ScalePoints ($FootLimitBackPoint[0],$Size*0.1);
-    string $FootLimitLeftPoint[] = `spaceLocator -n ("Character01_"+$Side+"_footLimitOuter_pnt_rfr") -p ($FootLimitLeftPosition.x) ($FootLimitLeftPosition.y) ($FootLimitLeftPosition.z)`;
-    xform -cp $FootLimitLeftPoint[0];
-    ScalePoints ($FootLimitLeftPoint[0],$Size*0.1);
-    string $FootLimitRightPoint[] = `spaceLocator -n ("Character01_"+$Side+"_footLimitInner_pnt_rfr") -p ($FootLimitRightPosition.x) ($FootLimitRightPosition.y) ($FootLimitRightPosition.z)`;
-    xform -cp $FootLimitRightPoint[0];
-    ScalePoints ($FootLimitRightPoint[0],$Size*0.1);
+    RMAlign $BallPoint[0] $ToePoint[0] 2;
+    RMAlign $BallPoint[0] $FootLimitLeftPoint[0] 2;
+    RMAlign $BallPoint[0] $FootLimitRightPoint[0] 2;
+    RMAlign $BallPoint[0] $FootLimitBackPoint[0] 2;
 
     parent ($ToePoint[0]) ($BallPoint[0]);
     parent ($BallPoint[0]) ($AnklePoint[0]);
@@ -119,5 +141,7 @@ global proc RMCreateFeetPoints(vector $OriginPoint, vector $DirectionVector,vect
     parent ($FootLimitBackPoint[0]) ($BallPoint[0]);
     parent ($FootLimitLeftPoint[0]) ($BallPoint[0]);
     parent ($FootLimitRightPoint[0]) ($BallPoint[0]);
+
+    return ($AnklePoint[0]);
 }
 

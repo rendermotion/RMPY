@@ -3,28 +3,27 @@ global proc string[] RMCreateHeadRefPoints (vector $Origin ,vector $DirectionVec
 	vector $TransversalVector=unit (cross ($DirectionVector, $FrontVector));
 	$FrontVector= unit (cross ($TransversalVector, $DirectionVector));
 
-	vector $headPosition = $Origin+$DirectionVector*$HeadSize*0.8 + $FrontVector*0.1*$HeadSize;
-	vector $headTipPosition = $headPosition + $DirectionVector*$HeadSize*0.5;
+	vector $headPosition = $Origin+$DirectionVector * $HeadSize*0.8 + $FrontVector*0.1*$HeadSize;
+	vector $headTipPosition = $headPosition + $DirectionVector * $HeadSize*0.5 + $FrontVector*0.1*$HeadSize;
+	//vector $headTipPosition = $headPosition + $DirectionVector * $HeadSize*0.5 - ;
 	vector $jawPosition = $headPosition - $DirectionVector * $HeadSize*0.25 - $FrontVector *0.2* $HeadSize;
 	vector $jawTipPosition = $headPosition - $DirectionVector * $HeadSize*0.25 - $FrontVector *0.5* $HeadSize;
 
-	string $neckPoint[] =  `spaceLocator -n (RMUniqueName("Character01_MD_neck_pnt_rfr")) -p ($Origin.x) ($Origin.y+$HeadSize*0.3) ($Origin.z)`;
-	//print ("este es "+$neckPoint[0]);
-	xform -cp $neckPoint[0];
-	ScalePoints ($neckPoint[0],$HeadSize*0.1);
-	//select -r $neckPoint[0];
-	string $headPoint[] =  `spaceLocator -n (RMUniqueName("Character01_MD_head_pnt_rfr")) -p ($headPosition.x) ($headPosition.y) ($headPosition.z)`;
-	xform -cp $headPoint[0];
-	ScalePoints ($headPoint[0],$HeadSize*0.1);
-	string $jawPoint[] =  `spaceLocator -n (RMUniqueName("Character01_MD_jaw_pnt_rfr")) -p ($jawPosition.x) ($jawPosition.y) ($jawPosition.z)`;
-	xform -cp $jawPoint[0]; 
-	ScalePoints ($jawPoint[0],$HeadSize*0.1);
-	string $headTipPoint[] =  `spaceLocator -n (RMUniqueName("Character01_MD_headTip_ball_pnt_rfr"))-p ($headTipPosition.x) ($headTipPosition.y) ($headTipPosition.z)`;
-	xform -cp $headTipPoint[0];
-	ScalePoints ($headTipPoint[0],$HeadSize*0.1);
-	string $jawTipPoint[] =  `spaceLocator -n (RMUniqueName("Character01_MD_jawTip_pnt_rfr")) -p ($jawTipPosition.x) ($jawTipPosition.y) ($jawTipPosition.z)`;
-	xform -cp $jawTipPoint[0];
-	ScalePoints ($jawTipPoint[0],$HeadSize*0.1);
+	string $neckPoint[] =  `spaceLocator -n (RMUniqueName("Character01_MD_neck_pnt_rfr"))`;
+	xform -ws -t ($Origin.x) ($Origin.y+$HeadSize*0.3) ($Origin.z) $neckPoint[0];
+	//ScalePoints ($neckPoint[0],$HeadSize*0.1);
+	string $headPoint[] =  `spaceLocator -n (RMUniqueName("Character01_MD_head_pnt_rfr"))`;
+	xform  -ws -t ($headPosition.x) ($headPosition.y) ($headPosition.z) $headPoint[0];
+	//ScalePoints ($headPoint[0],$HeadSize*0.1);
+	string $jawPoint[] =  `spaceLocator -n (RMUniqueName("Character01_MD_jaw_pnt_rfr"))`;
+	xform  -ws -t ($jawPosition.x) ($jawPosition.y) ($jawPosition.z) $jawPoint[0]; 
+	//ScalePoints ($jawPoint[0],$HeadSize*0.1);
+	string $headTipPoint[] =  `spaceLocator -n (RMUniqueName("Character01_MD_headTip_ball_pnt_rfr"))`;
+	xform -ws -t ($headTipPosition.x) ($headTipPosition.y) ($headTipPosition.z) $headTipPoint[0];
+	//ScalePoints ($headTipPoint[0],$HeadSize*0.1);
+	string $jawTipPoint[] =  `spaceLocator -n (RMUniqueName("Character01_MD_jawTip_pnt_rfr"))`;
+	xform -ws -t ($jawTipPosition.x) ($jawTipPosition.y) ($jawTipPosition.z) $jawTipPoint[0];
+	//ScalePoints ($jawTipPoint[0],$HeadSize*0.1);
     
     RMObjLookXAtPoint ($jawPoint[0],($jawTipPosition - $jawPosition));
     RMObjLookXAtPoint ($jawTipPoint[0],($jawTipPosition - $jawPosition));
@@ -38,5 +37,4 @@ global proc string[] RMCreateHeadRefPoints (vector $Origin ,vector $DirectionVec
     parent ($headPoint[0]) ($neckPoint[0]);
 
     return $neckPoint;
-
 }

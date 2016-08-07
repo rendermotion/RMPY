@@ -25,7 +25,6 @@ global proc RMObjLookXAtPoint (string $Obj01, vector $DirVect){
         }
         else
         {
-
         	$Ry = 180.0 - asind (float ($DirVect.z)/$longitud);
         }
         
@@ -34,7 +33,6 @@ global proc RMObjLookXAtPoint (string $Obj01, vector $DirVect){
         float $Rz = asind(float($DirVect.y)/$longitud);
         print "\n";
         print $Rz;
-        //0  
         xform -ws -rotation 0 (-$Ry) 0 $Obj01;
         xform -r -os -rotation 0  0 ($Rz) $Obj01;
     }

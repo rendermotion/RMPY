@@ -14,6 +14,7 @@ class RMNameConvention (object):
 
 		self.TypeDictionary = { 
 							"joint":"jnt",
+							"skinjoint":"sknjnt",
 							"nub":"nub",
 							"skin":"skn",
 						    "undefined":"UDF",
@@ -22,6 +23,7 @@ class RMNameConvention (object):
 							"renderMesh":"rmsh",
 							"transform":"grp",
 							"pointConstraint":"pnc",
+							"poleVectorConstraint":"pvc",
 							"control":"ctr",
 							"locator":"loc",
 							"ikHandle":"ikh",
@@ -33,7 +35,8 @@ class RMNameConvention (object):
 							"baseLattice":"blt",
 							"curveInfo":"cui",
 							"distanceBetween":"dbtw",
-							"cluster":"cls"
+							"cluster":"cls",
+							"plusMinusAverage":"pma"
 
 							}
 		self.ShapeDictionary = {
@@ -89,10 +92,26 @@ class RMNameConvention (object):
 			return returnTuple
 
 	def RMRenameSetFromName (self, ObjName, TextString, Token, mode = "regular"):
-		newName = self.RMSetFromName( ObjName, TextString, Token, mode = mode)
-		newName = self.RMUniqueName( newName)
-		cmds.rename (ObjName, newName)
-		return newName
+		returnListType = False
+		if (type (ObjName) == str) or (type (ObjName) == unicode):
+			ObjectList = [ObjName]
+			returnListType = False
+		elif (type(ObjName) == list):
+			ObjectList = ObjName
+			returnListType = True 
+		else :
+			ObjectList=[]
+		returnList = []
+		newName = ""
+		for eachObj in ObjectList:
+			newName = self.RMSetFromName( eachObj, TextString, Token, mode = mode)
+			newName = self.RMUniqueName( newName)
+			cmds.rename (eachObj, newName)
+			returnList.append(newName)
+		if returnListType == True:
+			return returnList
+		else:
+			return newName
 
 
 	def RMStringPlus1 (self, NameString):
@@ -250,9 +269,11 @@ class RMNameConvention (object):
 			return False
 	def RMGetAShortName(self,Node):
 		if self.RMIsNameInFormat(Node):
-			return self.RMGetFromName(Node,'Name')
+			Value = re.split(r"([0-9]+$)",self.RMGetFromName(Node,'Name'))
+			return Value[0]
 		else:
-			return Node
+			Value = re.split(r"([0-9]+$)",Node)
+			return Value[0]
 
 
 #NameConv = RMNameConvention()
