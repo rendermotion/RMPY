@@ -330,7 +330,7 @@ class RMSpaceSwitch(object):
             SWMultDiv = cmds.listConnections(ControlObject + "." + SpaceSwitchName, type = "multiplyDivide")[0]
 
         if reverse == True:
-            ConnectionsList = cmds.listConnections(SWMultDiv + ".outputX", type = "revese")
+            ConnectionsList = cmds.listConnections(SWMultDiv + ".outputX", type = "reverse")
             reverseSW = ""
             if ConnectionsList and len(ConnectionsList) >= 1:
                 reverseSW = ConnectionsList[0]
@@ -372,7 +372,7 @@ class RMSpaceSwitch(object):
             SWMultDiv = cmds.listConnections(ControlObject + "." + SpaceSwitchName, type = "multiplyDivide")[0]
 
         if reverse == True:
-            ConnectionsList = cmds.listConnections (SWMultDiv + ".outputX", type = "revese")
+            ConnectionsList = cmds.listConnections (SWMultDiv + ".outputX", type = "reverse")
             reverseSW = ""
             if ConnectionsList and len(ConnectionsList) >= 1:
                 reverseSW = ConnectionsList[0]
