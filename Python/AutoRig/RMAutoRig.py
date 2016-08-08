@@ -6,8 +6,10 @@ from AutoRig import RMSpine
 from AutoRig import RMNeckHead
 import maya.mel as mel
 import RMNameConvention
-#from MetacubeScripts import MetacubeFileNameConvention
+from MetacubeScripts import MetacubeFileNameConvention
 from AutoRig import RMFeet
+import RMRigShapeControls
+
 reload (RMFeet)
 reload (RMSpine)
 reload (RMNeckHead)
@@ -37,20 +39,19 @@ class RMBiped(object):
         self.RHfeet = RMFeet.RMFeetRig()
 
         self.NeckHead = RMNeckHead.RMNeckHead()
-        #self.MetaNameConv = MetacubeFileNameConvention.MetacubeFileNameConvention()
+        self.MetaNameConv = MetacubeFileNameConvention.MetacubeFileNameConvention()
 
     def CreateBipedRig(self):
-
-        #if self.MetaNameConv.nameInFormat:
-        #    CharacterName = self.MetaNameConv.AssetType+"_" + self.MetaNameConv.AssetName + "_rig"
-        CharacterName = "MainCharacter"
+        if self.MetaNameConv.nameInFormat:
+            CharacterName = self.MetaNameConv.AssetType + "_" + self.MetaNameConv.AssetName + "_rig"
+        else :
+            CharacterName = "MainCharacter"
 
         if cmds.objExists(CharacterName):
             MainGroup = CharacterName
         else:
             MainGroup = cmds.group(empty = True, name = CharacterName)
-        #else:
-        #    MainGroup = cmds.group(empty = True, name = "MainCharacter")
+
 
 
         if cmds.objExists("mesh_grp"):
@@ -66,11 +67,15 @@ class RMBiped(object):
         kinematics = cmds.group( empty = True, name = "kinematics")
         joints = cmds.group( empty = True, name = "joints")
         controls = cmds.group( empty = True, name = "controls_grp")
+        self.world = cmds.group( empty = True, name = "world")
 
         self.kinematics = kinematics
         self.deformation = deformation
         self.joints = joints
         self.controls = controls
+
+        cmds.parent(self.world, self.kinematics)
+
 
         meshp = cmds.listRelatives( mesh , parent = True )
         if not meshp:
@@ -83,12 +88,13 @@ class RMBiped(object):
         cmds.parent(deformation , rig)
         cmds.parent(kinematics , rig)
         cmds.parent(joints , rig)
-        
+
         #Creacion del spine 
         spineJoints = ["Character01_MD_Spine_pnt_rfr","Character01_MD_Spine1_pnt_rfr","Character01_MD_Spine2_pnt_rfr","Character01_MD_Spine3_pnt_rfr","Character01_MD_Spine4_pnt_rfr"]
         hip = ["Character01_MD_Spine_pnt_rfr","Character01_MD_Hip_pnt_rfr"]
         clavLF = ["Character01_LF_clavicle_pnt_rfr","Character01_LF_shoulder_pnt_rfr"]
         clavRH = ["Character01_RH_clavicle_pnt_rfr","Character01_RH_shoulder_pnt_rfr"]
+
         self.Spine.RMCreateSpineRig(spineJoints,hip,clavLF,clavRH)
 
         spineKinematics = cmds.group(empty = True, name = "spineKinematics")
@@ -114,7 +120,7 @@ class RMBiped(object):
 
         self.NeckHead.RMCreateHeadAndNeckRig(Head, neck, Jaw)
         cmds.parent( self.NeckHead.RootNeckJoints, self.Spine.chestJoint)
-        cmds.parent( self.NeckHead.resetNeckControl, self.Spine.chestControl)
+        cmds.parent( self.NeckHead.resetNeckControl, self.Spine.ChestRotationControl)
         
 
         #Creacion del Brazo 
@@ -122,7 +128,7 @@ class RMBiped(object):
         self.LimbArmRight.RMLimbRig("Character01_RH_shoulder_pnt_rfr", FKAxisFree='010')
         RHArmDic = self.OrganizeLimb(self.LimbArmRight,"RH","Arm", self.Spine.RightClavicleJoints[1],self.Spine.chestJoint)
 
-        self.LimbArmLeft.RMLimbRig("Character01_LF_shoulder_pnt_rfr",FKAxisFree='110')
+        self.LimbArmLeft.RMLimbRig("Character01_LF_shoulder_pnt_rfr",FKAxisFree='010')
         RHArmDic = self.OrganizeLimb(self.LimbArmLeft,"LF","Arm", self.Spine.LeftClavicleJoints[1],self.Spine.chestJoint)
 
 
@@ -168,7 +174,6 @@ class RMBiped(object):
                     "limitOut":"Character01_LF_footLimitOuter_pnt_rfr",
                     "limitIn":"Character01_LF_footLimitInner_pnt_rfr"}
 
-        #self.LFfeet = RMFeetRig()
         self.LFfeet.RigFeetIKFK(StandarFeetLFPoints, self.LimbLegLeft.ikControl, self.LimbLegLeft.FKTrirdLimbControl)
 
         self.LimbLegLeft.SPSW.RMCreateListConstraintSwitch(self.LFfeet.StandardFeetJoints ,self.LFfeet.StandardFeetIKJoints , self.LimbLegLeft.SpaceSwitchControl, SpaceSwitchName="IKFKSwitch")
@@ -192,8 +197,8 @@ class RMBiped(object):
                     "limitOut":"Character01_RH_footLimitOuter_pnt_rfr",
                     "limitIn":"Character01_RH_footLimitInner_pnt_rfr"}
 
-        self.RHfeet = RMFeetRig()
-        self.RHfeet.RigFeetIKFK(StandarFeetLFPoints, self.LimbLegRight.ikControl, self.LimbLegRight.FKTrirdLimbControl)
+
+        self.RHfeet.RigFeetIKFK(StandarFeetRHPoints, self.LimbLegRight.ikControl, self.LimbLegRight.FKTrirdLimbControl)
 
         self.LimbLegRight.SPSW.RMCreateListConstraintSwitch(self.RHfeet.StandardFeetJoints ,self.RHfeet.StandardFeetIKJoints , self.LimbLegRight.SpaceSwitchControl, SpaceSwitchName="IKFKSwitch")
         self.LimbLegRight.SPSW.RMCreateListConstraintSwitch(self.RHfeet.StandardFeetJoints ,self.RHfeet.StandardFeetFKJoints , self.LimbLegRight.SpaceSwitchControl, SpaceSwitchName="IKFKSwitch", reverse = True)
@@ -209,6 +214,28 @@ class RMBiped(object):
 
         cmds.pointConstraint(self.LimbLegRight.ikControl,self.LimbLegRight.IkHandle,remove=True)
         cmds.parent(self.LimbLegRight.IkHandle, self.RHfeet.IKAttachPoint)
+
+        mover01Reset, Mover01 = RMRigShapeControls.RMCircularControl ( "world" , axis = "Y" , radius = self.Spine.SpineLength * 1.5  , name = "mover02")
+        mover02Reset, Mover02 = RMRigShapeControls.RMCircularControl ( "world" , axis = "Y" , radius = self.Spine.SpineLength * 2, name = "mover01")
+        placerReset , placer  = RMRigShapeControls.RMCircularControl ( "world" , axis = "Y" , radius = self.Spine.SpineLength * 2.5  , name = "placer")
+        cmds.parent( placerReset, controls)
+        cmds.parent( mover02Reset, placer)
+        cmds.parent( mover01Reset, Mover02)
+        cmds.parent( self.Spine.ResetCOG ,Mover01)
+        
+        #mover01Reset, Mover01 = RMRigShapeControls.RMCircularControl ( "world" , axis = "Y" ,radius = self.Spine.SpineLength * 3  , name = "mover02")
+
+        #self.SPSW.
+
+
+    def Visibility():
+
+        pass
+
+    def ColorCode():
+        pass
+
+
 
         
     def OrganizeLimb (self, limbObject, Name, Side, ObjectAttached,deformationParent):

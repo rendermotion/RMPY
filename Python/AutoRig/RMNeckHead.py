@@ -19,6 +19,8 @@ class RMNeckHead(object):
         self.NeckJoints = None
         self.resetHeadControl = None
         self.headControl = None
+        self.RootJaw = None
+        self.JawJoints =None
 
         self.NeckControl = None
         self.resetNeckControl = None
@@ -41,6 +43,7 @@ class RMNeckHead(object):
 
         self.NeckJoints[0] = self.NameConv.RMRenameSetFromName( self.NeckJoints[0],"sknjnt","Type")
         self.HeadJoints[0] = self.NameConv.RMRenameSetFromName( self.HeadJoints[0],"sknjnt","Type")
+        self.JawJoints[0] = self.NameConv.RMRenameSetFromName( self.JawJoints[0],"sknjnt","Type")
 
 
 

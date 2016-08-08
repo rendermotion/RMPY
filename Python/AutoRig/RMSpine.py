@@ -76,6 +76,8 @@ class RMSpine(object):
         self.LeftClavicleJoints[0] = self.NameConv.RMRenameSetFromName( self.LeftClavicleJoints[0],"sknjnt","Type")
         self.RightClavicleJoints[0] = self.NameConv.RMRenameSetFromName( self.RightClavicleJoints[0],"sknjnt","Type")
         self.spineJoints = self.NameConv.RMRenameSetFromName( self.spineJoints,"sknjnt","Type")
+        self.hipJoints[0] = self.NameConv.RMRenameSetFromName( self.hipJoints[0],"sknjnt","Type")
+        self.chestJoint = self.NameConv.RMRenameSetFromName( self.chestJoint,"sknjnt","Type")
 
 
         RMRigTools.RMLockAndHideAttributes(self.hipControl, "000111000h")
@@ -118,7 +120,9 @@ class RMSpine(object):
         self.kinematics.append(ClustersGroup)
         self.kinematics.append(self.spineIK)
 
-        ResetCOG, COG = RMRigShapeControls.RMCreateBoxCtrl(self.spineJoints[0],Yratio=3,Zratio=3)
+        #ResetCOG, COG = RMRigShapeControls.RMCreateBoxCtrl(self.spineJoints[0],Yratio=3,Zratio=3)
+        ResetCOG, COG = RMRigShapeControls.RMImportMoveControl(self.spineJoints[0], scale = RMRigTools.RMLenghtOfBone(self.spineJoints[0]) * 7)
+
         COG = self.NameConv.RMRenameSetFromName(COG,"COG","Name")
         
 
@@ -248,6 +252,9 @@ class RMSpine(object):
 
 
         resetWaist, waist = RMRigShapeControls.RMCircularControl( AllSpine[1], radius = SpineLength*.8,name = "waist")
+        
+
+
         cmds.parent( ResetChest, waist)
         cmds.parent( resetWaist, COG)
 
@@ -266,7 +273,8 @@ class RMSpine(object):
         return rootHip , hipJoints
     
     def RMCreateHipSystem(self):
-        resetHipControl, hipControl = RMRigShapeControls.RMCircularControl(self.rootHip,radius = self.SpineLength *.7,name = "hip")
+        #resetHipControl, hipControl = RMRigShapeControls.RMCircularControl(self.rootHip,radius = self.SpineLength *.7,name = "hip")
+        resetHipControl, hipControl = RMRigShapeControls.RMImportMoveControl(self.rootHip, scale = self.SpineLength, name = "hip",Type = "circleDeform")
         cmds.parent( resetHipControl, self.COG)
         cmds.parentConstraint( hipControl, self.hipJoints[0])
         cmds.parent( self.rootHip, self.spineJoints[0])

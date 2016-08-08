@@ -3,7 +3,6 @@ import maya.api.OpenMaya as om
 import RMRigTools
 
 
-
 reload (RMRigTools)
 import RMRigShapeControls
 reload (RMRigShapeControls)
@@ -73,7 +72,7 @@ class RMLimbIKFK(object):
         self.FKparentGroup = self.NameConv.RMRenameSetFromName(self.FKparentGroup,"Limbfk" ,"System")
         self.RMCreateFKControls(AxisFree = FKAxisFree)
 
-        self.SknParentGroup , self.SknJointStructure = self.RMLimbJointEstructure(RootReferencePoint)     
+        self.SknParentGroup , self.SknJointStructure = self.RMLimbJointEstructure(RootReferencePoint)
         self.SknJointStructure = self.NameConv.RMRenameSetFromName(self.SknJointStructure,"Limbskn" ,"System")
         self.SknParentGroup = self.NameConv.RMRenameSetFromName(self.SknParentGroup,"Limbskn" ,"System")
 
@@ -83,12 +82,20 @@ class RMLimbIKFK(object):
         cmds.parent(self.IKControlResetPoint,self.IKControls)
         cmds.parent(self.PoleVectorControlResetPnt,self.IKControls)
 
-        self.TJArm.RMCreateTwistJoints (self.SknJointStructure[0], self.SknJointStructure[1])
+        if FKAxisFree == "010":
+            LookAtAxis="Y"
+        else :
+            LookAtAxis="Z"
+
+        self.TJArm.RMCreateTwistJoints (self.SknJointStructure[0], self.SknJointStructure[1],LookAtAxis = LookAtAxis)
+
 
         constraintTJArm = cmds.parentConstraint(self.SknParentGroup, self.TJArm.TwistControlResetPoint, mo=True)[0]
         constraintTJArm = self.NameConv.RMRenameBasedOnBaseName(self.SknJointStructure[1], constraintTJArm)
+        
+        self.TJElbow.RMCreateTwistJoints (self.SknJointStructure[1], self.SknJointStructure[2],LookAtAxis = LookAtAxis)
 
-        self.TJElbow.RMCreateTwistJoints (self.SknJointStructure[1], self.SknJointStructure[2])
+
         constraintTJElbow = cmds.parentConstraint(self.SknJointStructure[0] , self.TJElbow.TwistControlResetPoint,mo=True)[0]
         constraintTJElbow = self.NameConv.RMRenameBasedOnBaseName(self.SknJointStructure[1], constraintTJElbow )
 
@@ -189,20 +196,24 @@ class RMLimbIKFK(object):
 
     
     def RMCreateFKControls(self, AxisFree = "111"):
-        ArmParent ,FKFirstLimbControl = RMRigShapeControls.RMCreateBoxCtrl(self.FKjointStructure[0],Xratio=1,Yratio=.3,Zratio=.3, name = self.NameConv.RMGetAShortName(self.FKjointStructure[0]) + "FK")
+        #ArmParent ,FKFirstLimbControl = RMRigShapeControls.RMCreateBoxCtrl(self.FKjointStructure[0],Xratio=1,Yratio=.3,Zratio=.3, name = self.NameConv.RMGetAShortName(self.FKjointStructure[0]) + "FK")
+        ArmParent ,FKFirstLimbControl = RMRigShapeControls.RMCircularControl(self.FKjointStructure[0], radius = RMRigTools.RMLenghtOfBone(self.FKjointStructure[0])/2, name = self.NameConv.RMGetAShortName(self.FKjointStructure[0]) + "FK")
         
         RMRigTools.RMLinkHerarchyRotation (self.FKjointStructure[0], self.FKjointStructure[0],FKFirstLimbControl)
 
         RMRigTools.RMLockAndHideAttributes (FKFirstLimbControl,'000111000h')
 
-        SecondLimbParent ,FKSecondLimbControl = RMRigShapeControls.RMCreateBoxCtrl(self.FKjointStructure[1],Xratio=1,Yratio=.3,Zratio=.3, name = self.NameConv.RMGetAShortName(self.FKjointStructure[1])+ "FK")
+        #SecondLimbParent ,FKSecondLimbControl = RMRigShapeControls.RMCreateBoxCtrl(self.FKjointStructure[1],Xratio=1,Yratio=.3,Zratio=.3, name = self.NameConv.RMGetAShortName(self.FKjointStructure[1])+ "FK")
+        SecondLimbParent ,FKSecondLimbControl = RMRigShapeControls.RMCircularControl(self.FKjointStructure[1], radius = RMRigTools.RMLenghtOfBone(self.FKjointStructure[1])/2, name = self.NameConv.RMGetAShortName(self.FKjointStructure[1]) + "FK")
 
         cmds.parent(SecondLimbParent, FKFirstLimbControl)
 
         RMRigTools.RMLinkHerarchyRotation (self.FKjointStructure[1], self.FKjointStructure[1], FKSecondLimbControl)
         RMRigTools.RMLockAndHideAttributes (FKSecondLimbControl,'000'+ AxisFree +'000h')
 
-        ThirdLimbParent ,FKTrirdLimbControl = RMRigShapeControls.RMCreateBoxCtrl(self.FKjointStructure[2], Xratio=.3, Yratio=.3, Zratio=.3 , ParentBaseSize = True, name = self.NameConv.RMGetAShortName(self.FKjointStructure[2]) + "FK")
+        #ThirdLimbParent ,FKTrirdLimbControl = RMRigShapeControls.RMCreateBoxCtrl(self.FKjointStructure[2], Xratio=.3, Yratio=.3, Zratio=.3 , ParentBaseSize = True, name = self.NameConv.RMGetAShortName(self.FKjointStructure[2]) + "FK")
+        ThirdLimbParent ,FKTrirdLimbControl = RMRigShapeControls.RMCircularControl(self.FKjointStructure[2], radius = RMRigTools.RMLenghtOfBone(self.FKjointStructure[1])/3, name = self.NameConv.RMGetAShortName(self.FKjointStructure[2]) + "FK")
+
         
         cmds.parent(ThirdLimbParent, FKSecondLimbControl)
 
@@ -276,10 +287,10 @@ class RMLimbIKFK(object):
         self.PoleVectorControlResetPnt, self.PoleVectorControl = RMRigShapeControls.RMCreateBoxCtrl( locator, customSize = distancia / 5, name = self.NameConv.RMGetAShortName(self.IKjointStructure[1]) + "PoleVectorIK", centered = True)
 
         
-        dataGroup = RMRigTools.RMCreateLineBetwenPoints(self.PoleVectorControl, self.IKjointStructure[1])
+        dataGroup, Curve = RMRigTools.RMCreateLineBetwenPoints(self.PoleVectorControl, self.IKjointStructure[1])
+        cmds.parent(Curve, self.PoleVectorControl)
+        cmds.parentConstraint("world", Curve)
 
-        #solver = cmds.ikSolver( st='ikRPSolver', name = 'PoleVectorSolver' )
-        #cmds.ikHandle(IKHandle, e=True, sol = solver)
         PoleVectorCnstraint = cmds.poleVectorConstraint( self.PoleVectorControl, IKHandle, name = "PoleVector")[0]
         PoleVectorCnstraint = self.NameConv.RMRenameBasedOnBaseName(self.PoleVectorControl,PoleVectorCnstraint,NewName=PoleVectorCnstraint)
 

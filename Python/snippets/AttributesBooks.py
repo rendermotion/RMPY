@@ -4,6 +4,11 @@ import RMRigTools
 
 #mel.eval('source "RMAttributes.mel"; \nDeleteAttributes("BookMainControl");')
 
+
+bend = cmds.nonLinear(type = bend, lowBound = -1, highBound =1, curvature = 0)
+
+
+
 #cmds.addAttr("BookMainControl",longName="BookOpen",keyable=1,hasMinValue=1,hasMaxValue=1,minValue=0,maxValue=10)
 #cmds.addAttr("BookMainControl",longName="BookLeaf",keyable=1,hasMinValue=1,hasMaxValue=1,minValue=-10,maxValue=10)
 #cmds.addAttr("BookMainControl",longName="BorderRefinement",keyable=1,hasMinValue=1,hasMaxValue=1,minValue=-10,maxValue=10)

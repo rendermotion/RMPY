@@ -126,9 +126,9 @@ class RMFeetRig(object):
         cmds.poleVectorConstraint (FeetOrient, BallIK)
         cmds.poleVectorConstraint (FeetPalmOrient, TipIK)
 
-        RMRigTools.RMAlign(StandarFeetPointsDic["limitIn"],SideInGrp,1)
-        RMRigTools.RMAlign(StandarFeetPointsDic["limitOut"],SideOutGrp,1)        
-        RMRigTools.RMAlign(StandarFeetPointsDic["limitBack"],TapGrp,1)
+        #RMRigTools.RMAlign(StandarFeetPointsDic["limitIn"],SideInGrp,1)
+        #RMRigTools.RMAlign(StandarFeetPointsDic["limitOut"],SideOutGrp,1)        
+        #RMRigTools.RMAlign(StandarFeetPointsDic["limitBack"],TapGrp,1)
 
         cmds.parent( BallIK ,BallLift)
         cmds.parent( TipIK ,BallLift)
@@ -166,18 +166,20 @@ class RMFeetRig(object):
 
         cmds.parent (self.rootIKJoints, BallGrp)
 
-        RMRigTools.RMConnectWithLimits( FeetControl + ".ToePivot" , TipGrp + ".rotateZ", [[-10,-70],[0,0],[10,70]])
-        RMRigTools.RMConnectWithLimits( FeetControl + ".ToePivotSide",TipGrp+".rotateY", [[-10,-70],[0,0],[10,70]])
+        
+        RMRigTools.RMConnectWithLimits( FeetControl + ".ToePivotSide",TipGrp+".rotateY", [[-10,70],[0,0],[10,-70]])
         RMRigTools.RMConnectWithLimits( FeetControl + ".ToeLift",BallLift+".rotateZ", [[-10,-70],[0,0],[10,70]])
         RMRigTools.RMConnectWithLimits( FeetControl + ".BallPivot",BallGrp+".rotateZ", [[-10,70],[0,0],[10,-70]])
         RMRigTools.RMConnectWithLimits( FeetControl + ".HeelPivot",TapGrp+".rotateZ", [[-10,-70],[0,0],[10,70]])
 
-        if (Side=="LF"):
-            RMRigTools.RMConnectWithLimits( FeetControl + ".Tilt",SideInGrp+".rotateX", [[-10,70],[0,0]])
-            RMRigTools.RMConnectWithLimits( FeetControl + ".Tilt",SideInGrp+".rotateX", [[-10,-70],[0,0]])
+        if (Side == "LF"):
+            RMRigTools.RMConnectWithLimits( FeetControl + ".Tilt",SideInGrp + ".rotateX", [[-10,70],[0,0]])
+            RMRigTools.RMConnectWithLimits( FeetControl + ".Tilt",SideOutGrp +".rotateX", [[0,0],[10,-70]])
+            RMRigTools.RMConnectWithLimits( FeetControl + ".ToePivot" , TipGrp + ".rotateZ", [[-10,-70],[0,0],[10,70]])
         else:
-            RMRigTools.RMConnectWithLimits( FeetControl + ".Tilt", SideInGrp+".rotateX", [[10,-70],[0,0]])
-            RMRigTools.RMConnectWithLimits( FeetControl + ".Tilt", SideInGrp+".rotateX", [[-10,70],[0,0]])
+            RMRigTools.RMConnectWithLimits( FeetControl + ".Tilt", SideInGrp + ".rotateX", [[0,0],[10,-70]])
+            RMRigTools.RMConnectWithLimits( FeetControl + ".ToePivot" , TipGrp + ".rotateZ", [[-10,70],[0,0],[10,-70]])
+            RMRigTools.RMConnectWithLimits( FeetControl + ".Tilt", SideOutGrp + ".rotateX", [[-10,70],[0,0]])
         #RMRigTools.RMCreateGroupOnObj( FeetControl)
         cmds.scaleConstraint( FeetControl ,MainFeet)
 

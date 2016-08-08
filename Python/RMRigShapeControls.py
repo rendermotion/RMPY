@@ -108,7 +108,8 @@ def RMImportMoveControl(Obj, scale = 1,NameConv = None, name = '',Type = "move")
 	MoversTypeDic =	{
 					 "move":{"filename":"ControlMover.mb","object":"MoverControl"},
 					 "v"   :{"filename":"ControlV.mb",    "object":"VControl"},
-					 "head":{"filename":"ControlHead.mb", "object":"HeadControl"}
+					 "head":{"filename":"ControlHead.mb", "object":"HeadControl"},
+					 "circleDeform":{"filename":"ControlCircularDeform.mb", "object":"CircularDeform"}
 					}
 	if not NameConv:
 		NameConv = RMNameConvention.RMNameConvention()
