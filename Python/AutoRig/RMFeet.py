@@ -14,18 +14,22 @@ class RMFeetRig(object):
             self.NameConv = NameConv
         
         self.StandardFeetPointsDic = None
+
         self.rootFKJoints = None
         self.rootIKJoints = None
-        self.FeetControl = None
+
 
         self.StandardFeetIKJoints = None
         self.StandardFeetFKJoints = None
         self.MainFeetKinematics = None 
-        self.FirstLimbFeetResetControl = None 
 
+        self.FeetControl = None
+        self.FirstLimbFeetResetControl = None 
+        self.SecondLimbFeetControl = None
+        self.SecondLimbControlResetPoint = None
         #self.StandardFeetDefJoints = None
         #self.rootStandardFeetDefJoints = None
-        
+        self.IKAttachPoint = None
         self.rootJoints = None
         self.StandardFeetJoints = None
 
@@ -52,8 +56,8 @@ class RMFeetRig(object):
         Length = RMRigTools.RMPointDistance(self.StandardFeetPointsDic["feet"][2] , FootBK)
 
         if not FeetControl:
-            FirstLimbFeetResetControl, FeetControl = RMRigShapeControls.RMCircularControl(StandardFeetFKJoints[0] ,radius =  Length, name = "FKFeetControl")
-            self.FirstLimbFeetResetControl = FirstLimbFeetResetControl
+            self.FirstLimbFeetResetControl, FeetControl = RMRigShapeControls.RMCircularControl(StandardFeetFKJoints[0] ,radius =  Length, name = "FKFeetControl")
+
         self.FeetControl = FeetControl
 
         SecondLimbfeetResetControl , SecondLimbFeetControl = RMRigShapeControls.RMCircularControl(StandardFeetFKJoints[1] ,radius =  Length, name = "FKTipFeetControl")
@@ -62,11 +66,13 @@ class RMFeetRig(object):
         cmds.parentConstraint(SecondLimbFeetControl, StandardFeetFKJoints[1], mo = True)
         cmds.parentConstraint(StandardFeetFKJoints[0], SecondLimbfeetResetControl, mo = True)
 
+        cmds.parent(SecondLimbfeetResetControl,FeetControl )
         RMRigTools.RMLockAndHideAttributes(FeetControl,"000111000h")
         RMRigTools.RMLockAndHideAttributes(SecondLimbFeetControl,"000111000h")
 
         self.StandardFeetFKJoints = StandardFeetFKJoints
         self.SecondLimbFeetControl = SecondLimbFeetControl
+        self.SecondLimbControlResetPoint = SecondLimbfeetResetControl
 
 
     def StandardFeetIKRig (self , StandarFeetPointsDic, FeetControl = None):

@@ -6,12 +6,13 @@ from AutoRig import RMSpine
 from AutoRig import RMNeckHead
 import maya.mel as mel
 import RMNameConvention
-from MetacubeScripts import MetacubeFileNameConvention
+#from MetacubeScripts import MetacubeFileNameConvention
 from AutoRig import RMFeet
 reload (RMFeet)
 reload (RMSpine)
 reload (RMNeckHead)
 reload (RMLimbIKFK)
+reload (RMSpaceSwitch)
 reload (RMGenericHandRig)
 reload (RMNameConvention)
 import RMRigTools
@@ -36,18 +37,20 @@ class RMBiped(object):
         self.RHfeet = RMFeet.RMFeetRig()
 
         self.NeckHead = RMNeckHead.RMNeckHead()
-        self.MetaNameConv = MetacubeFileNameConvention.MetacubeFileNameConvention()
+        #self.MetaNameConv = MetacubeFileNameConvention.MetacubeFileNameConvention()
 
     def CreateBipedRig(self):
 
-        if self.MetaNameConv.nameInFormat:
-            CharacterName = self.MetaNameConv.AssetType+"_" + self.MetaNameConv.AssetName + "_rig"
-            if cmds.objExists(CharacterName):
-                MainGroup = CharacterName
-            else:
-                MainGroup = cmds.group(empty = True, name = CharacterName)
+        #if self.MetaNameConv.nameInFormat:
+        #    CharacterName = self.MetaNameConv.AssetType+"_" + self.MetaNameConv.AssetName + "_rig"
+        CharacterName = "MainCharacter"
+
+        if cmds.objExists(CharacterName):
+            MainGroup = CharacterName
         else:
-            MainGroup = cmds.group(empty = True, name = "MainCharacter")
+            MainGroup = cmds.group(empty = True, name = CharacterName)
+        #else:
+        #    MainGroup = cmds.group(empty = True, name = "MainCharacter")
 
 
         if cmds.objExists("mesh_grp"):
@@ -165,16 +168,23 @@ class RMBiped(object):
                     "limitOut":"Character01_LF_footLimitOuter_pnt_rfr",
                     "limitIn":"Character01_LF_footLimitInner_pnt_rfr"}
 
-        self.LFfeet = RMFeetRig()
+        #self.LFfeet = RMFeetRig()
         self.LFfeet.RigFeetIKFK(StandarFeetLFPoints, self.LimbLegLeft.ikControl, self.LimbLegLeft.FKTrirdLimbControl)
 
         self.LimbLegLeft.SPSW.RMCreateListConstraintSwitch(self.LFfeet.StandardFeetJoints ,self.LFfeet.StandardFeetIKJoints , self.LimbLegLeft.SpaceSwitchControl, SpaceSwitchName="IKFKSwitch")
         self.LimbLegLeft.SPSW.RMCreateListConstraintSwitch(self.LFfeet.StandardFeetJoints ,self.LFfeet.StandardFeetFKJoints , self.LimbLegLeft.SpaceSwitchControl, SpaceSwitchName="IKFKSwitch", reverse = True)
 
-        cmds.parent(LFfeet.rootJoints, self.LFfeet.TJElbow.TwistJoints[len(self.LimbArmLeft.TJElbow.TwistJoints) - 1])
+        cmds.parent(self.LFfeet.rootJoints, self.LimbLegLeft.TJElbow.TwistJoints[len(self.LimbLegLeft.TJElbow.TwistJoints) -1])
 
-        cmds.parent(LFfeet.MainFeetKinematics, self.LFfeet.IKjointStructure[len(self.LFfeet.IKjointStructure)-1] )
-        cmds.parent(LFfeet.StandardFeetFKJoints, self.LFfeet.FKjointStructure[len(self.LFfeet.FKjointStructure)-1] )
+        feetJointsGroup = cmds.group(empty = True, name = "FeetJoints")
+        feetJointsGroup = self.NameConv.RMRenameNameInFormat(feetJointsGroup,Side="LF")
+        cmds.parent(self.LFfeet.MainFeetKinematics  , feetJointsGroup)
+        cmds.parent(self.LFfeet.rootFKJoints, feetJointsGroup)
+        cmds.parent(feetJointsGroup, self.joints)
+
+       
+        cmds.pointConstraint(self.LimbLegLeft.ikControl,self.LimbLegLeft.IkHandle,remove=True)
+        cmds.parent(self.LimbLegLeft.IkHandle, self.LFfeet.IKAttachPoint)
 
 
         StandarFeetRHPoints = {"feet" : ["Character01_RH_ankleFeet_pnt_rfr","Character01_RH_ball_pnt_rfr","Character01_RH_toe_pnt_rfr"],
@@ -188,11 +198,17 @@ class RMBiped(object):
         self.LimbLegRight.SPSW.RMCreateListConstraintSwitch(self.RHfeet.StandardFeetJoints ,self.RHfeet.StandardFeetIKJoints , self.LimbLegRight.SpaceSwitchControl, SpaceSwitchName="IKFKSwitch")
         self.LimbLegRight.SPSW.RMCreateListConstraintSwitch(self.RHfeet.StandardFeetJoints ,self.RHfeet.StandardFeetFKJoints , self.LimbLegRight.SpaceSwitchControl, SpaceSwitchName="IKFKSwitch", reverse = True)
 
-        cmds.parent(RHfeet.rootJoints, self.RHfeet.TJElbow.TwistJoints[len(self.LimbArmLeft.TJElbow.TwistJoints) - 1])
+        cmds.parent(self.RHfeet.rootJoints, self.LimbLegRight.TJElbow.TwistJoints[len(self.LimbLegRight.TJElbow.TwistJoints) - 1])
 
-        cmds.parent(RHfeet.MainFeetKinematics, self.RHfeet.IKjointStructure[len(self.RHfeet.IKjointStructure)-1] )
-        cmds.parent(RHfeet.StandardFeetFKJoints, self.RHfeet.FKjointStructure[len(self.RHfeet.FKjointStructure)-1] )
+        
+        feetJointsGroup = cmds.group(empty = True,name = "FeetJoints")
+        feetJointsGroup = self.NameConv.RMRenameNameInFormat(feetJointsGroup,Side="RH")
+        cmds.parent(self.RHfeet.MainFeetKinematics  , feetJointsGroup)
+        cmds.parent(self.RHfeet.rootFKJoints, feetJointsGroup)
+        cmds.parent(feetJointsGroup, self.joints)
 
+        cmds.pointConstraint(self.LimbLegRight.ikControl,self.LimbLegRight.IkHandle,remove=True)
+        cmds.parent(self.LimbLegRight.IkHandle, self.RHfeet.IKAttachPoint)
 
         
     def OrganizeLimb (self, limbObject, Name, Side, ObjectAttached,deformationParent):
