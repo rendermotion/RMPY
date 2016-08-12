@@ -117,7 +117,7 @@ def RMImportMoveControl(Obj, scale = 1,NameConv = None, name = '',Type = "move")
 	RMMel=os.path.split(path)
 	FinalPath = os.path.join(RMMel[0],"Python\AutoRig\RigShapes",MoversTypeDic[Type]["filename"])
 	if os.path.isfile(FinalPath):
-		cmds.file( FinalPath, i=True, type="mayaBinary", ignoreVersion = True,mergeNamespacesOnClash=False, rpr="ControlMover", pr = False)
+		cmds.file( FinalPath, i=True, type="mayaBinary", ignoreVersion = True, mergeNamespacesOnClash=False, rpr="ControlMover", pr = False)
 	else:
 		print "archivo no encontrado"
 		return None

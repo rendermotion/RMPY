@@ -43,11 +43,10 @@ class RMSpaceSwitch(object):
             cmds.connectAttr(reverse + ".outputX", parentConstraint[0] + "." + WA[0])
 
 
-    def CreateSpaceSwitch(self, AfectedObject, SpaceObjects, ControlObject, Name = "spaceSwitch",constraintType = "parent", mo = True):
+    def CreateSpaceSwitch(self, AfectedObject, SpaceObjects, ControlObject, Name = "spaceSwitch"):
         '''
         Creates a new SpaceSwitch using conditions so it can accept multiple spaces, 
         and it is compatible with the add and remove from Space Switch functions.
-        Valid constraintTypes are "parent" , "point", "orient"
         '''
         SpaceObjectShortName =[]
         for eachObject in SpaceObjects:
@@ -57,14 +56,7 @@ class RMSpaceSwitch(object):
 
         index = 0
         for eachObject in SpaceObjects:
-            if constraintType == "point":
-                parentConstraint = cmds.pointConstraint (eachObject, AfectedObject, mo = mo, name = self.NameConv.RMGetAShortName(AfectedObject) + "SpaceSwitchConstraint")
-            
-            elif constraintType == "orient":
-                parentConstraint = cmds.orientConstraint (eachObject, AfectedObject, mo = mo, name = self.NameConv.RMGetAShortName(AfectedObject) + "SpaceSwitchConstraint")
-            
-            else:
-                parentConstraint = cmds.parentConstraint (eachObject, AfectedObject, mo = mo, name = self.NameConv.RMGetAShortName(AfectedObject) + "SpaceSwitchConstraint")
+            parentConstraint = cmds.parentConstraint (eachObject, AfectedObject, mo = True, name = self.NameConv.RMGetAShortName(AfectedObject) + "SpaceSwitchConstraint")
 
             Switch = cmds.shadingNode('condition', asUtility=True, name = Name + "SWCondition")
             cmds.connectAttr(ControlObject + "." + Name, Switch + ".firstTerm")
@@ -72,15 +64,9 @@ class RMSpaceSwitch(object):
             cmds.setAttr (Switch +".operation", 0)
             cmds.setAttr (Switch +".colorIfTrueR", 1)
             cmds.setAttr (Switch +".colorIfFalseR", 0)
-            if constraintType == "point":
-                WA = cmds.pointConstraint (parentConstraint, q = True, weightAliasList = True)
-                TL = cmds.pointConstraint (parentConstraint, q = True, targetList = True)
-            elif constraintType == "orient":
-                WA = cmds.orientConstraint (parentConstraint, q = True, weightAliasList = True)
-                TL = cmds.orientConstraint (parentConstraint, q = True, targetList = True)
-            else:
-                WA = cmds.parentConstraint (parentConstraint, q = True, weightAliasList = True)
-                TL = cmds.parentConstraint (parentConstraint, q = True, targetList = True)
+            
+            WA = cmds.parentConstraint (parentConstraint, q = True, weightAliasList = True)
+            TL = cmds.parentConstraint (parentConstraint, q = True, targetList = True)
 
             cmds.connectAttr (Switch + ".outColorR", parentConstraint[0] + "." + WA[index])
             if self.NameConv.RMIsNameInFormat(AfectedObject):
@@ -331,7 +317,8 @@ class RMSpaceSwitch(object):
 
     def RMCreateListConstraintSwitch(self,Constrained, Constraints ,ControlObject, SpaceSwitchName = 'spaceSwitch', reverse = False):
         SWMultDiv = ""
-        if (self.AddNumericParameter (ControlObject, Name = SpaceSwitchName)):
+        if (
+            self.AddNumericParameter (ControlObject, Name = SpaceSwitchName)):
             SWMultDiv = cmds.shadingNode("multiplyDivide",asUtility = True ,name = SpaceSwitchName + "SWMultDivide" )
             SWMultDiv = self.NameConv.RMRenameBasedOnBaseName(ControlObject, SWMultDiv, NewName = SWMultDiv)
             cmds.connectAttr(ControlObject+"."+SpaceSwitchName ,SWMultDiv+".input1X")

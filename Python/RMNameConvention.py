@@ -36,7 +36,8 @@ class RMNameConvention (object):
 							"curveInfo":"cui",
 							"distanceBetween":"dbtw",
 							"cluster":"cls",
-							"plusMinusAverage":"pma"
+							"plusMinusAverage":"pma",
+							"blendTwoAttr":"b2a"
 
 							}
 		self.ShapeDictionary = {

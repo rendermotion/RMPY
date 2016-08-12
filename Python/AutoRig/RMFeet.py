@@ -33,10 +33,12 @@ class RMFeetRig(object):
         self.rootJoints = None
         self.StandardFeetJoints = None
 
+        self.feetMainMoveIK = None
+
         self.rootFKJoints
     def RigFeetIKFK(self, StandarFeetPointsDic, IKcontrol = None, FKControl = None):
         self.StandardFeetIKRig( StandarFeetPointsDic, FeetControl = IKcontrol)
-        self.StardardFeetFK( StandarFeetPointsDic , FeetControl = FKControl)
+        self.StardardFeetFK   ( StandarFeetPointsDic , FeetControl = FKControl)
         
         self.rootJoints , FeetJoints = self.StandardReverseFeetJointStructure( StandarFeetPointsDic)
         #StandardFeetFKJoints = self.NameConv.RMRenameSetFromName(StandardFeetIKJoints, "Blend" , "Name" , mode = "add")
@@ -98,12 +100,12 @@ class RMFeetRig(object):
         FeetOrient     = cmds.group( empty=True, name = self.NameConv.RMSetNameInFormat(Name = "FeetOrient", Side = Side))
         FeetPalmOrient = cmds.group( empty=True, name = self.NameConv.RMSetNameInFormat(Name = "FeetPalmOrient", Side = Side))
 
-        RMRigTools.RMAlign(StandardFeetIKJoints[1],BallGrp,3);
-        RMRigTools.RMAlign(StandardFeetIKJoints[1],BallLift,3);
+        RMRigTools.RMAlign(StandardFeetIKJoints[1],BallGrp,3)
+        RMRigTools.RMAlign(StandardFeetIKJoints[1],BallLift,3)
 
-        RMRigTools.RMAlign(StandardFeetIKJoints[1],TipGrp,3);
-        RMRigTools.RMAlign(StandardFeetIKJoints[2],TipGrp,1);
-        RMRigTools.RMAlign(StandardFeetIKJoints[1],TapGrp,3);
+        RMRigTools.RMAlign(StandardFeetIKJoints[1],TipGrp,3)
+        RMRigTools.RMAlign(StandardFeetIKJoints[2],TipGrp,1)
+        RMRigTools.RMAlign(StandardFeetIKJoints[1],TapGrp,3)
         
 
         RMRigTools.RMAlign(FootIn,SideInGrp,3)
@@ -112,23 +114,19 @@ class RMFeetRig(object):
         RMRigTools.RMAlign(BallGrp,FeetPalmOrient,3)
         RMRigTools.RMAlign( StandardFeetIKJoints[0] ,FeetOrient,3)
 
-        cmds.xform(FeetOrient    , objectSpace=True, relative=True,t= [ Width , 0 , 0])
-        cmds.xform(FeetPalmOrient, objectSpace=True, relative=True,t= [ Width , 0 , 0])
+        cmds.xform(FeetOrient    , objectSpace=True, relative=True, t= [ 0 , 0 , Width])
+        cmds.xform(FeetPalmOrient, objectSpace=True, relative=True, t= [ 0 , 0 , Width])
 
-        BallIK, BallIkEffector = cmds.ikHandle (solver="ikRPsolver",sj=StandardFeetIKJoints[0],ee=StandardFeetIKJoints[1], name = "BallIK")
-        TipIK,  TipIkEffector  = cmds.ikHandle (solver="ikRPsolver",sj=StandardFeetIKJoints[1],ee=StandardFeetIKJoints[2], name = "TipIK")
+        BallIK, BallIkEffector = cmds.ikHandle (sj=StandardFeetIKJoints[0],ee=StandardFeetIKJoints[1], name = "BallIK") #solver="ikRPsolver",
+        TipIK,  TipIkEffector  = cmds.ikHandle (sj=StandardFeetIKJoints[1],ee=StandardFeetIKJoints[2], name = "TipIK")#solver="ikRPsolver",
        
         BallIK = self.NameConv.RMRenameNameInFormat( BallIK, Side = Side)
         TipIK = self.NameConv.RMRenameNameInFormat( TipIK, Side = Side)
         BallIkEffector = self.NameConv.RMRenameNameInFormat( BallIkEffector, Side = Side)
-        TipIkEffector = self.NameConv.RMRenameNameInFormat( TipIkEffector, Side = Side)
+        TipIkEffector  = self.NameConv.RMRenameNameInFormat( TipIkEffector, Side = Side)
 
-        cmds.poleVectorConstraint (FeetOrient, BallIK)
-        cmds.poleVectorConstraint (FeetPalmOrient, TipIK)
-
-        #RMRigTools.RMAlign(StandarFeetPointsDic["limitIn"],SideInGrp,1)
-        #RMRigTools.RMAlign(StandarFeetPointsDic["limitOut"],SideOutGrp,1)        
-        #RMRigTools.RMAlign(StandarFeetPointsDic["limitBack"],TapGrp,1)
+        #cmds.poleVectorConstraint (FeetOrient, BallIK)
+        #cmds.poleVectorConstraint (FeetPalmOrient, TipIK)
 
         cmds.parent( BallIK ,BallLift)
         cmds.parent( TipIK ,BallLift)
@@ -149,8 +147,7 @@ class RMFeetRig(object):
             fetControlReset , FeetControl = RMRigShapeControls.RMCreateBoxCtrl(StandarFeetPointsDic["feet"][0] ,customSize =  Length , Yratio = .6 ,Zratio = .3, name = "FeetControl")
             self.fetControlReset = fetControlReset
 
-
-
+        #self.feetMainMoveIK = TipData
         cmds.parentConstraint(FeetControl, TipData, mo=True)
 
         self.RMStandardRigAttributes(FeetControl)
@@ -164,22 +161,21 @@ class RMFeetRig(object):
         cmds.makeIdentity( FeetOrient ,    apply = True, t = 1, r = 1, s = 1, n = 0)
         cmds.makeIdentity( FeetPalmOrient ,apply = True, t = 1, r = 1, s = 1, n = 0)
 
-        cmds.parent (self.rootIKJoints, BallGrp)
-
+        #cmds.parent (self.rootIKJoints, BallGrp)
         
-        RMRigTools.RMConnectWithLimits( FeetControl + ".ToePivotSide",TipGrp+".rotateY", [[-10,70],[0,0],[10,-70]])
         RMRigTools.RMConnectWithLimits( FeetControl + ".ToeLift",BallLift+".rotateZ", [[-10,-70],[0,0],[10,70]])
-        RMRigTools.RMConnectWithLimits( FeetControl + ".BallPivot",BallGrp+".rotateZ", [[-10,70],[0,0],[10,-70]])
+        RMRigTools.RMConnectWithLimits( FeetControl + ".BallPivot", BallGrp+".rotateZ", [[-10,70],[0,0],[10,-70]])
         RMRigTools.RMConnectWithLimits( FeetControl + ".HeelPivot",TapGrp+".rotateZ", [[-10,-70],[0,0],[10,70]])
-
+        RMRigTools.RMConnectWithLimits( FeetControl + ".ToePivot" , TipGrp + ".rotateZ", [[-10,70],[0,0],[10,-70]])
         if (Side == "LF"):
             RMRigTools.RMConnectWithLimits( FeetControl + ".Tilt",SideInGrp + ".rotateX", [[-10,70],[0,0]])
             RMRigTools.RMConnectWithLimits( FeetControl + ".Tilt",SideOutGrp +".rotateX", [[0,0],[10,-70]])
-            RMRigTools.RMConnectWithLimits( FeetControl + ".ToePivot" , TipGrp + ".rotateZ", [[-10,-70],[0,0],[10,70]])
+            RMRigTools.RMConnectWithLimits( FeetControl + ".ToePivotSide",TipGrp+".rotateY", [[-10,70],[0,0],[10,-70]])
+        #    RMRigTools.RMConnectWithLimits( FeetControl + ".ToePivot" , TipGrp + ".rotateZ", [[-10,-70],[0,0],[10,70]])
         else:
-            RMRigTools.RMConnectWithLimits( FeetControl + ".Tilt", SideInGrp + ".rotateX", [[0,0],[10,-70]])
-            RMRigTools.RMConnectWithLimits( FeetControl + ".ToePivot" , TipGrp + ".rotateZ", [[-10,70],[0,0],[10,-70]])
-            RMRigTools.RMConnectWithLimits( FeetControl + ".Tilt", SideOutGrp + ".rotateX", [[-10,70],[0,0]])
+            RMRigTools.RMConnectWithLimits( FeetControl + ".Tilt", SideInGrp + ".rotateX",  [[-10,-70],[ 0, 0]])
+            RMRigTools.RMConnectWithLimits( FeetControl + ".Tilt", SideOutGrp + ".rotateX", [[  0,  0],[10,70]])
+            RMRigTools.RMConnectWithLimits( FeetControl + ".ToePivotSide",TipGrp+".rotateY", [[-10,-70],[0,0],[10,70]])
         #RMRigTools.RMCreateGroupOnObj( FeetControl)
         cmds.scaleConstraint( FeetControl ,MainFeet)
 
@@ -190,7 +186,7 @@ class RMFeetRig(object):
     def StandardReverseFeetJointStructure (self , StandarFeetPointsDic):
         feetResetJoints ,feetJoints = RMRigTools.RMCreateBonesAtPoints( StandarFeetPointsDic["feet"], ZAxisOrientation = "Z")
         
-        return feetResetJoints ,feetJoints
+        return feetResetJoints , feetJoints
 
 
     def RMStandardRigAttributes(self,Object):
