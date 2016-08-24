@@ -115,7 +115,6 @@ class RMSpaceSwitch(object):
 
         return {'enums' : Enums , 'constraints' : ConstraintDictionary }
 
-
     def GetAfectedObjectsList(self,ControlObject,SpaceSwitchName = "spaceSwitch"):
         SpaceSwDic = self.GetSpaceSwitchDic(ControlObject, SpaceSwitchName = SpaceSwitchName)
         ReturnObjectsList=[]

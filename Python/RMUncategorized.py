@@ -28,32 +28,32 @@ def ResetPostoZero(objects):
 			cmds.setAttr(eachObject+".s",1,1,1)
 		except:
 			None
-def SetObjectTransformDic(OTDic):
+def SetObjectTransformDic(OTDic, MirrorTranslateX = 1 ,MirrorTranslateY = 1, MirrorTranslateZ = 1,MirrorRotateX = 1 ,MirrorRotateY = 1, MirrorRotateZ = 1):
 	for keys in OTDic:
 		FocusObject = ignoreNamespace(keys)
 		if FocusObject:
 			try:
-				cmds.setAttr(FocusObject+".translateX",OTDic[keys]["t"][0])
+				cmds.setAttr(FocusObject+".translateX",OTDic[keys]["t"][0] * MirrorTranslateX)
 			except:
 				None
 			try:
-				cmds.setAttr(FocusObject+".translateY",OTDic[keys]["t"][1])
+				cmds.setAttr(FocusObject+".translateY",OTDic[keys]["t"][1] * MirrorTranslateY)
 			except:
 				None
 			try:
-				cmds.setAttr(FocusObject+".translateZ",OTDic[keys]["t"][2])
+				cmds.setAttr(FocusObject+".translateZ",OTDic[keys]["t"][2] * MirrorTranslateZ)
 			except:
 				None
 			try:
-				cmds.setAttr(FocusObject+".rotateX",OTDic[keys]["r"][0])
+				cmds.setAttr(FocusObject+".rotateX",OTDic[keys]["r"][0] * MirrorRotateX)
 			except:
 				None
 			try:
-				cmds.setAttr(FocusObject+".rotateY",OTDic[keys]["r"][1])
+				cmds.setAttr(FocusObject+".rotateY",OTDic[keys]["r"][1] * MirrorRotateY)
 			except:
 				None
 			try:
-				cmds.setAttr(FocusObject+".rotateZ",OTDic[keys]["r"][2])
+				cmds.setAttr(FocusObject+".rotateZ",OTDic[keys]["r"][2] * MirrorRotateZ)
 			except:
 				None
 			try:

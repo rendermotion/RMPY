@@ -238,7 +238,9 @@ class RMLimbIKFK(object):
         
         cmds.parent(ThirdLimbParent, FKSecondLimbControl)
 
-        RMRigTools.RMLinkHerarchyRotation (self.FKjointStructure[2], self.FKjointStructure[2], FKTrirdLimbControl)
+        #RMRigTools.RMLinkHerarchyRotation (self.FKjointStructure[2], self.FKjointStructure[2], FKTrirdLimbControl)
+        cmds.parentConstraint( FKTrirdLimbControl ,  self.FKjointStructure[2] )
+
         RMRigTools.RMLockAndHideAttributes (FKTrirdLimbControl,'000111000h')
         
         self.FKFirstLimbControl = FKFirstLimbControl

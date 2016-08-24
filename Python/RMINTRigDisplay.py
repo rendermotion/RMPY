@@ -21,8 +21,8 @@ class RMRigDisplay(QtGui.QDialog):
 		self.ui=RMFormRigDisplay.Ui_Form()
 		self.ui.setupUi(self)
 		self.setWindowTitle('RM Maya Rig Display')
-
 		self.ui.ChangeJointdrawStyle.clicked.connect(self.JointDrawStyle)
+
 	def JointDrawStyle(self):
 		mel.eval("source RMJointDisplay.mel;RMChangeJointDrawStyle();")
 

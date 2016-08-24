@@ -1,9 +1,32 @@
 import maya.cmds as cmds
 import RMNameConvention
-reload (RMNameConvention)
 import maya.api.OpenMaya as om
 import math
 
+class boundingBoxInfo(object):
+    def __init__(self,Object):
+        self.BaseObject = Object
+        Values = cmds.xform(Object,q=True, bb=True)
+        self.lenX = Values[3]-Values[0]
+        self.lenY = Values[4]-Values[1]
+        self.lenZ = Values[5]-Values[2]
+        self.xmin = Values[0] 
+        self.ymin = Values[1] 
+        self.zmin = Values[2] 
+        self.xmax = Values[3] 
+        self.ymax = Values[4] 
+        self.zmax = Values[5] 
+    def recalculate(self):
+        Values = cmds.xform(Object,bb=True)
+        self.lenX = Values[3]-Values[0]
+        self.lenY = Values[4]-Values[1]
+        self.lenZ = Values[5]-Values[2]
+        self.xmin = Values[0]
+        self.ymin = Values[1] 
+        self.zmin = Values[2] 
+        self.xmax = Values[3] 
+        self.ymax = Values[4] 
+        self.zmax = Values[5]
 
 def RMAlign(obj1,obj2,flag):
     if (flag==1 or flag == 3):
@@ -186,7 +209,6 @@ def RMLockAndHideAttributes(Obj, BitString, LHType ="LH"  ):
                ".scaleY":7,
                ".scaleZ":8,
                ".visibility":9}
-               
     if (len(BitString)==10):
         print ObjArray
         for eachObj in ObjArray:

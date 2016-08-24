@@ -159,7 +159,12 @@ class RMBiped(object):
         RMRigTools.RMAlign(self.NeckHead.resetHeadControl, WorldHead ,3)
         cmds.parent(WorldHead ,self.world)
 
-        self.SPSW.CreateSpaceSwitch(self.NeckHead.resetHeadControl,[ self.NeckHead.NeckJoints[1] , WorldHead ], self.NeckHead.headControl , constraintType = "orient",mo = False)
+        HeadResetPoint = cmds.group(empty = True, name = "NeckOrientConstraint" )
+        HeadResetPoint = self.NameConv.RMRenameBasedOnBaseName (self.NeckHead.headControl, HeadResetPoint, NewName = "Neck" , System = "HeadSpaceSwitch")
+        RMRigTools.RMAlign(self.NeckHead.resetHeadControl, HeadResetPoint ,3)
+        cmds.parent ( HeadResetPoint , self.NeckHead.NeckJoints[1] )  
+
+        self.SPSW.CreateSpaceSwitch(self.NeckHead.resetHeadControl,[ HeadResetPoint , WorldHead ], self.NeckHead.headControl , constraintType = "orient",mo = True)
 
 
         #Creacion de Brazos
@@ -204,12 +209,27 @@ class RMBiped(object):
 
         #Creacion de pierna
 
-
         self.LimbLegRight.RMLimbRig("Character01_RH_leg_pnt_rfr",FKAxisFree='001')
         RHLegDic = self.OrganizeLimb(self.LimbLegRight,"RH","Leg", self.Spine.hipJoints[1],self.Spine.hipJoints[1])
 
         self.LimbLegLeft.RMLimbRig("Character01_LF_leg_pnt_rfr",FKAxisFree='001')
         LFLegDic = self.OrganizeLimb(self.LimbLegLeft,"LF","Leg", self.Spine.hipJoints[1],self.Spine.hipJoints[1])
+
+        
+        Locator = cmds.spaceLocator(name = "referenceLocator")[0]
+        
+        RMRigTools.RMAlign( "Character01_LF_ball_pnt_rfr" , Locator , 1)
+        cmds.setAttr ( Locator +".rotateX", 90)
+        cmds.setAttr ( Locator +".rotateZ", -90)
+
+        RMRigTools.RMAlign(Locator, self.LimbLegLeft.IKControlResetPoint , 2)
+        RMRigTools.RMAlign(Locator, self.LimbLegLeft.ThirdLimbParent , 2)
+        RMRigTools.RMAlign(Locator, self.LimbLegRight.IKControlResetPoint , 2)
+        RMRigTools.RMAlign(Locator, self.LimbLegRight.ThirdLimbParent , 2)
+
+
+        cmds.delete( Locator )
+
 
         StandarFeetLFPoints = {"feet" : ["Character01_LF_ankleFeet_pnt_rfr","Character01_LF_ball_pnt_rfr","Character01_LF_toe_pnt_rfr"],
                     "limitBack":"Character01_LF_footLimitBack_pnt_rfr",
@@ -341,8 +361,6 @@ class RMBiped(object):
 
         return {"kinematics":limbKinematics, "controls":limbControls,"joints":limbJoints}
 
-BipedRig = RMBiped()
-BipedRig.CreateBipedRig()
 
 
 

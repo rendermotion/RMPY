@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'RMCopyPosition.ui'
 #
-# Created: Thu Aug 04 16:19:53 2016
+# Created: Tue Aug 16 15:51:38 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
