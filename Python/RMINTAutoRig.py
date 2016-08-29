@@ -9,10 +9,6 @@ import RMUncategorized
 from ui import RMFormAutorig
 from AutoRig import RMAutoRig
 import RMNameConvention
-reload (RMAutoRig)
-reload(RMUncategorized)
-reload(RMFormAutorig)
-
 
 def getMayaWindow():
     ptr = mui.MQtUtil.mainWindow()

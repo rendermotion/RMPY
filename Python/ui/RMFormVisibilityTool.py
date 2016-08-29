@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'RMVisibilityTool.ui'
 #
-# Created: Tue Aug 16 15:51:41 2016
+# Created: Fri Aug 26 10:26:44 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(369, 374)
+        Form.resize(369, 445)
         self.horizontalLayout_2 = QtGui.QHBoxLayout(Form)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.verticalLayout_5 = QtGui.QVBoxLayout()
@@ -101,9 +101,9 @@ class Ui_Form(object):
 "switch from object", None, QtGui.QApplication.UnicodeUTF8))
         self.AffectedVisibilityObjects.setTitle(QtGui.QApplication.translate("Form", "Affected Objects", None, QtGui.QApplication.UnicodeUTF8))
         self.RemoveFromVisibilityBtn.setText(QtGui.QApplication.translate("Form", "Remove selected \n"
-"from constrained Object list", None, QtGui.QApplication.UnicodeUTF8))
+"from visibility Object list", None, QtGui.QApplication.UnicodeUTF8))
         self.RemoveListSelectedBtn.setText(QtGui.QApplication.translate("Form", "Remove list selected \n"
 "from visibility Object list", None, QtGui.QApplication.UnicodeUTF8))
         self.AddToVisibilitySwitchBtn.setText(QtGui.QApplication.translate("Form", "Add object selection \n"
-"to object constrained list", None, QtGui.QApplication.UnicodeUTF8))
+"to object visibility list", None, QtGui.QApplication.UnicodeUTF8))
 

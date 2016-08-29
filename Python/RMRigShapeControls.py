@@ -1,9 +1,7 @@
 import maya.cmds as cmds
 import RMRigTools
 import os 
-reload (RMRigTools)
 import RMNameConvention
-reload (RMNameConvention)
 
 
 def RMTurnToOne (curveArray):
@@ -15,27 +13,33 @@ def RMTurnToOne (curveArray):
 
 def RMCreateCubeLine (height, length, width,centered = False, offsetX = 0 ,offsetY = 0, offsetZ = 0,name=""):
 	if centered == True:
-		offsetX = -height/2
+		offsetX = offsetX - height/2
 	if name=="":
 		defaultName = "CubeLine"
 	else :
 		defaultName = name
-
 	CubeCurve = []
-	CubeCurve.append(cmds.curve (d = 1, p = [[0     + offsetX, -length/2+ offsetY,  width/2+ offsetZ],[0     + offsetX, -length/2+ offsetY, -width/2+ offsetZ]], name = defaultName))
-	CubeCurve.append(cmds.curve (d = 1, p = [[height+ offsetX, -length/2+ offsetY,  width/2+ offsetZ],[height+ offsetX, -length/2+ offsetY, -width/2+ offsetZ]], name = defaultName))
-	CubeCurve.append(cmds.curve (d = 1, p = [[0     + offsetX,  length/2+ offsetY,  width/2+ offsetZ],[0     + offsetX,  length/2+ offsetY, -width/2+ offsetZ]], name = defaultName))
-	CubeCurve.append(cmds.curve (d = 1, p = [[height+ offsetX,  length/2+ offsetY,  width/2+ offsetZ],[height+ offsetX,  length/2+ offsetY, -width/2+ offsetZ]], name = defaultName))
-	CubeCurve.append(cmds.curve (d = 1, p = [[0     + offsetX, -length/2+ offsetY,  width/2+ offsetZ],[height+ offsetX, -length/2+ offsetY,  width/2+ offsetZ]], name = defaultName))
-	CubeCurve.append(cmds.curve (d = 1, p = [[0     + offsetX,  length/2+ offsetY, -width/2+ offsetZ],[height+ offsetX,  length/2+ offsetY, -width/2+ offsetZ]], name = defaultName))
-	CubeCurve.append(cmds.curve (d = 1, p = [[0     + offsetX, -length/2+ offsetY, -width/2+ offsetZ],[height+ offsetX, -length/2+ offsetY, -width/2+ offsetZ]], name = defaultName))
-	CubeCurve.append(cmds.curve (d = 1, p = [[0     + offsetX,  length/2+ offsetY,  width/2+ offsetZ],[height+ offsetX,  length/2+ offsetY,  width/2+ offsetZ]], name = defaultName))
-	CubeCurve.append(cmds.curve (d = 1, p = [[0     + offsetX, -length/2+ offsetY, -width/2+ offsetZ],[0     + offsetX,  length/2+ offsetY, -width/2+ offsetZ]], name = defaultName))
-	CubeCurve.append(cmds.curve (d = 1, p = [[0     + offsetX, -length/2+ offsetY,  width/2+ offsetZ],[0     + offsetX,  length/2+ offsetY,  width/2+ offsetZ]], name = defaultName))
-	CubeCurve.append(cmds.curve (d = 1, p = [[height+ offsetX, -length/2+ offsetY, -width/2+ offsetZ],[height+ offsetX,  length/2+ offsetY, -width/2+ offsetZ]], name = defaultName))
-	CubeCurve.append(cmds.curve (d = 1, p = [[height+ offsetX, -length/2+ offsetY,  width/2+ offsetZ],[height+ offsetX,  length/2+ offsetY,  width/2+ offsetZ]], name = defaultName))
-	RMTurnToOne(CubeCurve)
-	return CubeCurve[0]
+	pointArray= [
+				 [0     + offsetX, -length/2+ offsetY,  width/2+ offsetZ],
+				 [0     + offsetX, -length/2+ offsetY, -width/2+ offsetZ],
+				 [height+ offsetX, -length/2+ offsetY, -width/2+ offsetZ],
+				 [height+ offsetX,  length/2+ offsetY, -width/2+ offsetZ],
+				 [height+ offsetX,  length/2+ offsetY,  width/2+ offsetZ],
+				 [0     + offsetX,  length/2+ offsetY,  width/2+ offsetZ],
+				 [0     + offsetX,  length/2+ offsetY, -width/2+ offsetZ],
+				 [height+ offsetX,  length/2+ offsetY, -width/2+ offsetZ],
+				 [height+ offsetX, -length/2+ offsetY, -width/2+ offsetZ],
+				 [height+ offsetX, -length/2+ offsetY,  width/2+ offsetZ],
+				 [height+ offsetX,  length/2+ offsetY,  width/2+ offsetZ],
+				 [height+ offsetX, -length/2+ offsetY,  width/2+ offsetZ],
+				 [0     + offsetX, -length/2+ offsetY,  width/2+ offsetZ],
+				 [0     + offsetX,  length/2+ offsetY,  width/2+ offsetZ],
+		 		 [0     + offsetX,  length/2+ offsetY, -width/2+ offsetZ],
+		 		 [0     + offsetX, -length/2+ offsetY, -width/2+ offsetZ]
+		 		 ]
+	curve = cmds.curve(d = 1, p = pointArray, name = defaultName)
+	#return CubeCurve[0]
+	return curve
 
 def RMCreateBoxCtrl (Obj, NameConv = None, Xratio = 1 ,Yratio = 1 ,Zratio = 1, ParentBaseSize = False, customSize = 0,  name = "",centered = False):
 	if not NameConv:

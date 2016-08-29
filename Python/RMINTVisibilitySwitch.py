@@ -8,8 +8,8 @@ import os
 import RMUncategorized
 from ui import RMFormVisibilityTool
 from AutoRig import RMVisibilitySwitch
-
 import RMNameConvention
+reload(RMVisibilitySwitch)
 
 def getMayaWindow():
     ptr = mui.MQtUtil.mainWindow()
@@ -24,8 +24,11 @@ class RMINTVisibilitySwitch(QtGui.QDialog):
         self.VisSw = RMVisibilitySwitch.RMVisibilitySwitch()
         self.ui.LoadSelectionAsCntrlObjPushBtn.clicked.connect(self.LoadSelectionAsCntrlObjPushBtnClicked)
         self.ui.CreateVisibilitySwitchBtn.clicked.connect(self.CreateVisibilitySwitchBtnPressed)
+        self.ui.RemoveFromVisibilityBtn.clicked.connect (self.RemoveSelectedBtnPressed)
+        
         self.ui.AddToVisibilitySwitchBtn.clicked.connect(self.AddToVisibilitySwitchBtnPressed)
         self.ui.ObjectSpaceListView.itemClicked.connect(self.UpdateAffectedObjectList)
+        
         self.ui.RemoveListSelectedBtn.clicked.connect(self.RemoveListSelectedBtnPressed)
         self.ui.ConstrainedObjectListView.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.ui.RemoveEnumBtn.clicked.connect ( self.RemoveEnumBtnClicked )
@@ -41,11 +44,20 @@ class RMINTVisibilitySwitch(QtGui.QDialog):
         EnumList = self.VisSw.GetEnumVisibilityList(Object)
         for eachEnum in EnumList:
             self.ui.ObjectSpaceListView.addItem(eachEnum)
-        if len(EnumList) > 1:
+        print len(EnumList) 
+        if len(EnumList) >= 1:
             self.ui.ObjectSpaceListView.setCurrentRow(0)
             self.UpdateAffectedObjectList()
         else :
             self.ui.ConstrainedObjectListView.clear()
+    def UpdateAffectedObjectList(self):
+        controlObject = self.ui.ControllineEdit.text()
+        VisibilitySwitch = self.ui.ObjectSpaceListView.selectedItems()[0].text()
+        AffectedObjects = self.VisSw.GetAfectedObjectsList ( controlObject, VisibilitySwitch )
+        self.ui.ConstrainedObjectListView.clear()
+        if AffectedObjects:
+            for eachObject in AffectedObjects:
+                self.ui.ConstrainedObjectListView.addItem(eachObject)
 
     def CreateVisibilitySwitchBtnPressed(self):
         VisibilityList = self.VisSw.GetEnumVisibilityList(self.ui.ControllineEdit.text())
@@ -53,9 +65,14 @@ class RMINTVisibilitySwitch(QtGui.QDialog):
             #self.VisSw.AddEnumParameters( self.ui.ControllineEdit.text,VisibilitySwitch = self.ui.VisibilityNameTxt.text())
             Objects = cmds.ls(selection = True , type ="transform" )
             self.VisSw.ConstraintVisibility(Objects , self.ui.ControllineEdit.text(), VisibilitySwitch = self.ui.VisibilityNameTxt.text())
+        self.UpdateVisibilitySwitchObjectList()
+        self.UpdateAffectedObjectList()
 
     def AddToVisibilitySwitchBtnPressed (self):
-        SelectedItem = self.ui.ObjectSpaceListView.selectedItems()[0]
+        SelectedItems = self.ui.ObjectSpaceListView.selectedItems()
+        if len(SelectedItems) > 0:
+            SelectedItem = SelectedItems[0]
+        print "adding to list"
         controlObject = self.ui.ControllineEdit.text()
         Objects = cmds.ls(selection = True , type ="transform" )
         self.VisSw.AddAffectedObject ( controlObject, Objects , VisibilitySwitch = SelectedItem.text() )
@@ -79,14 +96,6 @@ class RMINTVisibilitySwitch(QtGui.QDialog):
         self.VisSw.RemoveAffectedObject ( controlObject, Objects , VisibilitySwitch = VisibilitySwitch )
         self.UpdateAffectedObjectList()
     
-    def UpdateAffectedObjectList(self):
-        controlObject = self.ui.ControllineEdit.text()
-        VisibilitySwitch = self.ui.ObjectSpaceListView.selectedItems()[0].text()
-        AffectedObjects = self.VisSw.GetAfectedObjectsList ( controlObject, VisibilitySwitch )
-        self.ui.ConstrainedObjectListView.clear()
-        if AffectedObjects:
-            for eachObject in AffectedObjects:
-                self.ui.ConstrainedObjectListView.addItem(eachObject)
     def RemoveEnumBtnClicked (self):
         cmds.deleteAttr ("%s.%s"%(self.ui.ControllineEdit.text() ,self.ui.ObjectSpaceListView.selectedItems()[0].text()))
         self.UpdateVisibilitySwitchObjectList()

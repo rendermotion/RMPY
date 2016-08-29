@@ -5,8 +5,54 @@ import math
 
 class boundingBoxInfo(object):
     def __init__(self,Object):
-        self.BaseObject = Object
-        Values = cmds.xform(Object,q=True, bb=True)
+        self.xmin = None
+        self.ymin = None
+        self.zmin = None
+        self.xmax = None 
+        self.ymax = None 
+        self.zmax = None
+
+        if Object.__class__ == list :
+            for eachObject in Objects:
+                Values = cmds.xform( eachObject , q = True, bb = True )
+                if self.xmin == None or self.xmin > Values[0]:
+                    self.xmin = Values[0]
+                if self.ymin == None or self.ymin > Values[1]:
+                    self.ymin = Values[1]
+                if self.zmin == None or self.zmin > Values[2]:
+                    self.zmin = Values[2]
+                if self.xmax == None or self.xmax < Values[3]:
+                    self.xmax = Values[3]
+                if self.ymax == None or self.ymax < Values[4]:
+                    self.ymax = Values[4]
+                if self.zmax == None or self.zmax < Values[5]:
+                    self.zmax = Values[5]
+        elif Object.__class__ in [str,unicode]:
+            self.BaseObject = Object
+            Values = cmds.xform(Object,q=True, bb=True)
+            self.position  = cmds.xform(Object,q=True,rp=True, worldSpace = True)
+            self.xmin = Values[0]
+            self.ymin = Values[1]
+            self.zmin = Values[2] 
+            self.xmax = Values[3] 
+            self.ymax = Values[4] 
+            self.zmax = Values[5]
+
+        self.lenX = self.xmax-self.xmin
+        self.lenY = self.ymax-self.ymin
+        self.lenZ = self.zmax-self.zmin
+        self.minDistanceToCenterX = self.position[0] - self.xmin
+        self.minDistanceToCenterY = self.position[1] - self.ymin
+        self.minDistanceToCenterZ = self.position[2] - self.zmin
+        self.maxDistanceToCenterX = self.position[0] - self.xmax
+        self.maxDistanceToCenterY = self.position[1] - self.ymax
+        self.maxDistanceToCenterZ = self.position[2] - self.zmax
+        self.offsetX = (self.minDistanceToCenterX - self.maxDistanceToCenterX)/2
+        self.offsetY = (self.minDistanceToCenterY - self.maxDistanceToCenterY)/2
+        self.offsetZ = (self.minDistanceToCenterZ - self.maxDistanceToCenterZ)/2
+
+    def recalculate(self):
+        self.position  = cmds.xform(Object,q=True,rp=True, worldSpace = True)
         self.lenX = Values[3]-Values[0]
         self.lenY = Values[4]-Values[1]
         self.lenZ = Values[5]-Values[2]
@@ -16,17 +62,15 @@ class boundingBoxInfo(object):
         self.xmax = Values[3] 
         self.ymax = Values[4] 
         self.zmax = Values[5] 
-    def recalculate(self):
-        Values = cmds.xform(Object,bb=True)
-        self.lenX = Values[3]-Values[0]
-        self.lenY = Values[4]-Values[1]
-        self.lenZ = Values[5]-Values[2]
-        self.xmin = Values[0]
-        self.ymin = Values[1] 
-        self.zmin = Values[2] 
-        self.xmax = Values[3] 
-        self.ymax = Values[4] 
-        self.zmax = Values[5]
+        self.minDistanceToCenterX = self.position[0] - self.xmin
+        self.minDistanceToCenterY = self.position[1] - self.ymin
+        self.minDistanceToCenterZ = self.position[2] - self.zmin
+        self.maxDistanceToCenterX = self.position[0] - self.xmax
+        self.maxDistanceToCenterY = self.position[1] - self.ymax
+        self.maxDistanceToCenterZ = self.position[2] - self.zmax
+        self.offsetX = (self.minDistanceToCenterX - self.maxDistanceToCenterX)/2
+        self.offsetY = (self.minDistanceToCenterY - self.maxDistanceToCenterY)/2
+        self.offsetZ = (self.minDistanceToCenterZ - self.maxDistanceToCenterZ)/2
 
 def RMAlign(obj1,obj2,flag):
     if (flag==1 or flag == 3):

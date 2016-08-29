@@ -9,6 +9,8 @@ import RMNameConvention
 from MetacubeScripts import MetacubeFileNameConvention
 from AutoRig import RMFeet
 import RMRigShapeControls
+import RMRigTools
+import maya.cmds as cmds
 
 reload (RMFeet)
 reload (RMSpine)
@@ -17,9 +19,6 @@ reload (RMLimbIKFK)
 reload (RMSpaceSwitch)
 reload (RMGenericHandRig)
 reload (RMNameConvention)
-import RMRigTools
-
-import maya.cmds as cmds
 
 class RMBiped(object):
     def __init__(self, NameConv = None):

@@ -99,7 +99,7 @@ class RMNameConvention (object):
 			returnListType = False
 		elif (type(ObjName) == list):
 			ObjectList = ObjName
-			returnListType = True 
+			returnListType = True
 		else :
 			ObjectList=[]
 		returnList = []
@@ -113,7 +113,6 @@ class RMNameConvention (object):
 			return returnList
 		else:
 			return newName
-
 
 	def RMStringPlus1 (self, NameString):
 		Value = re.split(r"([0-9]+$)",NameString)

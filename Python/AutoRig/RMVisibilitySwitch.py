@@ -80,8 +80,9 @@ class RMVisibilitySwitch(object):
     def AddAffectedObject ( self, ControlObject, addObjectList , VisibilitySwitch = 'visibility'):
         for eachObject in addObjectList:
             inputConnections = cmds.listConnections("%s.visibility" % eachObject, plugs=True, destination = True)
-            if len(inputConnections) > 0:
-                cmds.disconnectAttr(inputConnections[0], "%s.visibility" % eachObject)
+            if inputConnections:
+                if len(inputConnections) > 0:
+                    cmds.disconnectAttr(inputConnections[0], "%s.visibility" % eachObject)
             cmds.connectAttr( "%s.%s"%(ControlObject,VisibilitySwitch), "%s.visibility" % eachObject, force = True)
 
 
