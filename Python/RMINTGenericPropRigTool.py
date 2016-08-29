@@ -8,7 +8,7 @@ import os
 from ui import RMFormGenericPropRigTool
 import RMNameConvention
 from snippets import NoisePatternRig
-from MetacubeScripts import MetacubeFileNameConvention
+
 reload(RMFormGenericPropRigTool)
 reload(NoisePatternRig)
 
@@ -21,14 +21,10 @@ class RMINTGenericPropRigTool(QtGui.QDialog):
         super(RMINTGenericPropRigTool,self).__init__(parent = getMayaWindow())
         self.ui=RMFormGenericPropRigTool.Ui_Form()
         self.ui.setupUi(self)
-
         self.setWindowTitle('Generic Prop Rig Tool')
-
         self.ui.RigSelectionBtn.clicked.connect(self.RigSelectionBtnPressed)
         self.ui.LoadSelectionAsCntrlObjPushBtn.clicked.connect(self.LoadSelectionAsCntrlObjPushBtnPressed)
         self.ui.AddNoiseBtn.clicked.connect(self.AddNoiseBtnPressed)
-
-        self.MetaNameConv = MetacubeFileNameConvention.MetacubeFileNameConvention()
 
     def RigSelectionBtnPressed(self):
         NoisePatternRig.CreateControlOnSelection()
@@ -42,7 +38,7 @@ class RMINTGenericPropRigTool(QtGui.QDialog):
         NoisePatternRig.addNoiseOnControl([Object], self.ui.ControllineEdit.text())
 
     def CreateGenericRigStructure():
-        self.MetaNameConv
+        pass
 
 if __name__ == '__main__':
     w = RMINTGenericPropRigTool()

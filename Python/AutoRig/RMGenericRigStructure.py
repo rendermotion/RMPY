@@ -8,6 +8,7 @@ class genericRigStructure(object):
                               "rig"     :{"group":"rig_grp"    ,"subGroup":None},
                               "controls":{"group":"control_grp","subGroup":None}
                       }
+        #self.FileNameConv = None
         self.FileNameConv = MetacubeFileNameConvention.MetacubeFileNameConvention()
         self.CreateStructure()
 
