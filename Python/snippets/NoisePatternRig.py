@@ -58,7 +58,7 @@ def SinglePropRig(Object, referencePositionControl):
 
     RMRigTools.RMAlign ( referencePositionControl, joint,3)
     ResetJoint = RMRigTools.RMCreateGroupOnObj(joint)
-    cmds.parent( joint, jointGroup)
+    cmds.parent( ResetJoint, jointGroup)
     #if cmds.objExists
     #for eachObject in Object:
     cmds.select( clear = True )
@@ -120,10 +120,10 @@ def addNoiseOnControl(Object,Control):
 
     for eachObject in Object:
         constraints = constraintComponents(gessFrom = eachObject)
-
-        for eachkey in constraints.constraintDic.keys()
-
         ResetGroup = RMRigTools.RMCreateGroupOnObj( eachObject ,Type="child")
+        for eachkey in constraints.constraintDic:
+            cmds.delete(eachkey)
+            cmds.parentConstraint(ResetGroup,constraints.constraintDic[eachkey]["affected"],mo=True)
         ExpressionNode = cmds.expression (name = "NoiseMainExpresion", string = Expresion.format( ResetGroup , Control, random.uniform (0,100)))
 
 
