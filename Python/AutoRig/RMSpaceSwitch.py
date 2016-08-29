@@ -19,7 +19,6 @@ class RMSpaceSwitch(object):
     def CreateSpaceSwitchReverse(self, AfectedObject, SpaceObjects, ControlObject, Name = "spaceSwitch", sswtype = "enum"):
         '''
         Creates a simple space Switch that uses a reverse for simple solution it can only hold 2 spaces
-
         '''
         if sswtype == "enum" and len(SpaceObjects) == 2:
             self.AddEnumParameters(SpaceObjects, ControlObject, Name = Name)
@@ -44,10 +43,11 @@ class RMSpaceSwitch(object):
             cmds.connectAttr(reverse + ".outputX", parentConstraint[0] + "." + WA[0])
 
 
-    def CreateSpaceSwitch(self,AfectedObject, SpaceObjects, ControlObject, Name = "spaceSwitch"):
+    def CreateSpaceSwitch(self, AfectedObject, SpaceObjects, ControlObject, Name = "spaceSwitch",constraintType = "parent", mo = True):
         '''
         Creates a new SpaceSwitch using conditions so it can accept multiple spaces, 
         and it is compatible with the add and remove from Space Switch functions.
+        Valid constraintTypes are "parent" , "point", "orient"
         '''
         SpaceObjectShortName =[]
         for eachObject in SpaceObjects:
@@ -57,7 +57,14 @@ class RMSpaceSwitch(object):
 
         index = 0
         for eachObject in SpaceObjects:
-            parentConstraint = cmds.parentConstraint (eachObject, AfectedObject, mo = True, name = self.NameConv.RMGetAShortName(AfectedObject) + "SpaceSwitchConstraint")
+            if constraintType == "point":
+                parentConstraint = cmds.pointConstraint (eachObject, AfectedObject, mo = mo, name = self.NameConv.RMGetAShortName(AfectedObject) + "SpaceSwitchConstraint")
+            
+            elif constraintType == "orient":
+                parentConstraint = cmds.orientConstraint (eachObject, AfectedObject, mo = mo, name = self.NameConv.RMGetAShortName(AfectedObject) + "SpaceSwitchConstraint")
+            
+            else:
+                parentConstraint = cmds.parentConstraint (eachObject, AfectedObject, mo = mo, name = self.NameConv.RMGetAShortName(AfectedObject) + "SpaceSwitchConstraint")
 
             Switch = cmds.shadingNode('condition', asUtility=True, name = Name + "SWCondition")
             cmds.connectAttr(ControlObject + "." + Name, Switch + ".firstTerm")
@@ -65,9 +72,15 @@ class RMSpaceSwitch(object):
             cmds.setAttr (Switch +".operation", 0)
             cmds.setAttr (Switch +".colorIfTrueR", 1)
             cmds.setAttr (Switch +".colorIfFalseR", 0)
-            
-            WA = cmds.parentConstraint (parentConstraint, q = True, weightAliasList = True)
-            TL = cmds.parentConstraint (parentConstraint, q = True, targetList = True)
+            if constraintType == "point":
+                WA = cmds.pointConstraint (parentConstraint, q = True, weightAliasList = True)
+                TL = cmds.pointConstraint (parentConstraint, q = True, targetList = True)
+            elif constraintType == "orient":
+                WA = cmds.orientConstraint (parentConstraint, q = True, weightAliasList = True)
+                TL = cmds.orientConstraint (parentConstraint, q = True, targetList = True)
+            else:
+                WA = cmds.parentConstraint (parentConstraint, q = True, weightAliasList = True)
+                TL = cmds.parentConstraint (parentConstraint, q = True, targetList = True)
 
             cmds.connectAttr (Switch + ".outColorR", parentConstraint[0] + "." + WA[index])
             if self.NameConv.RMIsNameInFormat(AfectedObject):
@@ -101,7 +114,6 @@ class RMSpaceSwitch(object):
         ConstraintDictionary = self.ConstraintsDictionary(Enums[Enums.keys()[0]] ['condition'])
 
         return {'enums' : Enums , 'constraints' : ConstraintDictionary }
-
 
     def GetAfectedObjectsList(self,ControlObject,SpaceSwitchName = "spaceSwitch"):
         SpaceSwDic = self.GetSpaceSwitchDic(ControlObject, SpaceSwitchName = SpaceSwitchName)
@@ -188,10 +200,10 @@ class RMSpaceSwitch(object):
              ObjList.append(SpaceSwDic['enums'][eachEnum]['object'])
         return ObjList
 
-    def AddNumericParameter(self,Object, Name = 'spaceSwitch', valueRange = [0,10]):
+    def AddNumericParameter(self, Object, Name = 'spaceSwitch', valueRange = [0,10]):
         AttributeList = cmds.listAttr(Object)
         if Name  in AttributeList:
-            print "the Object Allready has an Attribute with this name, the type is:",cmds.getAttr (Object + "." + Name,type = True)
+            #print "the Object Allready has an Attribute with this name, the type is:",cmds.getAttr (Object + "." + Name,type = True)
             return False
         else :
             cmds.addAttr(Object,at = "float", ln = Name,  hnv = 1, hxv = 1, h = 0, k = 1, smn = valueRange[0], smx = valueRange[1])
@@ -213,8 +225,8 @@ class RMSpaceSwitch(object):
         AttributeList = cmds.listAttr(Object)
         if Name  in AttributeList:
             if cmds.getAttr (Object + "." + Name,type=True)=='enum':
-                print "the Object Allready has an spaceSwitch"
-                print "Current Valid types are", cmds.addAttr (Object + "." + Name,q = True,enumName=True)
+                #print "the Object Allready has an spaceSwitch"
+                #print "Current Valid types are", cmds.addAttr (Object + "." + Name,q = True,enumName=True)
                 EnumsInObject = self.getControlEnums(Object)
                 for eachEnum in Enum:
                     if not eachEnum in EnumsInObject:

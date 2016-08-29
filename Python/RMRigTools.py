@@ -1,9 +1,76 @@
 import maya.cmds as cmds
 import RMNameConvention
-reload (RMNameConvention)
 import maya.api.OpenMaya as om
 import math
 
+class boundingBoxInfo(object):
+    def __init__(self,Object):
+        self.xmin = None
+        self.ymin = None
+        self.zmin = None
+        self.xmax = None 
+        self.ymax = None 
+        self.zmax = None
+
+        if Object.__class__ == list :
+            for eachObject in Objects:
+                Values = cmds.xform( eachObject , q = True, bb = True )
+                if self.xmin == None or self.xmin > Values[0]:
+                    self.xmin = Values[0]
+                if self.ymin == None or self.ymin > Values[1]:
+                    self.ymin = Values[1]
+                if self.zmin == None or self.zmin > Values[2]:
+                    self.zmin = Values[2]
+                if self.xmax == None or self.xmax < Values[3]:
+                    self.xmax = Values[3]
+                if self.ymax == None or self.ymax < Values[4]:
+                    self.ymax = Values[4]
+                if self.zmax == None or self.zmax < Values[5]:
+                    self.zmax = Values[5]
+        elif Object.__class__ in [str,unicode]:
+            self.BaseObject = Object
+            Values = cmds.xform(Object,q=True, bb=True)
+            self.position  = cmds.xform(Object,q=True,rp=True, worldSpace = True)
+            self.xmin = Values[0]
+            self.ymin = Values[1]
+            self.zmin = Values[2] 
+            self.xmax = Values[3] 
+            self.ymax = Values[4] 
+            self.zmax = Values[5]
+
+        self.lenX = self.xmax-self.xmin
+        self.lenY = self.ymax-self.ymin
+        self.lenZ = self.zmax-self.zmin
+        self.minDistanceToCenterX = self.position[0] - self.xmin
+        self.minDistanceToCenterY = self.position[1] - self.ymin
+        self.minDistanceToCenterZ = self.position[2] - self.zmin
+        self.maxDistanceToCenterX = self.position[0] - self.xmax
+        self.maxDistanceToCenterY = self.position[1] - self.ymax
+        self.maxDistanceToCenterZ = self.position[2] - self.zmax
+        self.offsetX = (self.minDistanceToCenterX - self.maxDistanceToCenterX)/2
+        self.offsetY = (self.minDistanceToCenterY - self.maxDistanceToCenterY)/2
+        self.offsetZ = (self.minDistanceToCenterZ - self.maxDistanceToCenterZ)/2
+
+    def recalculate(self):
+        self.position  = cmds.xform(Object,q=True,rp=True, worldSpace = True)
+        self.lenX = Values[3]-Values[0]
+        self.lenY = Values[4]-Values[1]
+        self.lenZ = Values[5]-Values[2]
+        self.xmin = Values[0] 
+        self.ymin = Values[1] 
+        self.zmin = Values[2] 
+        self.xmax = Values[3] 
+        self.ymax = Values[4] 
+        self.zmax = Values[5] 
+        self.minDistanceToCenterX = self.position[0] - self.xmin
+        self.minDistanceToCenterY = self.position[1] - self.ymin
+        self.minDistanceToCenterZ = self.position[2] - self.zmin
+        self.maxDistanceToCenterX = self.position[0] - self.xmax
+        self.maxDistanceToCenterY = self.position[1] - self.ymax
+        self.maxDistanceToCenterZ = self.position[2] - self.zmax
+        self.offsetX = (self.minDistanceToCenterX - self.maxDistanceToCenterX)/2
+        self.offsetY = (self.minDistanceToCenterY - self.maxDistanceToCenterY)/2
+        self.offsetZ = (self.minDistanceToCenterZ - self.maxDistanceToCenterZ)/2
 
 def RMAlign(obj1,obj2,flag):
     if (flag==1 or flag == 3):
@@ -186,7 +253,6 @@ def RMLockAndHideAttributes(Obj, BitString, LHType ="LH"  ):
                ".scaleY":7,
                ".scaleZ":8,
                ".visibility":9}
-               
     if (len(BitString)==10):
         print ObjArray
         for eachObj in ObjArray:
@@ -338,8 +404,8 @@ def RMCreateLineBetwenPoints (Point1, Point2,NameConv = None):
         NameConv = RMNameConvention.RMNameConvention()
 
     Curve = cmds.curve (degree=1, p=[[0,0,0],[1,0,0]], name = "curveLineBetweenPnts")
-    print Curve
-    Curve = NameConv.RMRenameNameInFormat(Curve)
+
+    Curve = NameConv.RMRenameBasedOnBaseName(Point1, Curve, NewName = Curve)
 
     NumCVs = cmds.getAttr (Curve + ".controlPoints" , size = True)
     
@@ -361,14 +427,13 @@ def RMCreateLineBetwenPoints (Point1, Point2,NameConv = None):
     PointConstraint1 = NameConv.RMRenameBasedOnBaseName(Point1 , PointConstraint1, NewName = PointConstraint1)
     PointConstraint2 = cmds.pointConstraint (Point2, Cluster2Handle, name = "PointConstraintLineBetweenPnts")[0]
     PointConstraint2 = NameConv.RMRenameBasedOnBaseName(Point2 , PointConstraint2, NewName = PointConstraint2)
-
-
+    
     DataGroup = cmds.group (em = True,name = "DataLineBetweenPnts")
-    DataGroup = NameConv.RMRenameBasedOnBaseName(Point1 , DataGroup, NewName=DataGroup)
+    DataGroup = NameConv.RMRenameBasedOnBaseName(Point1 , DataGroup, NewName = DataGroup)
     cmds.parent (Cluster1Handle, DataGroup)
     cmds.parent (Cluster2Handle, DataGroup)
     cmds.parent (Curve, DataGroup)
-    return DataGroup
+    return DataGroup , Curve
 
 def RMCreateClustersOnCurve(curve,NameConv = None):
     if not NameConv:

@@ -57,4 +57,37 @@ def melstringArray(array):
 SpiralOfPoints(.3,0,15,100)
 	
 
+'''
+cmds.addAttr("PapirusControl",longName="SinAmplitude",keyable=1,hasMinValue=1,hasMaxValue=1,minValue=0,maxValue=10)
+cmds.addAttr("PapirusControl",longName="SinPhase",keyable=1)
+cmds.addAttr("PapirusControl",longName="SinDecay",keyable=1,hasMinValue=1,hasMaxValue=1,minValue=-10,maxValue=10)
+cmds.addAttr("PapirusControl",longName="SinDecayPos",keyable=1,hasMinValue=1,hasMaxValue=1,minValue=0,maxValue=10)
+cmds.addAttr("PapirusControl",longName="SinWaveLen",keyable=1,hasMinValue=1,hasMaxValue=1,minValue=0,maxValue=10)
+
+
+cmds.addAttr("PapirusControl",longName="BendFloor",keyable=1,hasMinValue=1,hasMaxValue=1,minValue=-10,maxValue=10)
+cmds.addAttr("PapirusControl",longName="BendFloorDistance",keyable=1,hasMinValue=1,hasMaxValue=1,minValue=0,maxValue=10)
+
+cmds.addAttr("PapirusControl",longName="BendDirection",keyable=1,hasMinValue=1,hasMaxValue=1,minValue=-10,maxValue=10)
+
+
+
+cmds.addAttr("PapirusControl",longName="ExtraControls",attributeType="enum",enumName = "Off:On")
+
+
+RMRigTools.connectWithLimits("PapirusControl.BendRoll","RolledBend.curvature",[[-10,-180],[0,0],[10,180]])
+cmds.connectAttr("PapirusControl.BendRollDirection","RollbendHandle.rotateY",force=True)
+
+RMRigTools.connectWithLimits("PapirusControl.BendFloor","FloorBend.curvature",[[-10,-180],[0,0],[10,180]])
+RMRigTools.connectWithLimits("PapirusControl.BendFloorDistance","FloorBendHandle.translateZ",[[0,0],[10,-20]])
+
+RMRigTools.connectWithLimits("PapirusControl.SinAmplitude","Wave.amplitude",[[0,0],[10,-20]])
+cmds.connectAttr("PapirusControl.SinPhase","Wave.offset",force=True)
+
+RMRigTools.connectWithLimits("PapirusControl.SinDecay","Wave.dropoff",[[-10,-1] , [0,0] , [10,1]] )
+RMRigTools.connectWithLimits("PapirusControl.SinDecayPos","sine1Handle.translateZ",[[0,0],[10,-20]])
+RMRigTools.connectWithLimits("PapirusControl.SinWaveLen","Wave.wavelength",[[0,.1],[10,6]])
+RMRigTools.connectWithLimits("PapirusControl.BendDirection","DirectionBend.curvature",[[-10,-90],[0,0],[10,90]])
+cmds.connectAttr("PapirusControl.ExtraControls","curve1.visibility",force=True) '''
+
 

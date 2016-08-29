@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'RMSpaceSwitchTool.ui'
 #
-# Created: Thu Aug 04 16:19:55 2016
+# Created: Fri Aug 26 10:26:43 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!

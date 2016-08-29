@@ -203,7 +203,7 @@ global proc StandardReverseFeet(string $originPoint){
    	RMConnectWithLimits ($FeetControl+".BallPivot") ($BallGrp+".rotateZ") (-10) 10 (70)(-70)(0);
    	RMConnectWithLimits ($FeetControl+".HeelPivot") ($TapGrp+".rotateZ") (-10) 10 (-70)(70)(0);
 
-   	if (`RMGetFromName $SideInGrp 1`=="LF")
+   	if (self.NameConv.RMGetFromName($SideInGrp, "Side" )== "LF")
     {
     ConnectWithLimits ($FeetControl+".Tilt") ($SideInGrp+".rotateX") (-10) 10 (70)(0)(0);
     ConnectWithLimits ($FeetControl+".Tilt") ($SideOutGrp+".rotateX") (-10) 10 (0)(-70)(0);
