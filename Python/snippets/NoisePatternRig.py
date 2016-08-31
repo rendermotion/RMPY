@@ -34,16 +34,15 @@ def SinglePropRig(Object, referencePositionControl):
     cntrlToMeshZ = bbMesh.position[2] - CtrlPosition[2]
 
     if len(NameList) > 1:
-        Ctrl = RMRigShapeControls.RMCreateCubeLine(bbMesh.lenX,bbMesh.lenY,bbMesh.lenZ, offsetX = -bbMesh.offsetX + cntrlToMeshX,offsetY = -bbMesh.minDistanceToCenterY + bbMesh.lenY / 2 + cntrlToMeshY,offsetZ = -bbMesh.minDistanceToCenterZ + bbMesh.lenZ / 2 + cntrlToMeshZ,name = NameList[1])
+        Ctrl = RMRigShapeControls.RMCreateCubeLine(bbMesh.lenX, bbMesh.lenY, bbMesh.lenZ, offsetX = -bbMesh.minDistanceToCenterX + cntrlToMeshX,offsetY = -bbMesh.minDistanceToCenterY + bbMesh.lenY / 2 + cntrlToMeshY,offsetZ = -bbMesh.minDistanceToCenterZ + bbMesh.lenZ / 2 + cntrlToMeshZ,name = NameList[1])
         joint = cmds.joint(name = NameList[1]+"jnt")
     else:
-        Ctrl = RMRigShapeControls.RMCreateCubeLine(bbMesh.lenX,bbMesh.lenY,bbMesh.lenZ, offsetX = -bbMesh.offsetX + cntrlToMeshX,offsetY = -bbMesh.minDistanceToCenterY + bbMesh.lenY / 2 + cntrlToMeshY,offsetZ = -bbMesh.minDistanceToCenterZ + bbMesh.lenZ / 2 + cntrlToMeshZ,name = NameList[0]+"Ctrl")
+        Ctrl = RMRigShapeControls.RMCreateCubeLine(bbMesh.lenX, bbMesh.lenY, bbMesh.lenZ, offsetX = -bbMesh.minDistanceToCenterX + cntrlToMeshX,offsetY = -bbMesh.minDistanceToCenterY + bbMesh.lenY / 2 + cntrlToMeshY,offsetZ = -bbMesh.minDistanceToCenterZ + bbMesh.lenZ / 2 + cntrlToMeshZ,name = NameList[0]+"Ctrl")
         joint = cmds.joint(name = NameList[0]+"jnt")
 
     Ctrl = NameConv.RMRenameNameInFormat(Ctrl, Type="control")
     ResetGroup = RMRigTools.RMCreateGroupOnObj(Ctrl)
-    cmds.parent( Ctrl , GRS.groups["controls"]["group"] )
-   
+    cmds.parent( ResetGroup , GRS.groups["controls"]["group"] )
     rigJntGrp = cmds.ls("*SimpleRigJoints*")
     if len(rigJntGrp) == 0:
         jointGroup = cmds.group(empty=True,name = "SimpleRigJoints")
@@ -51,8 +50,7 @@ def SinglePropRig(Object, referencePositionControl):
         cmds.parent ( jointGroup , GRS.groups["rig"]['group'])
     else:
         jointGroup = rigJntGrp
-
-    RMRigTools.RMAlign ( referencePositionControl, Ctrl, 3)
+    RMRigTools.RMAlign ( referencePositionControl, ResetGroup, 3)
 
     joint = NameConv.RMRenameNameInFormat(joint)
 

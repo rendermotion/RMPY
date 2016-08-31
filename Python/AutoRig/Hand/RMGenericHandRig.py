@@ -53,7 +53,7 @@ class RMGenericHandRig(object):
 		self.CreateHandStructure(PalmReferencePoint)
 		for fingers in self.GHS.fingers:
 			self.CreateFingerSquareRig(fingers)
-		self.CreatePalmRig(PalmControl = PalmControl)
+		self.CreatePalmRig ( PalmControl = PalmControl )
 		RMRigTools.RMParentArray(self.PalmControl,self.fingerControlsReset)
 		palmLen = RMRigTools.RMPointDistance( self.PalmControl, self.GHS.fingerRoots[0])
 		cmds.parentConstraint(self.MainKinematics,self.GHS.palmJoint)

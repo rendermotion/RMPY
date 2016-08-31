@@ -29,12 +29,14 @@ class RMVisibilitySwitch(object):
         returns all the attributes in the control object that are presumably visibility switches, it  checks two things, been an enum Attribute and have On Off Values. 
         '''
         VisibilityEnumList = []
+        AttributeList = None
         AttributeList = cmds.listAttr(ControlObject,visible=True,keyable = True )
-        for eachEnum in AttributeList:
-            if cmds.getAttr (ControlObject + "." + eachEnum, type = True) == 'enum':
-                EnumValues = self.getControlEnums(ControlObject , attribute = eachEnum )
-                if ( EnumValues [0]== "Off" and EnumValues [1]== "On"):
-                    VisibilityEnumList.append(eachEnum)
+        if AttributeList != None:
+            for eachEnum in AttributeList:
+                if cmds.getAttr (ControlObject + "." + eachEnum, type = True) == 'enum':
+                    EnumValues = self.getControlEnums(ControlObject , attribute = eachEnum )
+                    if ( EnumValues [0]== "Off" and EnumValues [1]== "On"):
+                        VisibilityEnumList.append(eachEnum)
         return VisibilityEnumList
 
     def AddEnumParameters(self,Object, VisibilitySwitch = 'visibility'):
@@ -48,12 +50,14 @@ class RMVisibilitySwitch(object):
             return True
         return None
 
-    def ConstraintVisibility(self, Objects , ControlObject , VisibilitySwitch = 'visibility'):
-
+    def ConstraintVisibility(self, Objects , ControlObject , VisibilitySwitch = 'visibility', visibilityType = "visibility"):
+        '''visibilityType  valid values are overrideVisibility, lodVisibility or visibility'''
         if (self.AddEnumParameters (ControlObject, VisibilitySwitch = VisibilitySwitch)):
             for eachObject in Objects:
-                RMRigTools.RMLockAndHideAttributes(eachObject,"xxxxxxxxx1")
-                cmds.connectAttr("%s.%s"%(ControlObject,VisibilitySwitch) , eachObject + ".visibility")
+                RMRigTools.RMLockAndHideAttributes(eachObject,"xxxxxxxxxL")
+                RMRigTools.RMLockAndHideAttributes(eachObject,"xxxxxxxxxh")
+                #print ("connecting Visibility %s.%s to %s.%s"%(ControlObject,VisibilitySwitch,eachObject,visibilityType) )
+                cmds.connectAttr("%s.%s"%(ControlObject,VisibilitySwitch) , "%s.%s"%( eachObject, visibilityType))
         else:
             print "Not Valid Object"
     
@@ -66,24 +70,26 @@ class RMVisibilitySwitch(object):
         if inputConnections:
             for eachConnection in inputConnections:
                 Values = eachConnection.split(".")
-                if Values [1] == "visibility":
+                if Values [1] == "visibility" or Values [1] == "lodVisibility" or Values [1] == "overrideVisibility":
                     Afected.append (Values[0])
         self.AfectedObjectList = Afected
         return self.AfectedObjectList
 
-    def RemoveAffectedObject (self, ControlObject, removeObjectList , VisibilitySwitch = 'visibility'):
+    def RemoveAffectedObject (self, ControlObject, removeObjectList , VisibilitySwitch = 'visibility', visibilityType = "visibility" ):
+        '''visibilityType  valid values are overrideVisibility, lodVisibility or visibility'''
         AffectedObjectList = self.GetAfectedObjectsList(ControlObject,VisibilitySwitch = VisibilitySwitch)
         for eachObject in removeObjectList:
             if eachObject in AffectedObjectList:
-                cmds.disconnectAttr( ("%s.%s"%(ControlObject,VisibilitySwitch)) , ("%s.visibility" % (eachObject)))
+                cmds.disconnectAttr( ("%s.%s"%(ControlObject,VisibilitySwitch)) , ("%s.%s" % (eachObject,visibilityType)))
 
-    def AddAffectedObject ( self, ControlObject, addObjectList , VisibilitySwitch = 'visibility'):
+    def AddAffectedObject ( self, ControlObject, addObjectList , VisibilitySwitch = 'visibility', visibilityType = "visibility"):
+        '''visibilityType  valid values are overrideVisibility, lodVisibility or visibility'''
         for eachObject in addObjectList:
-            inputConnections = cmds.listConnections("%s.visibility" % eachObject, plugs=True, destination = True)
+            inputConnections = cmds.listConnections("%s.%s" % (eachObject,visibilityType), plugs=True, destination = True)
             if inputConnections:
                 if len(inputConnections) > 0:
-                    cmds.disconnectAttr(inputConnections[0], "%s.visibility" % eachObject)
-            cmds.connectAttr( "%s.%s"%(ControlObject,VisibilitySwitch), "%s.visibility" % eachObject, force = True)
+                    cmds.disconnectAttr(inputConnections[0], "%s.%s" % (eachObject,visibilityType))
+            cmds.connectAttr( "%s.%s"%(ControlObject,VisibilitySwitch), "%s.%s" % (eachObject,visibilityType), force = True)
 
 
 

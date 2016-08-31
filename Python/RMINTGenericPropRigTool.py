@@ -30,7 +30,7 @@ class RMINTGenericPropRigTool(QtGui.QDialog):
         NoisePatternRig.CreateControlOnSelection()
 
     def LoadSelectionAsCntrlObjPushBtnPressed(self):
-        Object = cmds.ls(selection=True)[0]
+        Object = cmds.ls(selection = True)[0]
         self.ui.ControllineEdit.setText(Object)
     
     def AddNoiseBtnPressed(self):
