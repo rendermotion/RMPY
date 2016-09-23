@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'RMINTRigTools.ui'
 #
-# Created: Fri Aug 26 10:26:38 2016
+# Created: Thu Sep 22 13:02:15 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(864, 797)
+        Form.resize(412, 575)
         self.horizontalLayout_4 = QtGui.QHBoxLayout(Form)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.verticalLayout_6 = QtGui.QVBoxLayout()
@@ -53,12 +53,12 @@ class Ui_Form(object):
         self.GroupCreationLabel = QtGui.QLabel(Form)
         self.GroupCreationLabel.setObjectName("GroupCreationLabel")
         self.verticalLayout_2.addWidget(self.GroupCreationLabel)
-        self.CreateChildGroup = QtGui.QPushButton(Form)
-        self.CreateChildGroup.setObjectName("CreateChildGroup")
-        self.verticalLayout_2.addWidget(self.CreateChildGroup)
         self.CreateParentGroup = QtGui.QPushButton(Form)
         self.CreateParentGroup.setObjectName("CreateParentGroup")
         self.verticalLayout_2.addWidget(self.CreateParentGroup)
+        self.CreateChildGroup = QtGui.QPushButton(Form)
+        self.CreateChildGroup.setObjectName("CreateChildGroup")
+        self.verticalLayout_2.addWidget(self.CreateChildGroup)
         spacerItem = QtGui.QSpacerItem(10, 10, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
         self.verticalLayout_2.addItem(spacerItem)
         self.horizontalLayout_2.addLayout(self.verticalLayout_2)
@@ -148,8 +148,8 @@ class Ui_Form(object):
         self.FKOnSelection.setText(QtGui.QApplication.translate("Form", "FK on selection", None, QtGui.QApplication.UnicodeUTF8))
         self.JointsOnPoints.setText(QtGui.QApplication.translate("Form", "CreateJointsOnPoints", None, QtGui.QApplication.UnicodeUTF8))
         self.GroupCreationLabel.setText(QtGui.QApplication.translate("Form", "Group Creation", None, QtGui.QApplication.UnicodeUTF8))
-        self.CreateChildGroup.setText(QtGui.QApplication.translate("Form", "Create Child Group", None, QtGui.QApplication.UnicodeUTF8))
         self.CreateParentGroup.setText(QtGui.QApplication.translate("Form", "Create Parent Group", None, QtGui.QApplication.UnicodeUTF8))
+        self.CreateChildGroup.setText(QtGui.QApplication.translate("Form", "Create Child Group", None, QtGui.QApplication.UnicodeUTF8))
         self.AlignLabel.setText(QtGui.QApplication.translate("Form", "Align", None, QtGui.QApplication.UnicodeUTF8))
         self.AlignRotation.setText(QtGui.QApplication.translate("Form", "AlignRotation", None, QtGui.QApplication.UnicodeUTF8))
         self.AlignPosition.setText(QtGui.QApplication.translate("Form", "AlignPosition", None, QtGui.QApplication.UnicodeUTF8))

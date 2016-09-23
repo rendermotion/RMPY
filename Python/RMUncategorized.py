@@ -3,34 +3,44 @@ import maya.cmds as cmds
 def ObjectTransformDic(objects):
 	ObjectDic={}
 	for eachObject in objects:
-		Address=eachObject.split("|")
+		
+		position = (cmds.getAttr (eachObject + ".t"))
+		rotation = (cmds.getAttr (eachObject + ".r"))
+		scale    = (cmds.getAttr (eachObject + ".s"))
+		Address = eachObject.split("|")
 		if len(Address)== 1:
-			position =(cmds.getAttr(eachObject+".t"))
-			rotation = (cmds.getAttr(eachObject+".r"))
-			scale = (cmds.getAttr(eachObject+".s"))
-			objectName=eachObject.split(":",1)
-			if (len(objectName)>1):
-				ObjectDic[objectName[1]]={"t":position[0], "r":rotation[0],"s":scale[0]}
+			objectName = eachObject.split(":")
+			if (len(objectName)>=1):
+				ObjectDic [ objectName[len(objectName)-1] ]={"t":position[0], "r":rotation[0],"s":scale[0]}
 			else:
-				ObjectDic[eachObject]={"t":position[0], "r":rotation[0],"s":scale[0]}
+				ObjectDic [ eachObject ]                   ={"t":position[0], "r":rotation[0],"s":scale[0]}
 	return ObjectDic
+
 def ResetPostoZero(objects):
 	for eachObject in objects:
 		try:
-			cmds.setAttr(eachObject+".t",0,0,0)
+			cmds.setAttr( eachObject+".t",0,0,0)
 		except:
 			None
 		try:
-			cmds.setAttr(eachObject+".r",0,0,0)
+			cmds.setAttr( eachObject+".r",0,0,0)
 		except:
 			None
 		try:
-			cmds.setAttr(eachObject+".s",1,1,1)
+			cmds.setAttr( eachObject+".s",1,1,1)
 		except:
 			None
 def SetObjectTransformDic(OTDic, MirrorTranslateX = 1 ,MirrorTranslateY = 1, MirrorTranslateZ = 1,MirrorRotateX = 1 ,MirrorRotateY = 1, MirrorRotateZ = 1):
+	selection=cmds.ls(selection = True)
+	if selection:
+		if len(selection) >= 1:
+			Namespaces = selection[0].split(":")
+			if len(Namespaces) > 1:
+				selectionNameSpace = ":".join(Namespaces[0:-1]) + ":"
+			else:
+				selectionNameSpace = None
 	for keys in OTDic:
-		FocusObject = ignoreNamespace(keys)
+		FocusObject = ignoreNamespace(keys , selectedNamespace = selectionNameSpace )
 		if FocusObject:
 			try:
 				cmds.setAttr(FocusObject+".translateX",OTDic[keys]["t"][0] * MirrorTranslateX)
@@ -71,28 +81,37 @@ def SetObjectTransformDic(OTDic, MirrorTranslateX = 1 ,MirrorTranslateY = 1, Mir
 		else:
 			print "No Object Matches name:"
 			print keys
-def ignoreNamespace(Name):
+			break
+def ignoreNamespace(Name , selectedNamespace=None):
 	if cmds.objExists(str(Name)):
 		return str(Name)
 	else:
-		filter = cmds.itemFilter(byName="*"+str(Name))
-		FocusObject = cmds.lsThroughFilter(filter)
+		#filter = cmds.itemFilter(byName="*"+str(Name))
+		#FocusObject = cmds.lsThroughFilter(filter)
+		FocusObject = cmds.ls("*"+str(Name))
 		if FocusObject:
 			if len(FocusObject)>0:
-				if len(FocusObject)==1:
+				if len(FocusObject) == 1:
 					return FocusObject[0]
 				else:
-					print ("More than one object matches Name:"+ Name)
-					print FocusObject
-					for i in FocusObject:
-						values = i.split(":")
-						if values[len(values) - 1] == str(Name):
-							return i
-					return None
+					#print ("More than one object matches Name:"+ Name)
+					#print FocusObject
+					if selectedNamespace:
+						usingNamespace = cmds.ls(selectedNamespace + str(Name))
+						if len(usingNamespace) == 1:
+							return usingNamespace
+					else:
+						print "try to select an object with the namespace that you want to paste duplicateObject:%s"%(Name)
+						return None
+					#for i in FocusObject:
+					#	values = i.split(":")
+					#	if values[len(values) - 1] == str(Name):
+					#		return i
 			else:
 				return None
 		else:
 			return None
+
 def ExtractGeometry():
 
 	selected = cmds.ls(sl=True)

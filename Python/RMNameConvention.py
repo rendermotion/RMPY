@@ -3,7 +3,6 @@ import maya.cmds as cmds
 
 class RMNameConvention (object):
 	def __init__(self,LastName = "Character", Side = "MD", Name = "Object", Type = "UDF", System = "Rig"):
-
 		self.NameConvention  ={
 						"LastName":0,
 						"Name":2,
@@ -11,7 +10,6 @@ class RMNameConvention (object):
 						"Type":3,
 						"System":4
 	 					}
-
 		self.TypeDictionary = { 
 							"joint":"jnt",
 							"skinjoint":"sknjnt",
@@ -23,12 +21,13 @@ class RMNameConvention (object):
 							"renderMesh":"rmsh",
 							"transform":"grp",
 							"pointConstraint":"pnc",
+							"orientConstraint":"orc",
+							"parentConstraint":"prc",							
 							"poleVectorConstraint":"pvc",
 							"control":"ctr",
 							"locator":"loc",
 							"ikHandle":"ikh",
 							"ikEffector":"ikf",
-							"parentConstraint":"prc",
 							"reverse":"rvs",
 							"multiplyDivide":"mult",
 							"condition":"cnd",
@@ -37,7 +36,8 @@ class RMNameConvention (object):
 							"distanceBetween":"dbtw",
 							"cluster":"cls",
 							"plusMinusAverage":"pma",
-							"blendTwoAttr":"b2a"
+							"blendTwoAttr":"b2a",
+							"motionPath":"mph"
 
 							}
 		self.ShapeDictionary = {

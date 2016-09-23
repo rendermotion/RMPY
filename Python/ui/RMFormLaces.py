@@ -1,0 +1,91 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file 'RMFormLaces.ui'
+#
+# Created: Thu Sep 22 13:02:23 2016
+#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+#
+# WARNING! All changes made in this file will be lost!
+
+from PySide import QtCore, QtGui
+
+class Ui_Form(object):
+    def setupUi(self, Form):
+        Form.setObjectName("Form")
+        Form.resize(331, 144)
+        self.verticalLayout_3 = QtGui.QVBoxLayout(Form)
+        self.verticalLayout_3.setObjectName("verticalLayout_3")
+        self.horizontalLayout_3 = QtGui.QHBoxLayout()
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        self.verticalLayout_2 = QtGui.QVBoxLayout()
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.LoadShapeBtn = QtGui.QPushButton(Form)
+        self.LoadShapeBtn.setObjectName("LoadShapeBtn")
+        self.verticalLayout_2.addWidget(self.LoadShapeBtn)
+        self.CurrentShapeLbl = QtGui.QLabel(Form)
+        self.CurrentShapeLbl.setAlignment(QtCore.Qt.AlignCenter)
+        self.CurrentShapeLbl.setObjectName("CurrentShapeLbl")
+        self.verticalLayout_2.addWidget(self.CurrentShapeLbl)
+        self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.JointsOnCurve = QtGui.QLabel(Form)
+        self.JointsOnCurve.setObjectName("JointsOnCurve")
+        self.horizontalLayout.addWidget(self.JointsOnCurve)
+        self.NumberOfJoints = QtGui.QSpinBox(Form)
+        self.NumberOfJoints.setMinimumSize(QtCore.QSize(50, 0))
+        self.NumberOfJoints.setMaximumSize(QtCore.QSize(50, 16777215))
+        self.NumberOfJoints.setMinimum(2)
+        self.NumberOfJoints.setProperty("value", 2)
+        self.NumberOfJoints.setObjectName("NumberOfJoints")
+        self.horizontalLayout.addWidget(self.NumberOfJoints)
+        self.verticalLayout_2.addLayout(self.horizontalLayout)
+        self.Mode = QtGui.QCheckBox(Form)
+        self.Mode.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.Mode.setCheckable(True)
+        self.Mode.setChecked(False)
+        self.Mode.setObjectName("Mode")
+        self.verticalLayout_2.addWidget(self.Mode)
+        self.CreateControlsBtn = QtGui.QPushButton(Form)
+        self.CreateControlsBtn.setObjectName("CreateControlsBtn")
+        self.verticalLayout_2.addWidget(self.CreateControlsBtn)
+        self.horizontalLayout_3.addLayout(self.verticalLayout_2)
+        self.RebuildGrp = QtGui.QGroupBox(Form)
+        self.RebuildGrp.setObjectName("RebuildGrp")
+        self.verticalLayout = QtGui.QVBoxLayout(self.RebuildGrp)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.RebuildCurveChk = QtGui.QCheckBox(self.RebuildGrp)
+        self.RebuildCurveChk.setObjectName("RebuildCurveChk")
+        self.verticalLayout.addWidget(self.RebuildCurveChk)
+        self.horizontalLayout_2 = QtGui.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.NumberofSpansLabel = QtGui.QLabel(self.RebuildGrp)
+        self.NumberofSpansLabel.setObjectName("NumberofSpansLabel")
+        self.horizontalLayout_2.addWidget(self.NumberofSpansLabel)
+        self.NumberOfSpansSpnBx = QtGui.QSpinBox(self.RebuildGrp)
+        self.NumberOfSpansSpnBx.setMinimumSize(QtCore.QSize(50, 0))
+        self.NumberOfSpansSpnBx.setMaximumSize(QtCore.QSize(50, 16777215))
+        self.NumberOfSpansSpnBx.setMinimum(4)
+        self.NumberOfSpansSpnBx.setObjectName("NumberOfSpansSpnBx")
+        self.horizontalLayout_2.addWidget(self.NumberOfSpansSpnBx)
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
+        self.CurrentShapeControlsLbl = QtGui.QLabel(self.RebuildGrp)
+        self.CurrentShapeControlsLbl.setText("")
+        self.CurrentShapeControlsLbl.setObjectName("CurrentShapeControlsLbl")
+        self.verticalLayout.addWidget(self.CurrentShapeControlsLbl)
+        self.horizontalLayout_3.addWidget(self.RebuildGrp)
+        self.verticalLayout_3.addLayout(self.horizontalLayout_3)
+
+        self.retranslateUi(Form)
+        QtCore.QMetaObject.connectSlotsByName(Form)
+
+    def retranslateUi(self, Form):
+        Form.setWindowTitle(QtGui.QApplication.translate("Form", "Form", None, QtGui.QApplication.UnicodeUTF8))
+        self.LoadShapeBtn.setText(QtGui.QApplication.translate("Form", "Load Selected Shape", None, QtGui.QApplication.UnicodeUTF8))
+        self.CurrentShapeLbl.setText(QtGui.QApplication.translate("Form", "No Shape Selected", None, QtGui.QApplication.UnicodeUTF8))
+        self.JointsOnCurve.setText(QtGui.QApplication.translate("Form", "Joints On curve", None, QtGui.QApplication.UnicodeUTF8))
+        self.Mode.setText(QtGui.QApplication.translate("Form", "Single orient object", None, QtGui.QApplication.UnicodeUTF8))
+        self.CreateControlsBtn.setText(QtGui.QApplication.translate("Form", "Create Controls", None, QtGui.QApplication.UnicodeUTF8))
+        self.RebuildGrp.setTitle(QtGui.QApplication.translate("Form", "Rebuild curve", None, QtGui.QApplication.UnicodeUTF8))
+        self.RebuildCurveChk.setText(QtGui.QApplication.translate("Form", "rebuild curve", None, QtGui.QApplication.UnicodeUTF8))
+        self.NumberofSpansLabel.setText(QtGui.QApplication.translate("Form", "number of Controls", None, QtGui.QApplication.UnicodeUTF8))
+

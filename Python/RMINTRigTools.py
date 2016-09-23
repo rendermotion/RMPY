@@ -5,6 +5,8 @@ from PySide import QtGui, QtCore
 from shiboken import wrapInstance
 import maya.mel as mel
 import os
+import RMRigTools
+
 #sys.path.append(os.path.dirname(__file__))
 from ui import RMFormRigTools
 reload(RMFormRigTools)
@@ -14,9 +16,9 @@ def getMayaWindow():
 	ptr = mui.MQtUtil.mainWindow()
 	return wrapInstance(long(ptr), QtGui.QMainWindow)
 
-class RMRigTools(QtGui.QDialog):
+class RMINTRigTools(QtGui.QDialog):
 	def __init__(self, parent=None):
-		super(RMRigTools,self).__init__(parent=getMayaWindow())
+		super(RMINTRigTools,self).__init__(parent=getMayaWindow())
 		self.ui=RMFormRigTools.Ui_Form()
 		self.ui.setupUi(self)
 		self.setWindowTitle('RM Maya Rig Tools')
@@ -52,9 +54,10 @@ class RMRigTools(QtGui.QDialog):
 		string $temp[]=`ls -sl`;
 		RMCreateGrouponObj $temp[0] 2;''')
 	def CreateParentBtnPressed(self):
-		mel.eval('''source RMRigTools.mel;
-		string $temp[]=`ls -sl`;
-		RMCreateGrouponObj $temp[0] 1;''')
+		selection = cmds.ls( selection = True)
+		if selection:
+			for eachObject in selection:
+				RMRigTools.RMCreateGroupOnObj(eachObject,Type = 'inserted')
 	def JointsOnPointsBtnPressed(self):
 		mel.eval('''source RMRigTools.mel;
 		string $temp[]=`ls -sl`;
@@ -98,11 +101,6 @@ class RMRigTools(QtGui.QDialog):
 	def ExtractGeoFunct(self):
 		RMUncategorized.ExtractGeometry()
 
-
-
-
-
-
 if __name__ == '__main__':
-	w = RMRigTools()
+	w = RMINTRigTools()
 	w.show()

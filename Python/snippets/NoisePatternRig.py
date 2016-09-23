@@ -9,7 +9,7 @@ reload (RMRigTools)
 reload (RMRigShapeControls)
 reload (RMGenericRigStructure )
 
-def getMeshObjects(Objects):
+def getMeshObjects( Objects):
     MeshObjects  = []
     OtherObjects = []
     NameConv=RMNameConvention.RMNameConvention()
@@ -20,7 +20,7 @@ def getMeshObjects(Objects):
             OtherObjects.append(eachObject)
     return {"meshObjects" : MeshObjects,"other":OtherObjects}
 
-def SinglePropRig(Object, referencePositionControl):
+def SinglePropRig( Object, referencePositionControl):
     #if Object.__class__ == list :
     #elif Object.__class__ in [str,unicode]:
     GRS = RMGenericRigStructure.genericRigStructure()
@@ -129,7 +129,29 @@ def CreateControlOnSelection():
     selection = cmds.ls(sl=True, type="transform")
     ObjectsDic = getMeshObjects(selection)
     createControlForObject(ObjectsDic["meshObjects"],ObjectsDic["other"])
-        
+
+def deleteSimpleRig():
+    constraint = cmds.listConnections(type="parentConstraint")
+    if constraint and len(constraint) > 0:
+        parentConst = constraint[0]
+        wAlias = cmds.parentConstraint( parentConst, q=True, wal= True)
+        control = cmds.parentConstraint( parentConst, q=True, tl= True)
+        joint = cmds.listConnections ( "%s.constraintTranslateX" % (parentConst))
+        skinList = cmds.listConnections (joint, type="skinCluster")
+        if skinList and len(skinList) > 0:
+            skinCluster = skinList[0]
+            geolist = cmds.listConnections("%s.outputGeometry"%(skinCluster))
+            cmds.delete(skinCluster)
+            parentsJoint = cmds.listRelatives(joint,parent = True)
+            parentsControl = cmds.listRelatives(control,parent = True)
+            cmds.delete(parentsJoint[0])
+            cmds.delete(parentsControl[0])
+            for eachObject in geolist:
+                RMRigTools.RMLockAndHideAttributes(geolist,"1111111111")
+        else:
+            print "no skin cluster Identified"
+    else:
+        print "no constraint Node Identified"        
 
 
 class constraintComponents(object):
@@ -155,5 +177,5 @@ class constraintComponents(object):
             self.constraintDic[eachNode]["TL"] = TL
             self.constraintDic[eachNode]["affected"] = cmds.listConnections(eachNode + ".constraintRotateX")
 
-constraints = constraintComponents(gessFrom = "Character_MD_pSphere1Ctrl00_ctr_Rig")
-pprint.pprint(constraints.constraintDic)
+#constraints = constraintComponents(gessFrom = "Character_MD_pSphere1Ctrl00_ctr_Rig")
+#pprint.pprint(constraints.constraintDic)

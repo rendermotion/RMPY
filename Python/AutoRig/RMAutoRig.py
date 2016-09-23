@@ -153,23 +153,21 @@ class RMBiped(object):
         cmds.parentConstraint( self.Mover01 , self.moverWorld )
 
 
+        '''
         WorldRClavicle = cmds.group(empty = True, name = "clavicleWorld" )
         WorldRClavicle = self.NameConv.RMRenameBasedOnBaseName (self.Spine.rightClavicleControl, WorldRClavicle, NewName = "world", System = "RClavicleSpaceSwitch")
         RMRigTools.RMAlign(self.Spine.rightClavicleControl, WorldRClavicle ,3)
-        cmds.parent( WorldRClavicle, self.world)
-        cmds.parentConstraint( self.Mover01 , WorldRClavicle , mo = True)
+        cmds.parent( WorldRClavicle, self.moverWorld)
         RSpaceSwitchGroup = RMRigTools.RMCreateGroupOnObj(self.Spine.rightClavicleControl)
         self.SPSW.CreateSpaceSwitch(RSpaceSwitchGroup,[self.Spine.resetRightClavicleControl, WorldRClavicle],self.Spine.rightClavicleControl, constraintType = "orient")
 
         WorldLClavicle = cmds.group(empty = True, name = "clavicleWorld" )
         WorldLClavicle = self.NameConv.RMRenameBasedOnBaseName (self.Spine.leftClavicleControl, WorldLClavicle, NewName = "world", System = "LClavicleSpaceSwitch")
         RMRigTools.RMAlign(self.Spine.leftClavicleControl, WorldLClavicle ,3)
-        cmds.parent( WorldLClavicle, self.world)
-        cmds.parentConstraint( self.Mover01 , WorldLClavicle , mo = True)
+        cmds.parent( WorldLClavicle, self.moverWorld)
         LSpaceSwitchGroup = RMRigTools.RMCreateGroupOnObj(self.Spine.leftClavicleControl)
         self.SPSW.CreateSpaceSwitch(LSpaceSwitchGroup,[self.Spine.resetLeftClavicleControl, WorldLClavicle],self.Spine.leftClavicleControl, constraintType = "orient")
-
-
+        '''
 
         #Creacion de la cabeza
 
@@ -195,14 +193,32 @@ class RMBiped(object):
 
 
         #Creacion de Brazos
-
+        #BrazoDerecho
         self.LimbArmRight.RMLimbRig("Character01_RH_shoulder_pnt_rfr", FKAxisFree='010')
         RHArmDic = self.OrganizeLimb(self.LimbArmRight,"RH","Arm", self.Spine.RightClavicleJoints[1],self.Spine.chestJoint)
 
+
+        RHWorldFKArm = cmds.group(empty = True, name = "ArmWorld" )
+        RHWorldFKArm = self.NameConv.RMRenameBasedOnBaseName (self.LimbArmRight.FKparentGroup, RHWorldFKArm, NewName = "world", System = "RFKArmSpaceSwitch")
+        RMRigTools.RMAlign(self.LimbArmRight.FKparentGroup, RHWorldFKArm ,3)
+        cmds.parent( RHWorldFKArm, self.moverWorld)
+        RSpaceSwitchGroup = RMRigTools.RMCreateGroupOnObj(self.LimbArmRight.FKparentGroup)
+        self.SPSW.CreateSpaceSwitchReverse(self.LimbArmRight.FKparentGroup,[RSpaceSwitchGroup, RHWorldFKArm],self.LimbArmRight.FKFirstLimbControl,sswtype = "float", Name="", mo = False, constraintType = "orient")
+
+        #BrazoIzquierdo
         self.LimbArmLeft.RMLimbRig("Character01_LF_shoulder_pnt_rfr",FKAxisFree='010')
         RHArmDic = self.OrganizeLimb(self.LimbArmLeft,"LF","Arm", self.Spine.LeftClavicleJoints[1],self.Spine.chestJoint)
 
 
+        LFWorldFKArm = cmds.group(empty = True, name = "ArmWorld" )
+        LFWorldFKArm = self.NameConv.RMRenameBasedOnBaseName (self.LimbArmLeft.FKparentGroup, LFWorldFKArm, NewName = "world", System = "LFKArmSpaceSwitch")
+        RMRigTools.RMAlign(self.LimbArmLeft.FKparentGroup, LFWorldFKArm ,3)
+        cmds.parent( LFWorldFKArm, self.moverWorld)
+        LSpaceSwitchGroup = RMRigTools.RMCreateGroupOnObj(self.LimbArmLeft.FKparentGroup)
+        self.SPSW.CreateSpaceSwitchReverse(self.LimbArmLeft.FKparentGroup,[LSpaceSwitchGroup, LFWorldFKArm],self.LimbArmLeft.FKFirstLimbControl,sswtype = "float", Name="", mo = False, constraintType = "orient")
+
+
+        #ManoDerecha
         self.GHRightRig = RMGenericHandRig.RMGenericHandRig()
         self.GHRightRig.CreateHandRig("Character01_RH_palm_pnt_rfr",self.LimbArmRight.SpaceSwitchControl)
 
@@ -219,7 +235,7 @@ class RMBiped(object):
         cmds.parent ( self.GHRightRig.GHS.palmJoint , self.LimbArmRight.TJElbow.TwistJoints[len(self.LimbArmRight.TJElbow.TwistJoints) - 1])
         cmds.parent ( self.GHRightRig.PalmResetPoint, RHArmDic["controls"] )
 
-
+        #ManoIzquierda
         self.GHLeftRig = RMGenericHandRig.RMGenericHandRig()
         self.GHLeftRig.CreateHandRig("Character01_LF_palm_pnt_rfr", PalmControl = self.LimbArmLeft.SpaceSwitchControl )
 

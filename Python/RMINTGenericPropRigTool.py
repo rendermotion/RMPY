@@ -25,6 +25,7 @@ class RMINTGenericPropRigTool(QtGui.QDialog):
         self.ui.RigSelectionBtn.clicked.connect(self.RigSelectionBtnPressed)
         self.ui.LoadSelectionAsCntrlObjPushBtn.clicked.connect(self.LoadSelectionAsCntrlObjPushBtnPressed)
         self.ui.AddNoiseBtn.clicked.connect(self.AddNoiseBtnPressed)
+        self.ui.DeleteSimpleRigBtn.clicked.connect(self.deleteSimpleRigBtnPressed)
 
     def RigSelectionBtnPressed(self):
         NoisePatternRig.CreateControlOnSelection()
@@ -37,8 +38,11 @@ class RMINTGenericPropRigTool(QtGui.QDialog):
         Object = cmds.ls(selection = True)[0]
         NoisePatternRig.addNoiseOnControl([Object], self.ui.ControllineEdit.text())
 
-    def CreateGenericRigStructure():
+    def CreateGenericRigStructure(self):
         pass
+
+    def deleteSimpleRigBtnPressed(self):
+        NoisePatternRig.deleteSimpleRig()
 
 if __name__ == '__main__':
     w = RMINTGenericPropRigTool()
