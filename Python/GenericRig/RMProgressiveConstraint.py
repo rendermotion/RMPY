@@ -1,6 +1,6 @@
 import maya.cmds as cmds
 
-def progressiveConstraint( startObject, endObject, objectList,constraintType = "parent",mo = True):
+def progressiveConstraint( startObject, endObject, objectList, constraintType = "parent",mo = True):
 
 	constraintValue = float(0.0)
 	NumElements = len(objectList)
@@ -23,19 +23,19 @@ def progressiveConstraint( startObject, endObject, objectList,constraintType = "
 			cmds.pointConstraint( startObject, eachObject, w = float(1) - constraintValue, mo = mo )
 			cmds.pointConstraint( endObject  , eachObject, w = constraintValue, mo = mo )
 
-def deepthProgressiveconstraint(depth,objectList,constraintType="orient"):
+def deepthProgressiveconstraint(depth, objectList, constraintType = "orient", mo = True):
 	childGroup=[]
-	if depth >=1:
+	if depth >1:
 		for eachGroup in objectList:
-			eachChild = cmds.listRelatives(eachGroup, children = True)
+			eachChild = cmds.listRelatives(eachGroup, children = True, type = "transform")
 			childGroup.append(eachChild[0])
 		deepthProgressiveconstraint(depth-1 , childGroup)
 
-	progressiveConstraint(objectList[0],objectList[len(objectList)-1], objectList[1:-1],constraintType = constraintType,mo = True)
+	progressiveConstraint(objectList[0],objectList[len(objectList)-1], objectList[1:-1], constraintType = constraintType, mo = mo)
 
 if __name__=='__main__':
 	selection = cmds.ls( selection=True)
-	deepthProgressiveconstraint( 4, selection)
+	deepthProgressiveconstraint( 4, selection, constraintType = "orient", mo = True)
 	#progressiveConstraint(selection[0],selection[len(selection)-1], selection[1:-1],constraintType="orient",mo = True)
 
 

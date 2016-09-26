@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>331</width>
-    <height>144</height>
+    <width>349</width>
+    <height>299</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,108 +15,41 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <widget class="QPushButton" name="LoadShapeBtn">
-         <property name="text">
-          <string>Load Selected Shape</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="CurrentShapeLbl">
-         <property name="text">
-          <string>No Shape Selected</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QLabel" name="JointsOnCurve">
-           <property name="text">
-            <string>Joints On curve</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="NumberOfJoints">
-           <property name="minimumSize">
-            <size>
-             <width>50</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>50</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="minimum">
-            <number>2</number>
-           </property>
-           <property name="value">
-            <number>2</number>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="Mode">
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
-         </property>
-         <property name="text">
-          <string>Single orient object</string>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="CreateControlsBtn">
-         <property name="text">
-          <string>Create Controls</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <widget class="QGroupBox" name="RebuildGrp">
-       <property name="title">
-        <string>Rebuild curve</string>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout">
+    <widget class="QGroupBox" name="LacesGrpBx">
+     <property name="title">
+      <string>Lace creation</string>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QCheckBox" name="RebuildCurveChk">
+         <widget class="QPushButton" name="LoadShapeBtn">
           <property name="text">
-           <string>rebuild curve</string>
+           <string>Load Selected Shape</string>
           </property>
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <widget class="QLabel" name="CurrentShapeLbl">
+          <property name="text">
+           <string>No Shape Selected</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
-           <widget class="QLabel" name="NumberofSpansLabel">
+           <widget class="QLabel" name="JointsOnCurve">
             <property name="text">
-             <string>number of Controls</string>
+             <string>Joints On curve</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QSpinBox" name="NumberOfSpansSpnBx">
+           <widget class="QSpinBox" name="NumberOfJoints">
             <property name="minimumSize">
              <size>
               <width>50</width>
@@ -130,23 +63,147 @@
              </size>
             </property>
             <property name="minimum">
-             <number>4</number>
+             <number>2</number>
+            </property>
+            <property name="value">
+             <number>2</number>
             </property>
            </widget>
           </item>
          </layout>
         </item>
         <item>
-         <widget class="QLabel" name="CurrentShapeControlsLbl">
+         <widget class="QCheckBox" name="Mode">
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string>Single orient object</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="CreateControlsBtn">
+          <property name="text">
+           <string>Create Controls</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="RebuildGrp">
+        <property name="title">
+         <string>Rebuild curve</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QCheckBox" name="RebuildCurveChk">
+           <property name="text">
+            <string>rebuild curve</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_6">
+           <item>
+            <widget class="QLabel" name="NumberofSpansLabel">
+             <property name="text">
+              <string>number of Controls</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="NumberOfSpansSpnBx">
+             <property name="minimumSize">
+              <size>
+               <width>50</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>50</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="minimum">
+              <number>4</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QLabel" name="CurrentShapeControlsLbl">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="progresivePathGrpBx">
+     <property name="title">
+      <string>Progresive Path</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QPushButton" name="PathCurveBtn">
+          <property name="text">
+           <string>Load Path Curve :</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="PathCurveLbl">
           <property name="text">
            <string/>
           </property>
          </widget>
         </item>
        </layout>
-      </widget>
-     </item>
-    </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <item>
+         <widget class="QPushButton" name="ControlCurveBtn">
+          <property name="text">
+           <string>Load Control Curve:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="ControlCurveLbl">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton">
+        <property name="text">
+         <string>Progresive link to Path</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
   </layout>
  </widget>

@@ -18,12 +18,14 @@ class RMGenericJointChainRig (object):
 		self.CreateJointChainSquareRig(jointChain, UDaxis =UDaxis)
 
 	def CreateJointChainSquareRig( self, JointChain ,UDaxis ="Y" ):
-
-		if self.NameConv.RMGetFromName(JointChain[0],"Side")=="LF":
-			sideVariation = 1
+		if self.NameConv.RMIsNameInFormat(JointChain[0]):
+			if self.NameConv.RMGetFromName(JointChain[0],"Side")=="LF":
+				sideVariation = 1
+			else:
+				sideVariation = -1
 		else:
-			sideVariation = -1
-
+			sideVariation = 1
+			
 		if UDaxis in ["Y","Z"]:
 			BoxResetPoint , BoxControl = RMRigShapeControls.RMCreateBoxCtrl(JointChain[len(JointChain)-1], ParentBaseSize = True, Xratio = .5 ,Yratio = .5 ,Zratio = .5)
 			self.addChainParameters(BoxControl,len(JointChain) - 1)
@@ -42,9 +44,6 @@ class RMGenericJointChainRig (object):
 				RMRigTools.RMConnectWithLimits (BoxControl + ".UD"    + str(eachjoint + 1), JointChain[eachjoint] + (".rotate%s"%UDaxis), [[-10, 100],                 [0, 0], [10, -100]])
 				RMRigTools.RMConnectWithLimits (BoxControl + ".LR"    + str(eachjoint + 1), JointChain[eachjoint] + (".rotate%s"%LRaxis), [[-10, sideVariation * 100], [0, 0], [10, sideVariation * -100]])
 				RMRigTools.RMConnectWithLimits (BoxControl + ".Twist" + str(eachjoint + 1), JointChain[eachjoint] + ".rotateX",[[-10, sideVariation * 100], [0, 0], [10, sideVariation * -100]])
-
-			self.fingerControlsReset.append(BoxResetPoint)
-			self.fingerContols.append(BoxControl)
 		else:
 			print "Not Valid UD Axis Provided"
 
@@ -58,13 +57,6 @@ class RMGenericJointChainRig (object):
 		for element in range( number):
 			if Twist ==True:
 				cmds.addAttr(control, at="float", ln = ("Twist%s"%(element+1)),hnv = 1, hxv = 1, h = 0, k = 1, smn = smn, smx = smx)
-
-
-selection = cmds.ls(selection = True)
-
-GJR = RMGenericJointChainRig()
-GJR.CreateJointChainRig(selection[0],UDaxis = "Z")
-
 def setInName(selection):
 	NameConv = RMNameConvention.RMNameConvention()
 	for eachObject in selection:
@@ -79,6 +71,11 @@ def lastTwoJointsInChain(selection):
 		childJoints = RMRigTools.RMCustomPickWalk(eachObject, "joint", -1)
 		RMRigTools.RMAlign(childJoints[len(childJoints)-2],childJoints[len(childJoints)-1],2)
 
-#setInName (selection)
-#lastTwoJointsInChain(selection)
+
+if __name__ == '__main__':
+	selection = cmds.ls(selection = True)
+	GJR = RMGenericJointChainRig()
+	GJR.CreateJointChainRig(selection[0],UDaxis = "Z")
+	#setInName (selection)
+	#lastTwoJointsInChain(selection)
 

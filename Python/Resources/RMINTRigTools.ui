@@ -6,389 +6,436 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1066</width>
-    <height>699</height>
+    <width>485</width>
+    <height>669</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QWidget" name="">
-   <layout class="QVBoxLayout" name="verticalLayout_6">
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <layout class="QVBoxLayout" name="verticalLayout_17">
-        <item>
-         <widget class="QGroupBox" name="MiscGroupBox">
-          <property name="title">
-           <string>Misc</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_4">
-           <item>
-            <widget class="QPushButton" name="RenameTool">
-             <property name="text">
-              <string>Rename Tool</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="ExtractGeoBtn">
-             <property name="text">
-              <string>ExtractGeometry</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="ParentConstraintBtn">
-             <property name="text">
-              <string>Parent Constraint</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="AttributeTransferBtn">
-             <property name="toolTip">
-              <string extracomment="Select the object with the Attributes you want to transfer First, then the destination object."/>
-             </property>
-             <property name="text">
-              <string>Move Attributes</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-          <zorder></zorder>
-          <zorder>RenameTool</zorder>
-          <zorder>ExtractGeoBtn</zorder>
-          <zorder>ParentConstraintBtn</zorder>
-          <zorder>AttributeTransferBtn</zorder>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="AlignGroupBox">
-          <property name="title">
-           <string>Align Tools</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_10">
-           <item>
-            <widget class="QPushButton" name="AlignRotation">
-             <property name="text">
-              <string>AlignRotation</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="AlignPosition">
-             <property name="text">
-              <string>AlignPosition</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="AlignAll">
-             <property name="text">
-              <string>Align Pos &amp; Rot</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" name="verticalLayout_11">
-        <item>
-         <widget class="QGroupBox" name="groupBox">
-          <property name="title">
-           <string>EditShapes</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_9">
-           <item>
-            <widget class="QPushButton" name="ConstShapeLblBtn">
-             <property name="text">
-              <string>Const Shape Lbl</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="SCCombineButton">
-             <property name="text">
-              <string>Combine</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="CopyCvsPosBtn">
-             <property name="text">
-              <string>Copy Cvs Position</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-          <zorder>ConstShapeLblBtn</zorder>
-          <zorder>labelShapeControls</zorder>
-          <zorder>SCCombineButton</zorder>
-          <zorder>ConstShapeLblBtn</zorder>
-          <zorder>CopyCvsPosBtn</zorder>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="JointsGroupBox">
-          <property name="title">
-           <string>Joints</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_8">
-           <item>
-            <widget class="QPushButton" name="JointsOnPoints">
-             <property name="text">
-              <string>CreateJointsOnPoints</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="OrientNubButton">
-             <property name="text">
-              <string>Orient Nub</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <widget class="QGroupBox" name="GroupsGroupBox">
-        <property name="title">
-         <string>Group Creation</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_13">
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout_6">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_17">
          <item>
-          <widget class="QPushButton" name="CreateChildGroup">
-           <property name="text">
-            <string>Create Child Group</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QGroupBox" name="groupBox_2">
+          <widget class="QGroupBox" name="MiscGroupBox">
            <property name="title">
-            <string>Parent Group</string>
+            <string>Misc</string>
            </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <layout class="QVBoxLayout" name="verticalLayout_4">
             <item>
-             <widget class="QPushButton" name="CreateParentGroup">
+             <widget class="QPushButton" name="RenameTool">
               <property name="text">
-               <string>Create Parent Group</string>
+               <string>Rename Tool</string>
               </property>
              </widget>
             </item>
             <item>
-             <layout class="QVBoxLayout" name="verticalLayout_7">
-              <item>
-               <widget class="QRadioButton" name="insertedRadio">
-                <property name="text">
-                 <string>inserted</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="parentRadio">
-                <property name="text">
-                 <string>parent</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="worldRadio">
-                <property name="text">
-                 <string>world</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
+             <widget class="QPushButton" name="ExtractGeoBtn">
+              <property name="text">
+               <string>ExtractGeometry</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="ParentConstraintBtn">
+              <property name="text">
+               <string>Parent Constraint</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="AttributeTransferBtn">
+              <property name="toolTip">
+               <string extracomment="Select the object with the Attributes you want to transfer First, then the destination object."/>
+              </property>
+              <property name="text">
+               <string>Move Attributes</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
          </item>
         </layout>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <widget class="Line" name="line">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <item>
-       <widget class="QGroupBox" name="RigGroupBox">
-        <property name="title">
-         <string>Rig</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_2">
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_11">
          <item>
-          <widget class="QPushButton" name="FKOnSelection">
-           <property name="toolTip">
-            <string>Select some locators in order to create an FK Control</string>
-           </property>
-           <property name="text">
-            <string>FK on selection</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="IKOnSelection">
-           <property name="toolTip">
-            <string>Select some locators in order to create an FK Control</string>
-           </property>
-           <property name="text">
-            <string>IK on selection</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButton">
-           <property name="text">
-            <string>Generic Joint Chain Rig</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QGroupBox" name="groupBox_3">
+          <widget class="QGroupBox" name="groupBox">
            <property name="title">
-            <string>Progressive Constraint</string>
+            <string>EditShapes</string>
            </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <layout class="QVBoxLayout" name="verticalLayout_9">
             <item>
-             <layout class="QVBoxLayout" name="MainProgresiveLayout">
-              <item>
-               <widget class="QLabel" name="label">
-                <property name="text">
-                 <string>Depth</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="ProgressiveDepthSpinBox">
-                <property name="minimum">
-                 <number>1</number>
-                </property>
-                <property name="value">
-                 <number>1</number>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="ProgressiveConstraintButton">
-                <property name="text">
-                 <string>Progressive Constraint</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
+             <widget class="QPushButton" name="ConstShapeLblBtn">
+              <property name="text">
+               <string>Const Shape Lbl</string>
+              </property>
+             </widget>
             </item>
             <item>
-             <layout class="QVBoxLayout" name="ProgressiveTypeLayout">
-              <item>
-               <widget class="QRadioButton" name="CnstParentRadio">
-                <property name="text">
-                 <string>parent</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="CnstOrientRadio">
-                <property name="text">
-                 <string>orient</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="CnstPointRadio">
-                <property name="text">
-                 <string>point</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
+             <widget class="QPushButton" name="SCCombineButton">
+              <property name="text">
+               <string>Combine</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="CopyCvsPosBtn">
+              <property name="text">
+               <string>Copy Cvs Position</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+           <zorder>SCCombineButton</zorder>
+           <zorder>ConstShapeLblBtn</zorder>
+           <zorder>CopyCvsPosBtn</zorder>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="AlignGroupBox">
+           <property name="title">
+            <string>Align Tools</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_10">
+            <item>
+             <widget class="QPushButton" name="AlignRotation">
+              <property name="text">
+               <string>AlignRotation</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="AlignPosition">
+              <property name="text">
+               <string>AlignPosition</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="AlignAll">
+              <property name="text">
+               <string>Align Pos &amp; Rot</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
          </item>
-         <item>
-          <widget class="QGroupBox" name="LacesGroupBx">
-           <property name="title">
-            <string>Laces</string>
-           </property>
-           <widget class="QWidget" name="horizontalLayoutWidget_3">
-            <property name="geometry">
-             <rect>
-              <x>0</x>
-              <y>20</y>
-              <width>321</width>
-              <height>124</height>
-             </rect>
+        </layout>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="GroupsGroupBox">
+         <property name="title">
+          <string>Group Creation</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <widget class="QPushButton" name="CreateChildGroup">
+            <property name="text">
+             <string>Create Child Group</string>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_4">
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox_2">
+            <property name="title">
+             <string>Parent Group</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_7">
              <item>
-              <widget class="QPushButton" name="pushButton_2">
+              <layout class="QHBoxLayout" name="horizontalLayout_8">
+               <item>
+                <widget class="QRadioButton" name="worldRadio">
+                 <property name="text">
+                  <string>world</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="parentRadio">
+                 <property name="text">
+                  <string>parent</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="insertedRadio">
+                 <property name="text">
+                  <string>inserted</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QPushButton" name="CreateParentGroup">
                <property name="text">
-                <string>PushButton</string>
+                <string>Create Parent Group</string>
                </property>
               </widget>
              </item>
             </layout>
            </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="JointsGroupBox">
+            <property name="title">
+             <string>Joints</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_8">
+             <item>
+              <widget class="QPushButton" name="JointsOnPoints">
+               <property name="text">
+                <string>CreateJointsOnPoints</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="OrientNubButton">
+               <property name="text">
+                <string>Orient Nub</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="Line" name="line">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QGroupBox" name="RigGroupBox">
+         <property name="title">
+          <string>Rig</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QPushButton" name="FKOnSelection">
+            <property name="toolTip">
+             <string>Select some locators in order to create an FK Control</string>
+            </property>
+            <property name="text">
+             <string>FK on selection</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="IKOnSelection">
+            <property name="toolTip">
+             <string>Select some locators in order to create an FK Control</string>
+            </property>
+            <property name="text">
+             <string>IK on selection</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="GenericJointChainRigBtn">
+            <property name="text">
+             <string>Generic Joint Chain Rig</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox_3">
+            <property name="title">
+             <string>Progressive Constraint</string>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <item>
+              <layout class="QVBoxLayout" name="MainProgresiveLayout">
+               <item>
+                <widget class="QLabel" name="label">
+                 <property name="text">
+                  <string>Depth</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSpinBox" name="ProgressiveDepthSpinBox">
+                 <property name="minimum">
+                  <number>1</number>
+                 </property>
+                 <property name="value">
+                  <number>1</number>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="ProgressiveConstraintButton">
+                 <property name="text">
+                  <string>Progressive Constraint</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="mantainOffsetChk">
+                 <property name="text">
+                  <string>mantain offset</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="ProgressiveTypeLayout">
+               <item>
+                <widget class="QRadioButton" name="CnstParentRadio">
+                 <property name="text">
+                  <string>parent</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="CnstOrientRadio">
+                 <property name="text">
+                  <string>orient</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="CnstPointRadio">
+                 <property name="text">
+                  <string>point</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="unfoldRigGrpBox">
+            <property name="title">
+             <string>Unfold Rig</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_5">
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_12">
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_4">
+                 <item>
+                  <widget class="QLabel" name="initRadiusLbl">
+                   <property name="text">
+                    <string>Init Radius</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QDoubleSpinBox" name="initRadiusSpnBx"/>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_6">
+                 <item>
+                  <widget class="QLabel" name="endRadiusLbl">
+                   <property name="text">
+                    <string>End Radius</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QDoubleSpinBox" name="endRadiusSpnBx"/>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_7">
+                 <item>
+                  <widget class="QLabel" name="numberOfPointsLbl">
+                   <property name="text">
+                    <string>Number Of Points</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="NumberOfPointsSpnBx"/>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <widget class="QPushButton" name="unfoldRigBtn">
+                 <property name="text">
+                  <string>unfold Rig</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="Line" name="line_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="SkiningToolslabel">
+           <property name="text">
+            <string>SkiningTools</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="ListConnectedJoints">
+           <property name="text">
+            <string>List Skined Joints</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QListWidget" name="listWidget"/>
+         </item>
+         <item>
+          <widget class="QPushButton" name="SelectJoints">
+           <property name="text">
+            <string>Select Joints</string>
+           </property>
           </widget>
          </item>
         </layout>
-       </widget>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
-        <item>
-         <widget class="Line" name="line_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="SkiningToolslabel">
-          <property name="text">
-           <string>SkiningTools</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="ListConnectedJoints">
-          <property name="text">
-           <string>List Skined Joints</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QListWidget" name="listWidget"/>
-        </item>
-        <item>
-         <widget class="QPushButton" name="SelectJoints">
-          <property name="text">
-           <string>Select Joints</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </item>
-   </layout>
-  </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>

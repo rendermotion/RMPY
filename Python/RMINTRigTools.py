@@ -6,11 +6,16 @@ from shiboken import wrapInstance
 import maya.mel as mel
 import os
 import RMRigTools
-
+from AutoRig import RMGenericJointRig
+from GenericRig import RMProgressiveConstraint
 #sys.path.append(os.path.dirname(__file__))
 from ui import RMFormRigTools
-reload(RMFormRigTools)
 import RMUncategorized
+reload(RMFormRigTools)
+reload (RMGenericJointRig)
+reload(RMProgressiveConstraint)
+
+
 
 def getMayaWindow():
 	ptr = mui.MQtUtil.mainWindow()
@@ -36,6 +41,11 @@ class RMINTRigTools(QtGui.QDialog):
 		self.ui.SCCombineButton.clicked.connect(self.SCCombineButtonPressed)
 		self.ui.AttributeTransferBtn.clicked.connect(self.AttributeTransferBtnPressed)
 		self.ui.ExtractGeoBtn.clicked.connect(self.ExtractGeoFunct)
+		self.ui.GenericJointChainRigBtn.clicked.connect(self.GenericJointChainRigBtnPressed)
+		self.ui.OrientNubButton.clicked.connect(self.OrientNubButtonPressed)
+		
+		self.ui.ProgressiveConstraintButton.clicked.connect(self.ProgressiveConstraintButtonPressed)
+		
 		#self.ui.ConstShapeLblBtn.clicked.connect(self.AttributeTransferBtnPressed)
 
 		#support Multiple selections on qwidgets
@@ -53,11 +63,46 @@ class RMINTRigTools(QtGui.QDialog):
 		mel.eval('''source RMRigTools.mel;
 		string $temp[]=`ls -sl`;
 		RMCreateGrouponObj $temp[0] 2;''')
+
+	def GenericJointChainRigBtnPressed(self):
+		selection = cmds.ls(selection = True)
+		GJR = RMGenericJointRig.RMGenericJointChainRig()
+		GJR.CreateJointChainRig(selection[0],UDaxis = "Z")
+	def OrientNubButtonPressed(self):
+		selection = cmds.ls(selection = True)
+		RMGenericJointRig.lastTwoJointsInChain(selection)
+
 	def CreateParentBtnPressed(self):
 		selection = cmds.ls( selection = True)
+		paretnType =''
 		if selection:
-			for eachObject in selection:
-				RMRigTools.RMCreateGroupOnObj(eachObject,Type = 'inserted')
+			if self.ui.parentRadio.isChecked() == True:
+				paretnType ='parent'
+			if self.ui.worldRadio.isChecked() == True:
+				paretnType ='world'
+			if self.ui.insertedRadio.isChecked() == True:
+				paretnType ='inserted'
+		
+		for eachObject in selection:
+			RMRigTools.RMCreateGroupOnObj(eachObject,Type = paretnType)
+	def ProgressiveConstraintButtonPressed(self):
+		selection = cmds.ls( selection = True)
+		ConstraintType ='parent'
+		if selection:
+			if self.ui.CnstParentRadio.isChecked() == True:
+				ConstraintType ='parent'
+			if self.ui.CnstOrientRadio.isChecked() == True:
+				ConstraintType ='orient'
+			if self.ui.CnstPointRadio.isChecked() == True:
+				ConstraintType ='point'
+		if self.ui.mantainOffsetChk.isChecked() == True:
+			mo = True 
+		else: 
+			mo = False
+		deepth=self.ui.ProgressiveDepthSpinBox.value()
+
+		RMProgressiveConstraint.deepthProgressiveconstraint( deepth, selection, constraintType = ConstraintType, mo = mo)
+
 	def JointsOnPointsBtnPressed(self):
 		mel.eval('''source RMRigTools.mel;
 		string $temp[]=`ls -sl`;
