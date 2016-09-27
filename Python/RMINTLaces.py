@@ -8,6 +8,7 @@ import os
 import RMUncategorized
 from AutoRig import RMLaces
 from ui import RMFormLaces
+from snippets import MultiPathObjects
 reload(RMFormLaces)
 reload(RMLaces)
 
@@ -21,9 +22,26 @@ class RMINTLacesTool(QtGui.QDialog):
         self.isShapeSelected = False
         self.ui = RMFormLaces.Ui_Form()
         self.ui.setupUi(self)
+        self.setWindowTitle('RM Laces')
         self.ui.LoadShapeBtn.clicked.connect(self.LoadShapeBtnPressed)
         self.ui.CreateControlsBtn.clicked.connect(self.CreateControlsBtnPressed)
         self.NumCvs = None
+        self.ui.ControlCurveBtn.clicked.connect(self.ControlCurveBtnPressed)
+        self.ui.PathCurveBtn.clicked.connect(self.PathCurveBtnPressed)
+        self.ui.pushButton.clicked.connect(self.ProgressiveLinkBtnPressed)
+
+    def PathCurveBtnPressed(self):
+        selection = cmds.ls(selection = True)
+        if selection and len(selection)>=1:
+            self.ui.PathCurveLbl.setText(selection[0])
+    
+    def ControlCurveBtnPressed(self):
+        selection = cmds.ls(selection = True)
+        if selection and len(selection)>=1:
+            self.ui.ControlCurveLbl.setText(selection[0])
+    def ProgressiveLinkBtnPressed(self):
+        objectArray = cmds.ls(sl=True)
+        MultiPathObjects.pathFollow(self.ui.PathCurveLbl.text(),self.ui.ControlCurveLbl.text(),objectArray)
 
     def LoadShapeBtnPressed(self):
         selection = cmds.ls(selection = True)[0]
@@ -49,14 +67,6 @@ class RMINTLacesTool(QtGui.QDialog):
             laces.RMlacesSystem( self.ui.NumberOfJoints.value() , curve = self.ui.CurrentShapeLbl.text())    
         else:
             laces.RMlacesSystemMultipleRotationControls(self.ui.NumberOfJoints.value() , curve = self.ui.CurrentShapeLbl.text())
-        
-
-
-    
-
-
-
-
 if __name__ == '__main__':
     w = RMINTLacesTool()
     w.show()

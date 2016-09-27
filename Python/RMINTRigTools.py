@@ -8,6 +8,8 @@ import os
 import RMRigTools
 from AutoRig import RMGenericJointRig
 from GenericRig import RMProgressiveConstraint
+from GenericRig import RMUnfoldRig
+
 #sys.path.append(os.path.dirname(__file__))
 from ui import RMFormRigTools
 import RMUncategorized
@@ -43,13 +45,18 @@ class RMINTRigTools(QtGui.QDialog):
 		self.ui.ExtractGeoBtn.clicked.connect(self.ExtractGeoFunct)
 		self.ui.GenericJointChainRigBtn.clicked.connect(self.GenericJointChainRigBtnPressed)
 		self.ui.OrientNubButton.clicked.connect(self.OrientNubButtonPressed)
-		
+		self.ui.unfoldRigBtn.clicked.connect(self.unfoldRigBtnPressed)
+
 		self.ui.ProgressiveConstraintButton.clicked.connect(self.ProgressiveConstraintButtonPressed)
 		
 		#self.ui.ConstShapeLblBtn.clicked.connect(self.AttributeTransferBtnPressed)
 
 		#support Multiple selections on qwidgets
 		self.ui.listWidget.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
+
+	def unfoldRigBtnPressed(self):
+		selection = cmds.ls(selection=True)
+		RMUnfoldRig.SpiralOfPointsStraight(self.ui.initRadiusSpnBx.value(),self.ui.endRadiusSpnBx.value(), self.ui.NumberOfPointsSpnBx.value(),selection[0],selection[1])
 
 	def RenameToolBtnPressed(self):
 		mel.eval('source RMINTRenameTool.mel;')
