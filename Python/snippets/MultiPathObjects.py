@@ -34,5 +34,6 @@ def pathFollow (curve , control, objectArray, NameConv = None):
 		cmds.connectAttr("%s.output1D"%addition,"%s.uValue"%motionPath, force = True)
 		index+=1
 
-objectArray = cmds.ls(sl=True)
-pathFollow("curve1","nurbsCircle1",objectArray)
+if __name__=="__main__":
+	objectArray = cmds.ls(sl=True)
+	pathFollow("curve1","nurbsCircle1",objectArray)

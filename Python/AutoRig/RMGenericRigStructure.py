@@ -1,5 +1,8 @@
 import maya.cmds as cmds
-from MetacubeScripts import MetacubeFileNameConvention
+try:
+    from MetacubeScripts import MetacubeFileNameConvention
+except:
+    pass
 
 class genericRigStructure(object):
     def __init__(self):
@@ -8,8 +11,10 @@ class genericRigStructure(object):
                               "rig"     :{"group":"rig_grp"    ,"subGroup":None},
                               "controls":{"group":"control_grp","subGroup":None}
                       }
-        #self.FileNameConv = None
-        self.FileNameConv = MetacubeFileNameConvention.MetacubeFileNameConvention()
+        try:
+            self.FileNameConv = MetacubeFileNameConvention.MetacubeFileNameConvention()
+        except:
+            self.FileNameConv = None
         self.CreateStructure()
 
     def CreateStructure (self):

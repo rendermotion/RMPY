@@ -2,7 +2,10 @@ import sys
 import maya.cmds as cmds
 import maya.OpenMayaUI as mui
 from PySide import QtGui, QtCore
-from shiboken import wrapInstance
+try:
+    from shiboken import wrapInstance
+except:
+    from shiboken2 import wrapInstance 
 import maya.mel as mel
 import os
 import RMUncategorized
@@ -13,6 +16,7 @@ from AutoRig.snippets import CorrectPoleVectorsOrientation
 from AutoRig.snippets import RedoClavicleSpaceSwitch
 from AutoRig.snippets import SkeletonHands
 from AutoRig.snippets import supportScaleOnRig
+reload(RMAutoRig)
 def getMayaWindow():
     ptr = mui.MQtUtil.mainWindow()
     return wrapInstance(long(ptr), QtGui.QMainWindow)

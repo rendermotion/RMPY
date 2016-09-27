@@ -4,14 +4,18 @@ from AutoRig import RMSpaceSwitch
 from AutoRig.Hand import RMGenericHandRig
 from AutoRig import RMSpine
 from AutoRig import RMNeckHead
+from AutoRig import RMVisibilitySwitch
 import maya.mel as mel
 import RMNameConvention
-from MetacubeScripts import MetacubeFileNameConvention
+try:
+    from MetacubeScripts import MetacubeFileNameConvention
+except:
+    pass
 from AutoRig import RMFeet
 import RMRigShapeControls
 import RMRigTools
 import maya.cmds as cmds
-import RMVisibilitySwitch
+
 
 reload (RMFeet)
 reload (RMSpine)
@@ -21,6 +25,7 @@ reload (RMSpaceSwitch)
 reload (RMGenericHandRig)
 reload (RMNameConvention)
 reload (RMVisibilitySwitch)
+
 
 class RMBiped(object):
     def __init__(self, NameConv = None):
@@ -45,16 +50,19 @@ class RMBiped(object):
         self.Mover02 = None
         self.placer = None
         self.NeckHead = RMNeckHead.RMNeckHead()
-        self.MetaNameConv = MetacubeFileNameConvention.MetacubeFileNameConvention()
+        try:
+            self.MetaNameConv = MetacubeFileNameConvention.MetacubeFileNameConvention()
+        except:
+            pass
         self.GHRightRig = None
         self.GHLeftRig = None
 
         self.geometryGroups=["body_grp", "cloth_grp", "accesories_grp","hair_grp", "trackers_grp","collision_grp", "pxycloth_grp", "pxyhair_grp", "dynspline_grp"]
 
     def CreateBipedRig(self):
-        if self.MetaNameConv.nameInFormat:
+        try:
             CharacterName = self.MetaNameConv.AssetType + "_" + self.MetaNameConv.AssetName + "_rig"
-        else :
+        except :
             CharacterName = "MainCharacter"
 
         if cmds.objExists(CharacterName):
