@@ -125,10 +125,7 @@ class RMNameConvention (object):
 
 	def RMAddToNumberedString(self, Name, AddName):
 		Value = re.split(r"([0-9]+$)",Name)
-		if len(Value) >= 2:
-			return Value[0].title() + (AddName.title()) + Value[1]
-		else:
-			return Value[0].title() + (AddName.title())
+		return Value[0].title() + (AddName.title()) + Value[1]
 
 	def RMUniqueName(self, currentName):
 		ObjName=self.RMGetFromName(currentName,'Name')

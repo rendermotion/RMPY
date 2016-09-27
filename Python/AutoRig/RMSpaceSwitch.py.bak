@@ -57,7 +57,7 @@ class RMSpaceSwitch(object):
                     parentConstraint = cmds.parentConstraint (eachObject, AfectedObject, mo = mo, name = AfectedObject + "SpaceSwitchConstraint")
                     WA = cmds.parentConstraint (parentConstraint, q = True, weightAliasList = True)
             
-            cmds.setAttr("%s.interpType"%parentConstraint[0] , 0)
+            cmds.setAttr("%s.interpType"%parentConstraint , 0)
 
             if self.NameConv.RMIsNameInFormat (AfectedObject):
                 reverse = self.NameConv.RMRenameBasedOnBaseName(AfectedObject, reverse, NewName = reverse)

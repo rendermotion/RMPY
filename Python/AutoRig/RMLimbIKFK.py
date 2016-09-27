@@ -33,7 +33,7 @@ class RMLimbIKFK(object):
         self.IKjointStructure = None
         self.IKparentGroup = None
         self.IkHandle = None
-        self.IKControlResetPoint=None
+        self.IKControlResetPoint = None
         self.ikControl = None
         self.IKControls = None
         self.PoleVectorControlResetPnt = None
@@ -68,6 +68,12 @@ class RMLimbIKFK(object):
         self.RMCreateIKControls()
         self.RMMakeIkStretchy(self.IkHandle)
         self.RMCreatePoleVector(self.IkHandle)
+
+        
+
+        cmds.setAttr("%s.rotateZ"%self.PoleVectorControlResetPnt,90)
+        cmds.setAttr("%s.rotateX"%self.PoleVectorControlResetPnt,90)
+
 
         self.FKparentGroup , self.FKjointStructure = self.RMLimbJointEstructure(RootReferencePoint)        
         self.FKjointStructure = self.NameConv.RMRenameSetFromName(self.FKjointStructure,"Limbfk" ,"System")

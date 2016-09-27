@@ -95,11 +95,7 @@ def RMCreateGroupOnObj(Obj,Type="inserted", NameConv = None):
         Group = NameConv.RMRenameBasedOnBaseName (Obj, Group)
 
     else:
-        ValidNameList = Obj.split("_")
-        ValidName=""
-        for eachToken in ValidNameList:
-            ValidName += eachToken
-        NewName = NameConv.RMSetNameInFormat(Name = NameConv.RMAddToNumberedString(ValidName , "Group"))
+        NewName = NameConv.RMSetNameInFormat(Name = NameConv.RMAddToNumberedString(Obj , "Group"))
         Group = cmds.rename (Group, NewName)
 
     RMAlign(Obj,Group,3)

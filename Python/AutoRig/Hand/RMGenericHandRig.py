@@ -53,7 +53,8 @@ class RMGenericHandRig(object):
 		self.CreateHandStructure(PalmReferencePoint)
 		for fingers in self.GHS.fingers:
 			self.CreateFingerSquareRig(fingers)
-		self.CreatePalmRig(PalmControl = PalmControl)
+			
+		self.CreatePalmRig ( PalmControl = PalmControl )
 		RMRigTools.RMParentArray(self.PalmControl,self.fingerControlsReset)
 		palmLen = RMRigTools.RMPointDistance( self.PalmControl, self.GHS.fingerRoots[0])
 		cmds.parentConstraint(self.MainKinematics,self.GHS.palmJoint)
@@ -62,8 +63,6 @@ class RMGenericHandRig(object):
 		self.GHS.palmJoint = self.NameConv.RMRenameSetFromName(self.GHS.palmJoint, "sknjnt", "Type")
 		for eachFinger in self.GHS.fingers:
 			eachFinger = self.NameConv.RMRenameSetFromName(eachFinger[:-1], "sknjnt", "Type")
-		print self.GHS.fingers
-
 
 		#self.PalmControl
 		#RMRigShapeControls.RMCreateBoxCtrl(self.GHS.palmJoint, Yratio = .5, size = palmLen, NameConv =  NameConv)
@@ -83,7 +82,7 @@ class RMGenericHandRig(object):
 
 
 		if PalmControl== None:
-			palmResetPoint , self.PalmControl = RMRigShapeControls.RMCircularControl(self.GHS.palmJoint)
+			palmResetPoint , PalmControl = RMRigShapeControls.RMCircularControl(self.GHS.palmJoint)
 		else :
 			palmResetPoint = cmds.group(empty = True, name = "palmControl")
 			palmResetPoint = self.NameConv.RMRenameBasedOnBaseName (self.GHS.palmJoint, palmResetPoint, NewName = palmResetPoint)
@@ -112,7 +111,7 @@ class RMGenericHandRig(object):
 		if middle:
 			self.PalmFingerControlGrp["middle"] = RMRigTools.RMCreateGroupOnObj(middle[0])
 			RMRigTools.RMChangeRotateOrder(middle,"yxz")
-			RMRigTools.RMConnectWithLimits(self.PalmControl + ".Spread",self.PalmFingerControlGrp["middle"] + '.rotateZ',[[-10,0]  ,[0,0],[10,sideVariation * -5]])
+			RMRigTools.RMConnectWithLimits(self.PalmControl + ".Spread", self.PalmFingerControlGrp["middle"] + '.rotateZ',[[-10,0]  ,[0,0],[10,sideVariation * -5]])
 		index = self.GHS.fingerJointsByName("index")
 		if index:
 			self.PalmFingerControlGrp["index"] = RMRigTools.RMCreateGroupOnObj(index[0])

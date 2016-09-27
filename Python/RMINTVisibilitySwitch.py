@@ -18,7 +18,7 @@ def getMayaWindow():
 class RMINTVisibilitySwitch(QtGui.QDialog):
     def __init__(self, NameConv=None, parent=None):
         super(RMINTVisibilitySwitch,self).__init__(parent = getMayaWindow())
-        self.ui=RMFormVisibilityTool.Ui_Form()
+        self.ui = RMFormVisibilityTool.Ui_Form()
         self.ui.setupUi(self)
         self.setWindowTitle('Visibility Switch')
         self.VisSw = RMVisibilitySwitch.RMVisibilitySwitch()
@@ -72,7 +72,6 @@ class RMINTVisibilitySwitch(QtGui.QDialog):
         SelectedItems = self.ui.ObjectSpaceListView.selectedItems()
         if len(SelectedItems) > 0:
             SelectedItem = SelectedItems[0]
-        print "adding to list"
         controlObject = self.ui.ControllineEdit.text()
         Objects = cmds.ls(selection = True , type ="transform" )
         self.VisSw.AddAffectedObject ( controlObject, Objects , VisibilitySwitch = SelectedItem.text() )

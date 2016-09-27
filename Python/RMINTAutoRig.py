@@ -9,7 +9,10 @@ import RMUncategorized
 from ui import RMFormAutorig
 from AutoRig import RMAutoRig
 import RMNameConvention
-
+from AutoRig.snippets import CorrectPoleVectorsOrientation
+from AutoRig.snippets import RedoClavicleSpaceSwitch
+from AutoRig.snippets import SkeletonHands
+from AutoRig.snippets import supportScaleOnRig
 def getMayaWindow():
     ptr = mui.MQtUtil.mainWindow()
     return wrapInstance(long(ptr), QtGui.QMainWindow)
@@ -29,6 +32,11 @@ class RMINTAutoRig(QtGui.QDialog):
         self.ui.CreateRigBtn.clicked.connect(self.CreateRigBtnPressed)
         self.ui.CreateReferencePointsBtn.clicked.connect(self.CreateReferencePointsBtnPressed)
         self.ui.MirrorSelectionBtn.clicked.connect(self.MirrorSelectionBtnPressed)
+        self.ui.ClavicleSpaceSwitchBtn.clicked.connect(self.ClavicleSpaceSwitchBtnPressed)
+        self.ui.PoleVectorBtn.clicked.connect(self.PoleVectorBtnPressed)
+        self.ui.SkeletonHandsBtn.clicked.connect(self.SkeletonHandsBtnPressed)
+        self.ui.supportScaleRigBtn.clicked.connect(self.supportScaleRigBtnPressed)
+
 
     def CreateReferencePointsBtnPressed(self):
         CreateBypedPointsCommand = '''
@@ -36,6 +44,8 @@ class RMINTAutoRig(QtGui.QDialog):
         CreateBipedCharacter(%s,<<0,0,1>>,<<0,1,0>>);
         '''%(self.ui.HeightSpnBox.value())
         mel.eval(CreateBypedPointsCommand)
+    def supportScaleRigBtnPressed(self):
+        supportScaleOnRig.supportScaleOnRig()
 
     def MirrorSelectionBtnPressed(self):
         selection = cmds.ls(sl = True, type="transform")
@@ -58,6 +68,12 @@ class RMINTAutoRig(QtGui.QDialog):
                 OpositObject = self.NameConv.RMSetFromName( eachObject , "RH" , "Side")
                 if cmds.objExists(OpositObject):
                     RMUncategorized.SetObjectTransformDic({OpositObject : ObjectTransformDic[eachObject]}, MirrorTranslateX = 1 , MirrorTranslateY = 1 , MirrorTranslateZ = -1 , MirrorRotateX = -1 , MirrorRotateY = -1 , MirrorRotateZ = 1)
+    def ClavicleSpaceSwitchBtnPressed(self):
+        RedoClavicleSpaceSwitch.clavicleSpaceSwitch()
+    def PoleVectorBtnPressed(self):
+        CorrectPoleVectorsOrientation.correctPoleVectors()
+    def SkeletonHandsBtnPressed(self):
+        SkeletonHands.skeletonHands()
 if __name__ == '__main__':
     w = RMINTAutoRig()
     w.show()

@@ -11,6 +11,7 @@ from AutoRig import RMFeet
 import RMRigShapeControls
 import RMRigTools
 import maya.cmds as cmds
+import RMVisibilitySwitch
 
 reload (RMFeet)
 reload (RMSpine)
@@ -19,6 +20,7 @@ reload (RMLimbIKFK)
 reload (RMSpaceSwitch)
 reload (RMGenericHandRig)
 reload (RMNameConvention)
+reload (RMVisibilitySwitch)
 
 class RMBiped(object):
     def __init__(self, NameConv = None):
@@ -37,11 +39,15 @@ class RMBiped(object):
         self.LFfeet = None
         self.RHfeet = None
         self.moverMain = None
+        self.GHRightRig = None
+        self.GHLeftRig = None
         self.Mover01 = None
         self.Mover02 = None
         self.placer = None
         self.NeckHead = RMNeckHead.RMNeckHead()
         self.MetaNameConv = MetacubeFileNameConvention.MetacubeFileNameConvention()
+        self.GHRightRig = None
+        self.GHLeftRig = None
 
         self.geometryGroups=["body_grp", "cloth_grp", "accesories_grp","hair_grp", "trackers_grp","collision_grp", "pxycloth_grp", "pxyhair_grp", "dynspline_grp"]
 
@@ -66,7 +72,7 @@ class RMBiped(object):
             rig = "rig_grp"
         else:
             rig = cmds.group( empty = True, name = "rig_grp")
-
+        cmds.setAttr("%s.visibility"%rig,False )
         
         for eachgroup in self.geometryGroups:
             if not cmds.objExists(eachgroup):
@@ -78,6 +84,7 @@ class RMBiped(object):
         joints = cmds.group( empty = True, name = "joints")
         controls = cmds.group( empty = True, name = "controls_grp")
         self.world = cmds.group( empty = True, name ="world"+ CharacterName)
+        self.moverWorld = cmds.group( empty = True, name ="moverWorld"+ CharacterName)
 
         self.Spine = RMSpine.RMSpine()
         self.LimbArmLeft = RMLimbIKFK.RMLimbIKFK(worldNode = self.world, NameConv = self.NameConv)
@@ -93,7 +100,9 @@ class RMBiped(object):
         self.controls = controls
 
         cmds.parent(self.world, self.kinematics)
-        print self.world
+        cmds.parent(self.moverWorld, self.kinematics)
+
+        
 
         meshp = cmds.listRelatives( mesh , parent = True )
         if not meshp:
@@ -140,8 +149,25 @@ class RMBiped(object):
         cmds.parent( placerReset, controls)
         cmds.parent( mover02Reset, self.placer)
         cmds.parent( mover01Reset, self.Mover02)
-        
         cmds.parent(spineControls,self.Mover01)
+        cmds.parentConstraint( self.Mover01 , self.moverWorld )
+
+
+        '''
+        WorldRClavicle = cmds.group(empty = True, name = "clavicleWorld" )
+        WorldRClavicle = self.NameConv.RMRenameBasedOnBaseName (self.Spine.rightClavicleControl, WorldRClavicle, NewName = "world", System = "RClavicleSpaceSwitch")
+        RMRigTools.RMAlign(self.Spine.rightClavicleControl, WorldRClavicle ,3)
+        cmds.parent( WorldRClavicle, self.moverWorld)
+        RSpaceSwitchGroup = RMRigTools.RMCreateGroupOnObj(self.Spine.rightClavicleControl)
+        self.SPSW.CreateSpaceSwitch(RSpaceSwitchGroup,[self.Spine.resetRightClavicleControl, WorldRClavicle],self.Spine.rightClavicleControl, constraintType = "orient")
+
+        WorldLClavicle = cmds.group(empty = True, name = "clavicleWorld" )
+        WorldLClavicle = self.NameConv.RMRenameBasedOnBaseName (self.Spine.leftClavicleControl, WorldLClavicle, NewName = "world", System = "LClavicleSpaceSwitch")
+        RMRigTools.RMAlign(self.Spine.leftClavicleControl, WorldLClavicle ,3)
+        cmds.parent( WorldLClavicle, self.moverWorld)
+        LSpaceSwitchGroup = RMRigTools.RMCreateGroupOnObj(self.Spine.leftClavicleControl)
+        self.SPSW.CreateSpaceSwitch(LSpaceSwitchGroup,[self.Spine.resetLeftClavicleControl, WorldLClavicle],self.Spine.leftClavicleControl, constraintType = "orient")
+        '''
 
         #Creacion de la cabeza
 
@@ -154,7 +180,7 @@ class RMBiped(object):
         cmds.parent( self.NeckHead.resetNeckControl, self.Spine.ChestRotationControl )
 
         WorldHead = cmds.group(empty = True, name = "worldHead" )
-        WorldHead = self.NameConv.RMRenameBasedOnBaseName (self.NeckHead.headControl, WorldHead, NewName = "world",System = "HeadSpaceSwitch")
+        WorldHead = self.NameConv.RMRenameBasedOnBaseName (self.NeckHead.headControl, WorldHead, NewName = "world", System = "HeadSpaceSwitch")
         RMRigTools.RMAlign(self.NeckHead.resetHeadControl, WorldHead ,3)
         cmds.parent(WorldHead ,self.world)
 
@@ -167,44 +193,62 @@ class RMBiped(object):
 
 
         #Creacion de Brazos
-
+        #BrazoDerecho
         self.LimbArmRight.RMLimbRig("Character01_RH_shoulder_pnt_rfr", FKAxisFree='010')
         RHArmDic = self.OrganizeLimb(self.LimbArmRight,"RH","Arm", self.Spine.RightClavicleJoints[1],self.Spine.chestJoint)
 
+
+        RHWorldFKArm = cmds.group(empty = True, name = "ArmWorld" )
+        RHWorldFKArm = self.NameConv.RMRenameBasedOnBaseName (self.LimbArmRight.FKparentGroup, RHWorldFKArm, NewName = "world", System = "RFKArmSpaceSwitch")
+        RMRigTools.RMAlign(self.LimbArmRight.FKparentGroup, RHWorldFKArm ,3)
+        cmds.parent( RHWorldFKArm, self.moverWorld)
+        RSpaceSwitchGroup = RMRigTools.RMCreateGroupOnObj(self.LimbArmRight.FKparentGroup)
+        self.SPSW.CreateSpaceSwitchReverse(self.LimbArmRight.FKparentGroup,[RSpaceSwitchGroup, RHWorldFKArm],self.LimbArmRight.FKFirstLimbControl,sswtype = "float", Name="", mo = False, constraintType = "orient")
+
+        #BrazoIzquierdo
         self.LimbArmLeft.RMLimbRig("Character01_LF_shoulder_pnt_rfr",FKAxisFree='010')
         RHArmDic = self.OrganizeLimb(self.LimbArmLeft,"LF","Arm", self.Spine.LeftClavicleJoints[1],self.Spine.chestJoint)
 
 
-        GHRightRig = RMGenericHandRig.RMGenericHandRig()
-        GHRightRig.CreateHandRig("Character01_RH_palm_pnt_rfr",self.LimbArmRight.SpaceSwitchControl)
+        LFWorldFKArm = cmds.group(empty = True, name = "ArmWorld" )
+        LFWorldFKArm = self.NameConv.RMRenameBasedOnBaseName (self.LimbArmLeft.FKparentGroup, LFWorldFKArm, NewName = "world", System = "LFKArmSpaceSwitch")
+        RMRigTools.RMAlign(self.LimbArmLeft.FKparentGroup, LFWorldFKArm ,3)
+        cmds.parent( LFWorldFKArm, self.moverWorld)
+        LSpaceSwitchGroup = RMRigTools.RMCreateGroupOnObj(self.LimbArmLeft.FKparentGroup)
+        self.SPSW.CreateSpaceSwitchReverse(self.LimbArmLeft.FKparentGroup,[LSpaceSwitchGroup, LFWorldFKArm],self.LimbArmLeft.FKFirstLimbControl,sswtype = "float", Name="", mo = False, constraintType = "orient")
+
+
+        #ManoDerecha
+        self.GHRightRig = RMGenericHandRig.RMGenericHandRig()
+        self.GHRightRig.CreateHandRig("Character01_RH_palm_pnt_rfr",self.LimbArmRight.SpaceSwitchControl)
 
         #cmds.group(name = "Character01_RH_palmMover_grp_rig")
         RMRigTools.RMAlign("Character01_RH_palm_pnt_rfr", self.LimbArmRight.IKControlResetPoint , 3)
         RMRigTools.RMAlign("Character01_RH_palm_pnt_rfr", self.LimbArmRight.ThirdLimbParent , 3)
 
 
-        self.LimbArmRight.SPSW.RMCreateListConstraintSwitch([GHRightRig.MainKinematics],[self.LimbArmRight.IKjointStructure[2]]         , self.LimbArmRight.SpaceSwitchControl,SpaceSwitchName="IKFKSwitch")
-        self.LimbArmRight.SPSW.RMCreateListConstraintSwitch([GHRightRig.MainKinematics],[self.LimbArmRight.FKTrirdLimbControl], self.LimbArmRight.SpaceSwitchControl,SpaceSwitchName="IKFKSwitch", reverse = True)
-        self.LimbArmLeft.SPSW.CreateSpaceSwitch(self.LimbArmRight.IKControlResetPoint,[self.Spine.rightClavicleControl ,self.world, self.Spine.COG, self.Spine.hipJoints[0], self.NeckHead.HeadJoints[0]], self.LimbArmRight.ikControl)
+        self.LimbArmRight.SPSW.RMCreateListConstraintSwitch([self.GHRightRig.MainKinematics],[self.LimbArmRight.IKjointStructure[2]]         , self.LimbArmRight.SpaceSwitchControl,SpaceSwitchName="IKFKSwitch")
+        self.LimbArmRight.SPSW.RMCreateListConstraintSwitch([self.GHRightRig.MainKinematics],[self.LimbArmRight.FKTrirdLimbControl], self.LimbArmRight.SpaceSwitchControl,SpaceSwitchName="IKFKSwitch", reverse = True)
+        self.LimbArmLeft.SPSW.CreateSpaceSwitch(self.LimbArmRight.IKControlResetPoint,[self.Spine.rightClavicleControl ,self.world, self.Spine.COG, self.Spine.hipJoints[0], self.NeckHead.HeadJoints[0],self.moverWorld], self.LimbArmRight.ikControl)
 
-        cmds.parent ( GHRightRig.MainKinematics, RHArmDic["kinematics"])
-        cmds.parent ( GHRightRig.GHS.palmJoint , self.LimbArmRight.TJElbow.TwistJoints[len(self.LimbArmRight.TJElbow.TwistJoints) - 1])
-        cmds.parent ( GHRightRig.PalmResetPoint, RHArmDic["controls"] )
+        cmds.parent ( self.GHRightRig.MainKinematics, RHArmDic["kinematics"])
+        cmds.parent ( self.GHRightRig.GHS.palmJoint , self.LimbArmRight.TJElbow.TwistJoints[len(self.LimbArmRight.TJElbow.TwistJoints) - 1])
+        cmds.parent ( self.GHRightRig.PalmResetPoint, RHArmDic["controls"] )
 
-
-        GHLeftRig = RMGenericHandRig.RMGenericHandRig()
-        GHLeftRig.CreateHandRig("Character01_LF_palm_pnt_rfr", PalmControl = self.LimbArmLeft.SpaceSwitchControl )
+        #ManoIzquierda
+        self.GHLeftRig = RMGenericHandRig.RMGenericHandRig()
+        self.GHLeftRig.CreateHandRig("Character01_LF_palm_pnt_rfr", PalmControl = self.LimbArmLeft.SpaceSwitchControl )
 
         RMRigTools.RMAlign("Character01_LF_palm_pnt_rfr", self.LimbArmLeft.IKControlResetPoint , 3)
         RMRigTools.RMAlign("Character01_LF_palm_pnt_rfr", self.LimbArmLeft.ThirdLimbParent , 3)
 
-        self.LimbArmLeft.SPSW.RMCreateListConstraintSwitch ([GHLeftRig.MainKinematics],[self.LimbArmLeft.IKjointStructure[2]], self.LimbArmLeft.SpaceSwitchControl,SpaceSwitchName="IKFKSwitch")
-        self.LimbArmLeft.SPSW.RMCreateListConstraintSwitch ([GHLeftRig.MainKinematics],[self.LimbArmLeft.FKTrirdLimbControl] , self.LimbArmLeft.SpaceSwitchControl,SpaceSwitchName="IKFKSwitch", reverse = True)
-        self.LimbArmLeft.SPSW.CreateSpaceSwitch(self.LimbArmLeft.IKControlResetPoint,[self.Spine.leftClavicleControl ,self.world, self.Spine.COG, self.Spine.hipJoints[0], self.NeckHead.HeadJoints[0]], self.LimbArmLeft.ikControl)
+        self.LimbArmLeft.SPSW.RMCreateListConstraintSwitch ([self.GHLeftRig.MainKinematics],[self.LimbArmLeft.IKjointStructure[2]], self.LimbArmLeft.SpaceSwitchControl,SpaceSwitchName="IKFKSwitch")
+        self.LimbArmLeft.SPSW.RMCreateListConstraintSwitch ([self.GHLeftRig.MainKinematics],[self.LimbArmLeft.FKTrirdLimbControl] , self.LimbArmLeft.SpaceSwitchControl,SpaceSwitchName="IKFKSwitch", reverse = True)
+        self.LimbArmLeft.SPSW.CreateSpaceSwitch(self.LimbArmLeft.IKControlResetPoint,[self.Spine.leftClavicleControl ,self.world, self.Spine.COG, self.Spine.hipJoints[0], self.NeckHead.HeadJoints[0],self.moverWorld], self.LimbArmLeft.ikControl)
         
-        cmds.parent ( GHLeftRig.MainKinematics, RHArmDic["kinematics"])
-        cmds.parent ( GHLeftRig.GHS.palmJoint , self.LimbArmLeft.TJElbow.TwistJoints[len(self.LimbArmLeft.TJElbow.TwistJoints) - 1])
-        cmds.parent ( GHLeftRig.PalmResetPoint, RHArmDic["controls"])
+        cmds.parent ( self.GHLeftRig.MainKinematics, RHArmDic["kinematics"])
+        cmds.parent ( self.GHLeftRig.GHS.palmJoint , self.LimbArmLeft.TJElbow.TwistJoints[len(self.LimbArmLeft.TJElbow.TwistJoints) - 1])
+        cmds.parent ( self.GHLeftRig.PalmResetPoint, RHArmDic["controls"])
 
         #Creacion de pierna
 
@@ -281,6 +325,8 @@ class RMBiped(object):
 
         #cmds.parentConstraint(placer,self.kinematics)
         self.ColorCode()
+        self.Visibility()
+
         
         #mover01Reset, Mover01 = RMRigShapeControls.RMCircularControl ( "world" , axis = "Y" ,radius = self.Spine.SpineLength * 3  , name = "mover02")
 
@@ -299,10 +345,44 @@ class RMBiped(object):
         self.Mover01 = None
         self.Mover02 = None
         self.placer = None
-        self.NeckHead'''
+        self.NeckHead
+        self.GHRightRig = None
+        self.GHLeftRig = None
+        '''
+        VisSwitch = RMVisibilitySwitch.RMVisibilitySwitch()
 
-        #RMRigShapeControls.RMImportMoveControl(self.NeckHead.HeadJoints[0] ,scale = RMRigTools.RMLenghtOfBone(self.NeckHead.HeadJoints[0]),Type="v")
+        Vgroup , VControl = RMRigShapeControls.RMImportMoveControl( self.NeckHead.HeadJoints[0] ,scale = RMRigTools.RMLenghtOfBone(self.NeckHead.HeadJoints[0]),Type="v")
+        cmds.setAttr("%s.rotateX" % Vgroup, 0)
+        cmds.setAttr("%s.rotateY" % Vgroup, 0)
+        cmds.setAttr("%s.rotateZ" % Vgroup, 0)
+        
+        RMRigTools.RMAlign(self.NeckHead.HeadJoints[1] , Vgroup , 1)
+        
 
+        cmds.parentConstraint( self.Mover01 , Vgroup, mo = True)
+        cmds.parent(Vgroup,"controls_grp")
+
+        VisSwitch.ConstraintVisibility( [self.LimbArmLeft.PoleVectorControl,   self.LimbArmLeft.ikControl,  self.LimbArmLeft.FKFirstLimbControl,  self.LimbArmLeft.FKSecondLimbControl,  self.LimbArmLeft.FKTrirdLimbControl , self.LimbArmLeft.SpaceSwitchControl,
+                                         self.LimbArmRight.PoleVectorControl, self.LimbArmRight.ikControl, self.LimbArmRight.FKFirstLimbControl, self.LimbArmRight.FKSecondLimbControl, self.LimbArmRight.FKTrirdLimbControl, self.LimbArmRight.SpaceSwitchControl,
+                                         self.LimbLegLeft.PoleVectorControl,   self.LimbLegLeft.ikControl,  self.LimbLegLeft.FKFirstLimbControl,  self.LimbLegLeft.FKSecondLimbControl,  self.LimbLegLeft.FKTrirdLimbControl,  self.LimbLegLeft.SpaceSwitchControl,
+                                         self.LimbLegRight.PoleVectorControl, self.LimbLegRight.ikControl, self.LimbLegRight.FKFirstLimbControl, self.LimbLegRight.FKSecondLimbControl, self.LimbLegRight.FKTrirdLimbControl, self.LimbLegRight.SpaceSwitchControl,
+                                         self.Spine.rightClavicleControl,self.Spine.leftClavicleControl,self.Spine.waistControl,self.Spine.chestControl,self.Spine.hipControl,self.Spine.COG,
+                                         self.LFfeet.SecondLimbFeetControl,self.RHfeet.SecondLimbFeetControl, 
+                                         self.GHRightRig.MainControl , self.GHLeftRig.MainControl] , VControl, VisibilitySwitch = "Controls", visibilityType = "lodVisibility")
+        #print self.LFfeet.feetMainMoveIK
+        #print self.RHfeet.feetMainMoveIK
+        VisSwitch.ConstraintVisibility([ self.LimbArmLeft.TJArm.TwistControl,  self.LimbArmLeft.TJElbow.TwistControl,
+                                        self.LimbArmRight.TJArm.TwistControl, self.LimbArmRight.TJElbow.TwistControl,
+                                         self.LimbLegLeft.TJArm.TwistControl,  self.LimbLegLeft.TJElbow.TwistControl,
+                                        self.LimbLegRight.TJArm.TwistControl, self.LimbLegRight.TJElbow.TwistControl ] ,VControl, VisibilitySwitch = "Secondary", visibilityType = "lodVisibility")
+
+        VisSwitch.ConstraintVisibility( ["body_grp"] ,VControl, VisibilitySwitch = "Geometry")
+        VisSwitch.AddAffectedObject( VControl, self.Spine.secondaryControls, VisibilitySwitch = "Secondary" ,visibilityType = "lodVisibility")
+        VisSwitch.AddAffectedObject( VControl, self.GHRightRig.fingerControlsReset, VisibilitySwitch = "Controls" ,visibilityType = "lodVisibility")
+        VisSwitch.AddAffectedObject( VControl, self.GHLeftRig.fingerControlsReset, VisibilitySwitch = "Controls" ,visibilityType = "lodVisibility")
+
+        RMRigTools.RMLockAndHideAttributes(VControl,"0000000000")
+        #VisSwitch.AddEnumParameters( VControl, VisibilitySwitch = "Facial"   )
 
         pass
 
