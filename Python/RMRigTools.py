@@ -99,8 +99,8 @@ def RMCreateGroupOnObj(Obj,Type="inserted", NameConv = None):
         ValidName=""
         for eachToken in ValidNameList:
             ValidName += eachToken
-        NewName = NameConv.RMSetNameInFormat(Name = NameConv.RMAddToNumberedString(ValidName , "Group"))
-        Group = cmds.rename (Group, NewName)
+        NewName = NameConv.RMSetNameInFormat(Name = NameConv.RMAddToNumberedString(ValidName , "Group"), Type = "transform")
+        Group = cmds.rename ( Group , NewName)
 
     RMAlign(Obj,Group,3)
 
@@ -548,8 +548,12 @@ class RMRigTools(object):
             Group = self.NameConv.RMRenameBasedOnBaseName (Obj, Group)
 
         else:
-            NewName = self.NameConv.RMSetNameInFormat(Name = self.NameConv.RMAddToNumberedString(Obj , "Group"))
-            Group = cmds.rename (Group, NewName)
+            ValidNameList = Obj.split("_")
+            ValidName=""
+            for eachToken in ValidNameList:
+                ValidName += eachToken
+            NewName = self.NameConv.RMSetNameInFormat(Name = self.NameConv.RMAddToNumberedString(ValidName , "Group"), Type = "transform")
+            Group = cmds.rename ( Group , NewName)
 
         RMAlign(Obj,Group,3)
 
