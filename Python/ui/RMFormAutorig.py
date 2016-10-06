@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'Autorig.ui'
 #
-# Created: Mon Sep 26 14:23:49 2016
+# Created: Wed Oct 05 12:20:03 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(174, 174)
+        Form.resize(234, 172)
         self.verticalLayout_3 = QtGui.QVBoxLayout(Form)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.AutoRigTab = QtGui.QTabWidget(Form)
@@ -50,23 +50,35 @@ class Ui_Form(object):
         self.tab_2.setObjectName("tab_2")
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.tab_2)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.ClavicleSpaceSwitchBtn = QtGui.QPushButton(self.tab_2)
-        self.ClavicleSpaceSwitchBtn.setObjectName("ClavicleSpaceSwitchBtn")
-        self.verticalLayout_2.addWidget(self.ClavicleSpaceSwitchBtn)
-        self.PoleVectorBtn = QtGui.QPushButton(self.tab_2)
-        self.PoleVectorBtn.setObjectName("PoleVectorBtn")
-        self.verticalLayout_2.addWidget(self.PoleVectorBtn)
         self.SkeletonHandsBtn = QtGui.QPushButton(self.tab_2)
         self.SkeletonHandsBtn.setObjectName("SkeletonHandsBtn")
         self.verticalLayout_2.addWidget(self.SkeletonHandsBtn)
         self.supportScaleRigBtn = QtGui.QPushButton(self.tab_2)
         self.supportScaleRigBtn.setObjectName("supportScaleRigBtn")
         self.verticalLayout_2.addWidget(self.supportScaleRigBtn)
+        self.feetOrientationBtn = QtGui.QPushButton(self.tab_2)
+        self.feetOrientationBtn.setObjectName("feetOrientationBtn")
+        self.verticalLayout_2.addWidget(self.feetOrientationBtn)
         self.AutoRigTab.addTab(self.tab_2, "")
+        self.tab_5 = QtGui.QWidget()
+        self.tab_5.setObjectName("tab_5")
+        self.verticalLayout_4 = QtGui.QVBoxLayout(self.tab_5)
+        self.verticalLayout_4.setObjectName("verticalLayout_4")
+        self.ClavicleSpaceSwitchBtn = QtGui.QPushButton(self.tab_5)
+        self.ClavicleSpaceSwitchBtn.setObjectName("ClavicleSpaceSwitchBtn")
+        self.verticalLayout_4.addWidget(self.ClavicleSpaceSwitchBtn)
+        self.PoleVectorBtn = QtGui.QPushButton(self.tab_5)
+        self.PoleVectorBtn.setObjectName("PoleVectorBtn")
+        self.verticalLayout_4.addWidget(self.PoleVectorBtn)
+        self.label = QtGui.QLabel(self.tab_5)
+        self.label.setAlignment(QtCore.Qt.AlignCenter)
+        self.label.setObjectName("label")
+        self.verticalLayout_4.addWidget(self.label)
+        self.AutoRigTab.addTab(self.tab_5, "")
         self.verticalLayout_3.addWidget(self.AutoRigTab)
 
         self.retranslateUi(Form)
-        self.AutoRigTab.setCurrentIndex(0)
+        self.AutoRigTab.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
@@ -76,9 +88,13 @@ class Ui_Form(object):
         self.MirrorSelectionBtn.setText(QtGui.QApplication.translate("Form", "Mirror Selection", None, QtGui.QApplication.UnicodeUTF8))
         self.CreateRigBtn.setText(QtGui.QApplication.translate("Form", "CreateRig", None, QtGui.QApplication.UnicodeUTF8))
         self.AutoRigTab.setTabText(self.AutoRigTab.indexOf(self.tab), QtGui.QApplication.translate("Form", "AutoRig", None, QtGui.QApplication.UnicodeUTF8))
-        self.ClavicleSpaceSwitchBtn.setText(QtGui.QApplication.translate("Form", "Clavicle Space Switch", None, QtGui.QApplication.UnicodeUTF8))
-        self.PoleVectorBtn.setText(QtGui.QApplication.translate("Form", "Correct P Vector Orient", None, QtGui.QApplication.UnicodeUTF8))
         self.SkeletonHandsBtn.setText(QtGui.QApplication.translate("Form", "Skeleton Hands", None, QtGui.QApplication.UnicodeUTF8))
         self.supportScaleRigBtn.setText(QtGui.QApplication.translate("Form", "Support Scale Rig", None, QtGui.QApplication.UnicodeUTF8))
+        self.feetOrientationBtn.setText(QtGui.QApplication.translate("Form", "Correct Feet Orientation", None, QtGui.QApplication.UnicodeUTF8))
         self.AutoRigTab.setTabText(self.AutoRigTab.indexOf(self.tab_2), QtGui.QApplication.translate("Form", "Snipets", None, QtGui.QApplication.UnicodeUTF8))
+        self.ClavicleSpaceSwitchBtn.setText(QtGui.QApplication.translate("Form", "Clavicle Space Switch", None, QtGui.QApplication.UnicodeUTF8))
+        self.PoleVectorBtn.setText(QtGui.QApplication.translate("Form", "Correct P Vector Orient", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("Form", "All deprecated snippets are all ready\n"
+" included on the autorig default creation", None, QtGui.QApplication.UnicodeUTF8))
+        self.AutoRigTab.setTabText(self.AutoRigTab.indexOf(self.tab_5), QtGui.QApplication.translate("Form", "Deprecated", None, QtGui.QApplication.UnicodeUTF8))
 

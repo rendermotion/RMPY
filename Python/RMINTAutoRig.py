@@ -16,7 +16,9 @@ from AutoRig.snippets import CorrectPoleVectorsOrientation
 from AutoRig.snippets import RedoClavicleSpaceSwitch
 from AutoRig.snippets import SkeletonHands
 from AutoRig.snippets import supportScaleOnRig
-reload(RMAutoRig)
+from AutoRig.snippets import FetTipRotation
+#reload(RMAutoRig)
+#reload(RMFormAutorig)
 def getMayaWindow():
     ptr = mui.MQtUtil.mainWindow()
     return wrapInstance(long(ptr), QtGui.QMainWindow)
@@ -40,7 +42,12 @@ class RMINTAutoRig(QtGui.QDialog):
         self.ui.PoleVectorBtn.clicked.connect(self.PoleVectorBtnPressed)
         self.ui.SkeletonHandsBtn.clicked.connect(self.SkeletonHandsBtnPressed)
         self.ui.supportScaleRigBtn.clicked.connect(self.supportScaleRigBtnPressed)
+        self.ui.feetOrientationBtn.clicked.connect(self.feetOrientationBtnPressed)
 
+    def feetOrientationBtnPressed(self):
+        FeetTipRotation.FetTipRotationCorrect(side="LF")
+        FeetTipRotation.FetTipRotationCorrect(side="RH")
+    
 
     def CreateReferencePointsBtnPressed(self):
         CreateBypedPointsCommand = '''

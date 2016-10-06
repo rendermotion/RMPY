@@ -37,7 +37,8 @@ class RMNameConvention (object):
 							"cluster":"cls",
 							"plusMinusAverage":"pma",
 							"blendTwoAttr":"b2a",
-							"motionPath":"mph"
+							"motionPath":"mph",
+							"ffd":"ffd"
 
 							}
 		self.ShapeDictionary = {
@@ -155,7 +156,7 @@ class RMNameConvention (object):
 		if not Side:
 			Side = self.DefaultNames["Side"] 
 		if not Type:
-			Type = self.DefaultNames["Type"] 
+			Type = self.DefaultNames["Type"]
 		if not System:
 			System = self.DefaultNames["System"] 
 
@@ -175,28 +176,29 @@ class RMNameConvention (object):
 		return self.RMUniqueName(ReturnNameInFormat)
 
 	def RMRenameNameInFormat (self, Name, LastName=None, Side=None, Type=None, System=None):
-			NewNameArray = ()
-			NameList = []
-			if type(Name) == list:
-				NameList = Name
-			elif type(Name) in [str,unicode]:
-				NameList = [Name]
-			else:
-				print 'Error no Valid type on RMRenameNameInFromat should be string or list'
-			for Names in NameList:
-				NamesList = Names.split("_")
-				NewName = ""
-				for names in NamesList:
-					NewName += names
-				NewName = self.RMSetNameInFormat(Name = NewName, LastName = LastName, Side = Side, Type = Type, System=System)
-				Names = cmds.rename(Names,NewName)
-				if not Type:
-					NewNameArray += tuple([self.RMRenameGuessTypeInName (Names)])
-				else :
-					NewNameArray += tuple([Names])
-			if (len(NewNameArray) == 1):
-				return NewNameArray[0]
-			return NewNameArray
+		NewNameArray = ()
+		NameList = []
+		if type(Name) == list:
+			NameList = Name
+		elif type(Name) in [str,unicode]:
+			NameList = [Name]
+		else:
+			print 'Error no Valid type on RMRenameNameInFromat should be string or list'
+		for Names in NameList:
+			NamesList = Names.split("_")
+			NewName = ""
+			for names in NamesList:
+				NewName += names
+			NewName = self.RMSetNameInFormat(Name = NewName, LastName = LastName, Side = Side, Type = Type, System=System)
+			Names = cmds.rename(Names,NewName)
+			if not Type:
+				NewNameArray += tuple([self.RMRenameGuessTypeInName (Names)])
+			else :
+				NewNameArray += tuple([Names])
+
+		if (len(NewNameArray) == 1):
+			return NewNameArray[0]
+		return NewNameArray
 
 	def RMIsNameInFormat (self, ObjName):
 		splitString = ObjName.split("_")

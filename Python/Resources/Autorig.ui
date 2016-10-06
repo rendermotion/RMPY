@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>174</width>
-    <height>174</height>
+    <width>234</width>
+    <height>172</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="AutoRigTab">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -92,6 +92,34 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
+        <widget class="QPushButton" name="SkeletonHandsBtn">
+         <property name="text">
+          <string extracomment="This will create new joints to control the skeleton hand joints will add 4 joints per hand that will control the bones of the hand on skeleton characters">Skeleton Hands</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="supportScaleRigBtn">
+         <property name="text">
+          <string>Support Scale Rig</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="feetOrientationBtn">
+         <property name="text">
+          <string>Correct Feet Orientation</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_5">
+      <attribute name="title">
+       <string>Deprecated</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
         <widget class="QPushButton" name="ClavicleSpaceSwitchBtn">
          <property name="text">
           <string extracomment="This button will create a clavicle spaceswitch, this is allready implemented in the autorig, is just for previous rigs">Clavicle Space Switch</string>
@@ -106,16 +134,13 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="SkeletonHandsBtn">
+        <widget class="QLabel" name="label">
          <property name="text">
-          <string extracomment="This will create new joints to control the skeleton hand joints will add 4 joints per hand that will control the bones of the hand on skeleton characters">Skeleton Hands</string>
+          <string>All deprecated snippets are all ready
+ included on the autorig default creation</string>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="supportScaleRigBtn">
-         <property name="text">
-          <string>Support Scale Rig</string>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
          </property>
         </widget>
        </item>

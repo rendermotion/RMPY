@@ -292,6 +292,7 @@ def RMImportMoveControl(Obj, scale = 1,NameConv = None, name = '',Type = "move")
 			Ctrl = NameConv.RMRenameBasedOnBaseName(Obj,Ctrl)
 
 		else :
+			
 			Ctrl = NameConv.RMRenameBasedOnBaseName(Obj,Ctrl,NewName = Ctrl)
 			
 
