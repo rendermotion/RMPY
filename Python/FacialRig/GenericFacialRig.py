@@ -80,7 +80,7 @@ class GenericFacial():
 			if cmds.objExists(keys):
 				if keys =="LEyeCls" and cmds.objExists("LEyeHalfCls"):
 					cmds.blendShape(BSname,edit=True, target=["Character",NumBS,"LEyeHalfCls",.5])
-				if keys=="REyeCls" and cmds.objExists("REyeHalfCls"):
+				if keys =="REyeCls" and cmds.objExists("REyeHalfCls"):
 					cmds.blendShape(BSname,edit=True, target=["Character",NumBS,"REyeHalfCls",.5])
 				cmds.blendShape(BSname,edit=True, target=["Character",NumBS,keys,1.0])
 				self.FaceBlendShapeDic[keys]["index"] = NumBS

@@ -38,9 +38,8 @@ class RMNameConvention (object):
 							"plusMinusAverage":"pma",
 							"blendTwoAttr":"b2a",
 							"motionPath":"mph",
-							"ffd":"ffd"
-
-							}
+							"ffd":"ffd",
+							"blendShape":"bs"}
 		self.ShapeDictionary = {
 							"nurbsCurve":"shp",
 							"mesh":"msh",
