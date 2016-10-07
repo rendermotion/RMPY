@@ -1,5 +1,5 @@
 import maya.cmds as cmds
-import RigTools
+import RMRigTools
 
 def deleteAttributes (Object, attribute = None):
 	AttrList = cmds.listAttr ( Object, userDefined = True)
