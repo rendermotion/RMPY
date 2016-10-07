@@ -8,4 +8,7 @@ pyside-uic --from-imports Autorig.ui > ../UI/RMFormAutorig.py
 pyside-uic --from-imports RMVisibilityTool.ui > ../UI/RMFormVisibilityTool.py
 pyside-uic --from-imports GenericPropRigTool.ui > ../UI/RMFormGenericPropRigTool.py
 pyside-uic --from-imports RMFormLaces.ui > ../UI/RMFormLaces.py
+pyside-uic --from-imports BlendShapeCreatorHelper.ui > ../UI/RMFormBSCreatorHelper.py
+pyside-uic --from-imports RMFacialRig.ui > ../UI/RMFormFacialRig.py
+
 
