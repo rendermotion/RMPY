@@ -144,6 +144,22 @@ BlendShapes={
 				                                    'PupilDivergeRh'      : {"connection":"PupilDivergeLR"  ,"value": -10}},
 				                    'order'       :['PupilDivergeUD' , 'PupilDivergeLR']}
 				        }
+			"secondaryMouth" = {
+								"isSymetrical":True,
+			                    "baseMesh"    : "Character_MD_phoneticsBSphonetics00_msh_rig",
+								"control"     : "Character_MD_MidUpLip00_ctr_facialRig",
+								"attributes"  :{"UD"     :{"type": "float", "min":-10, "max":10},
+											    "LR"     :{"type": "float", "min":-10, "max":10}},
+								"blendShapes" :{'MidUp' : {"connection":"UD"  ,"value":  10},
+												'MidDn' : {"connection":"UD"  ,"value": -10},
+												'MidUp' : {"connection":"UD"  ,"value":  10},
+												'MidDn' : {"connection":"UD"  ,"value": -10},
+
+
+								}
+
+								'order'       :['UD' , 'LR']}
+}
             }
 
 Manager = BSManager()
