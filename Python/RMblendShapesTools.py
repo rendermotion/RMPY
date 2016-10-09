@@ -38,11 +38,12 @@ class BSManager(object):
 
     def AppyBlendShapeDefinition (self, BSDefinition, blendShapeNode = None):
         for eachBSGroup in BSDefinition:
+            print eachBSGroup
             if BSDefinition[eachBSGroup]["isSymetrical"] == True:
-                self.CreateMulipleBlendShapes (BSDefinition, "L", blendShapeNode)
-                self.CreateMulipleBlendShapes (BSDefinition, "R", blendShapeNode)
+                self.CreateMulipleBlendShapes (BSDefinition, "L", blendShapeNode = blendShapeNode)
+                self.CreateMulipleBlendShapes (BSDefinition, "R", blendShapeNode = blendShapeNode)
             else:
-                self.CreateMulipleBlendShapes (BSDefinition, "")
+                self.CreateMulipleBlendShapes (BSDefinition, "", blendShapeNode = blendShapeNode)
 
     def ReturnBlendShapesByControl(self,connectionPlug, BSDict):
         orderedList = {'positive':[] , 'negative':[]}
@@ -68,57 +69,86 @@ class BSManager(object):
                     orderedList[sign].insert(index,eachBlendShape)
                 pass
         return orderedList
+    def connectFromDefinition( BSDefinition, currentBlendShape, blendShapeNode, prefix, extremeValue):
+        Side = self.getSideFromPrefix(prefix)
+        if extremeValue > 0:
+            RMRigTools.RMConnectWithLimits("%s.%s"%(self.NameConv.RMSetFromName(BSDefinition["control"],Side,Token = "Side" ), BSDefinition['blendShapes'][currentBlendShape]["connection"] ) ,"%s.%s"%(blendShapeNode,currentBlendShape),[[           0,0], [extremeValue,1]] )
+        else:
+            RMRigTools.RMConnectWithLimits("%s.%s"%(self.NameConv.RMSetFromName(BSDefinition["control"],Side,Token = "Side" ), BSDefinition['blendShapes'][currentBlendShape]["connection"] ) ,"%s.%s"%(blendShapeNode,currentBlendShape),[[extremeValue,1], [           0,0]] )
 
     def CreateBlendShapesByControl (self, BlendShapeNode, Plug , BSDefinition, prefix):
         ''' This function adds new blendShapes to a node(BlendShapeNode) based on a plug,
         first it createds a dictionary with  self.ReturnBlendShapesByControl function, 
         This dictionary is then match againts the BS definition and the negative BS are added to a single BS
         and the positive ones are added to a new one.'''
-        if cmds.objExists(prefix + eachBS):
+        if cmds.objExists(BlendShapeNode):
             BlendShapesOfSingleControl = self.ReturnBlendShapesByControl(Plug, BSDefinition["blendShapes"])
             blendShapeOriginalGeo = self.findMeshByBlendShapeNode(BlendShapeNode)
             BlendShapeDict = self.RMblendShapeTargetDic(BlendShapeNode)
             NewTargetIndex = len(BlendShapeDict)
-            for eachBS in reversed(BlendShapesOfSingleControl['positive']):
-                if cmds.objExists(prefix + eachBS):
-                    cmds.blendShape(BSName, edit=True, target = [blendShapeOriginalGeo, NewTargetIndex, prefix + eachBS, float (abs(BSDefinition[BSGroups]['blendShapes'][eachBlendShape]["value"])) / 10.0 ])
-                else:
-                    print " BS  %s not found on scene"%(prefix + eachBS)
-            for eachBS in reversed(BlendShapesOfSingleControl['negative ']):
-                if cmds.objExists(prefix + eachBS):
-                    cmds.blendShape(BSName, edit=True, target = [blendShapeOriginalGeo, NewTargetIndex, prefix + eachBS, float (abs(BSDefinition[BSGroups]['blendShapes'][eachBlendShape]["value"])) / 10.0 ])
-                else:
-                    print " BS  %s not found on scene"%(prefix + eachBS)
+
+            if  'positive' in BlendShapesOfSingleControl:
+                SMX = BSDefinition['blendShapes'][BlendShapesOfSingleControl['positive'][len (BlendShapesOfSingleControl['positive']) - 1]]["value"]
+            else: 
+                SMX = 0
+            if  'negative' in BlendShapesOfSingleControl:
+                SMN = BSDefinition['blendShapes'][BlendShapesOfSingleControl['negative'][len (BlendShapesOfSingleControl['negative']) - 1]]["value"]
+            else: 
+                SMN = 0
+
+            connection = BSDefinition['blendShapes'][BlendShapesOfSingleControl['negative'][len (BlendShapesOfSingleControl['negative']) - 1]]["connection"]
+            Side = self.getSideFromPrefix(prefix)
+
+            control = self.NameConv.RMSetFromName(BSDefinition["control"] , Side, Token = "Side" )
+
+            self.AddAttributes (control,  connection, SMX , SMN )
+
+            if  'positive ' in BlendShapesOfSingleControl:
+                for eachBS in reversed(BlendShapesOfSingleControl['positive']):
+                    if cmds.objExists(prefix + eachBS):
+                        cmds.blendShape(BlendShapeNode, edit=True, target = [blendShapeOriginalGeo, NewTargetIndex, prefix + eachBS, float (abs(BSDefinition['blendShapes'][eachBS]["value"])) / 10.0 ])
+                    else:
+                        print " BS  %s not found on scene"%(prefix + eachBS)
+                self.connectFromDefinition( BSDefinition,BlendShapesOfSingleControl['positive'][len(BlendShapesOfSingleControl['positive']) - 1], BlendShapeNode, prefix, 10)
+            if  'negative ' in BlendShapesOfSingleControl:
+                for eachBS in reversed(BlendShapesOfSingleControl['negative ']):
+                    if cmds.objExists(prefix + eachBS):
+                        cmds.blendShape(BlendShapeNode, edit=True, target = [blendShapeOriginalGeo, NewTargetIndex, prefix + eachBS, float (abs(BSDefinition['blendShapes'][eachBS]["value"])) / 10.0 ])
+                    else:
+                        print " BS  %s not found on scene"%(prefix + eachBS)
+                self.connectFromDefinition( BSDefinition,BlendShapesOfSingleControl['negative'][len(BlendShapesOfSingleControl['negative']) - 1], BlendShapeNode, prefix, -10)
 
     def findMeshByBlendShapeNode (self,BSNode):
         mesh = cmds.listConnections ("%s.outputGeometry[0]"%BSNode, type='mesh')
         return mesh[0]
-
+    def getSideFromPrefix(prefix):
+        if prefix == "":
+            Side = "MD"
+        elif prefix=="R":
+            Side = "RH"
+        elif prefix=="L":
+            Side = "LF"
+        return Side
     def CreateMulipleBlendShapes (self,BSDefinition, prefix, blendShapeNode = None):
         self.FaceBlendShapeDic = None
         for BSGroups in BSDefinition:
             if BSDefinition[BSGroups]['Type'] == "blendShapeDefinition":
                 BSName = BSGroups + "BS"
-                if not blendShapeNode:
-                    blendShapeOriginalGeo = cmds.duplicate(prefix + BSDefinition[BSGroups]['baseMesh'], name = BSDefinition[BSGroups]['baseMesh'] + BSGroups)
-                    if prefix == "":
-                        Side = "MD"
-                    elif prefix=="R":
-                        Side = "RH"
-                    elif prefix=="L":
-                        Side = "LF"
+                print blendShapeNode
+                if blendShapeNode == None :
+                    blendShapeOriginalGeo = cmds.duplicate(prefix + BSDefinition[BSGroups]['baseMesh'], name = self.NameConv.RMGetAShortName(BSDefinition[BSGroups]['baseMesh']) + BSGroups)
+                    Side = self.getSideFromPrefix(prefix)
                     blendShapeOriginalGeo = self.NameConv.RMRenameNameInFormat( blendShapeOriginalGeo, System = "faceRig",Side = Side)
                     cmds.blendShape(blendShapeOriginalGeo, name = BSName)
                     BSName = self.NameConv.RMRenameNameInFormat(BSName, System = "faceRig", Side = Side )
                 else :
                     BSName = blendShapeNode
                 for eachControl in BSDefinition [BSGroups]['order']:
-                    CreateBlendShapesByControl(BSName, eachControl, BSDefinition [BSGroups], prefix)
+                    self.CreateBlendShapesByControl(BSName, eachControl, BSDefinition [BSGroups], prefix)
         return self.FaceBlendShapeDic
 
-    def AddAttributes (self, Object, AttributesDefinition):
-        for keys in AttributesDefinition:
-            cmds.addAttr(Object, at="float", ln = keys,     hnv = 1, hxv = 1, h = 0, k = 1, smn = 0, smx = 10)
+    def AddAttributes (self, Object, Attribute, SMN, SMX ):
+        cmds.addAttr(Object, at="float", ln = Attribute ,     hnv = 1, hxv = 1, h = 0, k = 1, smn = SMN, smx = SMX)
 
     def linkBlendShapesAttr (self, Object, AttributesDefinition, BSNode):
         blendShapeTargetDic = self.RMblendShapeTargetDic(BSNode)
@@ -139,56 +169,83 @@ class BSManager(object):
     def RigBlendShapesByDefinition():
         pass
     def linkJointDefinition (self, object, ):
-        
+        pass
 
-BlendShapes={
-            "lidShapes":{
-                    "Diverge":{
-                                'Type':"blendShapeDefinition",
+BlendShapes = {"lidShapes":{
+        			"lipUpperMidSecondary" :{
+        			 			'Type' : "blendShapeDefinition",
+								"isSymetrical":True,
+			                    "baseMesh"    : "Character_MD_RocaletaMain00_msh_rig",
+								"control"     : "Character_RH_MidUpLip00_ctr_facialRig",
+								"attributes"  :{"UD"     :{"type": "float", "min":-10, "max":10},
+											    "FB"     :{"type": "float", "min":-10, "max":10}},
+								"blendShapes" :{'UpperMidUp' : {"connection":"UD"  ,"value":  10},
+												'UpperMidDn' : {"connection":"UD"  ,"value": -10},
+												'UpperMidFn' : {"connection":"FB"  ,"value":  10},
+												'UpperMidBk' : {"connection":"FB"  ,"value": -10}},
+								'order'       :['UD' , 'FB']
+								},
+                    "lipLowMidSecondary" :{
+                                'Type' : "blendShapeDefinition",
                                 "isSymetrical":True,
-                                "baseMesh"    : "Crystalline",
+                                "baseMesh"    : "Character_MD_RocaletaMain00_msh_rig",
+                                "control"     : "Character_RH_MidLowLip00_ctr_facialRig",
+                                "attributes"  :{"UD"     :{"type": "float", "min":-10, "max":10},
+                                                "FB"     :{"type": "float", "min":-10, "max":10}},
+                                "blendShapes" :{'LowMidUp' : {"connection":"UD"  ,"value":  10},
+                                                'LowMidDn' : {"connection":"UD"  ,"value": -10},
+                                                'LowMidFn' : {"connection":"FB"  ,"value":  10},
+                                                'LowMidBk' : {"connection":"FB"  ,"value": -10}},
+                                'order'       :['UD' , 'FB']
+                                },
+                    "LipCornerSecondary" :{
+                                'Type' : "blendShapeDefinition",
+                                "isSymetrical":True,
+                                "baseMesh"    : "Character_MD_RocaletaMain00_msh_rig",
+                                "control"     : "Character_RH_CornerLip00_ctr_facialRig",
+                                "attributes"  :{"UD"     :{"type": "float", "min":-10, "max":10},
+                                                "FB"     :{"type": "float", "min":-10, "max":10}},
+                                "blendShapes" :{'CornerUp' : {"connection":"UD"  ,"value":  10},
+                                                'CornerDn' : {"connection":"UD"  ,"value": -10},
+                                                'CornerFn' : {"connection":"FB"  ,"value":  10},
+                                                'CornerBk' : {"connection":"FB"  ,"value": -10}},
+                                'order'       :['UD' , 'FB']
+                                },
+                    "LipUpperSecondary" :{
+                                'Type' : "blendShapeDefinition",
+                                "isSymetrical":False,
+                                "baseMesh"    : "Character_MD_RocaletaMain00_msh_rig",
+                                "control"     : "Character_MD_MidLowLip00_ctr_facialRig",
+                                "attributes"  :{"UD"     :{"type": "float", "min":-10, "max":10},
+                                                "FB"     :{"type": "float", "min":-10, "max":10}},
+                                "blendShapes" :{'LowUp' : {"connection":"UD"  ,"value":  10},
+                                                'LowDn' : {"connection":"UD"  ,"value": -10},
+                                                'LowFn' : {"connection":"FB"  ,"value":  10},
+                                                'LowBk' : {"connection":"FB"  ,"value": -10}},
+                                'order'       :['UD' , 'FB']
+                                },
+                    "LipLowSecondary" :{
+                                'Type' : "blendShapeDefinition",
+                                "isSymetrical":False,
+                                "baseMesh"    : "Character_MD_RocaletaMain00_msh_rig",
+                                "control"     : "Character_MD_MidUpLip00_ctr_facialRig",
+                                "attributes"  :{"UD"     :{"type": "float", "min":-10, "max":10},
+                                                "LR"     :{"type": "float", "min":-10, "max":10}},
+                                "blendShapes" :{'UpperUp' : {"connection":"UD"  ,"value":  10},
+                                                'UpperDn' : {"connection":"UD"  ,"value": -10},
+                                                'UpperFn' : {"connection":"FB"  ,"value":  10},
+                                                'UpperBk' : {"connection":"FB"  ,"value": -10}},
+                                'order'       :['UD' , 'LR']
+                                }
+					}
+		}
 
-                                "control"     : "Character_LF_EyeLidShapes00_ctr_facialRig",
-
-                                "attributes"  :{'PupilDivergeUD':{"type": "float", "min":-10, "max":10},
-                                                'PupilDivergeLR':{"type": "float", "min":-10, "max":10}},
-
-                                "blendShapes" :{'PupilDivergeUp'      : {"connection":"PupilDivergeUD"  ,"value":  10},
-                                                'PupilDivergeDn'      : {"connection":"PupilDivergeUD"  ,"value": -10},
-                                                'PupilDivergeLf'      : {"connection":"PupilDivergeLR"  ,"value":  10},
-                                                'PupilDivergeRh'      : {"connection":"PupilDivergeLR"  ,"value": -10}},
-                                'order'       :['PupilDivergeUD' , 'PupilDivergeLR']},
-                    
-                    "lid":{ 'Type'          : 'jointPlugDefinition',
-                            'joints'        : { "EyeUpperLid00_jnt_rig":{'plug'   :[{"connection":"UpLidUD" , "inputPlug":"rotateY", "limmits":[[-10,-16],[0,0],[10,16]]} ],
-                                                                         'control':  'Character_LF_EyeLidShapes00_ctr_facialRig'},
-                                                "EyeLowerLid00_jnt_rig":{'plug'   :[{"connection":"LowLidUD", "inputPlug":"rotateY", "limmits":[[-10,-16],[0,0],[10,16]]} ],
-                                                                         'control':  'Character_LF_EyeLidShapes00_ctr_facialRig'},
-                                                "EyeLidSpin00_grp_rig" :{'plug'   :[{"connection":"spin"    , "inputPlug":"rotateX", "limmits":[[-10,-16],[0,0],[10,16]]} ],
-                                                                         'control':  'Character_LF_EyeLidShapes00_ctr_facialRig'}},
-                            'defaultControl':'Character_LF_EyeLidShapes00_ctr_facialRig'},
-                            'attributes'    :{'PupilDivergeUD':{"type": "float", "min":-10, "max":10},
-                                              'PupilDivergeLR':{"type": "float", "min":-10, "max":10}}
-                           },
-
-                    "mouth":{
-                             'Type'   : 'jointPlugDefinition',
-                             "joints" :{'LF_MouthMiddleUp_jnt_rig':{'plug'  :[{"connection" :"UD"    , "inputPlug":"translateY", "limmits":[[-10,-16],[0,0],[10,16]]},
-                                                                              {"connection" :"LR"    , "inputPlug":"translateX", "limmits":[[-10,-16],[0,0],[10,16]]},
-                                                                              {"connection" :"FB"    , "inputPlug":"translateZ", "limmits":[[-10,-16],[0,0],[10,16]]},
-                                                                              {"connection" :"Twist" , "inputPlug":"translateZ", "limmits":[[-10,-16],[0,0],[10,16]]}],
-                                                                    'control': 'Character_MD_MidUpLip00_ctr_facialRig'}
-                            }
-                    }
-            }
 #                                       'LF_MouthMiddleDn_jnt_rig':
 #                                       'LF_MouthCorner_jnt_rig'  :
 #                                       'LF_MouthUp_jnt_rig'      :
 #                                       'LF_MouthDn_jnt_rig'      :
-
-
 Manager = BSManager()
-#Manager.AppyBlendShapeDefinition(BlendShapes["lidShapes"])
+Manager.AppyBlendShapeDefinition(BlendShapes["lidShapes"],blendShapeNode = "Character_MD_phoneticsBS01_bs_rig")
 #print Manager.ReturnBlendShapesByControl('PupilDivergeUD', BlendShapes["lidShapes"]["Diverge"]["blendShapes"])
-print Manager.findMeshByBlendShapeNode("Character_RH_DivergeBS00_bs_faceRig")
+#print Manager.findMeshByBlendShapeNode("Character_RH_DivergeBS00_bs_faceRig")
 #pp.pprint(Manager.FaceBlendShapeDic)
