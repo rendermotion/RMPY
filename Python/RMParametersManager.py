@@ -77,34 +77,7 @@ Nose = {
 	"RFlare" :{"type": "float", "min":-10, "max":10}
 }
 
-mouth = {
-'SmileFrown'     :{"type": "float", "min":-10, "max":10}, 
-'NarrowWide'     :{"type": "float", "min":-10, "max":10},
-'Ooo'            :{"type": "float", "min":  0, "max":10},
-'Press'          :{"type": "float", "min":  0, "max":10}, 
-'Puff'           :{"type": "float", "min":  0, "max":10},
-'CornerUD'       :{"type": "float", "min":-10, "max":10},
-'Pinch'          :{"type": "float", "min":  0, "max":10},
-'LeftRightShapes':{"type": "float", "min":  0, "max":10, "keyable" : False },
-'SmileFrownL'    :{"type": "float", "min":-10, "max":10}, 
-'SmileFrownR'    :{"type": "float", "min":-10, "max":10}, 
-'NarrowWideL'    :{"type": "float", "min":-10, "max":10}, 
-'NarrowWideR'    :{"type": "float", "min":-10, "max":10}, 
-'CornerL'        :{"type": "float", "min":-10, "max":10}, 
-'CornerR'        :{"type": "float", "min":-10, "max":10}, 
-'PinchL'         :{"type": "float", "min":  0, "max":10},
-'PinchR'         :{"type": "float", "min":  0, "max":10},
-'UpperLip'       :{"type": "float", "min":  0, "max":10, "keyable" : False },
-'UpperLipSneerL' :{"type": "float", "min":  0, "max":10},
-'UpperLipSneerR' :{"type": "float", "min":  0, "max":10},
-'UpperLipMidUD'  :{"type": "float", "min":-10, "max":10}, 
-'LowerLip'       :{"type": "float", "min":  0, "max":10, "keyable" : False },
-'LowerLipSneerL' :{"type": "float", "min":  0, "max":10},
-'LowerLipSneerR' :{"type": "float", "min":  0, "max":10},
-'LowerLipMidUD'  :{"type": "float", "min":-10, "max":10}, 
-'Jaw'            :{"type": "float", "min":  0, "max":10, "keyable" : False },
-'StickyLips'     :{"type": "float", "min":  0, "max":10}
-}
+
 mouthMover = {
 'UD'            :{"type": "float", "min":-10, "max":10}, 
 'LR'            :{"type": "float", "min":-10, "max":10}, 
