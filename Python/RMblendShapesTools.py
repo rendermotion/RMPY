@@ -38,28 +38,34 @@ class BSManager(object):
 
     def AppyBlendShapeDefinition (self, BSDefinition, blendShapeNode = None):
         for eachBSGroup in BSDefinition:
-            print eachBSGroup
-            if BSDefinition[eachBSGroup]["isSymetrical"] == True:
-                self.CreateMulipleBlendShapes (BSDefinition, "L", eachBSGroup, blendShapeNode = blendShapeNode)
-                self.CreateMulipleBlendShapes (BSDefinition, "R", eachBSGroup, blendShapeNode = blendShapeNode)
-            else:
-                self.CreateMulipleBlendShapes (BSDefinition, "", eachBSGroup,  blendShapeNode = blendShapeNode)
+            if BSDefinition[eachBSGroup]['Type'] == 'blendShapeDefinition':
+                if BSDefinition[eachBSGroup]["isSymetrical"] == True:
+                    self.CreateMulipleBlendShapes (BSDefinition, "L", eachBSGroup, blendShapeNode = blendShapeNode)
+                    self.CreateMulipleBlendShapes (BSDefinition, "R", eachBSGroup, blendShapeNode = blendShapeNode)
+                else:
+                    self.CreateMulipleBlendShapes (BSDefinition, "", eachBSGroup,  blendShapeNode = blendShapeNode)
 
-    def ReturnBlendShapesByControl(self,connectionPlug, BSDict):
+            elif BSDefinition[eachBSGroup]['Type'] == 'jointLinkDefinition':
+                if BSDefinition[eachBSGroup]["isSymetrical"] == True:
+                    self.linkJointDefinition("LF",BSDefinition[eachBSGroup] )
+                    self.linkJointDefinition("RH",BSDefinition[eachBSGroup] )
+                else:
+                    self.linkJointDefinition("MD",BSDefinition[eachBSGroup] )
+
+    def returnBlendShapesByControl(self,connectionPlug, BSDict):
         orderedList = {'positive':[] , 'negative':[]}
         for eachBlendShape in BSDict:
             if BSDict[eachBlendShape]["connection"] == connectionPlug:
-                
                 if BSDict[eachBlendShape]["value"] > 0:
                     sign = 'positive'
                 else:
                     sign = 'negative'
 
                 if len (orderedList[sign]) == 0:
-                    print "Toinsert0:%s"%eachBlendShape
+                    #print "Toinsert0:%s"%eachBlendShape
                     orderedList[sign].append(eachBlendShape)
                 else:
-                    print "Toinsert1:%s"%eachBlendShape
+                    #print "Toinsert1:%s"%eachBlendShape
                     index = 0
                     for blendShapes in orderedList[sign]:
                         if (abs(BSDict[eachBlendShape]['value']) > abs(BSDict[blendShapes]['value'])):
@@ -69,9 +75,17 @@ class BSManager(object):
                     orderedList[sign].insert(index,eachBlendShape)
                 pass
         return orderedList
+
+    def returnJointsByControl(self, connectionPlug, JointDic):
+        orderedList = []
+        for eachJoint in JointDic:
+            if JointDic[eachJoint]['connection'] == connectionPlug:
+                orderedList.append(eachJoint)
+        return orderedList
+
     def connectFromDefinition(self,  BSDefinition, currentBlendShape, blendShapeNode, prefix, extremeValue):
         Side = self.getSideFromPrefix(prefix)
-        print "Connecting:%s.%s To %s.%s"% (self.NameConv.RMSetFromName(BSDefinition["control"],Side,Token = "Side" ), BSDefinition['blendShapes'][currentBlendShape]["connection"], blendShapeNode, prefix +currentBlendShape)
+        #print "Connecting:%s.%s To %s.%s"% (self.NameConv.RMSetFromName(BSDefinition["control"],Side,Token = "Side" ), BSDefinition['blendShapes'][currentBlendShape]["connection"], blendShapeNode, prefix +currentBlendShape)
         
         if extremeValue > 0:
             RMRigTools.RMConnectWithLimits("%s.%s"%(self.NameConv.RMSetFromName(BSDefinition["control"],Side,Token = "Side" ), BSDefinition['blendShapes'][currentBlendShape]["connection"]) ,"%s.%s"%(blendShapeNode,prefix + currentBlendShape),[[           0,0], [extremeValue,1]] )
@@ -80,11 +94,11 @@ class BSManager(object):
 
     def CreateBlendShapesByControl (self, BlendShapeNode, Plug , BSDefinition, prefix):
         ''' This function adds new blendShapes to a node(BlendShapeNode) based on a plug,
-        first it createds a dictionary with  self.ReturnBlendShapesByControl function, 
+        first it createds a dictionary with  self.returnBlendShapesByControl function, 
         This dictionary is then match againts the BS definition and the negative BS are added to a single BS
         and the positive ones are added to a new one.'''
         if cmds.objExists(BlendShapeNode):
-            BlendShapesOfSingleControl = self.ReturnBlendShapesByControl(Plug, BSDefinition["blendShapes"])
+            BlendShapesOfSingleControl = self.returnBlendShapesByControl(Plug, BSDefinition["blendShapes"])
             blendShapeOriginalGeo = self.findMeshByBlendShapeNode(BlendShapeNode)
             BlendShapeDict = self.RMblendShapeTargetDic(BlendShapeNode)
             NewTargetIndex = len(BlendShapeDict)
@@ -104,9 +118,9 @@ class BSManager(object):
             control = self.NameConv.RMSetFromName(BSDefinition["control"] , Side, Token = "Side" )
 
             self.AddAttributes (control,  connection, SMN, SMX )
-            print BlendShapesOfSingleControl
-            pp.pprint (BlendShapeDict)
-            print "NewTargetIndex:%s"%(NewTargetIndex)
+            #print BlendShapesOfSingleControl
+            #pp.pprint (BlendShapeDict)
+            #print "NewTargetIndex:%s"%(NewTargetIndex)
             AtLeastOne = False
             if  'positive' in BlendShapesOfSingleControl:
                 for eachBS in reversed(BlendShapesOfSingleControl['positive']):
@@ -144,7 +158,7 @@ class BSManager(object):
     def CreateMulipleBlendShapes (self,BSDefinition, prefix, BSGroups,  blendShapeNode = None):
         self.FaceBlendShapeDic = None
         if BSDefinition[BSGroups]['Type'] == "blendShapeDefinition":
-            print ("STARTING :%s WITH PREFIX %s"%(BSGroups,prefix))
+            #print ("STARTING :%s WITH PREFIX %s"%(BSGroups,prefix))
             if blendShapeNode == None :
                 BSName = BSGroups + "BS"
                 blendShapeOriginalGeo = cmds.duplicate(prefix + BSDefinition[BSGroups]['baseMesh'], name = self.NameConv.RMGetAShortName(BSDefinition[BSGroups]['baseMesh']) + BSGroups)
@@ -159,7 +173,7 @@ class BSManager(object):
         return self.FaceBlendShapeDic
 
     def AddAttributes (self, Object, Attribute, SMN, SMX ):
-        print ("Adding Attribute:%s  to Object:%s Min:%s MAx %s"%(Attribute,Object,SMN,SMX))
+        #print ("Adding Attribute:%s  to Object:%s Min:%s MAx %s"%(Attribute,Object,SMN,SMX))
         AttrList = cmds.listAttr(Object)
         if Attribute not in AttrList:
             cmds.addAttr(Object, at="float", ln = Attribute ,hnv = 1, hxv = 1, h = 0, k = 1, smn = SMN, smx = SMX)
@@ -173,93 +187,37 @@ class BSManager(object):
         InputTargetGroup=cmds.getAttr ((BSNode+".inputTarget[0].inputTargetGroup"),mi=True);
         BlendShapeDic={}
         for eachTarget in InputTargetGroup:
-            AliasName=cmds.listAttr((BSNode +".weight["+str(eachTarget)+"]"),m=True);
-            BlendShapeDic[str(AliasName[0])]={}
+            AliasName=cmds.listAttr((BSNode + ".weight[" + str(eachTarget) + "]"),m=True);
+            BlendShapeDic[str(AliasName[0])] = {}
             BlendShapeDic[str(AliasName[0])]["TargetGroup"] = eachTarget
-            Items = cmds.getAttr ((BSNode+".inputTarget[0].inputTargetGroup["+str(eachTarget)+"].inputTargetItem"), mi=True)
+            Items = cmds.getAttr ((BSNode+".inputTarget[0].inputTargetGroup["+str(eachTarget)+"].inputTargetItem"), mi = True)
             BlendShapeDic[str(AliasName[0])]["Items"] = Items
         return BlendShapeDic
 
-    def RigBlendShapesByDefinition():
-        pass
-    def linkJointDefinition (self, object, ):
-        pass
+    def linkJointDefinition (self, Side, jointLinkDefinition):
+        control = jointLinkDefinition['control']
+        if Side in ["LF","RH"]:
+            control = self.NameConv.RMSetFromName(jointLinkDefinition['control'], Side, Token = 'Side')
 
-BlendShapes = {"lidShapes":{
-        			"lipUpperMidSecondary" :{
-        			 			'Type' : "blendShapeDefinition",
-								"isSymetrical":True,
-			                    "baseMesh"    : "Character_MD_RocaletaMain00_msh_rig",
-								"control"     : "Character_RH_MidUpLip00_ctr_facialRig",
-								"attributes"  :{"UD"     :{"type": "float", "min":-10, "max":10},
-											    "FB"     :{"type": "float", "min":-10, "max":10}},
-								"blendShapes" :{'UpperMidUp' : {"connection":"UD"  ,"value":  10},
-												'UpperMidDn' : {"connection":"UD"  ,"value": -10},
-												'UpperMidFn' : {"connection":"FB"  ,"value":  10},
-												'UpperMidBk' : {"connection":"FB"  ,"value": -10}},
-								'order'       :['UD' , 'FB']
-								},
-                    "lipLowMidSecondary" :{
-                                'Type' : "blendShapeDefinition",
-                                "isSymetrical":True,
-                                "baseMesh"    : "Character_MD_RocaletaMain00_msh_rig",
-                                "control"     : "Character_RH_MidLowLip00_ctr_facialRig",
-                                "attributes"  :{"UD"     :{"type": "float", "min":-10, "max":10},
-                                                "FB"     :{"type": "float", "min":-10, "max":10}},
-                                "blendShapes" :{'LowMidUp' : {"connection":"UD"  ,"value":  10},
-                                                'LowMidDn' : {"connection":"UD"  ,"value": -10},
-                                                'LowMidFn' : {"connection":"FB"  ,"value":  10},
-                                                'LowMidBk' : {"connection":"FB"  ,"value": -10}},
-                                'order'       :['UD' , 'FB']
-                                },
-                    "LipCornerSecondary" :{
-                                'Type' : "blendShapeDefinition",
-                                "isSymetrical":True,
-                                "baseMesh"    : "Character_MD_RocaletaMain00_msh_rig",
-                                "control"     : "Character_RH_CornerLip00_ctr_facialRig",
-                                "attributes"  :{"UD"     :{"type": "float", "min":-10, "max":10},
-                                                "FB"     :{"type": "float", "min":-10, "max":10}},
-                                "blendShapes" :{'CornerUp' : {"connection":"UD"  ,"value":  10},
-                                                'CornerDn' : {"connection":"UD"  ,"value": -10},
-                                                'CornerFn' : {"connection":"FB"  ,"value":  10},
-                                                'CornerBk' : {"connection":"FB"  ,"value": -10}},
-                                'order'       :['UD' , 'FB']
-                                },
-                    "LipUpperSecondary" :{
-                                'Type' : "blendShapeDefinition",
-                                "isSymetrical":False,
-                                "baseMesh"    : "Character_MD_RocaletaMain00_msh_rig",
-                                "control"     : "Character_MD_MidLowLip00_ctr_facialRig",
-                                "attributes"  :{"UD"     :{"type": "float", "min":-10, "max":10},
-                                                "FB"     :{"type": "float", "min":-10, "max":10}},
-                                "blendShapes" :{'LowUp' : {"connection":"UD"  ,"value":  10},
-                                                'LowDn' : {"connection":"UD"  ,"value": -10},
-                                                'LowFn' : {"connection":"FB"  ,"value":  10},
-                                                'LowBk' : {"connection":"FB"  ,"value": -10}},
-                                'order'       :['UD' , 'FB']
-                                },
-                    "LipLowSecondary" :{
-                                'Type' : "blendShapeDefinition",
-                                "isSymetrical":False,
-                                "baseMesh"    : "Character_MD_RocaletaMain00_msh_rig",
-                                "control"     : "Character_MD_MidUpLip00_ctr_facialRig",
-                                "attributes"  :{"UD"     :{"type": "float", "min":-10, "max":10},
-                                                "FB"     :{"type": "float", "min":-10, "max":10}},
-                                "blendShapes" :{'UpperUp' : {"connection":"UD"  ,"value":  10},
-                                                'UpperDn' : {"connection":"UD"  ,"value": -10},
-                                                'UpperFn' : {"connection":"FB"  ,"value":  10},
-                                                'UpperBk' : {"connection":"FB"  ,"value": -10}},
-                                'order'       :['UD' , 'FB']
-                                }
-					}
-		}
-
-#                                       'LF_MouthMiddleDn_jnt_rig':
-#                                       'LF_MouthCorner_jnt_rig'  :
-#                                       'LF_MouthUp_jnt_rig'      :
-#                                       'LF_MouthDn_jnt_rig'      :
-Manager = BSManager()
-Manager.AppyBlendShapeDefinition(BlendShapes["lidShapes"],blendShapeNode = "Character_MD_phoneticsBS01_bs_rig")
-#print Manager.ReturnBlendShapesByControl('PupilDivergeUD', BlendShapes["lidShapes"]["Diverge"]["blendShapes"])
-#print Manager.findMeshByBlendShapeNode("Character_RH_DivergeBS00_bs_faceRig")
-#pp.pprint(Manager.FaceBlendShapeDic)
+        if cmds.objExists( control):
+            for eachAttribute in jointLinkDefinition['order']:
+                jointsList = self.returnJointsByControl( eachAttribute, jointLinkDefinition['joints'])
+                for eachJoint in jointsList:
+                    JointName = eachJoint
+                    if Side in [ "LF", "RH"]:
+                        JointName = self.NameConv.RMSetFromName(eachJoint, Side, Token = 'Side')
+                    if cmds.objExists(JointName):
+                        
+                        if jointLinkDefinition['joints'][eachJoint]['value'] == None:
+                            cmds.connectAttr ('%s.%s'%(control,jointLinkDefinition['joints'][eachJoint]['connection'] ), '%s.%s'%(JointName, jointLinkDefinition['joints'][eachJoint]['inputPlug']),force=True)
+                        else:
+                            self.AddAttributes ( control, eachAttribute, jointLinkDefinition['attributes'][eachAttribute]['min'], jointLinkDefinition['attributes'][eachAttribute]['max'])
+                            RMRigTools.RMConnectWithLimits('%s.%s'%(control,jointLinkDefinition['joints'][eachJoint]['connection'] ), '%s.%s'%(JointName, jointLinkDefinition['joints'][eachJoint]['inputPlug']), jointLinkDefinition['joints'][eachJoint]['value'])
+                    else:
+                        print "Joint object doesnt exists:%s"%JointName
+        else:
+            print "Control object doesnt exists:%s"%control
+            control = self.NameConv.RMSetFromName(jointLinkDefinition['control'], Side, Token = 'Side')
+if __name__=="__main__":
+    Manager = BSManager()
+    Manager.AppyBlendShapeDefinition( SkinedJoints)
