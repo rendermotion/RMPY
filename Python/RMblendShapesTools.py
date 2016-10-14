@@ -16,9 +16,33 @@ def RMblendShapeTargetDic (BSNode):
         Items = cmds.getAttr ((BSNode+".inputTarget[0].inputTargetGroup["+str(eachTarget)+"].inputTargetItem"), mi=True);
         BlendShapeDic[str(AliasName[0])]["Items"]=Items
     return BlendShapeDic
+'''
+def invertCurrentPaintTargetWeights(ObjectName,index):
+    #cmds.setAttr("%s.inputTarget[0].inputTargetGroup[%s]paintTargetIndex"%ObjectName)
+    CompTarget = cmds.getAttr("%s.inputTarget[0].inputTargetGroup[%s].inputTargetItem[6000].inputComponentsTarget"%(ObjectName,index))
+    NormID    =cmds.getAttr("%s.inputTarget[0].inputTargetGroup[%s].normalizationId"%(ObjectName,index))
+    BaseWeights= cmds.getAttr("%s.inputTarget[0].baseWeights"%(ObjectName))
+    NM = cmds.getAttr("%s.inputTarget[0].normalizationGroup[%s].normalizationWeights  "%(ObjectName,index))
+    TargetIndex = cmds.getAttr("%s.inputTarget[0].paintTargetIndex"%ObjectName)
 
+    print 'CompTarget:%s'% (CompTarget)
+    print 'TargetIndex:%s'% (TargetIndex)
+    print 'NormID:%s'% (NormID)
+    print 'BaseWeights:%s'% (BaseWeights)
+    print 'NM:%s'% (NM)
+    weights = cmds.getAttr("%s.inputTarget[0].inputTargetGroup[%s].targetWeights"%(ObjectName,index))
+    print 'weights:%s'% (weights)
+    newWeights = []
+    weightIndex=0
+    #for i in weights[0]:
+    #    cmds.setAttr("%s.inputTarget[0].inputTargetGroup[%s].targetWeights[%s]"%(ObjectName, index , weightIndex), (float(1.0)- i))
+    #    weightIndex+=1
+    #weights = cmds.getAttr("%s.inputTarget[0].paintTargetWeights"%ObjectName)
+pp.pprint (RMblendShapeTargetDic('blendShape20'))
+invertCurrentPaintTargetWeights('blendShape20',3)
+'''
 def invertCurrentPaintTargetWeights(ObjectName, index):
-    cmds.setAttr("%s.inputTarget[0].paintTargetIndex"%ObjectName, index)
+    cmds.setAttr("%s.inputTarget[0].paintTargetIndex[%s]"%ObjectName, index)
     weights = cmds.getAttr("%s.inputTarget[0].paintTargetWeights"%ObjectName)
     newWeights = []
     index=0
@@ -26,6 +50,14 @@ def invertCurrentPaintTargetWeights(ObjectName, index):
         cmds.setAttr("%s.inputTarget[0].paintTargetWeights[%s]"% (ObjectName,index),float(1.0)- i)
         index+=1
     weights = cmds.getAttr("%s.inputTarget[0].paintTargetWeights"%ObjectName)
+
+def copyCurrentPaintTargetWeights(ObjectName, indexSource, indexDestination):
+    weights = cmds.getAttr("%s.inputTarget[0].inputTargetGroup[%s].targetWeights"%(ObjectName, indexSource))
+    newWeights = []
+    index=0
+    for i in weights[0]:
+        cmds.setAttr("%s.inputTarget[0].inputTargetGroup[%s].targetWeights[%s]"% (ObjectName,indexDestination,index),float(1.0)- i)
+        index+=1
 
 class BSManager(object):
     def __init__(self, NameConv=None) :
@@ -218,6 +250,6 @@ class BSManager(object):
         else:
             print "Control object doesnt exists:%s"%control
             control = self.NameConv.RMSetFromName(jointLinkDefinition['control'], Side, Token = 'Side')
-if __name__=="__main__":
-    Manager = BSManager()
-    Manager.AppyBlendShapeDefinition( SkinedJoints)
+#if __name__=="__main__":
+#    Manager = BSManager()
+#    Manager.AppyBlendShapeDefinition( SkinedJoints)

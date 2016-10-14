@@ -23,78 +23,10 @@ for i in selection:
 
 #addAttributesDic( "REyeLidShapes", lidShapes)
 
-Cheeks = {
- "UD"    :{"type": "float", "min":-10, "max":10},
- "LR"    :{"type": "float", "min":-10, "max":10},
- "FB"    :{"type": "float", "min":-10, "max":10},
- "Squint":{"type": "float", "min":  0, "max":10},
- "PUFF"  :{"type": "float", "min":-10, "max":10}
-}
-
-EyeBrow = {
-	"Angry"    :{"type": "float", "min":-10, "max":10},
-	"Sad"      :{"type": "float", "min":-10, "max":10},
-	"Surprise" :{"type": "float", "min":-10, "max":10},
-	"UD"       :{"type": "float", "min":-10, "max":10},
-	"LR"       :{"type": "float", "min":-10, "max":10},
-	"FB"       :{"type": "float", "min":-10, "max":10},
-	"Tilt"     :{"type": "float", "min":-10, "max":10},
-	"Secondary":{"Type": "enum", "enumNames":["Off","On"]}
-}
-
-secondaryEyeBrow = {
-	"UD"   :{"type": "float", "min":-10, "max":10},
-	"LR"   :{"type": "float", "min":-10, "max":10},
-	"FB"   :{"type": "float", "min":-10, "max":10},
-	"Tilt" :{"type": "float", "min":-10, "max":10}
-}
-
-furrow = {
-'Furrow'           :{"type": "float", "min":-10, "max":10},
-'UD'               :{"type": "float", "min":-10, "max":10},
-'FB'               :{"type": "float", "min":-10, "max":10},
-'LR'               :{"type": "float", "min":-10, "max":10},
-'TILT'             :{"type": "float", "min":-10, "max":10},
-'Left_Right_Shapes':{"type": "float", "min":-10, "max":10 , "keyable":False},
-'FurrowL'          :{"type": "float", "min":-10, "max":10},
-'FurrowR'          :{"type": "float", "min":-10, "max":10}
-}
-
-secondaryMouth = {
-	"UD"     :{"type": "float", "min":-10, "max":10},
-	"LR"     :{"type": "float", "min":-10, "max":10}
-}
-
-Nose = {
-	"UD"     :{"type": "float", "min":-10, "max":10},
-	"LR"     :{"type": "float", "min":-10, "max":10},
-	"FB"     :{"type": "float", "min":-10, "max":10},
-	"Curl"   :{"type": "float", "min":-10, "max":10},
-	"Tilt"   :{"type": "float", "min":-10, "max":10},
-	"LSneer" :{"type": "float", "min":-10, "max":10},
-	"RSneer" :{"type": "float", "min":-10, "max":10},
-	"LFlare" :{"type": "float", "min":-10, "max":10},
-	"RFlare" :{"type": "float", "min":-10, "max":10}
-}
 
 
-mouthMover = {
-'UD'            :{"type": "float", "min":-10, "max":10}, 
-'LR'            :{"type": "float", "min":-10, "max":10}, 
-'FB'            :{"type": "float", "min":-10, "max":10}, 
-'TILT'          :{"type": "float", "min":-10, "max":10},
-'Upper_Lip'     :{"type": "float", "min":-10, "max":10 , "keyable" : False},
-'UpperLipUD'    :{"type": "float", "min":-10, "max":10},
-'UpperLipLR'    :{"type": "float", "min":-10, "max":10},
-'UpperLipFB'    :{"type": "float", "min":-10, "max":10},
-'UpperLipTILT'  :{"type": "float", "min":-10, "max":10},
-'UpperLipCurl'  :{"type": "float", "min":-10, "max":10},
-'Lower_Lip'     :{"type": "float", "min":-10, "max":10 , "keyable" : False},
-'LowerLipUD'    :{"type": "float", "min":-10, "max":10},
-'LowerLipLR'    :{"type": "float", "min":-10, "max":10},
-'LowerLipFB'    :{"type": "float", "min":-10, "max":10},
-'LowerLipTILT'  :{"type": "float", "min":-10, "max":10},
-'LowerLipCurl'  :{"type": "float", "min":-10, "max":10},
-'SecondryShapes':{"Type": "enum", "enumNames":["Off","On"]}
-}
+	
+
+
+
 

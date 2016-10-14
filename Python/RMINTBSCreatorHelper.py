@@ -9,7 +9,6 @@ import RMblendShapesTools
 reload (RMblendShapesTools)
 from ui import RMFormBSCreatorHelper
 
-
 def getMayaWindow():
     ptr = mui.MQtUtil.mainWindow()
     return wrapInstance(long(ptr), QtGui.QMainWindow)
@@ -43,10 +42,14 @@ class RMBSCreatorHelper(QtGui.QDialog):
     def FlipWeightsBtnPressed(self):
         BSNode = self.ui.ObjectLbl.text()
         BsName = self.ui.listWidget.currentItem()
+
         if BSNode!= "":
             print self.BSdictionary[BsName.text()]["TargetGroup"]
-            print BSNode
-            invertCurrentPaintTargetWeights(BSNode,self.BSdictionary[BsName.text()]["TargetGroup"])
+            print "BSNode:%s"%BSNode
+            print "TargerEdited:%s"%self.BSdictionary[BsName.text()]["TargetGroup"]
+            index = self.BSdictionary[BsName.text()]["TargetGroup"]
+            RMblendShapesTools.copyCurrentPaintTargetWeights(BSNode, index,index)
+            #invertCurrentPaintTargetWeights(BSNode,self.BSdictionary[BsName.text()]["TargetGroup"])
 
 
 if __name__ == '__main__':
