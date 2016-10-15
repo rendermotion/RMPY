@@ -1,6 +1,3 @@
-
-
-
 import maya.cmds as cmds
 currentPanel = cmds.getPanel(withFocus=True)
 allPannels   = cmds.getPanel(type='modelPanel')

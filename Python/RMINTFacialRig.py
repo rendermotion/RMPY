@@ -9,6 +9,21 @@ import RMblendShapesTools
 from ui import RMFormFacialRig
 reload (RMFormFacialRig)
 import RMRigTools
+import FacialRig.FacialConfiguration as FacialConfiguration
+reload (FacialConfiguration)
+Dictionaries =  {'lisShapes'        :FacialConfiguration.lidShapes,#0
+                 'EyeBallPupil'     :FacialConfiguration.EyeBallPupil,#1
+                 'Cristaline'       :FacialConfiguration.Cristaline,#2
+                 'mouthSecondarys'  :FacialConfiguration.mouthSecondarys,#3
+                 'EyeJawJoints'     :FacialConfiguration.EyeJawJoints,#4
+                 'mouth'            :FacialConfiguration.mouth,#5
+                 'Cheeks'           :FacialConfiguration.Cheeks,#6
+                 'mouthMover'       :FacialConfiguration.mouthMover,#7
+                 'Nose'             :FacialConfiguration.Nose,#8
+                 'Furrow'           :FacialConfiguration.Furrow,#9
+                 'secondaryEyeBrow' :FacialConfiguration.secondaryEyeBrow,#10
+                 "EyeBrow"          :FacialConfiguration.EyeBrow
+                 }
 
 
 def getMayaWindow():
@@ -23,9 +38,29 @@ class RMFacialRig(QtGui.QDialog):
         self.setWindowTitle('FacialRig')
         self.ui.CheckBtn.clicked.connect(self.CheckBtnPressed)
         self.ui.ImportFacialInterfaceBtn.clicked.connect(self.ImportFacialInterfaceBtnPressed)
+        self.ui.ListCBx.currentIndexChanged.connect(self.comboBoxChanged)
+        for eachItem in sorted(Dictionaries):
+            self.ui.ListCBx.addItem(eachItem)
+    def comboBoxChanged(self):
+        self.CheckBtnPressed()
 
     def CheckBtnPressed(self):
-        pass
+        self.ui.listWidget.clear()
+        eachDic = Dictionaries[self.ui.ListCBx.currentText()]
+        print eachDic
+        for eachDefinition in eachDic:
+            print eachDefinition
+            if eachDic[eachDefinition]['Type'] == 'blendShapeDefinition':
+                arrayPrefix =[]
+                if eachDic[eachDefinition]['isSymetrical'] == True:
+                    arrayPrefix = ["L"]
+                else :
+                    arrayPrefix = [""]
+                for eachPrefix in arrayPrefix:
+                    for eachBlendShape in sorted(eachDic[eachDefinition]['blendShapes']):
+                        if not cmds.objExists(eachPrefix + eachBlendShape):
+                            self.ui.listWidget.addItem(eachPrefix + eachBlendShape)
+
 
     def ImportFacialInterfaceBtnPressed(self):
         path = os.path.dirname(RMRigTools.__file__)
