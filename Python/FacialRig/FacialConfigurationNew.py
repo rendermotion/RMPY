@@ -5,64 +5,123 @@ lidShapes = {"lidShapes":{
                             "baseMesh"    : "Character",
                             'control' : 'Character_LF_EyeLidShapes00_ctr_facialRig',
                             'blendShapes':{
-                                        "UpLidDn"           : {"connection": "UpLidUD"         ,"value":  10},
-                                        "UpLidDnHalf"       : {"connection": "UpLidUD"         ,"value":   5},
-                                        "UpLidUp"           : {"connection": "UpLidUD"         ,"value": -10},
-                                        "LowLidUp"          : {"connection": "LowLidUD"        ,"value":  10},
-                                        "LowLidUpHalf"      : {"connection": "LowLidUD"        ,"value":   5},
-                                        "LowLidDn"          : {"connection": "LowLidUD"        ,"value": -10},
-                                        "UpperEyeLidSpinCW" : {"connection": "UpLidSpin"       ,"value":  10},
-                                        "UpperEyeLidSpinCCW": {"connection": "UpLidSpin"       ,"value": -10},
-                                        "LowerEyeLidSpinCW" : {"connection": "LowLidSpin"      ,"value":  10},
-                                        "LowerEyeLidSpinCCW": {"connection": "LowLidSpin"      ,"value": -10},
+
                                         #"EyeSpinCCW"       : {"connection": "Spin"            ,"value":  10},
                                         #"EyeSpinCW"        : {"connection": "Spin"            ,"value": -10},
                                         "Bulge"             : {"connection": "Bulge"           ,"value":  10},
-                                        "UpperSquint"       : {"connection": "UpperSquint"     ,"value":  10},
-                                        "LowerSquint"       : {"connection": "LowerSquint"     ,"value":  10},
-                                        "UpLidInnerUp"      : {"connection": "UpLidInnerUD"    ,"value":  10},
-                                        "UpLidInnerDn"      : {"connection": "UpLidInnerUD"    ,"value": -10},
-                                        "UpLidMidUp"        : {"connection": "UpLidMidUD"      ,"value":  10},
-                                        "UpLidMidDn"        : {"connection": "UpLidMidUD"      ,"value": -10},
-                                        "UpLidOuterUp"      : {"connection": "UpLidOuterUD"    ,"value":  10},
-                                        "UpLidOuterDn"      : {"connection": "UpLidOuterUD"    ,"value": -10},
-
-                                        "LowLidInnerUp"     : {"connection": "LowLidInnerUD"   ,"value":  10},
-                                        "LowLidInnerDn"     : {"connection": "LowLidInnerUD"   ,"value": -10},
-                                        "LowLidMidUp"       : {"connection": "LowLidMidUD"     ,"value":  10},
-                                        "LowLidMidDn"       : {"connection": "LowLidMidUD"     ,"value": -10},
-                                        "LowLidOuterUp"     : {"connection": "LowLidOuterUD"   ,"value":  10},
-                                        "LowLidOuterDn"     : {"connection": "LowLidOuterUD"   ,"value": -10},
-
-                                        "CornerInnerUp"     : {"connection": "CornerInnerUD"   ,"value":  10},
-                                        "CornerOuterUp"     : {"connection": "CornerOuterUD"   ,"value":  10}},
+                                        
+                                        
+                                       },
                             "attributes" : {
-                                             'UpLidUD'       :{"type": "float", "min": -10, "max":10},
-                                             'LowLidUD'      :{"type": "float", "min": -10, "max":10},
-                                             'UpLidSpin'     :{"type": "float", "min": -10, "max":10}, 
-                                             'LowLidSpin'    :{"type": "float", "min": -10, "max":10},
+                                             
                                              #'Spin'          :{"type": "float", "min": -10, "max":10},
                                              #'UpLidInOut'    :{"type": "float", "min": -10, "max":10},
                                              #'LowLidInOut'   :{"type": "float", "min": -10, "max":10},
-                                             'Bulge'         :{"type": "float", "min":   0, "max":10}, 
+                                             'Bulge'         :{"type": "float", "min":   0, "max":10}
+
+
+                                             },
+
+                            'order':    ['Bulge']
+                            },
+                "lidShapesUp":{
+                            'baseMesh': 'Character' ,
+                            'Type':'blendShapeDefinition',
+                            'isSymetrical' : True,
+                            'baseMesh'    : "Character",
+                            'control' : 'Character_LF_EyeLidUpShapes00_ctr_facialRig',
+
+                            'blendShapes':{
+                                            "UpLidDn"           : {"connection": "UpLidUD"         ,"value":  10},
+                                            "UpLidDnHalf"       : {"connection": "UpLidUD"         ,"value":   5},
+                                            "UpLidUp"           : {"connection": "UpLidUD"         ,"value": -10},
+
+                                            "UpperEyeLidSpinCW" : {"connection": "UpLidSpin"       ,"value":  10},
+                                            "UpperEyeLidSpinCCW": {"connection": "UpLidSpin"       ,"value": -10},
+
+                                            "UpperSquint"       : {"connection": "UpperSquint"     ,"value":  10},
+
+
+                                            "UpLidInnerUp"      : {"connection": "UpLidInnerUD"    ,"value":  10},
+                                            "UpLidInnerDn"      : {"connection": "UpLidInnerUD"    ,"value": -10},
+                                            "UpLidMidUp"        : {"connection": "UpLidMidUD"      ,"value":  10},
+                                            "UpLidMidDn"        : {"connection": "UpLidMidUD"      ,"value": -10},
+                                            "UpLidOuterUp"      : {"connection": "UpLidOuterUD"    ,"value":  10},
+                                            "UpLidOuterDn"      : {"connection": "UpLidOuterUD"    ,"value": -10}
+                                            },
+                             'attributes':{
+                                             'UpLidUD'       :{"type": "float", "min": -10, "max":10},
+                                             'UpLidSpin'     :{"type": "float", "min": -10, "max":10}, 
+                                             
                                              'UpperSquint'   :{"type": "float", "min":   0, "max":10}, 
-                                             'LowerSquint'   :{"type": "float", "min":   0, "max":10},
+
                                              'UpLidInnerUD'  :{"type": "float", "min": -10, "max":10}, 
                                              'UpLidMidUD'    :{"type": "float", "min": -10, "max":10}, 
                                              'UpLidOuterUD'  :{"type": "float", "min": -10, "max":10}, 
-                                             'LowLidInnerUD' :{"type": "float", "min": -10, "max":10}, 
-                                             'LowLidMidUD'   :{"type": "float", "min": -10, "max":10}, 
-                                             'LowLidOuterUD' :{"type": "float", "min": -10, "max":10}, 
-                                             'CornerInnerUD' :{"type": "float", "min":   0, "max":10}, 
-                                             'CornerOuterUD' :{"type": "float", "min":   0, "max":10}},
+                                            },
+                            'order':  ['UpLidUD', 'UpLidSpin', 'UpperSquint', 'UpLidInnerUD','UpLidMidUD','UpLidOuterUD']
+                            },
 
-                            'order':    ['UpLidUD','LowLidUD','UpLidSpin','LowLidSpin',#'Spin','UpLidInOut','LowLidInOut',
-                                         'Bulge','UpperSquint','LowerSquint','UpLidInnerUD','UpLidMidUD',
-                                         'UpLidOuterUD','LowLidInnerUD','LowLidMidUD' ,'LowLidOuterUD','CornerInnerUD',
-                                         'CornerOuterUD']
-                            }}
+                "lidShapesLow":{
+                            'baseMesh': 'Character' ,
+                            'Type':'blendShapeDefinition',
+                            'isSymetrical' : True,
+                            'baseMesh'     : "Character",
+                            'control'      : 'Character_LF_EyeLidLowShapes00_ctr_facialRig',
+                            'blendShapes'  :{
+
+                                            "LowLidUp"          : {"connection": "LowLidUD"        ,"value":  10},
+                                            "LowLidUpHalf"      : {"connection": "LowLidUD"        ,"value":   5},
+                                            "LowLidDn"          : {"connection": "LowLidUD"        ,"value": -10},
+
+                                            "LowerEyeLidSpinCW" : {"connection": "LowLidSpin"      ,"value":  10},
+                                            "LowerEyeLidSpinCCW": {"connection": "LowLidSpin"      ,"value": -10},
+
+                                            "LowerSquint"       : {"connection": "LowerSquint"     ,"value":  10},
+
+                                            "LowLidInnerUp"     : {"connection": "LowLidInnerUD"   ,"value":  10},
+                                            "LowLidInnerDn"     : {"connection": "LowLidInnerUD"   ,"value": -10},
+                                            "LowLidMidUp"       : {"connection": "LowLidMidUD"     ,"value":  10},
+                                            "LowLidMidDn"       : {"connection": "LowLidMidUD"     ,"value": -10},
+                                            "LowLidOuterUp"     : {"connection": "LowLidOuterUD"   ,"value":  10},
+                                            "LowLidOuterDn"     : {"connection": "LowLidOuterUD"   ,"value": -10}
+                                            },
+                             'attributes'  :{
+                                             'LowLidUD'      :{"type": "float", "min": -10, "max":10},
+                                             'LowLidSpin'    :{"type": "float", "min": -10, "max":10},
+
+                                             'LowerSquint'   :{"type": "float", "min":   0, "max":10},
+
+                                             'LowLidInnerUD' :{"type": "float", "min": -10, "max":10},
+                                             'LowLidMidUD'   :{"type": "float", "min": -10, "max":10}, 
+                                             'LowLidOuterUD' :{"type": "float", "min": -10, "max":10}
+                                            },
+                            'order':  ['LowLidUD','LowLidSpin', 'LowerSquint','LowLidInnerUD','LowLidMidUD' ,'LowLidOuterUD']
+                            },
+                "lidShapesOut":{
+                            'baseMesh': 'Character' ,
+                            'Type':'blendShapeDefinition',
+                            'isSymetrical' : True,
+                            'baseMesh'     : "Character",
+                            'control'      : 'Character_LF_EyeLidOutShapes00_ctr_facialRig',
+                            'blendShapes'  :{"CornerOuterUp"     : {"connection": "CornerOuterUD"   ,"value":  10}},
+                            'attributes'  :{'CornerOuterUD' :{"type": "float", "min":   0, "max":10}},
+                            'order'        :['CornerOuterUD']
+                            },
+                "lidShapesIn":{
+                            'baseMesh': 'Character' ,
+                            'Type':'blendShapeDefinition',
+                            'isSymetrical' : True,
+                            'baseMesh'     : "Character",
+                            'control'      : 'Character_LF_EyeLidInShapes00_ctr_facialRig',
+                            'blendShapes'  :{"CornerInnerUp"  : {"connection": "CornerInnerUD"   ,"value":  10}},
+                            'attributes'   :{'CornerInnerUD'  :{"type": "float", "min":   0, "max":10}},
+                            'order':  ['CornerInnerUD']
+                            }
+                            }
 EyeBallPupil = {"EyeBallL":{'Type'         : 'blendShapeDefinition',
-                           'baseMesh'     : 'LEyeBall',
+                           #'baseMesh'     : 'C_HMn_SNW_Eye_L_MF',
+                           'baseMesh'     : 'C_HMn_SAC_eye_L_MF',
                            'isSymetrical' :  False,
                            'control'      : 'Character_LF_EyeLidShapes00_ctr_facialRig',
                            'blendShapes'  :{'LirisContract'       : {"connection":"Iris",   "value": -10},
@@ -73,7 +132,9 @@ EyeBallPupil = {"EyeBallL":{'Type'         : 'blendShapeDefinition',
                                              'Pupil'         : {"type": "float", "min":-10, "max":10}},            
                            'order'        : ['Iris','Pupil']},
                 "EyeBallR":{'Type'         : 'blendShapeDefinition',
-                           'baseMesh'     : 'REyeBall',
+                           #'baseMesh'     : 'C_HMn_SNW_Eye_R_MF',
+                           'baseMesh'     : 'C_HMn_SAC_eye_R_MF',
+                           
                            'isSymetrical' :  False,
                            'control'      : 'Character_RH_EyeLidShapes00_ctr_facialRig',
                            'blendShapes'  :{'RirisContract'       : {"connection":"Iris",   "value": -10},
@@ -83,14 +144,15 @@ EyeBallPupil = {"EyeBallL":{'Type'         : 'blendShapeDefinition',
                            'attributes'   : {'Iris'         : {"type": "float", "min":-10, "max":10},
                                              'Pupil'        : {"type": "float", "min":-10, "max":10}},            
                            'order'        : ['Iris','Pupil']}
-                
             }
 
 
 Cristaline = {"DivergeLf":{
                             'Type':"blendShapeDefinition",
                             "isSymetrical":False,
-                            "baseMesh"    : 'LCrystalline',
+                            #"baseMesh"    : 'C_HMn_SNW_Crystalline_L_MF',
+                            "baseMesh"    : 'C_HMn_SAC_crystalline_L_MF',
+                            
 
                             "control"     : "Character_LF_EyeLidShapes00_ctr_facialRig",
 
@@ -105,7 +167,9 @@ Cristaline = {"DivergeLf":{
              "DivergeRh":{
                             'Type':"blendShapeDefinition",
                             "isSymetrical":False,
-                            "baseMesh"    : 'RCrystalline',
+                            #"baseMesh"    : 'C_HMn_SNW_Crystalline_R_MF',
+
+                            "baseMesh"    : 'C_HMn_SAC_crystalline_R_MF',
 
                             "control"     : "Character_RH_EyeLidShapes00_ctr_facialRig",
 
@@ -184,87 +248,163 @@ EyeJawJoints = {"lidJoints":{
                     'Type'        : "jointLinkDefinition",
                     'isSymetrical': True,
                     'control'     :  'Character_LF_EyeLidShapes00_ctr_facialRig',
-                    'joints'      : {'Character_LF_EyeUpperLid00_sknjnt_Rig':{"connection":"UpLidUD" , "inputPlug":"rotateY","value" : [[-10, -45] ,[0,0] ,[10, 16]]},
-                                     "Character_LF_EyeLowerLid00_sknjnt_Rig":{"connection":"LowLidUD", "inputPlug":"rotateY","value" : [[-10,  16] ,[0,0] ,[10,-45]]},
-                                     "Character_LF_EyeLidSpin00_grp_Rig"    :{"connection":"spin"    , "inputPlug":"rotateX","value" : [[-10, -45] ,[0,0] ,[10,45]]}},
-                    "attributes"  : {"UpLidUD"      :{"type": "float", "min":-10, "max":10},
-                                     "LowLidUD"     :{"type": "float", "min":-10, "max":10},
-                                     "spin"         :{"type": "float", "min":-10, "max":10}},
-                    'order'       : ['UpLidUD' , 'LowLidUD', 'spin']},
-                "jawjoint":{
+
+                    'joints'      : {'Character_LF_EyeLidSpin00_grp_Rig'    :{"connection":"spin"    , "inputPlug":"rotateX", "value" : [[-10, -45] ,[0,0] ,[10,45]]}},
+
+                    "attributes"  : {"spin"         :{"type": "float", "min":-10, "max":10}},
+                    'order'       : ['spin']}
+                }
+'''"jawjoint":{
                     'Type'        : "jointLinkDefinition",
                     'isSymetrical': False,
                     'control'     : 'Character_MD_Jaw00_ctr_rig',
                     'joints'      : {"Character_MD_Jaw_sknjnt_RIG":{"connection":"rotateZ" , "inputPlug":"rotateZ", "value" : None}},
                     'attributes'  : {'rotateZ':{}},
-                    'order'       : ['rotateZ']}
-                }
+                    'order'       : ['rotateZ']}'''
 
 mouth = { "mouthMain":{
                     'Type'        : "blendShapeDefinition",
                     'isSymetrical': False,
                     "baseMesh"    : "Character",
-                    'control'     :  'Character_MD_MouthShapes00_ctr_facialRig',
-                    'blendShapes' :{'Smile'         : {"connection":"SmileFrown"    ,"value":  10},
+                    'control'     :  'Character_MD_Jaw00_ctr_rig',
+                    'blendShapes' :{ 'Smile'        : {"connection":"SmileFrown"    ,"value":  10},
                                      'Frown'        : {"connection":"SmileFrown"    ,"value": -10},
                                      'Wide'         : {"connection":"NarrowWide"    ,"value":  10},
                                      'Narrow'       : {"connection":"NarrowWide"    ,"value": -10},
                                      'Ooo'          : {"connection":"Ooo"           ,"value":  10},
                                      'CornerUp'     : {"connection":"CornerUD"      ,"value":  10},
                                      'CornerDn'     : {"connection":"CornerUD"      ,"value": -10},
-                                     'Pinch'        : {"connection":"Pinch"         ,"value":  10},
-                                     'LSmile'       : {"connection":"SmileFrownL"   ,"value":  10},
-                                     'LFrown'       : {"connection":"SmileFrownL"   ,"value": -10},
-                                     'RSmile'       : {"connection":"SmileFrownR"   ,"value":  10},
-                                     'RFrown'       : {"connection":"SmileFrownR"   ,"value": -10},
-                                     'LWide'        : {"connection":"NarrowWideL"   ,"value":  10},
-                                     'LNarrow'      : {"connection":"NarrowWideL"   ,"value": -10},
-                                     'RWide'        : {"connection":"NarrowWideR"   ,"value":  10},
-                                     'RNarrow'      : {"connection":"NarrowWideR"   ,"value": -10},
-                                     'LCornerUp'    : {"connection":"CornerL"       ,"value":  10},
-                                     'LCornerDn'    : {"connection":"CornerL"       ,"value": -10},
-                                     'RCornerUp'    : {"connection":"CornerR"       ,"value":  10},
-                                     'RCornerDn'    : {"connection":"CornerR"       ,"value": -10},
-                                     'Lpinch'       : {"connection":"PinchL"        ,"value":  10},
-                                     'Rpinch'       : {"connection":"PinchR"        ,"value":  10},
-                                     'LUpperSneer'  : {"connection":"UpperLipSneerL","value":  10},
-                                     'RUpperSneer'  : {"connection":"UpperLipSneerR","value":  10},
-                                     'MUpperSneerUp': {"connection":"UpperLipMidUD" ,"value":  10},
-                                     'MUpperSneerDn': {"connection":"UpperLipMidUD" ,"value": -10},
-                                     'LLowSneer'    : {"connection":"LowerLipSneerL","value":  10},
-                                     'RLowSneer'    : {"connection":"LowerLipSneerR","value":  10},
-                                     'MLowSneerUp'  : {"connection":"LowerLipMidUD" ,"value":  10},
-                                     'MLowSneerDn'  : {"connection":"LowerLipMidUD" ,"value": -10}},
+                                     'Pinch'        : {"connection":"Pinch"         ,"value":  10}
+                                     },
                     'attributes'  :{'SmileFrown'     :{"type": "float", "min":-10, "max":10}, 
                                     'NarrowWide'     :{"type": "float", "min":-10, "max":10},
                                     'Ooo'            :{"type": "float", "min":  0, "max":10},
-                                    #'Press'          :{"type": "float", "min":  0, "max":10}, 
-                                    #'Puff'           :{"type": "float", "min":  0, "max":10},
+                                    #'Press'         :{"type": "float", "min":  0, "max":10}, 
+                                    #'Puff'          :{"type": "float", "min":  0, "max":10},
                                     'CornerUD'       :{"type": "float", "min":-10, "max":10},
                                     'Pinch'          :{"type": "float", "min":  0, "max":10},
-                                    'LeftRightShapes':{"type": "float", "min":  0, "max":10, "keyable" : False },
-                                    'SmileFrownL'    :{"type": "float", "min":-10, "max":10}, 
-                                    'SmileFrownR'    :{"type": "float", "min":-10, "max":10}, 
-                                    'NarrowWideL'    :{"type": "float", "min":-10, "max":10}, 
-                                    'NarrowWideR'    :{"type": "float", "min":-10, "max":10}, 
-                                    'CornerL'        :{"type": "float", "min":-10, "max":10}, 
-                                    'CornerR'        :{"type": "float", "min":-10, "max":10}, 
-                                    'PinchL'         :{"type": "float", "min":  0, "max":10},
-                                    'PinchR'         :{"type": "float", "min":  0, "max":10},
-                                    'UpperLip'       :{"type": "float", "min":  0, "max":10, "keyable" : False },
-                                    'UpperLipSneerL' :{"type": "float", "min":  0, "max":10},
-                                    'UpperLipSneerR' :{"type": "float", "min":  0, "max":10},
-                                    'UpperLipMidUD'  :{"type": "float", "min":-10, "max":10}, 
-                                    'LowerLip'       :{"type": "float", "min":  0, "max":10, "keyable" : False },
-                                    'LowerLipSneerL' :{"type": "float", "min":  0, "max":10},
-                                    'LowerLipSneerR' :{"type": "float", "min":  0, "max":10},
-                                    'LowerLipMidUD'  :{"type": "float", "min":-10, "max":10}, 
-                                    'Jaw'            :{"type": "float", "min":  0, "max":10, "keyable" : False },
-                                    'StickyLips'     :{"type": "float", "min":  0, "max":10}},
-                      'order'     :['SmileFrown','NarrowWide','Ooo','CornerUD','Pinch','LeftRightShapes',
-                                    'SmileFrownL','SmileFrownR','NarrowWideL','NarrowWideR','CornerL','CornerR','PinchL',
-                                    'CornerR','PinchL','PinchR','UpperLip','UpperLipSneerL','UpperLipSneerR','UpperLipMidUD',
-                                    'UpperLipMidUD','LowerLip','LowerLipSneerL','LowerLipSneerR','LowerLipMidUD','Jaw','StickyLips']}
+                                    
+                                    'LeftRightShapes':{"type": "float", "min":  0, "max":10, "keyable" : False }},
+                      'order'     :[
+                                    'SmileFrown','NarrowWide','Ooo','CornerUD','Pinch','LeftRightShapes']},
+
+                "mouthSideUpperLip":{
+                    'Type'        : "blendShapeDefinition",
+                    'isSymetrical': True,
+                    "baseMesh"    : 'Character',
+                    'control'     : 'Character_LF_LipUpShapes00_ctr_facialRig',
+                    'blendShapes' :{
+                                     'LipUpperSneer'  : {"connection":"UpperSneer","value":  10},
+                                    },
+                    'attributes'  :{
+                                     'UpperSneer' :{"type": "float", "min":  0, "max":10},
+                                   },
+                    'order'     :['UpperSneer']
+                    },
+
+                "mouthSideLowerLip":{
+                    'Type'        : "blendShapeDefinition",
+                    'isSymetrical': True,
+                    "baseMesh"    : "Character",
+                    'control'     :  'Character_LF_LipLowShapes00_ctr_facialRig',
+                    'blendShapes' :{
+                                     'LipLowSneer'    : {"connection":"LowerSneer", "value":  10},
+                                   },
+                    'attributes'  :{
+                                     'LowerSneer' :{"type": "float", "min":  0, "max":10}
+                                   },
+                    'order'     :['LowerSneer']
+                    },
+
+               "mouthUpperLip":{
+                    'Type'        : "blendShapeDefinition",
+                    'isSymetrical': False,
+                    "baseMesh"    : "Character",
+                    'control'     :  'Character_MD_LipUpShapes00_ctr_facialRig',
+                    'blendShapes' :{
+
+                                    'UpperLipUp'     :{"connection":"UpperLipUD"    ,"value":   10},
+                                    'UpperLipDn'     :{"connection":"UpperLipUD"    ,"value":  -10},
+                                    'UpperLipFn'     :{"connection":"UpperLipFB"    ,"value":   10},
+                                    'UpperLipBk'     :{"connection":"UpperLipFB"    ,"value":  -10},
+                                    'UpperLipCw'     :{"connection":"UpperLipTILT"  ,"value":   10},
+                                    'UpperLipCcw'    :{"connection":"UpperLipTILT"  ,"value":  -10},
+                                    'UpperLipCurlIn' :{"connection":"UpperLipCurl"  ,"value":   10},
+                                    'UpperLipCurlOut':{"connection":"UpperLipCurl"  ,"value":  -10},
+
+                                    'MUpperSneerUp'  : {"connection":"UpperLipMidUD" ,"value":  10},
+                                    'MUpperSneerDn'  : {"connection":"UpperLipMidUD" ,"value": -10}
+                                   },
+
+                    'attributes'  :{
+
+                                    'UpperLipUD'    :{"type": "float", "min":-10, "max":10},
+                                    'UpperLipFB'    :{"type": "float", "min":-10, "max":10},
+                                    'UpperLipTILT'  :{"type": "float", "min":-10, "max":10},
+                                    'UpperLipCurl'  :{"type": "float", "min":-10, "max":10},
+
+                                    'SneerMid'      :{"type": "float", "min":  0, "max":10, "keyable" : False },
+                                    'UpperLipMidUD' :{"type": "float", "min":-10, "max":10}
+                                   },
+                    'order'     :['UpperLipUD','UpperLipFB','UpperLipTILT','UpperLipCurl', 'SneerMid','UpperLipMidUD']
+                    },
+
+                "mouthLowerLip":{
+                    'Type'        : "blendShapeDefinition",
+                    'isSymetrical': False,
+                    "baseMesh"    : "Character",
+                    'control'     : 'Character_MD_LipLowShapes00_ctr_facialRig',
+                    'blendShapes' :{
+
+                                    'LowLipUp'       :{"connection":"LowerLipUD"    ,"value":   10},
+                                    'LowLipDn'       :{"connection":"LowerLipUD"    ,"value":  -10},
+                                    'LowLipFn'       :{"connection":"LowerLipFB"    ,"value":   10},
+                                    'LowLipBk'       :{"connection":"LowerLipFB"    ,"value":  -10},
+                                    'LowLipCw'       :{"connection":"LowerLipTILT"  ,"value":   10},
+                                    'LowLipCcw'      :{"connection":"LowerLipTILT"  ,"value":  -10},
+                                    'LowLipCurlIn'   :{"connection":"LowerLipCurl"  ,"value":   10},
+                                    'LowLipCurlOut'  :{"connection":"LowerLipCurl"  ,"value":  -10},
+                                    
+                                    'MLowSneerUp'  : {"connection":"LowerLipMidUD" ,"value":  10},
+                                    'MLowSneerDn'  : {"connection":"LowerLipMidUD" ,"value": -10}
+                                   },
+                    'attributes'  :{
+                                    'LowerLipUD'    :{"type": "float", "min":-10, "max":10},
+                                    'LowerLipFB'    :{"type": "float", "min":-10, "max":10},
+                                    'LowerLipTILT'  :{"type": "float", "min":-10, "max":10},
+                                    'LowerLipCurl'  :{"type": "float", "min":-10, "max":10},
+                                    
+                                    'SneerMid'      :{"type": "float", "min":  0, "max":10, "keyable" : False },
+                                    'LowerLipMidUD'  :{"type": "float", "min":-10, "max":10}
+                                   },
+                    'order'     :[
+                                    "LowerLipUD","LowerLipFB","LowerLipTILT","LowerLipCurl",'SneerMid',
+                                    'LowerLipMidUD']
+                    },
+
+                "mouthSideCornerLip":{
+                    'Type'        : "blendShapeDefinition",
+                    'isSymetrical': True,
+                    "baseMesh"    : "Character",
+                    'control'     :  'Character_LF_MouthShapes00_ctr_facialRig',
+                    'blendShapes' :{
+                                    'Smile'       : {"connection":"SmileFrown"   ,"value":  10},
+                                    'Frown'       : {"connection":"SmileFrown"   ,"value": -10},
+                                    'Wide'        : {"connection":"NarrowWide"   ,"value":  10},
+                                    'Narrow'      : {"connection":"NarrowWide"   ,"value": -10},
+                                    'CornerUp'    : {"connection":"Corner"       ,"value":  10},
+                                    'CornerDn'    : {"connection":"Corner"       ,"value": -10},
+                                    'pinch'       : {"connection":"Pinch"        ,"value":  10}
+                                   },
+                    'attributes'  :{
+                                    'SmileFrown'    :{"type": "float", "min":-10, "max":10}, 
+                                    'NarrowWide'    :{"type": "float", "min":-10, "max":10},
+                                    'Corner'        :{"type": "float", "min":-10, "max":10}, 
+                                    'Pinch'         :{"type": "float", "min":  0, "max":10}
+                                   },
+                    'order'     :[  'SmileFrown','NarrowWide','Corner','Pinch']
+                    }
+
 }
 
 Cheeks = {'cheeks' :{'Type'        : "blendShapeDefinition",
@@ -298,41 +438,17 @@ mouthMover = {'mouthMover'  : {'Type'        : "blendShapeDefinition",
                                      'mouthFn'        :{"connection":"FB"            ,"value":   10},
                                      'mouthBk'        :{"connection":"FB"            ,"value":  -10},
                                      'TiltCw'         :{"connection":"Tilt"          ,"value":   10},
-                                     'TiltCcw'        :{"connection":"Tilt"          ,"value":  -10},
-                                     'UpperLipUp'     :{"connection":"UpperLipUD"    ,"value":   10},
-                                     'UpperLipDn'     :{"connection":"UpperLipUD"    ,"value":  -10},
-                                     'UpperLipFn'     :{"connection":"UpperLipFB"    ,"value":   10},
-                                     'UpperLipBk'     :{"connection":"UpperLipFB"    ,"value":  -10},
-                                     'UpperLipCw'     :{"connection":"UpperLipTILT"  ,"value":   10},
-                                     'UpperLipCcw'    :{"connection":"UpperLipTILT"  ,"value":  -10},
-                                     'UpperLipCurlIn' :{"connection":"UpperLipCurl"  ,"value":   10},
-                                     'UpperLipCurlOut':{"connection":"UpperLipCurl"  ,"value":  -10},
-                                     'LowLipUp'       :{"connection":"LowerLipUD"    ,"value":   10},
-                                     'LowLipDn'       :{"connection":"LowerLipUD"    ,"value":  -10},
-                                     'LowLipFn'       :{"connection":"LowerLipFB"    ,"value":   10},
-                                     'LowLipBk'       :{"connection":"LowerLipFB"    ,"value":  -10},
-                                     'LowLipCw'       :{"connection":"LowerLipTILT"  ,"value":   10},
-                                     'LowLipCcw'      :{"connection":"LowerLipTILT"  ,"value":  -10},
-                                     'LowLipCurlIn'   :{"connection":"LowerLipCurl"  ,"value":   10},
-                                     'LowLipCurlOut'  :{"connection":"LowerLipCurl"  ,"value":  -10}},
-                     'attributes'  :{ 'UD'            :{"type": "float", "min":-10, "max":10}, 
+                                     'TiltCcw'        :{"connection":"Tilt"          ,"value":  -10}
+                                     },
+
+                     'attributes'  :{ 
+                                      'UD'            :{"type": "float", "min":-10, "max":10}, 
                                       'LR'            :{"type": "float", "min":-10, "max":10}, 
                                       'FB'            :{"type": "float", "min":-10, "max":10}, 
-                                      'Tilt'          :{"type": "float", "min":-10, "max":10},
-                                      'Upper_Lip'     :{"type": "float", "min":-10, "max":10 , "keyable" : False},
-                                      'UpperLipUD'    :{"type": "float", "min":-10, "max":10},
-                                      'UpperLipFB'    :{"type": "float", "min":-10, "max":10},
-                                      'UpperLipTILT'  :{"type": "float", "min":-10, "max":10},
-                                      'UpperLipCurl'  :{"type": "float", "min":-10, "max":10},
-                                      'Lower_Lip'     :{"type": "float", "min":-10, "max":10 , "keyable" : False},
-                                      'LowerLipUD'    :{"type": "float", "min":-10, "max":10},
-                                      'LowerLipFB'    :{"type": "float", "min":-10, "max":10},
-                                      'LowerLipTILT'  :{"type": "float", "min":-10, "max":10},
-                                      'LowerLipCurl'  :{"type": "float", "min":-10, "max":10}},
-                      'order'      :["UD","LR","FB","Tilt","Upper_Lip","UpperLipUD","UpperLipFB",
-                                     "UpperLipTILT","UpperLipCurl","Lower_Lip","LowerLipUD",
-                                     "LowerLipFB","LowerLipTILT","LowerLipCurl"]}}
+                                      'Tilt'          :{"type": "float", "min":-10, "max":10}
+                                    },
 
+                      'order'      :["UD","LR","FB","Tilt"]}}
 
 Nose = {'Nose':       {'Type'        : "blendShapeDefinition",
                         'isSymetrical': False,
@@ -347,13 +463,7 @@ Nose = {'Nose':       {'Type'        : "blendShapeDefinition",
                                         'noseCurlUp'     :{"connection":"Curl"              ,"value":   10},
                                         'noseCurlDn'     :{"connection":"Curl"              ,"value":  -10},
                                         'noseTiltCw'     :{"connection":"Tilt"              ,"value":   10},
-                                        'noseTiltCcw'    :{"connection":"Tilt"              ,"value":  -10},
-                                        'noseLSneer'     :{"connection":"LSneer"            ,"value":   10},
-                                        'noseRSneer'     :{"connection":"RSneer"            ,"value":   10},
-                                        'noseLFlareIn'   :{"connection":"LFlare"            ,"value":  -10},
-                                        'noseLFlareOut'  :{"connection":"LFlare"            ,"value":   10},
-                                        'noseRFlareIn'   :{"connection":"RFlare"            ,"value":  -10},
-                                        'noseRFlareOut'  :{"connection":"RFlare"            ,"value":   10}
+                                        'noseTiltCcw'    :{"connection":"Tilt"              ,"value":  -10}
                                        },
                         'attributes' :{
                             "UD"     :{"type": "float", "min":-10, "max":10},
@@ -361,14 +471,24 @@ Nose = {'Nose':       {'Type'        : "blendShapeDefinition",
                             "FB"     :{"type": "float", "min":-10, "max":10},
                             "Curl"   :{"type": "float", "min":-10, "max":10},
                             "Tilt"   :{"type": "float", "min":-10, "max":10},
-                            "LSneer" :{"type": "float", "min":  0, "max":10},
-                            "RSneer" :{"type": "float", "min":  0, "max":10},
-                            "LFlare" :{"type": "float", "min":-10, "max":10},
-                            "RFlare" :{"type": "float", "min":-10, "max":10}
                             },
-                        'order'      :["UD","LR","FB","Curl","Tilt","LSneer","RSneer",
-                                     "LFlare","RFlare"]}}
-
+                        'order'      :["UD","LR","FB","Curl","Tilt"]},
+        'NoseLf': {'Type'        : "blendShapeDefinition",
+                        'isSymetrical': True,
+                        "baseMesh"    : "Character",
+                        'control'     : 'Character_LF_Nose00_ctr_facialRig',
+                        'blendShapes' :{
+                                        'noseSneer'     :{"connection":"Sneer"            ,"value":   10},
+                                        'noseFlareIn'   :{"connection":"Flare"            ,"value":  -10},
+                                        'noseFlareOut'  :{"connection":"Flare"            ,"value":   10}
+                                       },
+                        'attributes' :{
+                            "Sneer" :{"type": "float", "min":  0, "max":10},
+                            "Flare" :{"type": "float", "min":-10, "max":10}
+                            },
+                        'order'      :["Sneer","Flare"]
+                        },
+        }
 
 Furrow = {'Furrow':    {'Type'        : "blendShapeDefinition",
                         'isSymetrical': False,
@@ -397,7 +517,6 @@ Furrow = {'Furrow':    {'Type'        : "blendShapeDefinition",
                             'FurrowR'          :{"type": "float", "min":  0, "max":10}
                             },
                         'order'      :['Furrow',"UD","LR","FB","TILT","Left_Right_Shapes","FurrowL","FurrowR"]}}
-
 
 secondaryEyeBrow = {
                     "EyeBrowMidSecondary":{
@@ -461,6 +580,7 @@ secondaryEyeBrow = {
                                                 },
                                 'order'       :['UD' , 'LR' ,'FB','Tilt']}
                 }
+
 EyeBrow ={ "EyeBrow":{
                                 'Type' : "blendShapeDefinition",
                                 "isSymetrical":True,

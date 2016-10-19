@@ -9,23 +9,27 @@ import RMblendShapesTools
 from ui import RMFormFacialRig
 reload (RMFormFacialRig)
 import RMRigTools
-import FacialRig.FacialConfiguration as FacialConfiguration
+import FacialRig.FacialConfigurationNew as FacialConfiguration
+
+import RMParametersManager
 reload (FacialConfiguration)
-Dictionaries =  {'lisShapes'        :FacialConfiguration.lidShapes,#0
+reload (RMblendShapesTools)
+
+Dictionaries =  {'lidShapes'        :FacialConfiguration.lidShapes,#0
                  'EyeBallPupil'     :FacialConfiguration.EyeBallPupil,#1
                  'Cristaline'       :FacialConfiguration.Cristaline,#2
-                 'mouthSecondarys'  :FacialConfiguration.mouthSecondarys,#3
                  'EyeJawJoints'     :FacialConfiguration.EyeJawJoints,#4
+                 #'mouthSecondarys'  :FacialConfiguration.mouthSecondarys,#3
                  'mouth'            :FacialConfiguration.mouth,#5
                  'Cheeks'           :FacialConfiguration.Cheeks,#6
                  'mouthMover'       :FacialConfiguration.mouthMover,#7
                  'Nose'             :FacialConfiguration.Nose,#8
                  'Furrow'           :FacialConfiguration.Furrow,#9
-                 'secondaryEyeBrow' :FacialConfiguration.secondaryEyeBrow,#10
-                 "EyeBrow"          :FacialConfiguration.EyeBrow
+                 #'secondaryEyeBrow' :FacialConfiguration.secondaryEyeBrow,#10
+                 'EyeBrow'          :FacialConfiguration.EyeBrow
                  }
 
-
+ 
 def getMayaWindow():
     ptr = mui.MQtUtil.mainWindow()
     return wrapInstance(long(ptr), QtGui.QMainWindow)
@@ -38,22 +42,45 @@ class RMFacialRig(QtGui.QDialog):
         self.setWindowTitle('FacialRig')
         self.ui.CheckBtn.clicked.connect(self.CheckBtnPressed)
         self.ui.ImportFacialInterfaceBtn.clicked.connect(self.ImportFacialInterfaceBtnPressed)
+        self.ui.DeleteAttributesBtn.clicked.connect(self.deleteAttributes)
         self.ui.ListCBx.currentIndexChanged.connect(self.comboBoxChanged)
+
+        self.ui.LinkAllBtn.clicked.connect(self.linkAllDictionaries)
+
         for eachItem in sorted(Dictionaries):
             self.ui.ListCBx.addItem(eachItem)
+
+        self.ui.LinkSelectedBtn.clicked.connect(self.connectDictionary)
+        self.Manager = RMblendShapesTools.BSManager()
+
     def comboBoxChanged(self):
         self.CheckBtnPressed()
+
+    def connectDictionary(self):
+        linkDictionary = Dictionaries[self.ui.ListCBx.currentText()]
+        self.Manager.AppyBlendShapeDefinition(linkDictionary)
+    
+    def linkAllDictionaries(self):
+        for eachDic in Dictionaries:
+            self.Manager.AppyBlendShapeDefinition(Dictionaries[eachDic])
+
+
+
+
+    def deleteAttributes(self):
+        selection = cmds.ls(selection = True)
+        for eachObject in selection:
+            RMParametersManager.deleteAttributes(eachObject)
 
     def CheckBtnPressed(self):
         self.ui.listWidget.clear()
         eachDic = Dictionaries[self.ui.ListCBx.currentText()]
-        print eachDic
         for eachDefinition in eachDic:
             print eachDefinition
             if eachDic[eachDefinition]['Type'] == 'blendShapeDefinition':
                 arrayPrefix =[]
                 if eachDic[eachDefinition]['isSymetrical'] == True:
-                    arrayPrefix = ["L"]
+                    arrayPrefix = ["L","R"]
                 else :
                     arrayPrefix = [""]
                 for eachPrefix in arrayPrefix:
