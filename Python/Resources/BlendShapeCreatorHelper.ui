@@ -39,7 +39,7 @@
     <widget class="QListWidget" name="listWidget"/>
    </item>
    <item>
-    <widget class="QPushButton" name="ExtractShapesBtn">
+    <widget class="QPushButton" name="LinkSelected">
      <property name="text">
       <string>Extract_Shapes</string>
      </property>

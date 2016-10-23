@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'BlendShapeCreatorHelper.ui'
 #
-# Created: Wed Oct 05 12:20:07 2016
+# Created: Wed Oct 19 13:43:50 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -28,9 +28,9 @@ class Ui_Form(object):
         self.listWidget = QtGui.QListWidget(Form)
         self.listWidget.setObjectName("listWidget")
         self.verticalLayout.addWidget(self.listWidget)
-        self.ExtractShapesBtn = QtGui.QPushButton(Form)
-        self.ExtractShapesBtn.setObjectName("ExtractShapesBtn")
-        self.verticalLayout.addWidget(self.ExtractShapesBtn)
+        self.LinkSelected = QtGui.QPushButton(Form)
+        self.LinkSelected.setObjectName("LinkSelected")
+        self.verticalLayout.addWidget(self.LinkSelected)
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -39,5 +39,5 @@ class Ui_Form(object):
         Form.setWindowTitle(QtGui.QApplication.translate("Form", "Form", None, QtGui.QApplication.UnicodeUTF8))
         self.LoadObjectBtn.setText(QtGui.QApplication.translate("Form", "Load Selection", None, QtGui.QApplication.UnicodeUTF8))
         self.FlipWeightsBtn.setText(QtGui.QApplication.translate("Form", "Flip Weights", None, QtGui.QApplication.UnicodeUTF8))
-        self.ExtractShapesBtn.setText(QtGui.QApplication.translate("Form", "Extract_Shapes", None, QtGui.QApplication.UnicodeUTF8))
+        self.LinkSelected.setText(QtGui.QApplication.translate("Form", "Extract_Shapes", None, QtGui.QApplication.UnicodeUTF8))
 
