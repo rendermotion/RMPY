@@ -47,25 +47,43 @@ class RMFacialRig(QtGui.QDialog):
 
         self.ui.LinkAllBtn.clicked.connect(self.linkAllDictionaries)
 
+        self.ui.UsePrefixChkBx.stateChanged.connect(self.usePrefixChkBxStateChanged)
         for eachItem in sorted(Dictionaries):
             self.ui.ListCBx.addItem(eachItem)
-
         self.ui.LinkSelectedBtn.clicked.connect(self.connectDictionary)
         self.Manager = RMblendShapesTools.BSManager()
+        
+        self.ui.PrefixLineEdit.textChanged.connect(self.CheckBtnPressed)
+
+    def usePrefixChkBxStateChanged(self):
+        if self.ui.UsePrefixChkBx.checkState() == QtCore.Qt.CheckState.Checked:
+            self.ui.PrefixLineEdit.setEnabled(True)
+        else: 
+            self.ui.PrefixLineEdit.setDisabled(True)
+        self.CheckBtnPressed()        
+
 
     def comboBoxChanged(self):
         self.CheckBtnPressed()
 
     def connectDictionary(self):
+        if self.ui.PrefixLineEdit.isEnabled():
+            objectNamePrefix = self.ui.PrefixLineEdit.text()
+        else:
+            objectNamePrefix=''
+
+
         linkDictionary = Dictionaries[self.ui.ListCBx.currentText()]
-        self.Manager.AppyBlendShapeDefinition(linkDictionary)
+        self.Manager.AppyBlendShapeDefinition(linkDictionary,  objectPrefix = objectNamePrefix)
     
     def linkAllDictionaries(self):
+        if self.ui.PrefixLineEdit.isEnabled():
+            objectNamePrefix = self.ui.PrefixLineEdit.text()
+        else:
+            objectNamePrefix=''
+
         for eachDic in Dictionaries:
-            self.Manager.AppyBlendShapeDefinition(Dictionaries[eachDic])
-
-
-
+            self.Manager.AppyBlendShapeDefinition(Dictionaries[eachDic],  objectPrefix = objectNamePrefix)
 
     def deleteAttributes(self):
         selection = cmds.ls(selection = True)
@@ -73,6 +91,10 @@ class RMFacialRig(QtGui.QDialog):
             RMParametersManager.deleteAttributes(eachObject)
 
     def CheckBtnPressed(self):
+        if self.ui.PrefixLineEdit.isEnabled():
+            objectNamePrefix = self.ui.PrefixLineEdit.text()
+        else:
+            objectNamePrefix=''
         self.ui.listWidget.clear()
         eachDic = Dictionaries[self.ui.ListCBx.currentText()]
         for eachDefinition in eachDic:
@@ -85,9 +107,8 @@ class RMFacialRig(QtGui.QDialog):
                     arrayPrefix = [""]
                 for eachPrefix in arrayPrefix:
                     for eachBlendShape in sorted(eachDic[eachDefinition]['blendShapes']):
-                        if not cmds.objExists(eachPrefix + eachBlendShape):
-                            self.ui.listWidget.addItem(eachPrefix + eachBlendShape)
-
+                        if not cmds.objExists(eachPrefix + objectNamePrefix + eachBlendShape):
+                            self.ui.listWidget.addItem(eachPrefix+ objectNamePrefix + eachBlendShape)
 
     def ImportFacialInterfaceBtnPressed(self):
         path = os.path.dirname(RMRigTools.__file__)

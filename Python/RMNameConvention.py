@@ -39,7 +39,12 @@ class RMNameConvention (object):
 							"blendTwoAttr":"b2a",
 							"motionPath":"mph",
 							"ffd":"ffd",
-							"blendShape":"bs"}
+							"blendShape"       :"bs",
+							"aimConstraint"    :"aim",
+							"curveFromMeshEdge":"cfme",
+							"loft"             : "lft",
+							"pointOnSurfaceInfo":"psfi"
+							}
 		self.ShapeDictionary = {
 							"nurbsCurve":"shp",
 							"mesh":"msh",
