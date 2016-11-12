@@ -240,7 +240,7 @@ class BSManager(object):
             else :
                 BSName = blendShapeNode
             for eachControl in BSDefinition [BSGroups]['order']:
-                self.CreateBlendShapesByControl(BSName, eachControl, BSDefinition [BSGroups], prefix objectPrefix = objectPrefix)
+                self.CreateBlendShapesByControl(BSName, eachControl, BSDefinition [BSGroups], prefix, objectPrefix = objectPrefix)
         return self.FaceBlendShapeDic
 
     def AddAttributes (self, Object, Attribute, SMN, SMX,keyable = 1 ):

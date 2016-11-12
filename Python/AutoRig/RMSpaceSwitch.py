@@ -143,9 +143,7 @@ class RMSpaceSwitch(object):
 
     def GetSpaceSwitchDic(self, control, SpaceSwitchName = "spaceSwitch"):
         Enums = self.getControlEnumsRelations(control,SpaceSwitchName = "spaceSwitch")
-
         ConstraintDictionary = self.ConstraintsDictionary(Enums[Enums.keys()[0]] ['condition'])
-
         return {'enums' : Enums , 'constraints' : ConstraintDictionary }
 
     def GetAfectedObjectsList(self,ControlObject,SpaceSwitchName = "spaceSwitch"):

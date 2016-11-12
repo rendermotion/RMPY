@@ -3,6 +3,6 @@ NameConv  = RMNameConvention.RMNameConvention()
 reload (RMNameConvention)
 selection = cmds.ls(selection=True)
 for i in selection:
-	#NameConv.RMRenameNameInFormat(i, Side = "LF", System = "EyelidRig")
-	NameConv.RMRenameSetFromName( i , "PointOnSurface","Name")
+	NameConv.RMRenameNameInFormat(i, Side = "RH", System = "TorsoBelts")
+	#NameConv.RMRenameSetFromName( i , "RH","Side")
 

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'RMRigDisplay.ui'
 #
-# Created: Mon Oct 24 10:43:13 2016
+# Created: Mon Oct 31 15:31:39 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
