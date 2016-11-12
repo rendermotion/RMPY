@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'FacialLink.ui'
 #
-# Created: Wed Oct 19 13:43:44 2016
+# Created: Mon Oct 31 15:31:42 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(277, 458)
+        Form.resize(277, 395)
         self.verticalLayout_3 = QtGui.QVBoxLayout(Form)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.LinkBox = QtGui.QGroupBox(Form)

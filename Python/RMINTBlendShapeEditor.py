@@ -45,6 +45,7 @@ class RMBlendShapeEditor(QtGui.QDialog):
 				self.ui.TargetList.clear()
 				for i in self.currentBS["Items"]:
 					self.ui.TargetList.addItem("BS At:"+ unicode(float(i-5000)/1000))
+
 	def RebuildSelectedTargets(self):
 		Array=self.ui.InputTargetGroupAlias.selectedItems()
 		BSNode = self.ui.BlendShapeNodeNamelbl.text()

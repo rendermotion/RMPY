@@ -43,7 +43,6 @@ class RMFacialLink(QtGui.QDialog):
 		else:
 			print "archivo no encontrado"
 
-
 	def Link(self):
 		self.FacialRig.LinkFacial()
 

@@ -6,21 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>217</width>
-    <height>288</height>
+    <width>236</width>
+    <height>323</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
-    <widget class="QPushButton" name="ImportFacialInterfaceBtn">
-     <property name="text">
-      <string>Import facial interface</string>
-     </property>
-    </widget>
-   </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
@@ -63,10 +56,62 @@
     </layout>
    </item>
    <item>
-    <widget class="QPushButton" name="DeleteAttributesBtn">
-     <property name="text">
-      <string>Delete custom attributes</string>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Generic Tools</string>
      </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QPushButton" name="ImportFacialInterfaceBtn">
+        <property name="text">
+         <string>Import facial interface</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QCheckBox" name="UsePrefixChkBx">
+          <property name="text">
+           <string>UsePrefix</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="PrefixLineEdit">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QPushButton" name="renameRightBtn">
+          <property name="text">
+           <string>Rename right</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="createMissingBtn">
+          <property name="text">
+           <string>CreateMissingAsProxy</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QPushButton" name="DeleteAttributesBtn">
+        <property name="text">
+         <string>Delete custom attributes</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>

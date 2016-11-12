@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'RMFormLaces.ui'
 #
-# Created: Wed Oct 19 13:43:49 2016
+# Created: Mon Oct 31 15:31:46 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(349, 299)
+        Form.resize(354, 435)
         self.verticalLayout_3 = QtGui.QVBoxLayout(Form)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.LacesGrpBx = QtGui.QGroupBox(Form)
@@ -104,6 +104,38 @@ class Ui_Form(object):
         self.pushButton.setObjectName("pushButton")
         self.verticalLayout_4.addWidget(self.pushButton)
         self.verticalLayout_3.addWidget(self.progresivePathGrpBx)
+        self.groupBox = QtGui.QGroupBox(Form)
+        self.groupBox.setObjectName("groupBox")
+        self.verticalLayout_5 = QtGui.QVBoxLayout(self.groupBox)
+        self.verticalLayout_5.setObjectName("verticalLayout_5")
+        self.horizontalLayout_3 = QtGui.QHBoxLayout()
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        self.SinCntrlCurveBtn = QtGui.QPushButton(self.groupBox)
+        self.SinCntrlCurveBtn.setObjectName("SinCntrlCurveBtn")
+        self.horizontalLayout_3.addWidget(self.SinCntrlCurveBtn)
+        self.SinCurveLbl = QtGui.QLabel(self.groupBox)
+        self.SinCurveLbl.setMinimumSize(QtCore.QSize(100, 0))
+        self.SinCurveLbl.setText("")
+        self.SinCurveLbl.setObjectName("SinCurveLbl")
+        self.horizontalLayout_3.addWidget(self.SinCurveLbl)
+        self.verticalLayout_5.addLayout(self.horizontalLayout_3)
+        self.horizontalLayout_7 = QtGui.QHBoxLayout()
+        self.horizontalLayout_7.setObjectName("horizontalLayout_7")
+        self.CreateSinBtn = QtGui.QPushButton(self.groupBox)
+        self.CreateSinBtn.setObjectName("CreateSinBtn")
+        self.horizontalLayout_7.addWidget(self.CreateSinBtn)
+        self.XchkBx = QtGui.QCheckBox(self.groupBox)
+        self.XchkBx.setObjectName("XchkBx")
+        self.horizontalLayout_7.addWidget(self.XchkBx)
+        self.YchkBx = QtGui.QCheckBox(self.groupBox)
+        self.YchkBx.setChecked(True)
+        self.YchkBx.setObjectName("YchkBx")
+        self.horizontalLayout_7.addWidget(self.YchkBx)
+        self.ZchkBx = QtGui.QCheckBox(self.groupBox)
+        self.ZchkBx.setObjectName("ZchkBx")
+        self.horizontalLayout_7.addWidget(self.ZchkBx)
+        self.verticalLayout_5.addLayout(self.horizontalLayout_7)
+        self.verticalLayout_3.addWidget(self.groupBox)
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -123,4 +155,10 @@ class Ui_Form(object):
         self.PathCurveBtn.setText(QtGui.QApplication.translate("Form", "Load Path Curve :", None, QtGui.QApplication.UnicodeUTF8))
         self.ControlCurveBtn.setText(QtGui.QApplication.translate("Form", "Load Control Curve:", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton.setText(QtGui.QApplication.translate("Form", "Progresive link to Path", None, QtGui.QApplication.UnicodeUTF8))
+        self.groupBox.setTitle(QtGui.QApplication.translate("Form", "Sin function ", None, QtGui.QApplication.UnicodeUTF8))
+        self.SinCntrlCurveBtn.setText(QtGui.QApplication.translate("Form", "Load control curve :", None, QtGui.QApplication.UnicodeUTF8))
+        self.CreateSinBtn.setText(QtGui.QApplication.translate("Form", "Create sin function on selection", None, QtGui.QApplication.UnicodeUTF8))
+        self.XchkBx.setText(QtGui.QApplication.translate("Form", "X", None, QtGui.QApplication.UnicodeUTF8))
+        self.YchkBx.setText(QtGui.QApplication.translate("Form", "Y", None, QtGui.QApplication.UnicodeUTF8))
+        self.ZchkBx.setText(QtGui.QApplication.translate("Form", "Z", None, QtGui.QApplication.UnicodeUTF8))
 

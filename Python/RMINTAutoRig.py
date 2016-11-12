@@ -45,9 +45,11 @@ class RMINTAutoRig(QtGui.QDialog):
         self.ui.feetOrientationBtn.clicked.connect(self.feetOrientationBtnPressed)
 
     def feetOrientationBtnPressed(self):
-        FeetTipRotation.FetTipRotationCorrect(side="LF")
-        FeetTipRotation.FetTipRotationCorrect(side="RH")
-    
+        FetTipRotation.FetTipRotationCorrect(side="LF")
+        FetTipRotation.FetTipRotationCorrect(side="RH")
+
+        FetTipRotation.fetAnkleRotationCorrect(side="LF")
+        FetTipRotation.fetAnkleRotationCorrect(side="RH")
 
     def CreateReferencePointsBtnPressed(self):
         CreateBypedPointsCommand = '''

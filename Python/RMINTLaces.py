@@ -10,6 +10,8 @@ import RMUncategorized
 from AutoRig import RMLaces
 from ui import RMFormLaces
 from snippets import MultiPathObjects
+from snippets import sinFunct
+
 reload(RMFormLaces)
 reload(RMLaces)
 
@@ -30,6 +32,11 @@ class RMINTLacesTool(QtGui.QDialog):
         self.ui.ControlCurveBtn.clicked.connect(self.ControlCurveBtnPressed)
         self.ui.PathCurveBtn.clicked.connect(self.PathCurveBtnPressed)
         self.ui.pushButton.clicked.connect(self.ProgressiveLinkBtnPressed)
+
+        self.ui.SinCntrlCurveBtn.clicked.connect(self.SinCntrlCurveBtnPressed)
+        self.ui.CreateSinBtn.clicked.connect(self.CreateSinBtnPressed)
+    
+
 
     def PathCurveBtnPressed(self):
         selection = cmds.ls(selection = True)
@@ -68,6 +75,20 @@ class RMINTLacesTool(QtGui.QDialog):
             laces.RMlacesSystem( self.ui.NumberOfJoints.value() , curve = self.ui.CurrentShapeLbl.text())    
         else:
             laces.RMlacesSystemMultipleRotationControls(self.ui.NumberOfJoints.value() , curve = self.ui.CurrentShapeLbl.text())
+    def SinCntrlCurveBtnPressed(self):
+        selection = cmds.ls(selection = True)
+        if selection and len(selection)>=1:
+            self.ui.SinCurveLbl.setText(selection[0])
+    def CreateSinBtnPressed(self):
+        selection = cmds.ls(selection = True )
+
+        if self.ui.XchkBx.isChecked() == True:
+            sinFunct.sinfunction(self.ui.SinCurveLbl.text(), selection,'X')
+        if self.ui.YchkBx.isChecked() == True:
+            sinFunct.sinfunction(self.ui.SinCurveLbl.text(), selection,'Y')
+        if self.ui.ZchkBx.isChecked() == True:
+            sinFunct.sinfunction(self.ui.SinCurveLbl.text(), selection,'Z')
+
 if __name__ == '__main__':
     w = RMINTLacesTool()
     w.show()

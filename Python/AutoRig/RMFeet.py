@@ -39,7 +39,6 @@ class RMFeetRig(object):
     def RigFeetIKFK(self, StandarFeetPointsDic, IKcontrol = None, FKControl = None):
         self.StandardFeetIKRig( StandarFeetPointsDic, FeetControl = IKcontrol)
         self.StardardFeetFK   ( StandarFeetPointsDic , FeetControl = FKControl)
-        
         self.rootJoints , FeetJoints = self.StandardReverseFeetJointStructure( StandarFeetPointsDic)
         #StandardFeetFKJoints = self.NameConv.RMRenameSetFromName(StandardFeetIKJoints, "Blend" , "Name" , mode = "add")
         FeetJoints = self.NameConv.RMRenameSetFromName( FeetJoints, "sknjnt", "Type")
@@ -52,10 +51,10 @@ class RMFeetRig(object):
 
         StandardFeetFKJoints = self.NameConv.RMRenameSetFromName(StandardFeetFKJoints,"FK" , "Name" , mode = "add")
         
-        FootIn = self.StandardFeetPointsDic["limitIn"]
+        FootIn  = self.StandardFeetPointsDic["limitIn"]
         FootOut = self.StandardFeetPointsDic["limitOut"]
-        FootBK = self.StandardFeetPointsDic["limitBack"]
-        Length = RMRigTools.RMPointDistance(self.StandardFeetPointsDic["feet"][2] , FootBK)
+        FootBK  = self.StandardFeetPointsDic["limitBack"]
+        Length  = RMRigTools.RMPointDistance(self.StandardFeetPointsDic["feet"][2] , FootBK)
 
         if not FeetControl:
             self.FirstLimbFeetResetControl, FeetControl = RMRigShapeControls.RMCircularControl(StandardFeetFKJoints[0] ,radius =  Length, name = "FKFeetControl")
