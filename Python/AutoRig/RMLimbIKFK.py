@@ -3,16 +3,16 @@ import maya.api.OpenMaya as om
 import RMRigTools
 
 
-reload (RMRigTools)
+#reload (RMRigTools)
 import RMRigShapeControls
-reload (RMRigShapeControls)
+#reload (RMRigShapeControls)
 import RMNameConvention
-reload (RMNameConvention)
+#reload (RMNameConvention)
 from AutoRig import RMSpaceSwitch
-reload (RMSpaceSwitch)
+#reload (RMSpaceSwitch)
 import math
 from AutoRig import RMTwistJoints
-reload (RMTwistJoints)
+#reload (RMTwistJoints)
 
 class RMLimbIKFK(object):
     def __init__(self, worldNode = None , NameConv = None):
