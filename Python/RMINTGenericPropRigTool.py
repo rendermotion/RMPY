@@ -28,7 +28,7 @@ class RMINTGenericPropRigTool(QtGui.QDialog):
         self.ui.DeleteSimpleRigBtn.clicked.connect(self.deleteSimpleRigBtnPressed)
 
     def RigSelectionBtnPressed(self):
-        NoisePatternRig.CreateControlOnSelection()
+        NoisePatternRig.CreateControlOnSelection(centerPivot = True)
 
     def LoadSelectionAsCntrlObjPushBtnPressed(self):
         Object = cmds.ls(selection = True)[0]

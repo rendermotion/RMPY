@@ -130,14 +130,14 @@ class RMSpaceSwitch(object):
     def IsSpaceSwitch(self, Control, SpaceSwitchName = "spaceSwitch"):
         AttributeList = cmds.listAttr(Control)
         if SpaceSwitchName  in AttributeList:
-            if cmds.getAttr (Control + "." + SpaceSwitchName, type=True) == 'enum':
+            if cmds.getAttr (Control + "." + SpaceSwitchName, type = True) == 'enum':
                 Connections = cmds.listConnections (Control + "." + SpaceSwitchName)
                 if Connections != None:
                     for eachConnection in Connections:
                         if cmds.objectType(eachConnection) == 'condition':
                             ConstraintsConnections = cmds.listConnections(eachConnection+'.outColorR')
                             for eachConstraint in ConstraintsConnections:
-                                if cmds.objectType(eachConstraint) == 'parentConstraint':
+                                if cmds.objectType(eachConstraint) in ['parentConstraint', 'orientConstraint', 'orientConstraint']:
                                     return True
         return False
 
@@ -301,8 +301,21 @@ class RMSpaceSwitch(object):
     def getParentConstraintDic (self, parentConstraint) :
         returnedDic = {'alias':{}, "object":None }
         aliasDic={}
-        WA = cmds.parentConstraint (parentConstraint, q = True, weightAliasList = True)
-        TL = cmds.parentConstraint (parentConstraint, q = True, targetList = True)
+        if cmds.objectType(parentConstraint)=="parentConstraint":
+            WA = cmds.parentConstraint (parentConstraint, q = True, weightAliasList = True)
+            TL = cmds.parentConstraint (parentConstraint, q = True, targetList = True)
+        
+        elif cmds.objectType(parentConstraint)=="orientConstraint":
+            WA = cmds.orientConstraint (parentConstraint, q = True, weightAliasList = True)
+            TL = cmds.orientConstraint (parentConstraint, q = True, targetList = True)
+        
+        elif cmds.objectType(parentConstraint)=="pointConstraint":
+            WA = cmds.pointConstraint (parentConstraint, q = True, weightAliasList = True)
+            TL = cmds.pointConstraint (parentConstraint, q = True, targetList = True)
+        
+        else:
+            "error No constraint Type identified"
+        
         if len(WA) == len(TL):
             for eachWAIndex in range(0,len(WA)):
                 aliasDic[WA[eachWAIndex]] = TL[eachWAIndex]

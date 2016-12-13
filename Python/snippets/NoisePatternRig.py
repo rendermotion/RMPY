@@ -20,7 +20,7 @@ def getMeshObjects( Objects):
             OtherObjects.append(eachObject)
     return {"meshObjects" : MeshObjects,"other":OtherObjects}
 
-def SinglePropRig( Object, referencePositionControl):
+def SinglePropRig( Object, referencePositionControl, centerPivot = False):
     #if Object.__class__ == list :
     #elif Object.__class__ in [str,unicode]:
     GRS = RMGenericRigStructure.genericRigStructure()
@@ -28,6 +28,7 @@ def SinglePropRig( Object, referencePositionControl):
     NameConv = RMNameConvention.RMNameConvention()
     bbMesh   = RMRigTools.boundingBoxInfo(Object)
     CtrlPosition = cmds.xform(referencePositionControl,q=True,rp=True, worldSpace = True)
+
     NameList = Object.split(".")
     cntrlToMeshX = bbMesh.position[0] - CtrlPosition[0]
     cntrlToMeshY = bbMesh.position[1] - CtrlPosition[1]
@@ -35,10 +36,15 @@ def SinglePropRig( Object, referencePositionControl):
 
     if len(NameList) > 1:
         Ctrl = RMRigShapeControls.RMCreateCubeLine(bbMesh.lenX, bbMesh.lenY, bbMesh.lenZ, offsetX = -bbMesh.minDistanceToCenterX + cntrlToMeshX,offsetY = -bbMesh.minDistanceToCenterY + bbMesh.lenY / 2 + cntrlToMeshY,offsetZ = -bbMesh.minDistanceToCenterZ + bbMesh.lenZ / 2 + cntrlToMeshZ,name = NameList[1])
+        if centerPivot==True:
+            cmds.xform(Ctrl, cp = 1)
         joint = cmds.joint(name = NameList[1]+"jnt")
     else:
         Ctrl = RMRigShapeControls.RMCreateCubeLine(bbMesh.lenX, bbMesh.lenY, bbMesh.lenZ, offsetX = -bbMesh.minDistanceToCenterX + cntrlToMeshX,offsetY = -bbMesh.minDistanceToCenterY + bbMesh.lenY / 2 + cntrlToMeshY,offsetZ = -bbMesh.minDistanceToCenterZ + bbMesh.lenZ / 2 + cntrlToMeshZ,name = NameList[0]+"Ctrl")
+        if centerPivot==True:
+            cmds.xform(Ctrl, cp = 1)
         joint = cmds.joint(name = NameList[0]+"jnt")
+    
 
     Ctrl = NameConv.RMRenameNameInFormat(Ctrl, Type="control")
     ResetGroup = RMRigTools.RMCreateGroupOnObj(Ctrl)
@@ -50,7 +56,8 @@ def SinglePropRig( Object, referencePositionControl):
         cmds.parent ( jointGroup , GRS.groups["rig"]['group'])
     else:
         jointGroup = rigJntGrp
-    RMRigTools.RMAlign ( referencePositionControl, ResetGroup, 3)
+    if centerPivot!=True:
+        RMRigTools.RMAlign ( referencePositionControl, ResetGroup, 3)
 
     joint = NameConv.RMRenameNameInFormat(joint)
 
@@ -59,20 +66,23 @@ def SinglePropRig( Object, referencePositionControl):
     cmds.parent( ResetJoint, jointGroup)
     #if cmds.objExists
     #for eachObject in Object:
+    cmds.parentConstraint(Ctrl,joint)
     cmds.select( clear = True )
     cmds.select( Object )
     cmds.select( joint, add = True)
     cmds.skinCluster()
-    cmds.parentConstraint(Ctrl,joint)
+    
+    
+
 
 #def MultiPropRig ( Objects , referencePoint = None ):
-def createControlForObject(objects , controls):
+def createControlForObject(objects , controls , centerPivot = False):
     if len(controls) == 0:
         for eachObject in objects:
-            SinglePropRig(eachObject,eachObject)
+            SinglePropRig(eachObject,eachObject, centerPivot = centerPivot)
     elif len(controls) == len(objects):
         for index in range(0,len(controls)):
-            SinglePropRig(objects[index],controls[index])
+            SinglePropRig(objects[index],controls[index] , centerPivot = centerPivot)
     elif len(controls) == 1 and len(objects)>1:
         print "not suported Selection"
     else:
@@ -125,10 +135,10 @@ def addNoiseOnControl(Object,Control):
         ExpressionNode = cmds.expression (name = "NoiseMainExpresion", string = Expresion.format( ResetGroup , Control, random.uniform (0,100)))
 
 
-def CreateControlOnSelection():
+def CreateControlOnSelection(centerPivot = False):
     selection = cmds.ls(sl=True, type="transform")
     ObjectsDic = getMeshObjects(selection)
-    createControlForObject(ObjectsDic["meshObjects"],ObjectsDic["other"])
+    createControlForObject(ObjectsDic["meshObjects"],ObjectsDic["other"],centerPivot = centerPivot)
 
 def deleteSimpleRig():
     constraint = cmds.listConnections(type="parentConstraint")
@@ -152,6 +162,40 @@ def deleteSimpleRig():
             print "no skin cluster Identified"
     else:
         print "no constraint Node Identified"        
+def openTransform():
+    controlObj = cmds.ls(selection = True)
+    parentObject = cmds.listRelatives(controlObj[0], parent=True)[0]
+    print ("parentObject= %s"% parentObject)
+    constraint =  cmds.listConnections(controlObj[0],type = "parentConstraint")[0]
+    print ("constraint= %s"% constraint)
+    joints   =  cmds.listConnections(constraint ,type = "joint")[0]
+    print ("joints= %s"% joints)
+    skinCluster =  cmds.listConnections(joints ,type = "skinCluster")[0]
+    print ("skinCluster= %s"% skinCluster)
+    geometry =  cmds.listConnections(skinCluster ,type = "mesh")[0]
+    print ("geometry= %s"% geometry)
+    cmds.select(geometry, replace = True) 
+    cmds.select(parentObject, add = True) 
+    cmds.isolateSelect( "modelPanel4", state = 1)
+    cmds.isolateSelect( "modelPanel4", loadSelected = 1)
+    print ("isolating = \n%s, \n%s"%(geometry,parentObject))
+    cmds.select(parentObject, replace = True)
+    cmds.delete(constraint)
+    return joints , controlObj
+    
+def closeTransform(controlObj,joints):
+    cmds.makeIdentity(eachObject, apply=True, t=1)
+    cmds.parentConstraint(controlObj, joints, mo = True)
+    cmds.isolateSelect("modelPanel4",state = 0)
+
+if value:
+    joints = None
+    controlObject = None
+    joints, controlObject = openTransform()
+    value = False
+else:
+    closeTransform(controlObject,joints)
+    value = True
 
 
 class constraintComponents(object):
@@ -179,3 +223,7 @@ class constraintComponents(object):
 
 #constraints = constraintComponents(gessFrom = "Character_MD_pSphere1Ctrl00_ctr_Rig")
 #pprint.pprint(constraints.constraintDic)
+if __name__=="__main__":
+    pass
+    #print value
+    #openTransform()

@@ -39,6 +39,10 @@ def SetObjectTransformDic(OTDic, MirrorTranslateX = 1 ,MirrorTranslateY = 1, Mir
 				selectionNameSpace = ":".join(Namespaces[0:-1]) + ":"
 			else:
 				selectionNameSpace = None
+		else:
+				selectionNameSpace = None
+	else:
+		selectionNameSpace = None
 	for keys in OTDic:
 		FocusObject = ignoreNamespace(keys , selectedNamespace = selectionNameSpace )
 		if FocusObject:
