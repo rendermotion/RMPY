@@ -68,8 +68,11 @@ class RMNameConvention (object):
 				return self.TypeDictionary["undefined"]
 
 	def RMGetFromName(self, ObjName,Token):
-		splitString = ObjName.split("_")
-		return splitString[self.NameConvention[Token]]
+		if self.RMIsNameInFormat(ObjName):
+			splitString = ObjName.split("_")
+			return splitString[self.NameConvention[Token]]
+		else:
+			return self.DefaultNames[Token]
 
 	def RMSetFromName(self, ObjName, TextString, Token , mode = "regular"):
 		'Valid Modes are regular and add'

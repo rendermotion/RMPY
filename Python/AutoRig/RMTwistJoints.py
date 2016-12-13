@@ -21,10 +21,9 @@ class RMTwistJoints(object):
         self.TwistOrigin = None
         self.TwistEnd = None
 
-
     def RMCreateTwistJoints(self, TwistJoint, LookAtObject, NumberOfTB = 3, LookAtAxis = "Y"):
 
-        self.RMCreateTwist( TwistJoint, LookAtObject,NumberOfTB = NumberOfTB, LookAtAxis = LookAtAxis)
+        self.RMCreateTwist( TwistJoint, LookAtObject, NumberOfTB = NumberOfTB, LookAtAxis = LookAtAxis)
         self.TwistOrigin =  TwistJoint
         self.TwistEnd =  LookAtObject
         self.RMStretchyTwistJoints()
