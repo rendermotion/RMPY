@@ -17,7 +17,7 @@ reload(RMFormRigTools)
 reload (RMGenericJointRig)
 reload(RMProgressiveConstraint)
 
-
+from AutoRig import RMRigFK
 
 def getMayaWindow():
 	ptr = mui.MQtUtil.mainWindow()
@@ -64,8 +64,10 @@ class RMINTRigTools(QtGui.QDialog):
 		mel.eval('source RMRigIK.mel;')
 		mel.eval('RMIKCreateonSelected();')
 	def FKOnSelectionBtnPressed(self):
-		mel.eval('source RMRigFK.mel;')
-		mel.eval('RMFKCreateonSelected();')
+		#mel.eval('source RMRigFK.mel;')
+		#mel.eval('RMFKCreateonSelected();')
+		FKM = RMRigFK.RMRigFK()
+		FKM.createOnSelection()
 	def CreateChildGroupBtnPressed(self):
 		mel.eval('''source RMRigTools.mel;
 		string $temp[]=`ls -sl`;
