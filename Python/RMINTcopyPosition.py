@@ -38,7 +38,7 @@ class RMCopyPosition(QtGui.QDialog):
 		self.ui.ResetTransformBtn.clicked.connect(self.ResetTransformBtnPressed)
 		self.TramsformDic={}
 	def GetTransformBtnPressed(self):
-		selection=cmds.ls(sl=True)
+		selection = cmds.ls(sl=True)
 		self.TramsformDic = RMUncategorized.ObjectTransformDic(selection)
 		print "saving file to: %s" %(self.DiskCachePath)
 		SaveDic={'type':'ObjectTransforms','data':self.TramsformDic}

@@ -3,18 +3,19 @@ import maya.cmds as cmds
 def ObjectTransformDic(objects):
 	ObjectDic={}
 	for eachObject in objects:
-		
 		position = (cmds.getAttr (eachObject + ".t"))
 		rotation = (cmds.getAttr (eachObject + ".r"))
 		scale    = (cmds.getAttr (eachObject + ".s"))
-		Address = eachObject.split("|")
-		if len(Address)== 1:
-			objectName = eachObject.split(":")
-			if (len(objectName)>=1):
-				ObjectDic [ objectName[len(objectName)-1] ]={"t":position[0], "r":rotation[0],"s":scale[0]}
-			else:
-				ObjectDic [ eachObject ]                   ={"t":position[0], "r":rotation[0],"s":scale[0]}
+		ObjectDic [ removeNameSpaceFromName (eachObject) ] = {"t":position[0], "r":rotation[0],"s":scale[0]}
 	return ObjectDic
+def removeNameSpaceFromName(name):
+	Address = name.split("|")
+	NewAddres = []
+	for eachElement in Address:
+		objectName = eachElement.split(":")
+		NewAddres.append(objectName[len(objectName) - 1])
+	
+	return "|".join(NewAddres)
 
 def ResetPostoZero(objects):
 	for eachObject in objects:
