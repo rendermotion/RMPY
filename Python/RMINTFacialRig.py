@@ -44,6 +44,7 @@ class RMFacialRig(QtGui.QDialog):
         self.ui.ImportFacialInterfaceBtn.clicked.connect(self.ImportFacialInterfaceBtnPressed)
         self.ui.DeleteAttributesBtn.clicked.connect(self.deleteAttributes)
         self.ui.ListCBx.currentIndexChanged.connect(self.comboBoxChanged)
+        self.ui.renameRightBtn.clicked.connect(self.renameRightBtn)
 
         self.ui.LinkAllBtn.clicked.connect(self.linkAllDictionaries)
 
@@ -62,6 +63,10 @@ class RMFacialRig(QtGui.QDialog):
             self.ui.PrefixLineEdit.setDisabled(True)
         self.CheckBtnPressed()        
 
+    def renameRightBtn(self):
+        selection = cmds.ls(selection=True)
+        for i in selection:
+            cmds.rename (i , "R" + i[1:-1])
 
     def comboBoxChanged(self):
         self.CheckBtnPressed()
