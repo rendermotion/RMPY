@@ -12,3 +12,6 @@ def LockAndHide(selection):
 	        for eachObject in selection :
 	            RMRigTools.RMLockAndHideAttributes( eachObject, "xxxxxxxxx1" )
 	            cmds.setAttr("%s.visibility"%eachObject,True)
+if __name__=="__main__":
+	selection = cmds.ls( selection = True )
+	LockAndHide(selection)
