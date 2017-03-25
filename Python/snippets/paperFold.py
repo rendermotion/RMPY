@@ -39,23 +39,26 @@ print selection
 #listaPuntos = selection[((len(selection))/2):]
 '''
 
-joints   = [u'Character_MD_joint00_jnt_Rig',u'Character_MD_joint01_jnt_Rig', u'Character_MD_joint02_jnt_Rig', u'Character_MD_joint03_jnt_Rig', u'Character_MD_joint04_jnt_Rig', u'Character_MD_joint05_jnt_Rig', u'Character_MD_joint06_jnt_Rig', u'Character_MD_joint07_jnt_Rig', u'Character_MD_joint08_jnt_Rig', u'Character_MD_joint09_jnt_Rig', u'Character_MD_joint10_jnt_Rig', u'Character_MD_joint11_jnt_Rig',u'Character_MD_joint12_jnt_Rig']
-locators = [u'locator12', u'locator11', u'locator10', u'locator9', u'locator8', u'locator7', u'locator6', u'locator5', u'locator4', u'locator3', u'locator2', u'locator1', u'locator']
-drivers  = [u'Character_MD_TirasdePapel00_sknjnt_Rig', u'Character_MD_TirasdePapel01_sknjnt_Rig', u'Character_MD_TirasdePapel02_sknjnt_Rig', u'Character_MD_TirasdePapel03_sknjnt_Rig', u'Character_MD_TirasdePapel04_sknjnt_Rig', u'Character_MD_TirasdePapel05_sknjnt_Rig', u'Character_MD_TirasdePapel06_sknjnt_Rig', u'Character_MD_TirasdePapel07_sknjnt_Rig', u'Character_MD_TirasdePapel08_sknjnt_Rig', u'Character_MD_TirasdePapel09_sknjnt_Rig', u'Character_MD_TirasdePapel10_sknjnt_Rig', u'Character_MD_TirasdePapel11_sknjnt_Rig', u'Character_MD_TirasdePapel12_sknjnt_Rig']
+joints   = [u'Character_MD_HatNub07_jnt_Dynamic', u'Character_MD_HatNub06_jnt_Dynamic', u'Character_MD_HatNub05_jnt_Dynamic', u'Character_MD_HatNub04_jnt_Dynamic', u'Character_MD_HatNub03_jnt_Dynamic', u'Character_MD_HatNub02_jnt_Dynamic', u'Character_MD_HatNub01_jnt_Dynamic', u'Character_MD_HatNub00_jnt_Dynamic']
+locators = [u'Character_MD_HatNub07_jnt_Rig', u'Character_MD_HatNub06_jnt_Rig', u'Character_MD_HatNub05_jnt_Rig', u'Character_MD_HatNub04_jnt_Rig', u'Character_MD_HatNub03_jnt_Rig', u'Character_MD_HatNub02_jnt_Rig', u'Character_MD_HatNub01_jnt_Rig', u'Character_MD_HatNub00_jnt_Rig']
+drivers  = [u'Hat00joint', u'Hat01joint', u'Hat02joint', u'Hat03joint', u'Hat04joint', u'Hat05joint', u'Hat06joint', u'Hat07joint']
 
+#CtrlParameters = RMUserParameters.RMUserParameters("HatBase")
+#CtrlParameters.addNumeric('DynamicHat')
 
+#yincrement = 10.0/ (len (locators))
 
-yincrement = 10.0/ (len (locators))
+#loop = 0
+#for eachDriver in drivers:
+#	constraint        = cmds.parentConstraint(loop] , eachDriver, mo = False)[0]
+#	cmds.parentConstraint ( locators[loop] , eachDriver, mo = False)
+#	WA = cmds.parentConstraint (constraint, q = True, weightAliasList = True)
+#	RMRigTools.RMConnectWithLimits("HatBaseShape.DynamicHat", "%s.%s"%(constraint , WA[0]), [[yincrement * loop , 1], [yincrement * (loop + 3), 0]])
+#	RMRigTools.RMConnectWithLimits("HatBaseShape.DynamicHat", "%s.%s"%(constraint , WA[1]), [[yincrement * loop , 0], [yincrement * (loop + 3), 1]])
+#	loop = loop + 1
 
-loop = 0
-for eachDriver in reversed(drivers):
-	constraint        = cmds.parentConstraint(joints[len(joints) - loop - 1] , eachDriver, mo = False)[0]
-	cmds.parentConstraint ( locators[len(locators) - loop - 1] , eachDriver, mo = False)
-	constraintManager = RMSpaceSwitch.RMSpaceSwitch()
-	
-	WA = cmds.parentConstraint (constraint, q = True, weightAliasList = True)
-	RMRigTools.RMConnectWithLimits("nurbsCircle1.paperFold", "%s.%s"%(constraint , WA[0]), [[yincrement * loop , 1], [yincrement * (loop + 3), 0]])
-	RMRigTools.RMConnectWithLimits("nurbsCircle1.paperFold", "%s.%s"%(constraint , WA[1]), [[yincrement * loop , 0], [yincrement * (loop + 3), 1]])
-	loop = loop + 1
+constraintManager = RMSpaceSwitch.RMSpaceSwitch()
+constraintManager.RMCreateListConstraintSwitch (drivers, locators,'HatBase',SpaceSwitchName = "DynamicHat", reverse = True)
+constraintManager.RMCreateListConstraintSwitch (drivers, joints ,'HatBase',SpaceSwitchName = "DynamicHat", reverse = False)
 
 
