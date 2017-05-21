@@ -106,7 +106,7 @@ def RMCreateGroupOnObj(Obj, Type="inserted", NameConv = None):
     Group = cmds.group(empty=True)
 
     if NameConv.RMIsNameInFormat(Obj):
-        Group = NameConv.RMRenameBasedOnBaseName(Obj, Group, {})
+        Group = NameConv.RMRenameBasedOnBaseName(Obj, Group, {'objectType': "transform"})
 
     else:
         ValidNameList = Obj.split("_")
