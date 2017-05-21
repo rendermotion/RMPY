@@ -71,7 +71,7 @@ class RMNameConvention(object):
             "guide": 'guide',
             "nub": "nub",
             "skin": "skn",
-            "undefined": "udf",
+            "undefined": "UDF",
             "nurbsCurve": "shp",
             "mesh": "msh",
             "renderMesh": "rmsh",
@@ -140,7 +140,7 @@ class RMNameConvention(object):
             return None
 
     def RMSetFromName(self, ObjName, TextString, Token, mode = "regular"):
-        'Valid Modes are regular and add'
+        'Valid Modes are regular add, and prefix'
         returnTuple = ()
         if (type(ObjName) == str) or (type(ObjName) == unicode):
             ObjectList = [ObjName]
@@ -172,7 +172,8 @@ class RMNameConvention(object):
             ObjectList = ObjName
             returnListType = True
         else:
-            ObjectList = []
+            print 'error not valid object on RMRenameSetFromName'
+            return
         returnList = []
         newName = ""
         for eachObj in ObjectList:
@@ -254,12 +255,11 @@ class RMNameConvention(object):
                 wantedNameDic['name'] = NewName
             NewName = self.RMSetNameInFormat(wantedNameDic)
             Names = cmds.rename(Names, NewName)
-            if not 'objectType' in wantedNameDic :
+            if 'objectType' not in wantedNameDic:
                 NewNameArray += tuple([self.RMRenameGuessTypeInName(Names)])
-            else :
-                Token = self.RMTokenValidation('objectType', wantedNameDic['objectType'])
-
-                NewNameArray += tuple([self.RMSetFromName(Names,'objectType',Token)])
+            else:
+                Token = self.RMTokenValidation(wantedNameDic['objectType'], 'objectType')
+                NewNameArray += tuple([self.RMRenameSetFromName(Names,Token, 'objectType')])
 
         if len(NewNameArray) == 1:
             return NewNameArray[0]

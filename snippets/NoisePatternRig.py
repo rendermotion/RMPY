@@ -8,17 +8,18 @@ import pprint
 reload (RMRigTools)
 reload (RMRigShapeControls)
 reload (RMGenericRigStructure )
+reload (RMNameConvention)
 
 def getMeshObjects( Objects):
     MeshObjects  = []
     OtherObjects = []
     NameConv=RMNameConvention.RMNameConvention()
     for eachObject in Objects:
-        if NameConv.RMGuessObjType(  eachObject ) == "msh":
+        if NameConv.RMGuessObjType(eachObject) == "msh":
             MeshObjects.append(eachObject)
         else:
             OtherObjects.append(eachObject)
-    return {"meshObjects" : MeshObjects,"other":OtherObjects}
+    return {"meshObjects": MeshObjects,"other":OtherObjects}
 
 def SinglePropRig( Object, referencePositionControl, centerPivot = False):
     #if Object.__class__ == list :
@@ -44,22 +45,21 @@ def SinglePropRig( Object, referencePositionControl, centerPivot = False):
         if centerPivot==True:
             cmds.xform(Ctrl, cp = 1)
         joint = cmds.joint(name = NameList[0]+"jnt")
-    
 
-    Ctrl = NameConv.RMRenameNameInFormat(Ctrl, Type="control")
+    Ctrl = NameConv.RMRenameNameInFormat(Ctrl, {'objectType':"control"})
     ResetGroup = RMRigTools.RMCreateGroupOnObj(Ctrl)
     cmds.parent( ResetGroup , GRS.groups["controls"]["group"] )
     rigJntGrp = cmds.ls("*SimpleRigJoints*")
     if len(rigJntGrp) == 0:
         jointGroup = cmds.group(empty=True,name = "SimpleRigJoints")
-        jointGroup = NameConv.RMRenameNameInFormat (jointGroup)
+        jointGroup = NameConv.RMRenameNameInFormat (jointGroup,{})
         cmds.parent ( jointGroup , GRS.groups["rig"]['group'])
     else:
         jointGroup = rigJntGrp
     if centerPivot!=True:
         RMRigTools.RMAlign ( referencePositionControl, ResetGroup, 3)
 
-    joint = NameConv.RMRenameNameInFormat(joint)
+    joint = NameConv.RMRenameNameInFormat(joint, {})
 
     RMRigTools.RMAlign ( referencePositionControl, joint,3)
     ResetJoint = RMRigTools.RMCreateGroupOnObj(joint)
