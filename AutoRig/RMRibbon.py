@@ -24,14 +24,15 @@ class RMRibbon(object):
         NameConv = RMNameConvention.RMNameConvention()
         plano = cmds.nurbsPlane(ax=[0, 1, 0], p=[(longitud.length()) / 2, 0, 0], w=longitud.length(), lr=.05, d=3, u=8,
                                 v=1, ch=0, name=NameConv.RMSetNameInFormat(
-                Name="%sTo%sPlane" % (NameConv.RMGetAShortName(Object01), NameConv.RMGetAShortName(Object02)),
-                Side=NameConv.RMGetFromName(Object02, "Side"), System="Ribbons"))
+                {'name': "%sTo%sPlane" % (NameConv.RMGetAShortName(Object01), NameConv.RMGetAShortName(Object02)),
+                 'side': NameConv.RMGetFromName(Object02, "side"), 'system': "Ribbons"}))
 
         RMRigTools.RMAlign(Object01, plano[0], 3)
         return plano[0]
 
     # nurbPlaneBetweenObjects("joint1","joint2")
     def RibbonCreation(self, Object01, Object02, foliculeNumber=5):
+        print 'creating riboon in %s and %s'% (Object01, Object02)
         self.baseObjects.append(Object01)
         self.baseObjects.append(Object02)
 
@@ -47,11 +48,11 @@ class RMRibbon(object):
         print "len = %s" % RibbonSize.length()
 
         MainSkeleton = cmds.group(em=True, name=NameConv.RMSetNameInFormat(
-            Name="%sTo%sRibbon" % (NameConv.RMGetAShortName(Object01), NameConv.RMGetAShortName(Object02)),
-            Side=NameConv.RMGetFromName(Object02, "Side"), System="Ribbons"))
-        HairGroup = cmds.group(em=True, name=NameConv.RMSetNameInFormat(
-            Name="%sTo%sHairSystem" % (NameConv.RMGetAShortName(Object01), NameConv.RMGetAShortName(Object02)),
-            Side=NameConv.RMGetFromName(Object02, "Side"), System="Ribbons"))
+            {'name': "%sTo%sRibbon" % (NameConv.RMGetAShortName(Object01), NameConv.RMGetAShortName(Object02)),
+             'side': NameConv.RMGetFromName(Object02, "side"), 'system': "Ribbons"}))
+        HairGroup = cmds.group(em=True, name = NameConv.RMSetNameInFormat(
+            {'name': "%sTo%sHairSystem" % (NameConv.RMGetAShortName(Object01), NameConv.RMGetAShortName(Object02)),
+            'side': NameConv.RMGetFromName(Object02, "side"), 'system': "Ribbons"}))
 
         nstep = 1.0 / (foliculeNumber - 1.0)
         Hys = pm.language.Mel.eval('createNode hairSystem')
@@ -72,12 +73,12 @@ class RMRibbon(object):
         cmds.delete(cmds.listRelatives(Hys, p=True))
         index = 0
         skinedJoints = cmds.group(em=True, name=NameConv.RMSetNameInFormat(
-            Name="%sTo%sskinedJoints" % (NameConv.RMGetAShortName(Object01), NameConv.RMGetAShortName(Object02)),
-            Side=NameConv.RMGetFromName(Object02, "Side"), System="Ribbons"))
+            {'name': "%sTo%sskinedJoints" % (NameConv.RMGetAShortName(Object01), NameConv.RMGetAShortName(Object02)),
+             'side': NameConv.RMGetFromName (Object02, "side"), 'system': "Ribbons"}))
         for eachFolicule in folicules:
             ArrayJoints.append(cmds.joint(name=NameConv.RMSetNameInFormat(
-                Name="%sTo%sRibbonJoints" % (NameConv.RMGetAShortName(Object01), NameConv.RMGetAShortName(Object02)),
-                Side=NameConv.RMGetFromName(Object02, "Side"), System="Ribbons")))
+                {'name': "%sTo%sRibbonJoints" % (NameConv.RMGetAShortName(Object01), NameConv.RMGetAShortName(Object02)),
+                 'side': NameConv.RMGetFromName(Object02, "Side"), 'system': "Ribbons"})))
             RMRigTools.RMAlign(eachFolicule, ArrayJoints[index], 3)
             cmds.parentConstraint(eachFolicule, ArrayJoints[index])
             index += 1
@@ -91,11 +92,11 @@ class RMRibbon(object):
         groupLookAtList = []
 
         GroupControls = cmds.group(empty=True, name=NameConv.RMSetNameInFormat(
-            Name="%sTo%sControls" % (NameConv.RMGetAShortName(Object01), NameConv.RMGetAShortName(Object02)),
-            Side=NameConv.RMGetFromName(Object02, "Side"), System="Ribbons"))
+            {'name': "%sTo%sControls" % (NameConv.RMGetAShortName(Object01), NameConv.RMGetAShortName(Object02)),
+            'side': NameConv.RMGetFromName(Object02, "Side"), 'system': "Ribbons"}))
         GroupJoints = cmds.group(empty=True, name=NameConv.RMSetNameInFormat(
-            Name="%sTo%sGroupJointsLookAt" % (NameConv.RMGetAShortName(Object01), NameConv.RMGetAShortName(Object02)),
-            Side=NameConv.RMGetFromName(Object02, "Side"), System="Ribbons"))
+            {'name': "%sTo%sGroupJointsLookAt" % (NameConv.RMGetAShortName(Object01), NameConv.RMGetAShortName(Object02)),
+            'side': NameConv.RMGetFromName(Object02, "Side"), 'system': "Ribbons"}))
         RigControls = RMRigShapeControls.RMRigShapeControls()
 
         self.allControls.append(GroupControls)
@@ -104,38 +105,37 @@ class RMRibbon(object):
         for iloop in range(3):
             resetControlGroup, control = RigControls.RMCircularControl(Object01, radius=RibbonSize.length() / 3,
                                                                        name=NameConv.RMSetNameInFormat(
-                                                                           Name="%sTo%sCtrl" % (
-                                                                           NameConv.RMGetAShortName(Object01),
-                                                                           NameConv.RMGetAShortName(Object02)),
-                                                                           Side=NameConv.RMGetFromName(Object02,
-                                                                                                       "Side"),
-                                                                           Type='ctrl', System="Ribbons"))
+                                                                       {'name': "%sTo%sCtrl" % (
+                                                                       NameConv.RMGetAShortName(Object01),
+                                                                       NameConv.RMGetAShortName(Object02)),
+                                                                       'side': NameConv.RMGetFromName(Object02, "side"),
+                                                                       'objectType': 'ctrl', 'system': "Ribbons"}))
             controles.append(control)
             resetControles.append(resetControlGroup)
 
             locatorControl = cmds.spaceLocator(name=NameConv.RMSetNameInFormat(
-                Name="%sTo%sLocatorCntrl" % (NameConv.RMGetAShortName(Object01), NameConv.RMGetAShortName(Object02)),
-                Type='spaceLocator', Side=NameConv.RMGetFromName(Object02, "Side"), System="Ribbons"))
+                {'name':"%sTo%sLocatorCntrl" % (NameConv.RMGetAShortName(Object01), NameConv.RMGetAShortName(Object02)),
+                'objectType':'spaceLocator', 'side': NameConv.RMGetFromName(Object02, "Side"), 'system': "Ribbons"}))
             locatorControlesList.append(locatorControl[0])
             RMRigTools.RMAlign(Object01, locatorControl[0], 3)
 
             locatorLookAt = cmds.spaceLocator(name=NameConv.RMSetNameInFormat(
-                Name="%sTo%sLocatorLookAt" % (NameConv.RMGetAShortName(Object01), NameConv.RMGetAShortName(Object02)),
-                Type='spaceLocator', Side=NameConv.RMGetFromName(Object02, "Side"), System="Ribbons"))
+                {'name': "%sTo%sLocatorLookAt" % (NameConv.RMGetAShortName(Object01), NameConv.RMGetAShortName(Object02)),
+                'objectType': 'spaceLocator', 'side': NameConv.RMGetFromName(Object02, "side"), 'system': "Ribbons"}))
             locatorLookAtList.append(locatorLookAt[0])
             RMRigTools.RMAlign(Object01, locatorLookAt[0], 3)
 
             cmds.select(clear=True)
 
             jointsLookAt = cmds.joint(name=NameConv.RMSetNameInFormat(
-                Name="%sTo%sJointsLookAt" % (NameConv.RMGetAShortName(Object01), NameConv.RMGetAShortName(Object02)),
-                Type='joint', Side=NameConv.RMGetFromName(Object02, "Side"), System="Ribbons"))
+                {'name': "%sTo%sJointsLookAt" % (NameConv.RMGetAShortName(Object01), NameConv.RMGetAShortName(Object02)),
+                'objectType':'joint', 'side': NameConv.RMGetFromName(Object02, "side"), 'system':"Ribbons"}))
             jointsLookAtList.append(jointsLookAt)
             RMRigTools.RMAlign(Object01, jointsLookAt, 3)
 
             groupLookAt = cmds.group(empty=True, name=NameConv.RMSetNameInFormat(
-                Name="%sTo%sGroupLookAt" % (NameConv.RMGetAShortName(Object01), NameConv.RMGetAShortName(Object02)),
-                Type='transform', Side=NameConv.RMGetFromName(Object02, "Side"), System="Ribbons"))
+                {'name': "%sTo%sGroupLookAt" % (NameConv.RMGetAShortName(Object01), NameConv.RMGetAShortName(Object02)),
+                'objectType': 'transform', 'side':NameConv.RMGetFromName(Object02, "side"), 'system':"Ribbons"}))
             self.kinematics.append(groupLookAt)
             groupLookAtList.append(groupLookAt)
             RMRigTools.RMAlign(Object01, groupLookAt, 3)
