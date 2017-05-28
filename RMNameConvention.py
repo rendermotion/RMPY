@@ -3,7 +3,7 @@ import maya.cmds as cmds
 
 
 class RMNameConvention(object):
-    def __init__(self, DefaultValues = ["Character", "C", "Object", "UDF", 'Rig'], convention = None):
+    def __init__(self, DefaultValues = ["Character", "MD", "Object", "UDF", 'Rig'], convention = None):
         if convention == None:
             self.NameConvention = {
                 "lastName": 0,
@@ -17,7 +17,7 @@ class RMNameConvention(object):
             self.NameConvention = convention
 
         '''
-        self.validation = {'side': ['LF', 'RH', 'C'],'objectType' : ['JNT','SKNJNT','NUB','SKN','UDF','SHP','MSH','RMSH','GRP','PNC',
+        self.validation = {'side': ['LF', 'RH', 'MD'],'objectType' : ['JNT','SKNJNT','NUB','SKN','UDF','SHP','MSH','RMSH','GRP','PNC',
                                                                 'ORC','PRC','PVC','CTRL','pnt','IKH','IKF','RVS','MULT','CND','BLT','CUI',
                                                                 'DBTW','CLS','PMA','B2A','MPH','FFD','BS','AIM','CFME','LFT','PSFI','GUIDE']}
         self.translator = {'objectType':{
@@ -56,10 +56,10 @@ class RMNameConvention(object):
                             "loft": "LFT",
                             "pointOnSurfaceInfo": "PSFI"
                             },
-                            'side':{'left':'LF', 'right':'RH', 'middle':'M'}
+                            'side':{'left':'LF', 'right':'RH', 'middle':'MD'}
                             }
         '''
-        self.validation = {'side': ['LF', 'RH', 'C'],
+        self.validation = {'side': ['LF', 'RH', 'MD'],
                            'objectType': ['jnt', 'sknjnt', 'nub', 'skn', 'UDF', 'shp', 'msh', 'rmsh', 'grp', 'pnc',
                                           'orc', 'prc', 'pvc', 'ctr', 'pnt', 'ikh', 'ikf', 'rvs', 'mult', 'cnd', 'blt',
                                           'cui',
@@ -101,7 +101,7 @@ class RMNameConvention(object):
             "loft": "lft",
             "pointOnSurfaceInfo": "psfi"
         },
-            'side': {'left': 'LF', 'right': 'RH', 'middle': 'M'}
+            'side': {'left': 'LF', 'right': 'RH', 'middle': 'MD'}
         }
 
 
