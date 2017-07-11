@@ -10,7 +10,7 @@ except:
     from shiboken2 import wrapInstance 
 import maya.mel as mel
 import os
-import RMPY.RMUncategorized
+from RMPY import RMUncategorized
 from RMPY.ui import RMFormAutorig
 from RMPY.AutoRig import RMAutoRig
 from RMPY import RMNameConvention
@@ -74,13 +74,13 @@ class Main(QtGui.QDialog):
     def MirrorSelection(self , ObjectList):
         for eachObject in ObjectList:
             ObjectTransformDic = RMUncategorized.ObjectTransformDic( [eachObject] )
-            Side = self.NameConv.RMGetFromName( eachObject , "Side")
+            Side = self.NameConv.RMGetFromName( eachObject , "side")
             if Side == "RH":
-                OpositObject = self.NameConv.RMSetFromName( eachObject , "LF" , "Side")
+                OpositObject = self.NameConv.RMSetFromName( eachObject , "LF" , "side")
                 if cmds.objExists(OpositObject):
                     RMUncategorized.SetObjectTransformDic({OpositObject : ObjectTransformDic[eachObject]}, MirrorTranslateX = 1 , MirrorTranslateY = 1 , MirrorTranslateZ = -1 , MirrorRotateX = -1 , MirrorRotateY = -1 , MirrorRotateZ = 1)
             else:
-                OpositObject = self.NameConv.RMSetFromName( eachObject , "RH" , "Side")
+                OpositObject = self.NameConv.RMSetFromName( eachObject , "RH" , "side")
                 if cmds.objExists(OpositObject):
                     RMUncategorized.SetObjectTransformDic({OpositObject : ObjectTransformDic[eachObject]}, MirrorTranslateX = 1 , MirrorTranslateY = 1 , MirrorTranslateZ = -1 , MirrorRotateX = -1 , MirrorRotateY = -1 , MirrorRotateZ = 1)
     def ClavicleSpaceSwitchBtnPressed(self):
