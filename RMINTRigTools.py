@@ -25,6 +25,7 @@ def getMayaWindow():
 class Main(QtGui.QDialog):
     def __init__(self, parent=None):
         super(Main, self).__init__(parent=getMayaWindow())
+        self.rigTools = RMRigTools.RMRigTools()
         self.ui = RMFormRigTools.Ui_Form()
         self.ui.setupUi(self)
         self.setWindowTitle('RM Maya Rig Tools')
@@ -122,7 +123,7 @@ class Main(QtGui.QDialog):
 
     def JointsOnPointsBtnPressed(self):
         selection = cmds.ls(selection=True)
-        RMRigTools.RMCreateBonesAtPoints(selection, selection, 3)
+        self.rigTools.RMCreateBonesAtPoints(selection)
 
     # RMCreateBonesAtPoints $temp;''')
     def AlignPositionBtnPressed(self):
