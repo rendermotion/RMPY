@@ -9,12 +9,13 @@ from RMPY import RMRigTools
 from RMPY.AutoRig import RMGenericJointRig
 from RMPY.GenericRig import RMProgressiveConstraint
 from RMPY.GenericRig import RMUnfoldRig
-
 # sys.path.append(os.path.dirname(__file__))
 from RMPY.ui import RMFormRigTools
 from RMPY import RMUncategorized
 
 from RMPY.AutoRig import RMRigFK
+
+reload(RMRigFK)
 
 
 def getMayaWindow():

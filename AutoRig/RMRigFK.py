@@ -2,6 +2,7 @@ import maya.cmds as cmds
 from RMPY import RMRigTools
 from RMPY import RMRigShapeControls
 from RMPY import RMNameConvention
+reload(RMRigShapeControls)
 
 
 class RMRigFK(object):

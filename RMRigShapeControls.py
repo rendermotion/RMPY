@@ -77,7 +77,7 @@ class RMRigShapeControls(object):
                                     centered=centered)
 
         if name == '' and self.NameConv.RMIsNameInFormat(Obj):
-            Ctrl = self.NameConv.RMRenameBasedOnBaseName(Obj, Ctrl)
+            Ctrl = self.NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {})
         else:
             Ctrl = self.NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {'name': Ctrl})
 
