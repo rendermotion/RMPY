@@ -1,19 +1,23 @@
-import sys
 import maya.cmds as cmds
+from maya.app.general.mayaMixin import MayaQWidgetDockableMixin
 import maya.OpenMayaUI as mui
-#from PySide import QtGui, QtCore
-from PySide2 import QtWidgets
-#RMB08
-#627tpw
 try:
-    from shiboken import wrapInstance
-except:
+    from PySide2.QtCore import *
+    from PySide2.QtGui import *
+    from PySide2.QtWidgets import *
+    from PySide2 import __version__
     from shiboken2 import wrapInstance
+
+except ImportError:
+    from PySide.QtCore import *
+    from PySide.QtGui import *
+    from PySide import __version__
+    from shiboken import wrapInstance
 
 import maya.mel as mel
 import os
 from RMPY import RMUncategorized
-from RMPY.ui import RMFormAutorig
+from RMPY.Tools.QT5.ui import RMFormAutorig
 from RMPY.AutoRig import RMAutoRig
 from RMPY import RMNameConvention
 from RMPY.AutoRig.snippets import CorrectPoleVectorsOrientation
@@ -22,28 +26,14 @@ from RMPY.AutoRig.snippets import SkeletonHands
 from RMPY.AutoRig.snippets import supportScaleOnRig
 from RMPY.AutoRig.snippets import FetTipRotation
 reload(RMAutoRig)
-#reload(RMFormAutorig)
-#def getMayaWindow():
-#    ptr = mui.MQtUtil.mainWindow()
-#    return wrapInstance(long(ptr), QtGui.QMainWindow)
+reload(RMFormAutorig)
+def getMayaWindow():
+    ptr = mui.MQtUtil.mainWindow()
+    return wrapInstance(long(ptr), QMainWindow)
 
-def getMainWindow():
-    """
-    Get Main window
-    :return: main window 
-    """
-    mainWindow = QtWidgets.QApplication.activeWindow()
-    while True:
-        parentWin = mainWindow.parent()
-        if parentWin:
-            mainWindow = parentWin
-        else:
-            break
-    return mainWindow
-
-class Main(MayaQWidgetDockableMixin,QtGui.QDialog):
+class main(MayaQWidgetDockableMixin,QDialog):
     def __init__(self, NameConv=None, parent=None):
-        super(Main, self).__init__(parent = getMainWindow())
+        super(main, self).__init__(parent = getMayaWindow())
         self.ui=RMFormAutorig.Ui_Form()
         self.ui.setupUi(self)
         self.setWindowTitle('AutoRig')
@@ -106,5 +96,5 @@ class Main(MayaQWidgetDockableMixin,QtGui.QDialog):
     def SkeletonHandsBtnPressed(self):
         SkeletonHands.skeletonHands()
 if __name__ == '__main__':
-    w = Main()
+    w = main()
     w.show()
