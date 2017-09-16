@@ -166,6 +166,24 @@ def RMTurnToOne(curveArray):
             cmds.parent(eachShape, curveArray[0], shape=True, add=True)
             cmds.delete(eachCurve)
 
+def fixShapeName(object_list):
+    """
+    :param object_list: receives a list of an object name, and renames the shapes to match the objects name.
+    :return:no return value 
+    """
+    for each_object in object_list:
+        shapes = each_object.getShapes()
+        for each_shape in shapes:
+            index = 0
+            if each_shape.intermediateObject.get():
+                print 'found intermediate'
+            else:
+                print 'found Shape'
+                if index > 0:
+                    each_shape.rename('%sShape%s' % (each_object, index))
+                else:
+                    each_shape.rename('%sShape' % (each_object))
+                index += 1
 
 def RMCreateCubeLine(height, length, width, centered=False, offsetX=0, offsetY=0, offsetZ=0, name=""):
     if centered == True:

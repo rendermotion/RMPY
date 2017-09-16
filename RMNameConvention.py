@@ -1,6 +1,55 @@
 import re
 import maya.cmds as cmds
 
+class validator(object):
+    def __init__(self):
+        self._translator={}
+        self._validator =[]
+        self._default = ''
+    @property
+    def translator(self):
+        return self.translator
+
+    @translator.setter
+    def translator(self,value):
+        self.translator = value
+        self._validator = []
+        for each_value in self._translator:
+            each._validator.append(self._translator[each_value])
+
+    def validate(self, value):
+        if value in self._validator:
+            return value
+        elif value in self._translator:
+            return self._translator[value]
+        elif self._translator=={}:
+            return value
+        elif self._default=='':
+            raise RuntimeError('no valid validator, assign a default value, or a dictionary')
+        else:
+            return self._default
+    @property
+    def default(self):
+        return  self._default
+    @default.setter
+    def default(self,new_value):
+        self._default = self.validate(new_value)
+    @classmethod
+    def validator_from_default(cls,default_value):
+        new_instance = cls()
+        new_instance.default = default_value
+        return new_instance
+    @classmethod
+    def validator_from_dictionary(cls,translator_dictionary):
+        new_instance = cls()
+        new_instance.translator = translator_dictionary
+        return new_instance
+    @classmethod
+    def validator_from_dictionary_default(cls,translator_dictionary, default_value):
+        new_instance = cls()
+        new_instance.translator = translator_dictionary
+        new_instance.default = default_value
+        return new_instance
 
 class RMNameConvention(object):
     def __init__(self, DefaultValues = ["Character", "MD", "Object", "UDF", 'Rig'], convention = None):
@@ -282,7 +331,7 @@ class RMNameConvention(object):
             print 'Not same token number'
             return False
 
-    def RMGuessObjType(self, Obj):
+    def RMGuessObjType (self, Obj):
         ObjType = cmds.objectType(Obj)
         ObjType = self.RMTokenValidation(ObjType,'objectType')
 
