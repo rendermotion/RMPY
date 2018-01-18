@@ -8,15 +8,17 @@ try:
     from PySide2.QtWidgets import *
     from PySide2 import __version__
     from shiboken2 import wrapInstance
+    from RMPY.Tools.QT5.ui import FormFacialLink
 
 except ImportError:
     from PySide.QtCore import *
     from PySide.QtGui import *
     from PySide import __version__
     from shiboken import wrapInstance
+    from RMPY.Tools.QT4.ui import FormFacialLink
 import maya.mel as mel
 import os
-from RMPY.Tools.QT5.ui  import RMFormFacialLink
+
 from RMPY.FacialRig import GenericFacialRig
 
 reload(GenericFacialRig)
@@ -31,7 +33,7 @@ def getMayaWindow():
 class main(MayaQWidgetDockableMixin, QDialog):
     def __init__(self, parent=None):
         super(main, self).__init__(parent=getMayaWindow())
-        self.ui = RMFormFacialLink.Ui_Form()
+        self.ui = FormFacialLink.Ui_Form()
         self.ui.setupUi(self)
         self.setWindowTitle('Facial Link')
 

@@ -7,26 +7,28 @@ try:
     from PySide2.QtWidgets import *
     from PySide2 import __version__
     from shiboken2 import wrapInstance
+    from RMPY.Tools.QT5.ui import FormBipedRig
 
 except ImportError:
     from PySide.QtCore import *
     from PySide.QtGui import *
     from PySide import __version__
     from shiboken import wrapInstance
+    from RMPY.Tools.QT4.ui import FormBipedRig
 
 import maya.mel as mel
 import os
 from RMPY import RMUncategorized
-from RMPY.Tools.QT5.ui import RMFormAutorig
 from RMPY.AutoRig import RMAutoRig
 from RMPY import RMNameConvention
 from RMPY.AutoRig.snippets import CorrectPoleVectorsOrientation
 from RMPY.AutoRig.snippets import RedoClavicleSpaceSwitch
 from RMPY.AutoRig.snippets import SkeletonHands
 from RMPY.AutoRig.snippets import supportScaleOnRig
-from RMPY.AutoRig.snippets import FetTipRotation
+reload(FormBipedRig)
 reload(RMAutoRig)
-reload(RMFormAutorig)
+
+from RMPY.AutoRig.snippets import FetTipRotation
 def getMayaWindow():
     ptr = mui.MQtUtil.mainWindow()
     return wrapInstance(long(ptr), QMainWindow)
@@ -34,7 +36,7 @@ def getMayaWindow():
 class main(MayaQWidgetDockableMixin,QDialog):
     def __init__(self, NameConv=None, parent=None):
         super(main, self).__init__(parent = getMayaWindow())
-        self.ui=RMFormAutorig.Ui_Form()
+        self.ui=FormBipedRig.Ui_Form()
         self.ui.setupUi(self)
         self.setWindowTitle('AutoRig')
 
@@ -74,21 +76,25 @@ class main(MayaQWidgetDockableMixin,QDialog):
         self.MirrorSelection (selection)
 
     def CreateRigBtnPressed(self):
-        BipedRig = RMAutoRig.RMBiped()
-        BipedRig.CreateBipedRig()
+        FormBipedRig = RMAutoRig.RMBiped()
+        FormBipedRig.CreateBipedRig()
 
     def MirrorSelection(self , ObjectList):
         for eachObject in ObjectList:
-            ObjectTransformDic = RMUncategorized.ObjectTransformDic( [eachObject] )
-            Side = self.NameConv.RMGetFromName( eachObject , "side")
-            if Side == "RH":
-                OpositObject = self.NameConv.RMSetFromName( eachObject , "LF" , "side")
+            ObjectTransformDic = RMUncategorized.ObjectTransformDic([eachObject])
+            Side = self.NameConv.RMGetFromName(eachObject , "side")
+            if Side == "R":
+                OpositObject = self.NameConv.RMSetFromName(eachObject, "L", "side")
                 if cmds.objExists(OpositObject):
                     RMUncategorized.SetObjectTransformDic({OpositObject : ObjectTransformDic[eachObject]}, MirrorTranslateX = 1 , MirrorTranslateY = 1 , MirrorTranslateZ = -1 , MirrorRotateX = -1 , MirrorRotateY = -1 , MirrorRotateZ = 1)
+                else:
+                    print 'object not found %s'%OpositObject
             else:
-                OpositObject = self.NameConv.RMSetFromName( eachObject , "RH" , "side")
+                OpositObject = self.NameConv.RMSetFromName(eachObject , "R", "side")
                 if cmds.objExists(OpositObject):
                     RMUncategorized.SetObjectTransformDic({OpositObject : ObjectTransformDic[eachObject]}, MirrorTranslateX = 1 , MirrorTranslateY = 1 , MirrorTranslateZ = -1 , MirrorRotateX = -1 , MirrorRotateY = -1 , MirrorRotateZ = 1)
+                else:
+                    print 'object not found %s' % OpositObject
     def ClavicleSpaceSwitchBtnPressed(self):
         RedoClavicleSpaceSwitch.clavicleSpaceSwitch()
     def PoleVectorBtnPressed(self):

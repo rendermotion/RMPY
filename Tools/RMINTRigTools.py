@@ -8,12 +8,13 @@ try:
     from PySide2.QtWidgets import *
     from PySide2 import __version__
     from shiboken2 import wrapInstance
-
+    from RMPY.Tools.QT5.ui  import FormRigTools
 except ImportError:
     from PySide.QtCore import *
     from PySide.QtGui import *
     from PySide import __version__
     from shiboken import wrapInstance
+    from RMPY.Tools.QT4.ui import FormRigTools
 import maya.mel as mel
 import os
 from RMPY import RMRigTools
@@ -21,7 +22,7 @@ from RMPY.AutoRig import RMGenericJointRig
 from RMPY.GenericRig import RMProgressiveConstraint
 from RMPY.GenericRig import RMUnfoldRig
 # sys.path.append(os.path.dirname(__file__))
-from RMPY.Tools.QT5.ui  import RMFormRigTools
+
 from RMPY import RMUncategorized
 
 from RMPY.AutoRig import RMRigFK
@@ -34,11 +35,11 @@ def getMayaWindow():
     return wrapInstance(long(ptr), QMainWindow)
 
 
-class main(MayaQWidgetDockableMixin, QDialog):
+class Main(MayaQWidgetDockableMixin, QDialog):
     def __init__(self, parent=None):
-        super(main, self).__init__(parent=getMayaWindow())
+        super(Main, self).__init__(parent=getMayaWindow())
         self.rigTools = RMRigTools.RMRigTools()
-        self.ui = RMFormRigTools.Ui_Form()
+        self.ui = FormRigTools.Ui_Form()
         self.ui.setupUi(self)
         self.setWindowTitle('RM Maya Rig Tools')
         self.ui.RenameTool.clicked.connect(self.RenameToolBtnPressed)

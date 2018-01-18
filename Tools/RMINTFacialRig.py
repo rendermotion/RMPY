@@ -8,17 +8,18 @@ try:
     from PySide2.QtWidgets import *
     from PySide2 import __version__
     from shiboken2 import wrapInstance
-
+    from RMPY.Tools.QT5.ui  import FormFacialRig
 except ImportError:
     from PySide.QtCore import *
     from PySide.QtGui import *
     from PySide import __version__
     from shiboken import wrapInstance
+    from RMPY.Tools.QT4.ui import FormFacialRig
 import maya.mel as mel
 import os
 from RMPY import RMblendShapesTools
-from RMPY.Tools.QT5.ui  import RMFormFacialRig
-reload (RMFormFacialRig)
+
+reload (FormFacialRig)
 from RMPY import RMRigTools
 from RMPY.FacialRig import FacialConfigurationNew as FacialConfiguration
 
@@ -26,7 +27,8 @@ from RMPY import RMParametersManager
 reload (FacialConfiguration)
 reload (RMblendShapesTools)
 
-Dictionaries =  {'lidShapes'        :FacialConfiguration.lidShapes,#0
+Dictionaries = {
+                 'lidShapes'        :FacialConfiguration.lidShapes,#0
                  'EyeBallPupil'     :FacialConfiguration.EyeBallPupil,#1
                  'Cristaline'       :FacialConfiguration.Cristaline,#2
                  'EyeJawJoints'     :FacialConfiguration.EyeJawJoints,#4
@@ -38,7 +40,7 @@ Dictionaries =  {'lidShapes'        :FacialConfiguration.lidShapes,#0
                  'Furrow'           :FacialConfiguration.Furrow,#9
                  #'secondaryEyeBrow' :FacialConfiguration.secondaryEyeBrow,#10
                  'EyeBrow'          :FacialConfiguration.EyeBrow
-                 }
+                }
 
  
 def getMayaWindow():
@@ -48,7 +50,7 @@ def getMayaWindow():
 class main(MayaQWidgetDockableMixin,QDialog):
     def __init__(self, parent=None):
         super(main,self).__init__(parent=getMayaWindow())
-        self.ui=RMFormFacialRig.Ui_Form()
+        self.ui=FormFacialRig.Ui_Form()
         self.ui.setupUi(self)
         self.setWindowTitle('FacialRig')
         self.ui.CheckBtn.clicked.connect(self.CheckBtnPressed)

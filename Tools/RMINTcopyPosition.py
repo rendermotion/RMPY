@@ -8,20 +8,20 @@ try:
     from PySide2.QtWidgets import *
     from PySide2 import __version__
     from shiboken2 import wrapInstance
-
+    from RMPY.Tools.QT5.ui import FormCopyPosition
 except ImportError:
     from PySide.QtCore import *
     from PySide.QtGui import *
     from PySide import __version__
     from shiboken import wrapInstance
+    from RMPY.Tools.QT4.ui import FormCopyPosition
 import maya.mel as mel
 import os
 import inspect
 # sys.path.append(os.path.dirname(__file__))
-from RMPY.Tools.QT5.ui import RMFormCopyPosition
 import json
 
-reload(RMFormCopyPosition)
+reload(FormCopyPosition)
 from RMPY import RMUncategorized
 
 reload(RMUncategorized)
@@ -41,7 +41,7 @@ def getMayaWindow():
 class main(MayaQWidgetDockableMixin, QDialog):
     def __init__(self, parent=None):
         super(main, self).__init__(parent=getMayaWindow())
-        self.ui = RMFormCopyPosition.Ui_Form()
+        self.ui = FormCopyPosition.Ui_Form()
         self.ui.setupUi(self)
         self.setWindowTitle('RM Transform Tools ')
         self.Directory = os.path.expanduser("~")

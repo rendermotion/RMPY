@@ -1,4 +1,4 @@
-import maya.cmds as cmds
+import pymel.core as pm
 import maya.api.OpenMaya as om
 from RMPY import RMNameConvention
 reload(RMNameConvention)
@@ -15,7 +15,8 @@ class RMSpaceSwitch(object):
         self.AfectedObjectList = []
         self.SpaceObjectsList = []
 
-    def CreateSpaceSwitchReverse(self, AfectedObject, SpaceObjects, ControlObject, Name = "spaceSwitch", constraintType = "parent", mo = True, sswtype = "enum"): #
+    def CreateSpaceSwitchReverse(self, AfectedObject, SpaceObjects, ControlObject, Name = "spaceSwitch",
+                                 constraintType = "parent", mo = True, sswtype = "enum"):
         '''
         Creates a simple space Switch that uses a reverse for simple solution it can only hold 2 spaces
         '''
@@ -36,44 +37,44 @@ class RMSpaceSwitch(object):
 
                 self.AddNumericParameter( ControlObject, Name = Name)
 
-            reverse = cmds.shadingNode('reverse', asUtility=True, name = Name + "SWReverse")
-            multiply = cmds.shadingNode('multiplyDivide', asUtility=True, name = Name + "SWMultDiv")
+            reverse = pm.shadingNode('reverse', asUtility=True, name = Name + "SWReverse")
+            multiply = pm.shadingNode('multiplyDivide', asUtility=True, name = Name + "SWMultDiv")
 
-            #cmds.connectAttr(ControlObject + "." + Name, reverse + ".inputX")
-            cmds.connectAttr(ControlObject + "." + Name, multiply + ".input1X")
-            cmds.setAttr(multiply + ".input2X", 10)
-            cmds.setAttr(multiply + ".operation", 2)
-            cmds.connectAttr(multiply + ".outputX", reverse + ".inputX")
+            #pm.connectAttr(ControlObject + "." + Name, reverse + ".inputX")
+            pm.connectAttr(ControlObject + "." + Name, multiply + ".input1X")
+            pm.setAttr(multiply + ".input2X", 10)
+            pm.setAttr(multiply + ".operation", 2)
+            pm.connectAttr(multiply + ".outputX", reverse + ".inputX")
             
             for eachObject in SpaceObjects:
                 if constraintType == "point":
-                    parentConstraint = cmds.pointConstraint (eachObject, AfectedObject, mo = mo, name = AfectedObject + "SpaceSwitchConstraint")
-                    WA = cmds.pointConstraint (parentConstraint, q = True, weightAliasList = True)
+                    parentConstraint = pm.pointConstraint(eachObject, AfectedObject, mo = mo, name = AfectedObject + "SpaceSwitchConstraint")
+                    WA = pm.pointConstraint (parentConstraint, q = True, weightAliasList = True)
                 elif constraintType == "orient":
-                    parentConstraint = cmds.orientConstraint (eachObject, AfectedObject, mo = mo, name = AfectedObject + "SpaceSwitchConstraint")
-                    WA = cmds.orientConstraint (parentConstraint, q = True, weightAliasList = True)
+                    parentConstraint = pm.orientConstraint (eachObject, AfectedObject, mo = mo, name = AfectedObject + "SpaceSwitchConstraint")
+                    WA = pm.orientConstraint (parentConstraint, q = True, weightAliasList = True)
                 elif constraintType == "parent":
-                    parentConstraint = cmds.parentConstraint (eachObject, AfectedObject, mo = mo, name = AfectedObject + "SpaceSwitchConstraint")
-                    WA = cmds.parentConstraint (parentConstraint, q = True, weightAliasList = True)
+                    parentConstraint = pm.parentConstraint (eachObject, AfectedObject, mo = mo, name = AfectedObject + "SpaceSwitchConstraint")
+                    WA = pm.parentConstraint (parentConstraint, q=True, weightAliasList=True)
             
-            cmds.setAttr("%s.interpType"%parentConstraint[0] , 0)
+            pm.setAttr("%s.interpType"%parentConstraint , 0)
 
             if self.NameConv.RMIsNameInFormat (AfectedObject):
-                reverse = self.NameConv.RMRenameBasedOnBaseName(AfectedObject, reverse, {'name': reverse})
-                multiply = self.NameConv.RMRenameBasedOnBaseName(AfectedObject, multiply,{'name': multiply})
-                parentConstraint[0] = self.NameConv.RMRenameBasedOnBaseName(AfectedObject, parentConstraint[0]
+                self.NameConv.RMRenameBasedOnBaseName(AfectedObject, reverse, {'name': reverse})
+                self.NameConv.RMRenameBasedOnBaseName(AfectedObject, multiply,{'name': multiply})
+                self.NameConv.RMRenameBasedOnBaseName(AfectedObject, parentConstraint
                                                                             , {'name': Name})
 
             else:
-                reverse = self.NameConv.RMRenameNameInFormat(reverse, {})
-                multiply = self.NameConv.RMRenameNameInFormat(multiply, {})
-                parentConstraint[0] = self.NameConv.RMRenameNameInFormat(parentConstraint[0], {})
+                self.NameConv.RMRenameNameInFormat(reverse, {})
+                self.NameConv.RMRenameNameInFormat(multiply, {})
+                self.NameConv.RMRenameNameInFormat(parentConstraint, {})
 
-            cmds.connectAttr( multiply + ".outputX", parentConstraint[0] + "." + WA[1])
-            cmds.connectAttr( reverse  + ".outputX", parentConstraint[0]+ "." + WA[0])
+            pm.connectAttr( multiply + ".outputX", WA[1])
+            pm.connectAttr( reverse  + ".outputX", WA[0])
             
-            #cmds.connectAttr(ControlObject + "." + Name, parentConstraint[0] + "." + WA[1])
-            #cmds.connectAttr(reverse + ".outputX", parentConstraint[0] + "." + WA[0])
+            #pm.connectAttr(ControlObject + "." + Name, parentConstraint[0] + "." + WA[1])
+            #pm.connectAttr(reverse + ".outputX", parentConstraint[0] + "." + WA[0])
 
 
     def CreateSpaceSwitch(self, AfectedObject, SpaceObjects, ControlObject, Name = "spaceSwitch",constraintType = "parent", mo = True):
@@ -91,53 +92,53 @@ class RMSpaceSwitch(object):
         index = 0
         for eachObject in SpaceObjects:
             if constraintType == "point":
-                parentConstraint = cmds.pointConstraint (eachObject, AfectedObject, mo = mo, name = self.NameConv.RMGetAShortName(AfectedObject) + "SpaceSwitchConstraint")
+                parentConstraint = pm.pointConstraint (eachObject, AfectedObject, mo = mo, name = self.NameConv.RMGetAShortName(AfectedObject) + "SpaceSwitchConstraint")
             
             elif constraintType == "orient":
-                parentConstraint = cmds.orientConstraint (eachObject, AfectedObject, mo = mo, name = self.NameConv.RMGetAShortName(AfectedObject) + "SpaceSwitchConstraint")
+                parentConstraint = pm.orientConstraint (eachObject, AfectedObject, mo = mo, name = self.NameConv.RMGetAShortName(AfectedObject) + "SpaceSwitchConstraint")
             
             else:
-                parentConstraint = cmds.parentConstraint (eachObject, AfectedObject, mo = mo, name = self.NameConv.RMGetAShortName(AfectedObject) + "SpaceSwitchConstraint")
+                parentConstraint = pm.parentConstraint (eachObject, AfectedObject, mo = mo, name = self.NameConv.RMGetAShortName(AfectedObject) + "SpaceSwitchConstraint")
 
-            Switch = cmds.shadingNode('condition', asUtility=True, name = Name + "SWCondition")
-            cmds.connectAttr(ControlObject + "." + Name, Switch + ".firstTerm")
-            cmds.setAttr (Switch +".secondTerm", index)
-            cmds.setAttr (Switch +".operation", 0)
-            cmds.setAttr (Switch +".colorIfTrueR", 1)
-            cmds.setAttr (Switch +".colorIfFalseR", 0)
+            Switch = pm.shadingNode('condition', asUtility=True, name = Name + "SWCondition")
+            pm.connectAttr(ControlObject + "." + Name, Switch + ".firstTerm")
+            pm.setAttr (Switch +".secondTerm", index)
+            pm.setAttr (Switch +".operation", 0)
+            pm.setAttr (Switch +".colorIfTrueR", 1)
+            pm.setAttr (Switch +".colorIfFalseR", 0)
             if constraintType == "point":
-                WA = cmds.pointConstraint (parentConstraint, q = True, weightAliasList = True)
-                TL = cmds.pointConstraint (parentConstraint, q = True, targetList = True)
+                WA = pm.pointConstraint (parentConstraint, q = True, weightAliasList = True)
+                TL = pm.pointConstraint (parentConstraint, q = True, targetList = True)
             elif constraintType == "orient":
-                WA = cmds.orientConstraint (parentConstraint, q = True, weightAliasList = True)
-                TL = cmds.orientConstraint (parentConstraint, q = True, targetList = True)
+                WA = pm.orientConstraint (parentConstraint, q = True, weightAliasList = True)
+                TL = pm.orientConstraint (parentConstraint, q = True, targetList = True)
             else:
-                WA = cmds.parentConstraint (parentConstraint, q = True, weightAliasList = True)
-                TL = cmds.parentConstraint (parentConstraint, q = True, targetList = True)
+                WA = pm.parentConstraint (parentConstraint, q = True, weightAliasList = True)
+                TL = pm.parentConstraint (parentConstraint, q = True, targetList = True)
 
-            cmds.connectAttr (Switch + ".outColorR", parentConstraint[0] + "." + WA[index])
+            pm.connectAttr (Switch + ".outColorR", WA[index])
             if self.NameConv.RMIsNameInFormat(AfectedObject):
-                Switch = self.NameConv.RMRenameBasedOnBaseName(AfectedObject, Switch, {'name': Switch})
+                self.NameConv.RMRenameBasedOnBaseName(AfectedObject, Switch, {'name': Switch})
             else:
-                Switch = self.NameConv.RMRenameNameInFormat(Switch, {})
+                self.NameConv.RMRenameNameInFormat(Switch, {})
             index += 1
         
         if self.NameConv.RMIsNameInFormat(AfectedObject):
-            parentConstraint[0] = self.NameConv.RMRenameBasedOnBaseName(AfectedObject,parentConstraint[0], {'name': parentConstraint[0]})
+            self.NameConv.RMRenameBasedOnBaseName(AfectedObject,parentConstraint, {'name': parentConstraint})
         else:
-            parentConstraint[0] = self.NameConv.RMRenameNameInFormat(parentConstraint[0], {})
+            self.NameConv.RMRenameNameInFormat(parentConstraint, {})
     
     def IsSpaceSwitch(self, Control, SpaceSwitchName = "spaceSwitch"):
-        AttributeList = cmds.listAttr(Control)
+        AttributeList = pm.listAttr(Control)
         if SpaceSwitchName  in AttributeList:
-            if cmds.getAttr (Control + "." + SpaceSwitchName, type = True) == 'enum':
-                Connections = cmds.listConnections (Control + "." + SpaceSwitchName)
+            if pm.getAttr (Control + "." + SpaceSwitchName, type = True) == 'enum':
+                Connections = pm.listConnections (Control + "." + SpaceSwitchName)
                 if Connections != None:
                     for eachConnection in Connections:
-                        if cmds.objectType(eachConnection) == 'condition':
-                            ConstraintsConnections = cmds.listConnections(eachConnection+'.outColorR')
+                        if pm.objectType(eachConnection) == 'condition':
+                            ConstraintsConnections = pm.listConnections(eachConnection+'.outColorR')
                             for eachConstraint in ConstraintsConnections:
-                                if cmds.objectType(eachConstraint) in ['parentConstraint', 'orientConstraint', 'orientConstraint']:
+                                if pm.objectType(eachConstraint) in ['parentConstraint', 'orientConstraint', 'orientConstraint']:
                                     return True
         return False
 
@@ -157,9 +158,11 @@ class RMSpaceSwitch(object):
         SpaceSwDic = self.GetSpaceSwitchDic(ControlObject,SpaceSwitchName = SpaceSwitchName)
         index = 0
         for eachEnum in SpaceSwDic['enums']:
-            parentConstraint = cmds.parentConstraint (SpaceSwDic['enums'][eachEnum]['object'], AfectedObject, mo = True, name = self.NameConv.RMGetAShortName(AfectedObject) + "SpaceSwitchConstraint")
-            WA = cmds.parentConstraint (parentConstraint[0], q = True, weightAliasList = True)
-            cmds.connectAttr (SpaceSwDic['enums'][eachEnum]['condition'] + ".outColorR", parentConstraint[0] + "." + WA[index])
+            parentConstraint = pm.parentConstraint (SpaceSwDic['enums'][eachEnum]['object'], AfectedObject,
+                                                    mo=True,
+                                                    name=self.NameConv.RMGetAShortName("%sSpaceSwitchConstraint" % AfectedObject))
+            WA = pm.parentConstraint (parentConstraint, q = True, weightAliasList = True)
+            pm.connectAttr (SpaceSwDic['enums'][eachEnum]['condition'] + ".outColorR", WA[index])
             index += 1
     def RemoveAffectedObject(self, ControlObject, AfectedObject, SpaceSwitchName = "spaceSwitch"):
 
@@ -167,11 +170,11 @@ class RMSpaceSwitch(object):
         
         for allConstraints in SpaceSwDic['constraints']:
             if SpaceSwDic['constraints'][allConstraints]['object'] == AfectedObject:
-                cmds.delete(allConstraints)
+                pm.delete(allConstraints)
 
         if len(SpaceSwDic['constraints'].keys()) == 1:
             for eachPlug in SpaceSwDic['enums']:
-                cmds.delete(SpaceSwDic['enums'][eachPlug]['condition'])
+                pm.delete(SpaceSwDic['enums'][eachPlug]['condition'])
 
             self.DeleteSpaceSwitchAttr(ControlObject, SpaceSwitchName)
             
@@ -182,25 +185,25 @@ class RMSpaceSwitch(object):
         
         EnumDic = self.AddEnumParameters([self.NameConv.RMGetAShortName(SpaceObject)],ControlObject)
 
-        Switch = cmds.shadingNode('condition', asUtility=True, name = SpaceSwitchName + "SWCondition")
-        cmds.connectAttr(ControlObject + "." + SpaceSwitchName, Switch + ".firstTerm")
-        cmds.setAttr (Switch +".secondTerm", EnumDic[self.NameConv.RMGetAShortName(SpaceObject)])
-        cmds.setAttr (Switch +".operation", 0)
-        cmds.setAttr (Switch +".colorIfTrueR", 1)
-        cmds.setAttr (Switch +".colorIfFalseR", 0)
+        Switch = pm.shadingNode('condition', asUtility=True, name = SpaceSwitchName + "SWCondition")
+        pm.connectAttr(ControlObject + "." + SpaceSwitchName, Switch + ".firstTerm")
+        pm.setAttr (Switch +".secondTerm", EnumDic[self.NameConv.RMGetAShortName(SpaceObject)])
+        pm.setAttr (Switch +".operation", 0)
+        pm.setAttr (Switch +".colorIfTrueR", 1)
+        pm.setAttr (Switch +".colorIfFalseR", 0)
 
         if self.NameConv.RMIsNameInFormat(ControlObject):
-            Switch = self.NameConv.RMRenameBasedOnBaseName(ControlObject, Switch, {'name': Switch})
+            self.NameConv.RMRenameBasedOnBaseName(ControlObject, Switch, {'name': Switch})
         else:
-            Switch = self.NameConv.RMRenameNameInFormat(Switch, {})
+            self.NameConv.RMRenameNameInFormat(Switch, {})
 
         for eachConstraint in SpaceSwDic['constraints']:
             Object = SpaceSwDic['constraints'][eachConstraint]['object']
-            parentConstraint = cmds.parentConstraint (SpaceObject, Object, mo = True)
-            WA = cmds.parentConstraint (parentConstraint, q = True, weightAliasList = True)
-            TL = cmds.parentConstraint (parentConstraint, q = True, targetList = True)
+            parentConstraint = pm.parentConstraint (SpaceObject, Object, mo = True)
+            WA = pm.parentConstraint (parentConstraint, q = True, weightAliasList = True)
+            TL = pm.parentConstraint (parentConstraint, q = True, targetList = True)
             if SpaceObject in TL:
-                cmds.connectAttr (Switch + ".outColorR", parentConstraint[0] + "." + WA[TL.index(SpaceObject)])
+                pm.connectAttr (Switch + ".outColorR", WA[TL.index(SpaceObject)])
             else:
                 print "Error, cant find spaceobject in constraint targetList"
 
@@ -209,12 +212,12 @@ class RMSpaceSwitch(object):
 
         for eachConstraint in SpaceSwDic['constraints']:
             Object = SpaceSwDic['constraints'][eachConstraint]['object']
-            cmds.parentConstraint (SpaceObject, Object, remove = True)
+            pm.parentConstraint (SpaceObject, Object, remove = True)
 
         for eachEnum in SpaceSwDic['enums']:
             if  SpaceSwDic['enums'][eachEnum]['object'] == SpaceObject:
                 self.deleteEnumParameter(ControlObject,eachEnum)
-                cmds.delete(SpaceSwDic['enums'][eachEnum]['condition'])
+                pm.delete(SpaceSwDic['enums'][eachEnum]['condition'])
         
         enumDic = self.getEnumDictionary ( ControlObject, SpaceSwitchName = SpaceSwitchName)
 
@@ -222,7 +225,7 @@ class RMSpaceSwitch(object):
             for eachEnum in enumDic:
                 if eachEnum in SpaceSwDic['enums']:
                     EnumCond = SpaceSwDic['enums'][eachEnum]['condition']
-                    cmds.setAttr (EnumCond +".secondTerm", enumDic[eachEnum])
+                    pm.setAttr (EnumCond +".secondTerm", enumDic[eachEnum])
 
     def GetSpaceObjectsList(self, ControlObject, SpaceSwitchName = "spaceSwitch"):
         SpaceSwDic = self.GetSpaceSwitchDic( ControlObject, SpaceSwitchName = SpaceSwitchName)
@@ -232,37 +235,38 @@ class RMSpaceSwitch(object):
         return ObjList
 
     def AddNumericParameter(self, Object, Name = 'spaceSwitch', valueRange = [0,10]):
-        AttributeList = cmds.listAttr(Object)
+        AttributeList = pm.listAttr(Object)
         if Name  in AttributeList:
-            #print "the Object Allready has an Attribute with this name, the type is:",cmds.getAttr (Object + "." + Name,type = True)
+            #print "the Object Allready has an Attribute with this name, the type is:",pm.getAttr (Object + "." + Name,type = True)
             return False
         else :
-            cmds.addAttr(Object,at = "float", ln = Name,  hnv = 1, hxv = 1, h = 0, k = 1, smn = valueRange[0], smx = valueRange[1])
+            pm.addAttr(Object,at = "float", ln = Name,  hnv = 1, hxv = 1, h = 0, k = 1, smn = valueRange[0], smx = valueRange[1])
             return True
 
     def deleteEnumParameter(self, Object, Enum, SpaceSwitchName = 'spaceSwitch'):
-        AttributeList = cmds.listAttr(Object)
+        AttributeList = pm.listAttr(Object)
         if SpaceSwitchName in AttributeList:
-            if cmds.getAttr (Object + "." + SpaceSwitchName,type=True)=='enum':
+            if pm.getAttr (Object + "." + SpaceSwitchName,type=True)=='enum':
                 getControlEnums =self.getControlEnums(Object,SpaceSwitchName = SpaceSwitchName)
                 if len(getControlEnums) > 1:
                     if Enum in getControlEnums:
                         getControlEnums.remove(Enum)
-                        cmds.addAttr(Object + '.' + SpaceSwitchName, e=True, en =":".join(getControlEnums))
+                        pm.addAttr(Object + '.' + SpaceSwitchName, e=True, en =":".join(getControlEnums))
                 else:
                     self.DeleteSpaceSwitchAttr(Object, SpaceSwitchName)
 
-    def AddEnumParameters(self, Enum, Object, Name = 'spaceSwitch'):
-        AttributeList = cmds.listAttr(Object)
+    def AddEnumParameters(self, Enum, scene_object, Name ='spaceSwitch'):
+        print 'object1111::: %s  %s'%(scene_object, scene_object.__class__)
+        AttributeList = pm.listAttr(scene_object)
         if Name  in AttributeList:
-            if cmds.getAttr (Object + "." + Name,type=True)=='enum':
+            if pm.getAttr (scene_object + "." + Name, type=True)== 'enum':
                 #print "the Object Allready has an spaceSwitch"
-                #print "Current Valid types are", cmds.addAttr (Object + "." + Name,q = True,enumName=True)
-                EnumsInObject = self.getControlEnums(Object)
+                #print "Current Valid types are", pm.addAttr (Object + "." + Name,q = True,enumName=True)
+                EnumsInObject = self.getControlEnums(scene_object)
                 for eachEnum in Enum:
                     if not eachEnum in EnumsInObject:
                         EnumsInObject.append(eachEnum)
-                cmds.addAttr(Object + '.' + Name, e=True,ln = Name, en =":".join(EnumsInObject))
+                pm.addAttr(scene_object + '.' + Name, e=True, ln = Name, en =":".join(EnumsInObject))
                 index = 0
                 returnIndexDic = {}
                 for eachEnum in EnumsInObject:
@@ -270,19 +274,19 @@ class RMSpaceSwitch(object):
                     index += 1
                 return returnIndexDic
         else :
-            cmds.addAttr(Object , at = "enum" , ln = Name , k = 1, en =":".join(Enum))
+            pm.addAttr(scene_object, at ="enum", ln = Name, k = 1, en =":".join(Enum))
         return None
 
     def DeleteSpaceSwitchAttr (self, Object, Name = 'spaceSwitch'):
-        AttributeList = cmds.listAttr(Object)
+        AttributeList = pm.listAttr(Object)
         if Name  in AttributeList:
-            cmds.deleteAttr (Object,at = Name)
+            pm.deleteAttr (Object,at = Name)
         else:
             print "The Attribute %s could not be found on obj %s" % (Name , Object)
 
     def ConstraintsDictionary (self, Condition):
         returnedDic = {}
-        ObjectsConnected = cmds.listConnections(Condition +'.outColorR')
+        ObjectsConnected = pm.listConnections(Condition +'.outColorR')
         for eachConstraint in ObjectsConnected:
             returnedDic[eachConstraint] = self.getParentConstraintDic(eachConstraint)
         return returnedDic
@@ -290,8 +294,8 @@ class RMSpaceSwitch(object):
 
     def getSwitchPlugsDictionary(self, Condition):
         returnedDic = {}
-        ObjectsConnected = cmds.listConnections(Condition +'.outColorR')
-        plugs = cmds.listConnections(Condition +'.outColorR', plugs = True)
+        ObjectsConnected = pm.listConnections(Condition +'.outColorR')
+        plugs = pm.listConnections(Condition +'.outColorR', plugs = True)
         for eachPlug in plugs:
             splitPlug = eachPlug.split(".")
             if splitPlug[0] in ObjectsConnected:
@@ -301,17 +305,17 @@ class RMSpaceSwitch(object):
     def getParentConstraintDic (self, parentConstraint) :
         returnedDic = {'alias':{}, "object":None }
         aliasDic={}
-        if cmds.objectType(parentConstraint)=="parentConstraint":
-            WA = cmds.parentConstraint (parentConstraint, q = True, weightAliasList = True)
-            TL = cmds.parentConstraint (parentConstraint, q = True, targetList = True)
+        if pm.objectType(parentConstraint)=="parentConstraint":
+            WA = pm.parentConstraint (parentConstraint, q = True, weightAliasList = True)
+            TL = pm.parentConstraint (parentConstraint, q = True, targetList = True)
         
-        elif cmds.objectType(parentConstraint)=="orientConstraint":
-            WA = cmds.orientConstraint (parentConstraint, q = True, weightAliasList = True)
-            TL = cmds.orientConstraint (parentConstraint, q = True, targetList = True)
+        elif pm.objectType(parentConstraint)=="orientConstraint":
+            WA = pm.orientConstraint (parentConstraint, q = True, weightAliasList = True)
+            TL = pm.orientConstraint (parentConstraint, q = True, targetList = True)
         
-        elif cmds.objectType(parentConstraint)=="pointConstraint":
-            WA = cmds.pointConstraint (parentConstraint, q = True, weightAliasList = True)
-            TL = cmds.pointConstraint (parentConstraint, q = True, targetList = True)
+        elif pm.objectType(parentConstraint)=="pointConstraint":
+            WA = pm.pointConstraint (parentConstraint, q = True, weightAliasList = True)
+            TL = pm.pointConstraint (parentConstraint, q = True, targetList = True)
         
         else:
             "error No constraint Type identified"
@@ -320,15 +324,15 @@ class RMSpaceSwitch(object):
             for eachWAIndex in range(0,len(WA)):
                 aliasDic[WA[eachWAIndex]] = TL[eachWAIndex]
         
-        returnedDic["object"] = cmds.listConnections(parentConstraint + ".constraintRotateX")[0]
+        returnedDic["object"] = pm.listConnections(parentConstraint + ".constraintRotateX")[0]
         returnedDic["alias"] = aliasDic
         return returnedDic
 
     def getEnumDictionary(self,Node,SpaceSwitchName = 'spaceSwitch'):
-        AttributeList = cmds.listAttr(Node)
+        AttributeList = pm.listAttr(Node)
         if SpaceSwitchName  in AttributeList:
-            if cmds.getAttr (Node + "." + SpaceSwitchName,type=True)=='enum':
-                ValidValues = cmds.addAttr(Node+"."+SpaceSwitchName,q = True,enumName=True)
+            if pm.getAttr (Node + "." + SpaceSwitchName,type=True)=='enum':
+                ValidValues = pm.addAttr(Node+"."+SpaceSwitchName,q = True,enumName=True)
                 returnDictionary = {}
                 index = 0
                 for eachValue in ValidValues.split(":"):
@@ -340,10 +344,10 @@ class RMSpaceSwitch(object):
 
 
     def getControlEnums (self, Node, SpaceSwitchName = 'spaceSwitch'):
-        AttributeList = cmds.listAttr(Node)
+        AttributeList = pm.listAttr(Node)
         if SpaceSwitchName  in AttributeList:
-            if cmds.getAttr (Node + "." + SpaceSwitchName,type=True)=='enum':
-                ValidValues = cmds.addAttr(Node+"."+SpaceSwitchName,q = True,enumName=True)
+            if pm.getAttr (Node + "." + SpaceSwitchName,type=True)=='enum':
+                ValidValues = pm.addAttr(Node+"."+SpaceSwitchName,q = True,enumName=True)
                 ValidValuesList = ValidValues.split(":")
                 return ValidValuesList
         else:
@@ -351,11 +355,11 @@ class RMSpaceSwitch(object):
 
     def getControlEnumsRelations(self, Node, SpaceSwitchName = 'spaceSwitch'):
         EnumRelationDic = {}
-        AsummedConditions = cmds.listConnections( Node+'.'+SpaceSwitchName)
+        AsummedConditions = pm.listConnections( Node+'.'+SpaceSwitchName)
         enumList = self.getControlEnums(Node, SpaceSwitchName = 'spaceSwitch')
         for eachAssumedCondition in AsummedConditions:
-            if cmds.objectType(eachAssumedCondition) == 'condition':
-                index = cmds.getAttr(eachAssumedCondition+".secondTerm")
+            if pm.objectType(eachAssumedCondition) == 'condition':
+                index = pm.getAttr(eachAssumedCondition+".secondTerm")
                 EnumRelationDic[enumList[int(index)]] = {}
                 EnumRelationDic[enumList[int(index)]]['condition']= eachAssumedCondition
                 EnumRelationDic[enumList[int(index)]]['index'] = int(index)
@@ -375,30 +379,30 @@ class RMSpaceSwitch(object):
     def RMCreateListConstraintSwitch(self,Constrained, Constraints ,ControlObject, SpaceSwitchName = 'spaceSwitch', reverse = False):
         SWMultDiv = ""
         if (self.AddNumericParameter (ControlObject, Name = SpaceSwitchName)):
-            SWMultDiv = cmds.shadingNode("multiplyDivide",asUtility = True ,name = SpaceSwitchName + "SWMultDivide" )
-            SWMultDiv = self.NameConv.RMRenameBasedOnBaseName(ControlObject, SWMultDiv, {'name': SWMultDiv})
-            cmds.connectAttr(ControlObject+"."+SpaceSwitchName ,SWMultDiv+".input1X")
-            cmds.setAttr(SWMultDiv+".input2X",10)
-            cmds.setAttr(SWMultDiv+".operation",2)
+            SWMultDiv = pm.shadingNode("multiplyDivide",asUtility = True ,name = SpaceSwitchName + "SWMultDivide" )
+            self.NameConv.RMRenameBasedOnBaseName(ControlObject, SWMultDiv, {'name': SWMultDiv})
+            pm.connectAttr(ControlObject+"."+SpaceSwitchName ,SWMultDiv+".input1X")
+            pm.setAttr(SWMultDiv+".input2X",10)
+            pm.setAttr(SWMultDiv+".operation",2)
         
         else:
             
-            SWMultDiv = cmds.listConnections(ControlObject + "." + SpaceSwitchName, type = "multiplyDivide")[0]
+            SWMultDiv = pm.listConnections(ControlObject + "." + SpaceSwitchName, type = "multiplyDivide")[0]
 
         if reverse == True:
-            ConnectionsList = cmds.listConnections(SWMultDiv + ".outputX", type = "reverse")
+            ConnectionsList = pm.listConnections(SWMultDiv + ".outputX", type = "reverse")
             reverseSW = ""
             if ConnectionsList and len(ConnectionsList) >= 1:
                 reverseSW = ConnectionsList[0]
             else :
-                reverseSW = cmds.shadingNode('reverse', asUtility=True, name = SpaceSwitchName + "SWReverse")
-                reverseSW = self.NameConv.RMRenameBasedOnBaseName(ControlObject, reverseSW, {'name' :"SWReverse"})
-                cmds.connectAttr( SWMultDiv + ".outputX", reverseSW + ".inputX")
+                reverseSW = pm.shadingNode('reverse', asUtility=True, name = SpaceSwitchName + "SWReverse")
+                self.NameConv.RMRenameBasedOnBaseName(ControlObject, reverseSW, {'name' :"SWReverse"})
+                pm.connectAttr( SWMultDiv + ".outputX", reverseSW + ".inputX")
 
                 if self.NameConv.RMIsNameInFormat (ControlObject):
-                    reverseSW = self.NameConv.RMRenameBasedOnBaseName(ControlObject,reverseSW, {'name': reverseSW})
+                    self.NameConv.RMRenameBasedOnBaseName(ControlObject,reverseSW, {'name': reverseSW})
                 else:
-                    reverseSW = self.NameConv.RMRenameNameInFormat(reverseSW,{})
+                    self.NameConv.RMRenameNameInFormat(reverseSW,{})
 
             self.RMListConstraint(Constrained, Constraints, reverseSW + ".outputX")
 
@@ -410,44 +414,44 @@ class RMSpaceSwitch(object):
     def RMListConstraint(self,Constrained, Constraint, Connection):
         index = 0
         for eachObject in Constrained:
-            constraint = cmds.parentConstraint(Constraint[index] , eachObject, name = "SpaceSwitch" + self.NameConv.RMGetAShortName(eachObject))[0]
-            constraint = self.NameConv.RMRenameBasedOnBaseName(eachObject, constraint, {'name': self.NameConv.RMGetAShortName(constraint)})
-            WA = cmds.parentConstraint (constraint, q = True, weightAliasList = True)
-            TL = cmds.parentConstraint (constraint, q = True, targetList = True)
+            constraint = pm.parentConstraint(Constraint[index] , eachObject, name = "SpaceSwitch" + self.NameConv.RMGetAShortName(eachObject))
+            self.NameConv.RMRenameBasedOnBaseName(eachObject, constraint, {'name': self.NameConv.RMGetAShortName(constraint)})
+            WA = pm.parentConstraint (constraint, q = True, weightAliasList = True)
+            TL = pm.parentConstraint (constraint, q = True, targetList = True)
             ConstraintIndex = TL.index(Constraint[index])
-            cmds.connectAttr(Connection, constraint + "." + WA[ConstraintIndex])
+            pm.connectAttr(Connection, WA[ConstraintIndex])
             index +=  1
 
     def ConstraintVisibility(self, Objects , ControlObject , SpaceSwitchName = 'spaceSwitch', reverse = False ):
         if (self.AddNumericParameter (ControlObject, Name = SpaceSwitchName)):
-            SWMultDiv = cmds.shadingNode("multiplyDivide",asUtility = True ,name = SpaceSwitchName + "SWMultDivide" )
-            SWMultDiv = self.NameConv.RMRenameBasedOnBaseName(ControlObject, SWMultDiv, {'name': SWMultDiv})
-            cmds.connectAttr(ControlObject+"."+SpaceSwitchName ,SWMultDiv+".input1X")
-            cmds.setAttr(SWMultDiv+".input2X",10)
-            cmds.setAttr(SWMultDiv+".operation",2)
+            SWMultDiv = pm.shadingNode("multiplyDivide",asUtility = True ,name = SpaceSwitchName + "SWMultDivide" )
+            self.NameConv.RMRenameBasedOnBaseName(ControlObject, SWMultDiv, {'name': SWMultDiv})
+            pm.connectAttr(ControlObject+"."+SpaceSwitchName ,SWMultDiv+".input1X")
+            pm.setAttr(SWMultDiv+".input2X",10)
+            pm.setAttr(SWMultDiv+".operation",2)
         else:
-            SWMultDiv = cmds.listConnections(ControlObject + "." + SpaceSwitchName, type = "multiplyDivide")[0]
+            SWMultDiv = pm.listConnections(ControlObject + "." + SpaceSwitchName, type = "multiplyDivide")[0]
 
         if reverse == True:
-            ConnectionsList = cmds.listConnections (SWMultDiv + ".outputX", type = "reverse")
+            ConnectionsList = pm.listConnections (SWMultDiv + ".outputX", type = "reverse")
             reverseSW = ""
             if ConnectionsList and len(ConnectionsList) >= 1:
                 reverseSW = ConnectionsList[0]
             else :
-                reverseSW = cmds.shadingNode('reverse', asUtility=True, name = SpaceSwitchName + "SWReverse")
-                reverseSW = self.NameConv.RMRenameBasedOnBaseName(ControlObject, reverseSW, {'name': "SWReverse"})
-                cmds.connectAttr( SWMultDiv + ".outputX", reverseSW + ".inputX")
+                reverseSW = pm.shadingNode('reverse', asUtility=True, name = SpaceSwitchName + "SWReverse")
+                self.NameConv.RMRenameBasedOnBaseName(ControlObject, reverseSW, {'name': "SWReverse"})
+                pm.connectAttr( SWMultDiv + ".outputX", reverseSW + ".inputX")
 
                 if self.NameConv.RMIsNameInFormat (ControlObject):
-                    reverseSW = self.NameConv.RMRenameBasedOnBaseName(ControlObject,reverseSW, {'name': reverseSW})
+                    self.NameConv.RMRenameBasedOnBaseName(ControlObject,reverseSW, {'name': reverseSW})
                 else:
-                    reverseSW = self.NameConv.RMRenameNameInFormat(reverseSW,{})
+                    self.NameConv.RMRenameNameInFormat(reverseSW,{})
             for eachObject in Objects:
-                cmds.connectAttr(reverseSW + ".outputX", eachObject + ".visibility")
+                pm.connectAttr(reverseSW + ".outputX", eachObject + ".visibility")
         
         else:
             for eachObject in Objects:
-                cmds.connectAttr(SWMultDiv + ".outputX", eachObject + ".visibility")
+                pm.connectAttr(SWMultDiv + ".outputX", eachObject + ".visibility")
 
 
 

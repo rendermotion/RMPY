@@ -8,17 +8,19 @@ try:
     from PySide2.QtWidgets import *
     from PySide2 import __version__
     from shiboken2 import wrapInstance
+    from RMPY.Tools.QT5.ui import FormBlendShapeCreatorHelper
 
 except ImportError:
     from PySide.QtCore import *
     from PySide.QtGui import *
     from PySide import __version__
     from shiboken import wrapInstance
+    from RMPY.Tools.QT4.ui import FormBlendShapeCreatorHelper
 import maya.mel as mel
 import os
 from RMPY import RMblendShapesTools
 reload (RMblendShapesTools)
-from RMPY.Tools.QT5.ui import RMFormBSCreatorHelper
+
 
 def getMayaWindow():
     ptr = mui.MQtUtil.mainWindow()
@@ -27,7 +29,7 @@ def getMayaWindow():
 class main(MayaQWidgetDockableMixin, QDialog):
     def __init__(self, parent=None):
         super(main,self).__init__(parent=getMayaWindow())
-        self.ui=RMFormBSCreatorHelper.Ui_Form()
+        self.ui=FormBlendShapeCreatorHelper.Ui_Form()
         self.ui.setupUi(self)
         self.setWindowTitle('Blend Shape Creator Helper')
         self.ui.LoadObjectBtn.clicked.connect(self.loadObjectBtnPressed)

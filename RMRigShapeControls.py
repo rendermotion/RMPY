@@ -1,9 +1,9 @@
-import maya.cmds as cmds
+import pymel.core as pm
 from RMPY import RMRigTools
 import os
 from RMPY import RMNameConvention
 
-
+reload(RMNameConvention)
 class RMRigShapeControls(object):
     def __init__(self, NameConv=None):
         if NameConv is None:
@@ -14,10 +14,10 @@ class RMRigShapeControls(object):
 
     def RMTurnToOne(self, curveArray):
         for eachCurve in curveArray[1:]:
-            shapesInCurve = cmds.listRelatives(eachCurve, s=True, children=True)
+            shapesInCurve = pm.listRelatives(eachCurve, s=True, children=True)
             for eachShape in shapesInCurve:
-                cmds.parent(eachShape, curveArray[0], shape=True, add=True)
-                cmds.delete(eachCurve)
+                pm.parent(eachShape, curveArray[0], shape=True, add=True)
+                pm.delete(eachCurve)
 
     def RMCreateCubeLine(self, height, length, width, centered=False, offsetX=float(0.0), offsetY=float(0.0),
                          offsetZ=float(0.0), name=""):
@@ -46,19 +46,19 @@ class RMRigShapeControls(object):
             [0 + offsetX, length / 2.0 + offsetY, -width / 2.0 + offsetZ],
             [0 + offsetX, -length / 2.0 + offsetY, -width / 2.0 + offsetZ]
         ]
-        curve = cmds.curve(d=1, p=pointArray, name=defaultName)
+        curve = pm.curve(d=1, p=pointArray, name=defaultName)
         # return CubeCurve[0]
         return curve
 
     def RMCreateBoxCtrl(self, Obj, Xratio=1, Yratio=1, Zratio=1, ParentBaseSize=False, customSize=0, name="",
                         centered=False):
-
+        Obj = RMRigTools.validate_pymel_nodes(Obj)
         if name == "":
             defaultName = "BoxControl"
         else:
             defaultName = name
 
-        Parents = cmds.listRelatives(Obj, parent=True)
+        Parents = pm.listRelatives(Obj, parent=True)
 
         if Parents and len(Parents) != 0 and ParentBaseSize == True:
             JntLength = RMRigTools.RMLenghtOfBone(Parents[0])
@@ -68,7 +68,7 @@ class RMRigShapeControls(object):
             if customSize != 0:
                 JntLength = customSize
 
-            elif cmds.objectType(Obj) == "joint":
+            elif pm.objectType(Obj) == "joint":
                 JntLength = RMRigTools.RMLenghtOfBone(Obj)
 
             else:
@@ -77,11 +77,11 @@ class RMRigShapeControls(object):
                                     centered=centered)
 
         if name == '' and self.NameConv.RMIsNameInFormat(Obj):
-            Ctrl = self.NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {})
+            self.NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {})
         else:
-            Ctrl = self.NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {'name': Ctrl})
+            self.NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {'name': Ctrl})
 
-        Ctrl = self.NameConv.RMRenameSetFromName(Ctrl, "control", "objectType")
+        self.NameConv.RMRenameSetFromName(Ctrl, "control", "objectType")
 
         RMRigTools.RMAlign(Obj, Ctrl, 3)
 
@@ -89,25 +89,25 @@ class RMRigShapeControls(object):
         return ResetGroup, Ctrl
 
     def RMCircularControl(self, Obj, radius=1, axis="X", name=""):
+        Obj = RMRigTools.validate_pymel_nodes(Obj)
         if name == '':
             defaultName = "circularControl"
         else:
             defaultName = name
         if axis in "yY":
-            Ctrl, Shape = cmds.circle(normal=[0, 1, 0], radius=radius, name=defaultName)
+            Ctrl, Shape = pm.circle(normal=[0, 1, 0], radius=radius, name=defaultName)
         elif axis in "zZ":
-            Ctrl, Shape = cmds.circle(normal=[0, 0, 1], radius=radius, name=defaultName)
+            Ctrl, Shape = pm.circle(normal=[0, 0, 1], radius=radius, name=defaultName)
         elif axis in "xX":
-            Ctrl, Shape = cmds.circle(normal=[1, 0, 0], radius=radius, name=defaultName)
+            Ctrl, Shape = pm.circle(normal=[1, 0, 0], radius=radius, name=defaultName)
 
-        if name == '' and self.NameConv.RMIsNameInFormat(Obj):
-
-            Ctrl = self.NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {})
+        if name == 'circularControl':
+            if self.NameConv.RMIsNameInFormat(Obj):
+                self.NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {})
+            else:
+                self.NameConv.RMRenameNameInFormat(Ctrl, {'name': name, "objectType": "control"})
         else:
-            Ctrl = self.NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {'name': Ctrl})
-
-        Ctrl = self.NameConv.RMRenameSetFromName(Ctrl, "control", "objectType")
-
+            self.NameConv.RMRenameNameInFormat(Ctrl, {'name': name, "objectType": "control"})
         RMRigTools.RMAlign(Obj, Ctrl, 3)
 
         ResetGroup = self.rigTools.RMCreateGroupOnObj(Ctrl)
@@ -115,6 +115,7 @@ class RMRigShapeControls(object):
         return ResetGroup, Ctrl
 
     def RMImportMoveControl(self, Obj, scale=1, name='', Type="move"):
+        Obj = RMRigTools.validate_pymel_nodes(Obj)
         MoversTypeDic = {
             "move": {"filename": "ControlMover.mb", "object": "MoverControl"},
             "v": {"filename": "ControlV.mb", "object": "VControl"},
@@ -126,30 +127,31 @@ class RMRigShapeControls(object):
         RMPYPATH = os.path.split(path)
         FinalPath = os.path.join(RMPYPATH[0], "RMPY\AutoRig\RigShapes", MoversTypeDic[Type]["filename"])
         if os.path.isfile(FinalPath):
-            cmds.file(FinalPath, i=True, type="mayaBinary", ignoreVersion=True, mergeNamespacesOnClash=False,
-                      rpr="ControlMover", pr=False)
+            pm.importFile(FinalPath, i=True, type="mayaBinary", ignoreVersion=True, mergeNamespacesOnClash=False,
+                    rpr="ControlMover", pr=False)
+            #pm.importFile(FinalPath, i=True, type="mayaBinary", ignoreVersion=True, mergeNamespacesOnClash=False,
+            #          rpr="ControlMover", pr=False)
         else:
             print "archivo no encontrado %s , %s, %s "% (path, RMPYPATH, FinalPath)
             return None
+        Ctrl = pm.ls(MoversTypeDic[Type]["object"])[0]
 
-        Ctrl = MoversTypeDic[Type]["object"]
-
-        if cmds.objExists(Ctrl):
+        if pm.objExists(Ctrl):
             if name != '':
-                Ctrl = cmds.rename(Ctrl, name)
+                Ctrl = pm.rename(Ctrl, name)
 
-            cmds.setAttr(Ctrl + ".scale", scale, scale, scale)
+            pm.setAttr(Ctrl + ".scale", scale, scale, scale)
 
-            cmds.makeIdentity(Ctrl, apply=True, t=1, r=1, s=1)
+            pm.makeIdentity(Ctrl, apply=True, t=1, r=1, s=1)
 
             if name != '' and self.NameConv.RMIsNameInFormat(Obj):
 
-                Ctrl = self.NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {})
+                self.NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {})
 
             else:
-                Ctrl = self.NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {'name': Ctrl})
+                self.NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {'name': Ctrl})
 
-            Ctrl = self.NameConv.RMRenameSetFromName(Ctrl, "control", "objectType")
+            self.NameConv.RMRenameSetFromName(Ctrl, "control", "objectType")
             RMRigTools.RMAlign(Obj, Ctrl, 3)
 
             ParentGroup = self.rigTools.RMCreateGroupOnObj(Ctrl)
@@ -161,10 +163,10 @@ class RMRigShapeControls(object):
 
 def RMTurnToOne(curveArray):
     for eachCurve in curveArray[1:]:
-        shapesInCurve = cmds.listRelatives(eachCurve, s=True, children=True)
+        shapesInCurve = pm.listRelatives(eachCurve, s=True, children=True)
         for eachShape in shapesInCurve:
-            cmds.parent(eachShape, curveArray[0], shape=True, add=True)
-            cmds.delete(eachCurve)
+            pm.parent(eachShape, curveArray[0], shape=True, add=True)
+            pm.delete(eachCurve)
 
 def fixShapeName(object_list):
     """
@@ -211,7 +213,7 @@ def RMCreateCubeLine(height, length, width, centered=False, offsetX=0, offsetY=0
         [0 + offsetX, length / 2 + offsetY, -width / 2 + offsetZ],
         [0 + offsetX, -length / 2 + offsetY, -width / 2 + offsetZ]
     ]
-    curve = cmds.curve(d=1, p=pointArray, name=defaultName)
+    curve = pm.curve(d=1, p=pointArray, name=defaultName)
     # return CubeCurve[0]
     return curve
 
@@ -225,7 +227,7 @@ def RMCreateBoxCtrl(Obj, NameConv=None, Xratio=1, Yratio=1, Zratio=1, ParentBase
     else:
         defaultName = name
 
-    Parents = cmds.listRelatives(Obj, parent=True)
+    Parents = pm.listRelatives(Obj, parent=True)
 
     if Parents and len(Parents) != 0 and ParentBaseSize == True:
         JntLength = RMRigTools.RMLenghtOfBone(Parents[0])
@@ -235,7 +237,7 @@ def RMCreateBoxCtrl(Obj, NameConv=None, Xratio=1, Yratio=1, Zratio=1, ParentBase
         if customSize != 0:
             JntLength = customSize
 
-        elif cmds.objectType(Obj) == "joint":
+        elif pm.objectType(Obj) == "joint":
             JntLength = RMRigTools.RMLenghtOfBone(Obj)
 
         else:
@@ -244,11 +246,11 @@ def RMCreateBoxCtrl(Obj, NameConv=None, Xratio=1, Yratio=1, Zratio=1, ParentBase
                                 centered=centered)
 
     if name == '' and NameConv.RMIsNameInFormat(Obj):
-        Ctrl = NameConv.RMRenameBasedOnBaseName(Obj, Ctrl,{})
+        NameConv.RMRenameBasedOnBaseName(Obj, Ctrl,{})
     else:
-        Ctrl = NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {'name': Ctrl})
+        NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {'name': Ctrl})
 
-    Ctrl = NameConv.RMRenameSetFromName(Ctrl, "control", "objectType")
+    NameConv.RMRenameSetFromName(Ctrl, "control", "objectType")
 
     RMRigTools.RMAlign(Obj, Ctrl, 3)
 
@@ -257,6 +259,7 @@ def RMCreateBoxCtrl(Obj, NameConv=None, Xratio=1, Yratio=1, Zratio=1, ParentBase
 
 
 def RMCircularControl(Obj, radius=1, NameConv=None, axis="X", name=""):
+    Obj = RMRigTools.validate_pymel_nodes(Obj)
     if not NameConv:
         NameConv = RMNameConvention.RMNameConvention()
     if name == '':
@@ -264,19 +267,19 @@ def RMCircularControl(Obj, radius=1, NameConv=None, axis="X", name=""):
     else:
         defaultName = name
     if axis in "yY":
-        Ctrl, Shape = cmds.circle(normal=[0, 1, 0], radius=radius, name=defaultName)
+        Ctrl, Shape = pm.circle(normal=[0, 1, 0], radius=radius, name=defaultName)
     elif axis in "zZ":
-        Ctrl, Shape = cmds.circle(normal=[0, 0, 1], radius=radius, name=defaultName)
+        Ctrl, Shape = pm.circle(normal=[0, 0, 1], radius=radius, name=defaultName)
     elif axis in "xX":
-        Ctrl, Shape = cmds.circle(normal=[1, 0, 0], radius=radius, name=defaultName)
+        Ctrl, Shape = pm.circle(normal=[1, 0, 0], radius=radius, name=defaultName)
 
     if name == '' and NameConv.RMIsNameInFormat(Obj):
 
-        Ctrl = NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {})
+        NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {})
     else:
-        Ctrl = NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {'name': Ctrl})
+        NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {'name': Ctrl})
 
-    Ctrl = NameConv.RMRenameSetFromName(Ctrl, "control", "objectType")
+    NameConv.RMRenameSetFromName(Ctrl, "control", "objectType")
 
     RMRigTools.RMAlign(Obj, Ctrl, 3)
 
@@ -286,6 +289,7 @@ def RMCircularControl(Obj, radius=1, NameConv=None, axis="X", name=""):
 
 
 def RMImportMoveControl(Obj, scale=1, NameConv=None, name='', Type="move"):
+    Obj = RMRigTools.validate_pymel_nodes(Obj)
     MoversTypeDic = {
         "move": {"filename": "ControlMover.mb", "object": "MoverControl"},
         "v": {"filename": "ControlV.mb", "object": "VControl"},
@@ -298,31 +302,34 @@ def RMImportMoveControl(Obj, scale=1, NameConv=None, name='', Type="move"):
     RMPYPATH = os.path.split(path)
     FinalPath = os.path.join(RMPYPATH[0], "RMPY\AutoRig\RigShapes", MoversTypeDic[Type]["filename"])
     if os.path.isfile(FinalPath):
-        cmds.file(FinalPath, i=True, type="mayaBinary", ignoreVersion=True, mergeNamespacesOnClash=False,
+        print 'ready  to import'
+        pm.importFile(FinalPath, i=True, type="mayaBinary", ignoreVersion=True, mergeNamespacesOnClash=False,
                   rpr="ControlMover", pr=False)
+        print 'imported !!'
     else:
         print "archivo no encontrado %s , %s, %s " % (path, RMPYPATH, FinalPath)
         return None
 
-    Ctrl = MoversTypeDic[Type]["object"]
-
-    if cmds.objExists(Ctrl):
+    Ctrl = pm.ls(MoversTypeDic[Type]["object"])[0]
+    print '********'
+    print Ctrl
+    if pm.objExists(Ctrl):
         if name != '':
-            Ctrl = cmds.rename(Ctrl, name)
+            Ctrl = pm.rename(Ctrl, name)
 
-        cmds.setAttr(Ctrl + ".scale", scale, scale, scale)
+        pm.setAttr(Ctrl + ".scale", scale, scale, scale)
 
-        cmds.makeIdentity(Ctrl, apply=True, t=1, r=1, s=1)
+        pm.makeIdentity(Ctrl, apply=True, t=1, r=1, s=1)
 
         if name != '' and NameConv.RMIsNameInFormat(Obj):
 
-            Ctrl = NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {})
+            NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {})
 
         else:
 
-            Ctrl = NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {'name': Ctrl})
+            NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {'name': Ctrl})
+        NameConv.RMRenameSetFromName(Ctrl, "control", "objectType")
 
-        Ctrl = NameConv.RMRenameSetFromName(Ctrl, "control", "objectType")
         RMRigTools.RMAlign(Obj, Ctrl, 3)
 
         ParentGroup = RMRigTools.RMCreateGroupOnObj(Ctrl)
@@ -330,3 +337,9 @@ def RMImportMoveControl(Obj, scale=1, NameConv=None, name='', Type="move"):
     else:
         print "Error importing Shape File"
         return None
+
+if __name__=='__main__':
+    selection = pm.ls('Character01_MD_neck_pnt_rfr')[0]
+    shapeControls = RMRigShapeControls()
+    shapeControls.RMImportMoveControl(selection)
+

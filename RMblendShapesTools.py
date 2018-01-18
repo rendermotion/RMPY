@@ -196,7 +196,7 @@ class BSManager(object):
                 if (prefix + BlendShapesOfSingleControl['negative'][len(BlendShapesOfSingleControl['negative']) - 1]) not in BlendShapeDict:
                     for eachBS in BlendShapesOfSingleControl['negative']:
                         if cmds.objExists(prefix + eachBS):
-                            print "adding nblendShape:%s"% (prefix+objectPrefix + eachBS)
+                            print "adding blendShape:%s"% (prefix+objectPrefix + eachBS)
                             cmds.blendShape(BlendShapeNode, edit=True, target = [blendShapeOriginalGeo, NewTargetIndex + 1, prefix+ objectPrefix + eachBS, float (abs(BSDefinition['blendShapes'][eachBS]["value"])) / 10.0 ])
                             #NewTargetIndex += 1
                             AtLeastOne = True 

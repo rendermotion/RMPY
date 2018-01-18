@@ -8,17 +8,20 @@ try:
     from PySide2.QtWidgets import *
     from PySide2 import __version__
     from shiboken2 import wrapInstance
+    from RMPY.Tools.QT5.ui import FormVisibilitySwitch
 
 except ImportError:
     from PySide.QtCore import *
     from PySide.QtGui import *
     from PySide import __version__
     from shiboken import wrapInstance
+    from RMPY.Tools.QT4.ui import FormVisibilitySwitch
+reload(FormVisibilitySwitch)
 
 import maya.mel as mel
 import os
 from RMPY import RMUncategorized
-from RMPY.Tools.QT5.ui  import RMFormVisibilityTool
+
 from RMPY.AutoRig import RMVisibilitySwitch
 from RMPY import RMNameConvention
 reload(RMVisibilitySwitch)
@@ -30,7 +33,7 @@ def getMayaWindow():
 class main(MayaQWidgetDockableMixin, QDialog):
     def __init__(self, NameConv=None, parent=None):
         super(main,self).__init__(parent = getMayaWindow())
-        self.ui = RMFormVisibilityTool.Ui_Form()
+        self.ui = FormVisibilitySwitch.Ui_Form()
         self.ui.setupUi(self)
         self.setWindowTitle('Visibility Switch')
         self.VisSw = RMVisibilitySwitch.RMVisibilitySwitch()

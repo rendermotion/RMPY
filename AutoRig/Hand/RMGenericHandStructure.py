@@ -6,7 +6,7 @@ from RMPY import RMNameConvention
 
 reload(RMNameConvention)
 
-import maya.cmds as cmds
+import pymel.core as pm
 
 
 class GenericHandJointStructure(object):
@@ -16,33 +16,33 @@ class GenericHandJointStructure(object):
         else:
             self.NameConv = NameConv
 
-        self.RigTools = RMRigTools.RMRigTools()
+        self.rig_tools = RMRigTools.RMRigTools(NameConv = self.NameConv)
         self.palmJoint = ""
         self.fingerRoots = []
         self.fingers = []
 
     def CreateHandJointStructure(self, Palm):
-        referenceRoots = cmds.listRelatives(Palm, children=True, type="transform")
-        palmJoint = cmds.joint(name=self.NameConv.RMGetFromName(Palm, "name"))
+        referenceRoots = pm.listRelatives(Palm, children=True, type="transform")
+        palmJoint = pm.joint(name=self.NameConv.RMGetFromName(Palm, "name"))
 
         RMRigTools.RMAlign(Palm, palmJoint, 3)
-        palmJoint = self.NameConv.RMRenameBasedOnBaseName(Palm, palmJoint, {'system': "rig"})
+        self.NameConv.RMRenameBasedOnBaseName(Palm, palmJoint, {'system': "Rig"})
         self.fingers = []
 
         for eachPoint in referenceRoots:
             fingerPoints = RMRigTools.RMCustomPickWalk(eachPoint, "transform", -1)
-            FingerRoot, fingerJoints = self.RigTools.RMCreateBonesAtPoints(fingerPoints)
-            cmds.parent(FingerRoot, palmJoint)
+            FingerRoot, fingerJoints = self.rig_tools.RMCreateBonesAtPoints(fingerPoints)
+            pm.parent(FingerRoot, palmJoint)
             self.fingerRoots.append(FingerRoot)
             self.fingers.append(fingerJoints)
         self.palmJoint = palmJoint
-        if cmds.listRelatives(self.palmJoint, parent=True):
-            cmds.parent(self.palmJoint, world=True)
+        if pm.listRelatives(self.palmJoint, parent=True):
+            pm.parent(self.palmJoint, world=True)
         return palmJoint
 
     def fingerJointsByName(self, NameString):
         for eachFinger in self.fingers:
-            stringFound = re.search(NameString, eachFinger[0])
+            stringFound = re.search('%s' % NameString, '%s' % eachFinger[0])
             if stringFound:
                 return eachFinger
         return None

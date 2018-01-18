@@ -30,36 +30,42 @@ class validator(object):
             return self._default
     @property
     def default(self):
-        return  self._default
+        return self._default
     @default.setter
     def default(self,new_value):
         self._default = self.validate(new_value)
     @classmethod
-    def validator_from_default(cls,default_value):
+    def validator_from_default(cls, default_value):
         new_instance = cls()
         new_instance.default = default_value
         return new_instance
     @classmethod
-    def validator_from_dictionary(cls,translator_dictionary):
+    def validator_from_dictionary(cls, translator_dictionary):
         new_instance = cls()
         new_instance.translator = translator_dictionary
         return new_instance
     @classmethod
-    def validator_from_dictionary_default(cls,translator_dictionary, default_value):
+    def validator_from_dictionary_default(cls, translator_dictionary, default_value):
         new_instance = cls()
         new_instance.translator = translator_dictionary
         new_instance.default = default_value
         return new_instance
 
+
+def validate_input_nodes(nodes):
+    if type(nodes) == list:
+        return [str(str_node) for str_node in nodes]
+    return str(nodes)
+
+
 class RMNameConvention(object):
-    def __init__(self, DefaultValues = ["Character", "MD", "Object", "UDF", 'Rig'], convention = None):
+    def __init__(self, DefaultValues = ["C", "Object", 'Rig', "UDF"], convention = None):
         if convention == None:
             self.NameConvention = {
-                "lastName": 0,
-                "name": 2,
-                'side': 1,
+                "name": 1,
+                'side': 0,
                 'objectType': 3,
-                "system": 4
+                "system": 2
             }
             convention = self.NameConvention
         else:
@@ -108,7 +114,7 @@ class RMNameConvention(object):
                             'side':{'left':'LF', 'right':'RH', 'middle':'MD'}
                             }
         '''
-        self.validation = {'side': ['LF', 'RH', 'MD'],
+        self.validation = {'side': ['L', 'R', 'C'],
                            'objectType': ['jnt', 'sknjnt', 'nub', 'skn', 'UDF', 'shp', 'msh', 'rmsh', 'grp', 'pnc',
                                           'orc', 'prc', 'pvc', 'ctr', 'pnt', 'ikh', 'ikf', 'rvs', 'mult', 'cnd', 'blt',
                                           'cui',
@@ -150,7 +156,7 @@ class RMNameConvention(object):
             "loft": "lft",
             "pointOnSurfaceInfo": "psfi"
         },
-            'side': {'left': 'LF', 'right': 'RH', 'middle': 'MD'}
+            'side': {'left': 'L', 'right': 'R', 'center': 'C'}
         }
 
 
@@ -213,6 +219,7 @@ class RMNameConvention(object):
             return returnTuple
 
     def RMRenameSetFromName(self, ObjName, TextString, Token, mode="regular"):
+        ObjName = validate_input_nodes(ObjName)
         returnListType = False
         if (type(ObjName) == str) or (type(ObjName) == unicode):
             ObjectList = [ObjName]
@@ -221,12 +228,20 @@ class RMNameConvention(object):
             ObjectList = ObjName
             returnListType = True
         else:
-            print 'error not valid object on RMRenameSetFromName'
+            print 'error not valid object on RMRenameSetFromName :%s' % ObjName
             return
         returnList = []
         newName = ""
         for eachObj in ObjectList:
-            newName = self.RMSetFromName(eachObj, TextString, Token, mode = mode)
+            fullNameToken = eachObj.split('|')
+            if len(fullNameToken) > 1:
+                simpleName = fullNameToken[len(fullNameToken)-1]
+                complement = '|'.join(fullNameToken[:-1])
+            else:
+                simpleName = fullNameToken[0]
+                complement = ''
+
+            newName = self.RMSetFromName(simpleName, TextString, Token, mode=mode)
             newName = self.RMUniqueName(newName)
             cmds.rename(eachObj, newName)
             returnList.append(newName)
@@ -272,7 +287,7 @@ class RMNameConvention(object):
         nameDic={}
         for eachKey in self.NameConvention:
             if eachKey in wantedNameDic:
-                nameDic[eachKey] = wantedNameDic[eachKey]
+                nameDic[eachKey] = str(wantedNameDic[eachKey])
             else:
                 nameDic[eachKey] = self.DefaultNames[eachKey]
 
@@ -286,6 +301,8 @@ class RMNameConvention(object):
         return self.RMUniqueName(ReturnNameInFormat)
 
     def RMRenameNameInFormat(self, Name, wantedNameDic, useName = False):
+        Name = validate_input_nodes(Name)
+
         NewNameArray = ()
         NameList = []
         if type(Name) == list:
@@ -314,8 +331,9 @@ class RMNameConvention(object):
             return NewNameArray[0]
         return NewNameArray
 
-    def RMIsNameInFormat(self, ObjName):
-        splitString = ObjName.split("_")
+    def RMIsNameInFormat(self, obj_name):
+        obj_name = validate_input_nodes(obj_name)
+        splitString = obj_name.split("_")
         valid = True
         if len(splitString) == len(self.NameConvention.keys()):
             for keys in self.validation:
@@ -331,12 +349,13 @@ class RMNameConvention(object):
             print 'Not same token number'
             return False
 
-    def RMGuessObjType (self, Obj):
-        ObjType = cmds.objectType(Obj)
+    def RMGuessObjType (self, scene_object):
+        scene_object = validate_input_nodes(scene_object)
+        ObjType = cmds.objectType(scene_object)
         ObjType = self.RMTokenValidation(ObjType,'objectType')
 
-        if cmds.objectType(Obj) == "transform":
-            children = cmds.listRelatives(Obj, shapes=True)
+        if cmds.objectType(scene_object) == "transform":
+            children = cmds.listRelatives(scene_object, shapes=True)
             if children:
                 ShapeType = cmds.objectType(children[0])
                 if ShapeType in self.ShapeDictionary:
@@ -346,28 +365,30 @@ class RMNameConvention(object):
             else:
                 return ObjType
         if ObjType == self.translator['objectType']['undefined']:
-            print 'Type not identified:', cmds.objectType(Obj)
+            print 'Type not identified:', cmds.objectType(scene_object)
         return ObjType
 
-    def RMRenameGuessTypeInName(self, currentName):
+    def RMRenameGuessTypeInName(self, current_name):
         ''' this functions renames a name in format and adds the correct objectType described on the type dictionary
             to acomplish this, will look the objectType maya command and will match the type on the dictionary,
             this token will be placed on the objectType token place, and the object will be renamed to the new name.
         '''
+        current_name = validate_input_nodes(current_name)
+
         NewNameArray = []
         NameList = []
-        if type(currentName) == list:
-            NameList = currentName
-        elif type(currentName) in [str, unicode]:
-            NameList = [currentName]
-        for currentName in NameList:
-            NewName = currentName
+        if type(current_name) == list:
+            NameList = current_name
+        elif type(current_name) in [str, unicode]:
+            NameList = [current_name]
+        for current_name in NameList:
+            NewName = current_name
             if cmds.objExists(NewName):
                 if self.RMIsNameInFormat(NewName):
-                    Type = self.RMGuessObjType(currentName)
+                    Type = self.RMGuessObjType(current_name)
                     NewName = self.RMSetFromName(NewName, Type, "objectType")
             NewName = self.RMUniqueName(NewName)
-            cmds.rename(currentName, NewName)
+            cmds.rename(current_name, NewName)
             NewNameArray.append(NewName)
 
         if len(NewNameArray) == 1:
@@ -375,43 +396,48 @@ class RMNameConvention(object):
         else:
             return NewNameArray
 
-    def RMRenameBasedOnBaseName(self, BaseName, ObjToRename, wantedNameDic):
+    def RMRenameBasedOnBaseName(self, base_name, obj_to_rename, wantedNameDic):
+
+        obj_to_rename =validate_input_nodes(obj_to_rename)
+        base_name = validate_input_nodes(base_name)
+
         wantedNameCreated={}
-        if self.RMIsNameInFormat(BaseName):
-            baseNameTokens = BaseName.split('_')
+        if self.RMIsNameInFormat(base_name):
+            baseNameTokens = base_name.split('_')
             for eachToken in self.NameConvention:
                 if eachToken in wantedNameDic:
-                    wantedNameCreated[eachToken] = wantedNameDic [eachToken]
+                    wantedNameCreated[eachToken] = str(wantedNameDic [eachToken])
                 else:
                     wantedNameCreated[eachToken] = baseNameTokens[self.NameConvention[eachToken]]
 
-                wantedNameCreated['objectType']= self.RMGuessObjType(ObjToRename)
+                wantedNameCreated['objectType']= self.RMGuessObjType(obj_to_rename)
         else:
             for eachToken in self.NameConvention:
                 if eachToken in wantedNameDic:
-                    wantedNameCreated[eachToken] = wantedNameDic [eachToken]
+                    wantedNameCreated[eachToken] = str(wantedNameDic [eachToken])
                 else:
                     wantedNameCreated[eachToken] = self.DefaultNames [eachToken]
             if not 'name' in wantedNameDic:
-                NamesList = ObjToRename.split("_")
+                NamesList = obj_to_rename.split("_")
                 NewName = ""
                 for names in NamesList:
                     NewName += names
                 wantedNameCreated['name'] = NewName
 
-        if cmds.objExists(ObjToRename):
+        if cmds.objExists(obj_to_rename):
             NewName = self.RMSetNameInFormat(wantedNameCreated)
-            cmds.rename(ObjToRename, NewName)
+            cmds.rename(obj_to_rename, NewName)
             return NewName
         else:
             return False
 
-    def RMGetAShortName(self, Node):
-        if self.RMIsNameInFormat(Node):
-            Value = re.split(r"([0-9]+$)", self.RMGetFromName(Node, 'name'))
+    def RMGetAShortName(self, scene_object):
+        scene_object = validate_input_nodes(scene_object)
+        if self.RMIsNameInFormat(scene_object):
+            Value = re.split(r"([0-9]+$)", self.RMGetFromName(scene_object, 'name'))
             return Value[0]
         else:
-            Value = re.split(r"([0-9]+$)", Node)
+            Value = re.split(r"([0-9]+$)", scene_object)
             return Value[0]
 
 

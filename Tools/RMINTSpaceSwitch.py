@@ -8,23 +8,18 @@ try:
     from PySide2.QtWidgets import *
     from PySide2 import __version__
     from shiboken2 import wrapInstance
+    from RMPY.Tools.QT5.ui import FormSpaceSwitch
 
 except ImportError:
     from PySide.QtCore import *
     from PySide.QtGui import *
     from PySide import __version__
     from shiboken import wrapInstance
+    from RMPY.Tools.QT4.ui import FormSpaceSwitch
 import maya.mel as mel
 import os
 import maya.cmds as cmds
-
-from RMPY.Tools.QT5.ui  import RMFormSpaceSwitch
-
-reload(RMFormSpaceSwitch)
-
 from RMPY.AutoRig import RMSpaceSwitch
-
-reload(RMSpaceSwitch)
 
 
 def getMayaWindow():
@@ -36,7 +31,7 @@ class main(MayaQWidgetDockableMixin,QDialog):
     def __init__(self, parent=None):
         super(main, self).__init__(parent=getMayaWindow())
 
-        self.ui = RMFormSpaceSwitch.Ui_Form()
+        self.ui = FormSpaceSwitch.Ui_Form()
         self.ui.setupUi(self)
         self.setWindowTitle('Space Switch Tool')
         self.SSw = RMSpaceSwitch.RMSpaceSwitch()

@@ -8,19 +8,21 @@ try:
     from PySide2.QtWidgets import *
     from PySide2 import __version__
     from shiboken2 import wrapInstance
+    from RMPY.Tools.QT5.ui import FormGenericPropRig
 
 except ImportError:
     from PySide.QtCore import *
     from PySide.QtGui import *
     from PySide import __version__
     from shiboken import wrapInstance
+    from RMPY.Tools.QT4.ui import FormGenericPropRig
 import maya.mel as mel
 import os
-from RMPY.Tools.QT5.ui import RMFormGenericPropRigTool
+
 import RMPY.RMNameConvention
 from RMPY.snippets import NoisePatternRig
 
-reload(RMFormGenericPropRigTool)
+reload(FormGenericPropRig)
 reload(NoisePatternRig)
 
 def getMayaWindow():
@@ -30,7 +32,7 @@ def getMayaWindow():
 class main(MayaQWidgetDockableMixin, QDialog):
     def __init__(self, NameConv=None, parent=None):
         super(main,self).__init__(parent = getMayaWindow())
-        self.ui=RMFormGenericPropRigTool.Ui_Form()
+        self.ui=FormGenericPropRig.Ui_Form()
         self.ui.setupUi(self)
         self.setWindowTitle('Generic Prop Rig Tool')
         self.ui.RigSelectionBtn.clicked.connect(self.RigSelectionBtnPressed)
