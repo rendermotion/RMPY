@@ -45,15 +45,15 @@ class RMNeckHead(object):
 
     def RMCleanUP(self):
 
-        self.NameConv.RMRenameSetFromName(self.NeckJoints[0], "sknjnt", "objectType")
-        self.NameConv.RMRenameSetFromName(self.HeadJoints[0], "sknjnt", "objectType")
-        self.NameConv.RMRenameSetFromName(self.JawJoints[0], "sknjnt", "objectType")
+        self.NameConv.rename_set_from_name(self.NeckJoints[0], "sknjnt", "objectType")
+        self.NameConv.rename_set_from_name(self.HeadJoints[0], "sknjnt", "objectType")
+        self.NameConv.rename_set_from_name(self.JawJoints[0], "sknjnt", "objectType")
 
     def RMCreate2PointsJointStructure(self, ReferencePoints, name="joints"):
         root, Joints = self.rig_tools.RMCreateBonesAtPoints(ReferencePoints, ZAxisOrientation="z")
         # RMRigTools.RMAlign(ReferencePoints[0],root,3 )
-        self.NameConv.RMRenameSetFromName(Joints, name + "Joints", "name")
-        self.NameConv.RMRenameSetFromName(root, "resetPoint%s" % name.title() + "Joints", "name")
+        self.NameConv.rename_set_from_name(Joints, name + "Joints", "name")
+        self.NameConv.rename_set_from_name(root, "resetPoint%s" % name.title() + "Joints", "name")
         return root, Joints
 
     def RMCreateHeadRig(self):

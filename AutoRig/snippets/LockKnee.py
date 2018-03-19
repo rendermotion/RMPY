@@ -7,8 +7,8 @@ from RMPY import RMRigTools
 
 def lockKneeOnSpecific(Constraint, IKJointLimb, SkinJointLimb, PoleVectorControl, TwistJointsControl):
     NameConv = RMNameConvention.RMNameConvention()
-    ShortName = NameConv.RMGetAShortName(IKJointLimb)
-    Side = NameConv.RMGetFromName(IKJointLimb, 'Side')
+    ShortName = NameConv.get_a_short_name(IKJointLimb)
+    Side = NameConv.get_from_name(IKJointLimb, 'Side')
     group = cmds.group(empty=True, name="Character01_%s_%sLockDriver00_grp_Rig" % (Side, ShortName))
     RigTools = RMRigTools.RMRigTools()
     ChildPoleVector = RigTools.RMCreateGroupOnObj(PoleVectorControl, "child")

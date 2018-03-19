@@ -32,14 +32,14 @@ def clavicleSpaceSwitch():
 	RHControlShoulder = cmds.ls("*_RH_shoulderFK00_ctr_Rig")[0]
 
 	LFWorldFKArm = cmds.group(empty = True, name = "ArmWorld" )
-	LFWorldFKArm = NameConv.RMRenameBasedOnBaseName (LFShoulderFK, LFWorldFKArm, {'name':"world", 'system':"LFKArmSpaceSwitch"})
+	LFWorldFKArm = NameConv.rename_based_on_base_name (LFShoulderFK, LFWorldFKArm, {'name': "world", 'system': "LFKArmSpaceSwitch"})
 	RMRigTools.RMAlign(LFShoulderFK, LFWorldFKArm ,3)
 	cmds.parent( LFWorldFKArm, moverWorld)
 	LSpaceSwitchGroup = RMRigTools.RMCreateGroupOnObj(LFShoulderFK)
 	SPSW.CreateSpaceSwitchReverse(LFShoulderFK,[LSpaceSwitchGroup, LFWorldFKArm],LFControlShoulder,sswtype = "float", Name="", mo = False, constraintType = "orient")
 
 	RHWorldFKArm = cmds.group(empty = True, name = "ArmWorld" )
-	RHWorldFKArm = NameConv.RMRenameBasedOnBaseName (RHShoulderFK, RHWorldFKArm, {'name':"world", 'system':"RFKArmSpaceSwitch"})
+	RHWorldFKArm = NameConv.rename_based_on_base_name (RHShoulderFK, RHWorldFKArm, {'name': "world", 'system': "RFKArmSpaceSwitch"})
 	RMRigTools.RMAlign(RHShoulderFK, RHWorldFKArm ,3)
 	cmds.parent( RHWorldFKArm, moverWorld)
 	RSpaceSwitchGroup = RMRigTools.RMCreateGroupOnObj(RHShoulderFK)

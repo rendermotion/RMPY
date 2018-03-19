@@ -24,15 +24,15 @@ def pathFollow(curve, control, objectArray, NameConv=None):
     for eachObject in objectArray:
         motionPath = cmds.pathAnimation(eachObject, c=curve, follow=True, worldUpType="scene",
                                         name="motionpath%s" % index)
-        motionPath = NameConv.RMRenameNameInFormat(motionPath,{'name':motionPath})
+        motionPath = NameConv.rename_name_in_format(motionPath, {'name':motionPath})
         multDivFactor = cmds.shadingNode('multiplyDivide', asUtility=True, name="factor%s" % index)
-        multDivFactor = NameConv.RMRenameNameInFormat(multDivFactor,{'name':multDivFactor})
+        multDivFactor = NameConv.rename_name_in_format(multDivFactor, {'name':multDivFactor})
         cmds.connectAttr("%s.Stretch" % control, "%s.input1X" % multDivFactor)
         cmds.setAttr("%s.input2X" % multDivFactor, float(index) / float(len(objectArray)))
         cmds.setAttr("%s.operation" % multDivFactor, 1)
         multiplyDivide.append(multDivFactor)
         addition = cmds.shadingNode('plusMinusAverage', asUtility=True, name="Addition%s" % index)
-        addition = NameConv.RMRenameNameInFormat(addition,{'name':addition})
+        addition = NameConv.rename_name_in_format(addition, {'name':addition})
         cmds.connectAttr("%s.outputX" % multDivFactor, "%s.input1D[0]" % addition)
         cmds.connectAttr("%s.Percent" % control, "%s.input1D[1]" % addition)
         cmds.connectAttr("%s.output1D" % addition, "%s.uValue" % motionPath, force=True)

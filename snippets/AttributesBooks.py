@@ -54,14 +54,14 @@ class RMBookPage(object):
         self.heightValue = RMRigTools.RMPointDistance(self.height, self.origin)
 
         parentGroup = cmds.group(empty=True, name="BookRig")
-        self.NameConv.DefaultNames["System"] = parentGroup
+        self.NameConv.default_names["System"] = parentGroup
         RMRigTools.RMAlign(self.origin, parentGroup, 3)
 
         cmds.select(affected)
         self.flare2, self.flareHandle2 = cmds.nonLinear(type='flare', lowBound=0, highBound=self.widthValue,
                                                         name="FlareLeafsThick")
-        self.flare2 = self.NameConv.RMRenameNameInFormat(self.flare2)
-        self.flareHandle2 = self.NameConv.RMRenameNameInFormat(self.flareHandle2)
+        self.flare2 = self.NameConv.rename_name_in_format(self.flare2)
+        self.flareHandle2 = self.NameConv.rename_name_in_format(self.flareHandle2)
 
         RMRigTools.RMAlign(self.origin, self.flareHandle2, 3)
         cmds.xform(self.flareHandle2, objectSpace=True, rotation=[180, 0, 90])
@@ -70,8 +70,8 @@ class RMBookPage(object):
         cmds.select(affected)
         self.flare, self.flareHandle = cmds.nonLinear(type='flare', lowBound=0, highBound=self.heightValue,
                                                       name="FlareBorderRefinement")  # endFlareX
-        self.flare = self.NameConv.RMRenameNameInFormat(self.flare)
-        self.flareHandle = self.NameConv.RMRenameNameInFormat(self.flareHandle)
+        self.flare = self.NameConv.rename_name_in_format(self.flare)
+        self.flareHandle = self.NameConv.rename_name_in_format(self.flareHandle)
         RMRigTools.RMAlign(self.origin, self.flareHandle, 3)
         cmds.setAttr(self.flareHandle + ".scale", 1, 1, 1)
         cmds.xform(self.flareHandle, objectSpace=True, translation=[self.widthValue / 2, 0, 0])
@@ -80,8 +80,8 @@ class RMBookPage(object):
         self.bendSpread, self.bendHandleSpread = cmds.nonLinear(type='bend', lowBound=-self.widthValue,
                                                                 highBound=self.widthValue, curvature=0,
                                                                 name="bendSpread")  # curvature
-        self.bendSpread = self.NameConv.RMRenameNameInFormat(self.bendSpread)
-        self.bendHandleSpread = self.NameConv.RMRenameNameInFormat(self.bendHandleSpread)
+        self.bendSpread = self.NameConv.rename_name_in_format(self.bendSpread)
+        self.bendHandleSpread = self.NameConv.rename_name_in_format(self.bendHandleSpread)
         RMRigTools.RMAlign(self.origin, self.bendHandleSpread, 3)
         cmds.xform(self.bendHandleSpread, objectSpace=True, rotation=[0, 0, 90])
         cmds.setAttr(self.bendHandleSpread + ".scale", 1, 1, 1)
@@ -90,8 +90,8 @@ class RMBookPage(object):
         # self.bendMidle, self.bendHandleMiddle = cmds.nonLinear(type = 'bend', lowBound = 0 , highBound = self.heightValue / 2 , curvature = 0,name = "bendCenter")#curvature Hight Bound
         self.bendMidle, self.bendHandleMiddle = cmds.nonLinear(type='bend', lowBound=0, highBound=1, curvature=0,
                                                                name="bendCenter")  # curvature Hight Bound
-        self.bendMidle = self.NameConv.RMRenameNameInFormat(self.bendMidle)
-        self.bendHandleMiddle = self.NameConv.RMRenameNameInFormat(self.bendHandleMiddle)
+        self.bendMidle = self.NameConv.rename_name_in_format(self.bendMidle)
+        self.bendHandleMiddle = self.NameConv.rename_name_in_format(self.bendHandleMiddle)
         RMRigTools.RMAlign(self.origin, self.bendHandleMiddle, 3)
         cmds.setAttr(self.bendHandleMiddle + ".scale", 1, 1, 1)
         cmds.xform(self.bendHandleMiddle, objectSpace=True, translation=[0, self.heightValue / 2, 0])
@@ -100,8 +100,8 @@ class RMBookPage(object):
         # self.bendOpen, self.bendHandleOpen = cmds.nonLinear(type = 'bend', lowBound = 0 , highBound = self.heightValue / 2 , curvature = 0,name = "bendOpen")#curvature Hight Bound
         self.bendOpen, self.bendHandleOpen = cmds.nonLinear(type='bend', lowBound=0, highBound=1, curvature=0,
                                                             name="bendOpen")  # curvature Hight Bound
-        self.bendOpen = self.NameConv.RMRenameNameInFormat(self.bendOpen)
-        self.bendHandleOpen = self.NameConv.RMRenameNameInFormat(self.bendHandleOpen)
+        self.bendOpen = self.NameConv.rename_name_in_format(self.bendOpen)
+        self.bendHandleOpen = self.NameConv.rename_name_in_format(self.bendHandleOpen)
         RMRigTools.RMAlign(self.origin, self.bendHandleOpen, 3)
         cmds.setAttr(self.bendHandleOpen + ".scale", 1, 1, 1)
 
@@ -115,7 +115,7 @@ class RMBookPage(object):
         # cmds.setAttr(self.bendHandleOpenOposit + ".scale", 1 , 1 , 1)
 
         self.centerBendLocator = cmds.spaceLocator(name="centerBend")[0]
-        self.centerBendLocator = self.NameConv.RMRenameNameInFormat(self.centerBendLocator)
+        self.centerBendLocator = self.NameConv.rename_name_in_format(self.centerBendLocator)
 
         RMRigTools.RMAlign(self.bendHandleMiddle, self.centerBendLocator, 3)
         cmds.parent(self.bendHandleMiddle, self.centerBendLocator)

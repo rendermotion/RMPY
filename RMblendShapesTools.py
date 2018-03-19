@@ -119,7 +119,7 @@ class BSManager(object):
         if prefix!="":
             Side = self.getSideFromPrefix(prefix)
             #print "Connecting:%s.%s To %s.%s"% (self.NameConv.RMSetFromName(BSDefinition["control"],Side,Token = "Side" ), BSDefinition['blendShapes'][currentBlendShape]["connection"], blendShapeNode, prefix +currentBlendShape)
-            control = self.NameConv.RMSetFromName(BSDefinition["control"],Side,Token = "Side" )
+            control = self.NameConv.set_from_name(BSDefinition["control"], Side, Token ="Side")
         else:
             control = BSDefinition["control"]
 
@@ -158,7 +158,7 @@ class BSManager(object):
             #connection = BSDefinition['blendShapes'][BlendShapesOfSingleControl['negative'][len (BlendShapesOfSingleControl['negative']) - 1]]["connection"]
             if prefix != '':
                 Side = self.getSideFromPrefix(prefix)
-                control = self.NameConv.RMSetFromName(BSDefinition["control"] , Side, Token = "Side" )
+                control = self.NameConv.set_from_name(BSDefinition["control"], Side, Token ="Side")
             else:
                 control =BSDefinition["control"]
 
@@ -234,7 +234,7 @@ class BSManager(object):
                     #blendShapeOriginalGeo = self.NameConv.RMRenameNameInFormat( blendShapeOriginalGeo, System = "faceRig",Side = Side)
                     #cmds.blendShape(blendShapeOriginalGeo, name = BSName)
                     cmds.blendShape(BSDefinition[BSGroups]['baseMesh'], name = BSName)
-                    BSName = self.NameConv.RMRenameNameInFormat(BSName, {'system':"faceRig", 'side': Side})
+                    BSName = self.NameConv.rename_name_in_format(BSName, {'system': "faceRig", 'side': Side})
                 else:
                     BSName = BSNodeArray[0]
             else :
@@ -269,7 +269,7 @@ class BSManager(object):
     def linkJointDefinition (self, Side, jointLinkDefinition):
         control = jointLinkDefinition['control']
         if Side in ["LF","RH"]:
-            control = self.NameConv.RMSetFromName(jointLinkDefinition['control'], Side, Token = 'Side')
+            control = self.NameConv.set_from_name(jointLinkDefinition['control'], Side, Token ='Side')
 
         if cmds.objExists( control):
             for eachAttribute in jointLinkDefinition['order']:
@@ -277,7 +277,7 @@ class BSManager(object):
                 for eachJoint in jointsList:
                     JointName = eachJoint
                     if Side in [ "LF", "RH"]:
-                        JointName = self.NameConv.RMSetFromName(eachJoint, Side, Token = 'Side')
+                        JointName = self.NameConv.set_from_name(eachJoint, Side, Token ='Side')
                     if cmds.objExists(JointName):
                         
                         if jointLinkDefinition['joints'][eachJoint]['value'] == None:
@@ -289,7 +289,7 @@ class BSManager(object):
                         print "Joint object doesnt exists:%s"%JointName
         else:
             print "Control object doesnt exists:%s"%control
-            control = self.NameConv.RMSetFromName(jointLinkDefinition['control'], Side, Token = 'Side')
+            control = self.NameConv.set_from_name(jointLinkDefinition['control'], Side, Token ='Side')
 #if __name__=="__main__":
 #    Manager = BSManager()
 #    Manager.AppyBlendShapeDefinition( SkinedJoints)

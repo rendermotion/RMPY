@@ -20,7 +20,7 @@ def AddRibbon (SknJointStructure, SknParentGroup, currentTwists,ToDeleteNodes,Lo
     TJArm.RMCreateTwistJoints(SknJointStructure[0], SknJointStructure[1], NumberOfTB = 2, LookAtAxis = LookAtAxis)
 
     constraintTJArm = cmds.parentConstraint(SknParentGroup, TJArm.TwistControlResetPoint, mo=True)[0]
-    constraintTJArm = NameConv.RMRenameBasedOnBaseName(SknJointStructure[1], constraintTJArm, {})
+    constraintTJArm = NameConv.rename_based_on_base_name(SknJointStructure[1], constraintTJArm, {})
 
     Ribbon=RMRibbon.RMRibbon()
     Ribbon.RibbonCreation(SknJointStructure[0], SknJointStructure[1], foliculeNumber = 4)

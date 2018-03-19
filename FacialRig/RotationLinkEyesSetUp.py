@@ -27,12 +27,12 @@ class EyeRig(object):
 
         RMRigTools.RMAlign(EyeNode, MainUpperLid, 3)
         EyeParent = Rigtools.RMCreateGroupOnObj(MainUpperLid, Type='parent')
-        EyeParent = self.NameConv.RMRenameSetFromName(EyeParent, "EyeLidSpin", Token='name')
+        EyeParent = self.NameConv.rename_set_from_name(EyeParent, "EyeLidSpin", Token='name')
         MainEye = Rigtools.RMCreateGroupOnObj(EyeParent, Type='parent')
-        MainEye = self.NameConv.RMRenameSetFromName(MainEye, "Eye", Token='name')
+        MainEye = self.NameConv.rename_set_from_name(MainEye, "Eye", Token='name')
 
         upperLidParent = Rigtools.RMCreateGroupOnObj(MainUpperLid)
-        upperLidParent = self.NameConv.RMRenameSetFromName(upperLidParent, "EyeUpperLidReset", Token='name')
+        upperLidParent = self.NameConv.rename_set_from_name(upperLidParent, "EyeUpperLidReset", Token='name')
 
         cmds.parent(MainLowerLid, EyeParent)
         LowerLidParent = Rigtools.RMCreateGroupOnObj(MainLowerLid)
@@ -75,22 +75,22 @@ class EyeRig(object):
         # cmds.setAttr ( lattice + ".scale", float(latticeScale[0]) + float(eyeScale[0]), float(latticeScale[1]) + float(eyeScale[1]), float(latticeScale[2]) + float(eyeScale[2]))
 
         # renamingto NameConvention.
-        if self.NameConv.RMIsNameInFormat(EyeNode):
-            side = self.NameConv.RMGetFromName(EyeNode, Token="Side")
+        if self.NameConv.is_name_in_format(EyeNode):
+            side = self.NameConv.get_from_name(EyeNode, Token="Side")
         else:
             side = "MD"
         # latticeAttr, lattice, latticeBase,
-        self.NameConv.RMRenameNameInFormat(
+        self.NameConv.rename_name_in_format(
             [mDUpper, mDLower, UpperLid, LowerLid, MiddleMainUpperLid, MiddleMainLowerLid], {'side':side})
-        self.NameConv.RMRenameSetFromName([EyeParent, LowerLidParent, upperLidParent], side, Token="side")
-        MainEye = self.NameConv.RMRenameSetFromName(MainEye, side, Token="side")
+        self.NameConv.rename_set_from_name([EyeParent, LowerLidParent, upperLidParent], side, Token="side")
+        MainEye = self.NameConv.rename_set_from_name(MainEye, side, Token="side")
 
-        self.NameConv.RMRenameNameInFormat([MiddleUpperLid, MiddleLowerLid], {'objectType': "sknjnt", 'side': side} )
-        MainLowerLid = self.NameConv.RMRenameNameInFormat(MainLowerLid, {'objectType': "sknjnt", 'side': side})
-        MainUpperLid = self.NameConv.RMRenameNameInFormat(MainUpperLid, {'objectType': "sknjnt", 'side': side})
+        self.NameConv.rename_name_in_format([MiddleUpperLid, MiddleLowerLid], {'objectType': "sknjnt", 'side': side})
+        MainLowerLid = self.NameConv.rename_name_in_format(MainLowerLid, {'objectType': "sknjnt", 'side': side})
+        MainUpperLid = self.NameConv.rename_name_in_format(MainUpperLid, {'objectType': "sknjnt", 'side': side})
 
         if not cmds.objExists("Character_MD_EyesRig00_grp_rig"):
-            EyesRig = self.NameConv.RMSetNameInFormat("EyesRig", Type="grp", System="rig")
+            EyesRig = self.NameConv.set_name_in_format("EyesRig", Type="grp", System="rig")
             cmds.group(empty=True, name=EyesRig)
             RMRigTools.RMChangeRotateOrder(EyesRig, "xzy")
             cmds.setAttr("%s.rotateY" % EyesRig, -90)

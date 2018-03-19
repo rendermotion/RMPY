@@ -11,9 +11,9 @@ def skeletonHands():
 	palmGroups = ["*_LF_middle00_grp_Rig","*_LF_ring00_grp_Rig","*_LF_pinky00_grp_Rig","*_LF_index00_grp_Rig"]
 	for eachGroup in palmGroups:
 		Group = cmds.ls(eachGroup)[0]
-		NewJoint = cmds.joint( name= NameConv.RMGetAShortName(Group) + "skeleton")
-		NewJoint = NameConv.RMRenameBasedOnBaseName(Group ,NewJoint, NewName = NewJoint)
-		NewJoint = NameConv.RMRenameSetFromName(NewJoint , TextString = "skinjoint" , Token = "Type")
+		NewJoint = cmds.joint(name=NameConv.get_a_short_name(Group) + "skeleton")
+		NewJoint = NameConv.rename_based_on_base_name(Group, NewJoint, NewName = NewJoint)
+		NewJoint = NameConv.rename_set_from_name(NewJoint, TextString ="skinjoint", Token ="Type")
 		RMRigTools.RMAlign ( Group, NewJoint,3)
 		cmds.parent ( NewJoint, Group )
 

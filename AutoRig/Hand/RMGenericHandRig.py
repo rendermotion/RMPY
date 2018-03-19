@@ -65,9 +65,9 @@ class RMGenericHandRig(object):
         pm.parentConstraint(self.MainKinematics, self.GHS.palmJoint)
         pm.parentConstraint(self.MainKinematics, self.MainControl)
 
-        self.NameConv.RMRenameSetFromName(self.GHS.palmJoint, "sknjnt", "objectType")
+        self.NameConv.rename_set_from_name(self.GHS.palmJoint, "sknjnt", "objectType")
         for eachFinger in self.GHS.fingers:
-            self.NameConv.RMRenameSetFromName(eachFinger, "sknjnt", "objectType")
+            self.NameConv.rename_set_from_name(eachFinger, "sknjnt", "objectType")
 
         # self.PalmControl
         # RMRigShapeControls.RMCreateBoxCtrl(self.GHS.palmJoint, Yratio = .5, size = palmLen, NameConv =  NameConv)
@@ -78,7 +78,7 @@ class RMGenericHandRig(object):
 
     def CreatePalmRig(self, PalmControl=None):
 
-        if self.NameConv.RMGetFromName(self.GHS.palmJoint, "side") == "LF":
+        if self.NameConv.get_from_name(self.GHS.palmJoint, "side") == "L":
             sideVariation = -1
         else:
             sideVariation = 1
@@ -89,8 +89,8 @@ class RMGenericHandRig(object):
             palmResetPoint, PalmControl = RMRigShapeControls.RMCircularControl(self.GHS.palmJoint)
         else:
             palmResetPoint = pm.group(empty=True, name="palmControl")
-            self.NameConv.RMRenameBasedOnBaseName(self.GHS.palmJoint, palmResetPoint,
-                                                                   {'name': palmResetPoint})
+            self.NameConv.rename_based_on_base_name(self.GHS.palmJoint, palmResetPoint,
+                                                    name=palmResetPoint)
             RMRigTools.RMAlign(self.GHS.palmJoint, palmResetPoint, 3)
 
         self.PalmControl = PalmControl
@@ -162,7 +162,7 @@ class RMGenericHandRig(object):
         HandPalm = self.name_conv.RMCreateGroupOnObj(self.GHS.palmJoint, Type="world")
         for keys in self.fingerRoot:
             childGroup = self.name_conv.RMCreateGroupOnObj(HandPalm, Type="child")
-            self.NameConv.RMRenameSetFromName(childGroup, keys, 'name', mode = 'add')
+            self.NameConv.rename_set_from_name(childGroup, keys, 'name', mode='add')
             pm.parentConstraint(childGroup, self.fingerRoot[keys], maintainOffset=True)
             self.PalmReferencePoints[keys] = childGroup
 
@@ -170,7 +170,7 @@ class RMGenericHandRig(object):
 
     def CreateFingerSquareRig(self, Finger):
 
-        if self.NameConv.RMGetFromName(Finger[0], "Side") == "LF":
+        if self.NameConv.get_from_name(Finger[0], "side") == "L":
             sideVariation = 1
         else:
             sideVariation = -1

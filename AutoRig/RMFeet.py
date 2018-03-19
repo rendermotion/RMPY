@@ -43,15 +43,15 @@ class RMFeetRig(object):
         self.StardardFeetFK(StandarFeetPointsDic, FeetControl=FKControl)
         self.rootJoints, FeetJoints = self.StandardReverseFeetJointStructure(StandarFeetPointsDic)
         # StandardFeetFKJoints = self.NameConv.RMRenameSetFromName(StandardFeetIKJoints, "Blend" , "Name" , mode = "add")
-        self.NameConv.RMRenameSetFromName(FeetJoints, "sknjnt", "objectType")
-        self.NameConv.RMRenameSetFromName(FeetJoints[2], "jnt", "objectType")
+        self.NameConv.rename_set_from_name(FeetJoints, "sknjnt", "objectType")
+        self.NameConv.rename_set_from_name(FeetJoints[2], "jnt", "objectType")
         self.StandardFeetJoints = FeetJoints
 
     def StardardFeetFK(self, StandarFeetPointsDic, FeetControl=None):
-        Side = self.NameConv.RMGetFromName(self.StandardFeetPointsDic["feet"][0], "side")
+        Side = self.NameConv.get_from_name(self.StandardFeetPointsDic["feet"][0], "side")
         self.rootFKJoints, StandardFeetFKJoints = self.StandardReverseFeetJointStructure(StandarFeetPointsDic)
 
-        self.NameConv.RMRenameSetFromName(StandardFeetFKJoints, "FK", "name", mode="add")
+        self.NameConv.rename_set_from_name(StandardFeetFKJoints, "FK", "name", mode="add")
 
         FootIn = self.StandardFeetPointsDic["limitIn"]
         FootOut = self.StandardFeetPointsDic["limitOut"]
@@ -83,9 +83,9 @@ class RMFeetRig(object):
     def StandardFeetIKRig(self, StandarFeetPointsDic, FeetControl=None):
         self.StandardFeetPointsDic = StandarFeetPointsDic
 
-        Side = self.NameConv.RMGetFromName(self.StandardFeetPointsDic["feet"][0], "side")
+        Side = self.NameConv.get_from_name(self.StandardFeetPointsDic["feet"][0], "side")
         self.rootIKJoints, StandardFeetIKJoints = self.StandardReverseFeetJointStructure(StandarFeetPointsDic)
-        self.NameConv.RMRenameSetFromName(StandardFeetIKJoints, "IK", "name", mode="add")
+        self.NameConv.rename_set_from_name(StandardFeetIKJoints, "IK", "name", mode="add")
 
         FootIn = self.StandardFeetPointsDic["limitIn"]
         FootOut = self.StandardFeetPointsDic["limitOut"]
@@ -94,14 +94,14 @@ class RMFeetRig(object):
         Length = RMRigTools.RMPointDistance(self.StandardFeetPointsDic["feet"][2], FootBK)
         Width = RMRigTools.RMPointDistance(FootIn, FootOut)
 
-        BallGrp = pm.group(empty=True, name=self.NameConv.RMSetNameInFormat({'name': "Ball", 'side': Side}))
-        BallLift = pm.group(empty=True, name=self.NameConv.RMSetNameInFormat({'name': "BallLift", 'side': Side}))
-        TapGrp = pm.group(empty=True, name=self.NameConv.RMSetNameInFormat({'name': "TapGrp", 'side': Side}))
-        TipGrp = pm.group(empty=True, name=self.NameConv.RMSetNameInFormat({'name': "TipGrp", 'side': Side}))
-        SideInGrp = pm.group(empty=True, name=self.NameConv.RMSetNameInFormat({'name': "SideInGrp", 'side': Side}))
-        SideOutGrp = pm.group(empty=True, name=self.NameConv.RMSetNameInFormat({'name': "SideOutGrp", 'side': Side}))
-        FeetOrient = pm.group(empty=True, name=self.NameConv.RMSetNameInFormat({'name': "FeetOrient", 'side': Side}))
-        FeetPalmOrient = pm.group(empty=True, name=self.NameConv.RMSetNameInFormat({'name': "FeetPalmOrient", 'side': Side}))
+        BallGrp = pm.group(empty=True, name=self.NameConv.set_name_in_format(name="Ball", side=Side))
+        BallLift = pm.group(empty=True, name=self.NameConv.set_name_in_format(name="BallLift", side=Side))
+        TapGrp = pm.group(empty=True, name=self.NameConv.set_name_in_format(name="TapGrp", side=Side))
+        TipGrp = pm.group(empty=True, name=self.NameConv.set_name_in_format(name="TipGrp", side=Side))
+        SideInGrp = pm.group(empty=True, name=self.NameConv.set_name_in_format(name="SideInGrp", side=Side))
+        SideOutGrp = pm.group(empty=True, name=self.NameConv.set_name_in_format(name="SideOutGrp", side=Side))
+        FeetOrient = pm.group(empty=True, name=self.NameConv.set_name_in_format(name="FeetOrient", side=Side))
+        FeetPalmOrient = pm.group(empty=True, name=self.NameConv.set_name_in_format(name="FeetPalmOrient", side=Side))
 
         RMRigTools.RMAlign(StandardFeetIKJoints[1], BallGrp, 3)
         RMRigTools.RMAlign(StandardFeetIKJoints[1], BallLift, 3)
@@ -124,10 +124,10 @@ class RMFeetRig(object):
         TipIK, TipIkEffector = pm.ikHandle(sj=StandardFeetIKJoints[1], ee=StandardFeetIKJoints[2],
                                              name="TipIK")  # solver="ikRPsolver",
 
-        self.NameConv.RMRenameNameInFormat(BallIK, {'side':Side})
-        self.NameConv.RMRenameNameInFormat(TipIK, {'side':Side})
-        self.NameConv.RMRenameNameInFormat(BallIkEffector, {'side':Side})
-        self.NameConv.RMRenameNameInFormat(TipIkEffector, {'side':Side})
+        self.NameConv.rename_name_in_format(BallIK, side=Side)
+        self.NameConv.rename_name_in_format(TipIK, side=Side)
+        self.NameConv.rename_name_in_format(BallIkEffector, side=Side)
+        self.NameConv.rename_name_in_format(TipIkEffector, side=Side)
 
         # pm.poleVectorConstraint (FeetOrient, BallIK)
         # pm.poleVectorConstraint (FeetPalmOrient, TipIK)
@@ -145,7 +145,7 @@ class RMFeetRig(object):
         TipData = self.rig_tools.RMCreateGroupOnObj(TipGrp)
         MainFeet = self.rig_tools.RMCreateGroupOnObj(TipData)
 
-        self.NameConv.RMRenameSetFromName(MainFeet, "MainFeet", "name")
+        self.NameConv.rename_set_from_name(MainFeet, "MainFeet", "name")
 
         if not FeetControl:
             fetControlReset, FeetControl = RMRigShapeControls.RMCreateBoxCtrl(StandarFeetPointsDic["feet"][0],

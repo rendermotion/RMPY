@@ -17,6 +17,7 @@ except ImportError:
     from RMPY.Tools.QT4.ui import FormBipedRig
 
 import maya.mel as mel
+import pymel.core as pm
 import os
 from RMPY import RMUncategorized
 from RMPY.AutoRig import RMAutoRig
@@ -25,6 +26,7 @@ from RMPY.AutoRig.snippets import CorrectPoleVectorsOrientation
 from RMPY.AutoRig.snippets import RedoClavicleSpaceSwitch
 from RMPY.AutoRig.snippets import SkeletonHands
 from RMPY.AutoRig.snippets import supportScaleOnRig
+from RMPY.snippets import ChangeNameConvention
 reload(FormBipedRig)
 reload(RMAutoRig)
 
@@ -65,8 +67,12 @@ class main(MayaQWidgetDockableMixin,QDialog):
         CreateBypedPointsCommand = '''
         source "RMCreateCharacterByped.mel";
         CreateBipedCharacter(%s,<<0,0,1>>,<<0,1,0>>);
-        '''%(self.ui.HeightSpnBox.value())
+        ''' % (self.ui.HeightSpnBox.value())
         mel.eval(CreateBypedPointsCommand)
+        selection = pm.ls('Character01_MD_Spine_pnt_rfr')
+        ChangeNameConvention.changeNameConv(selection)
+        pm.rename('C_object01_rig_UDF', 'C_headTip01_rig_pnt')
+
     def supportScaleRigBtnPressed(self):
         supportScaleOnRig.supportScaleOnRig()
 
@@ -82,15 +88,15 @@ class main(MayaQWidgetDockableMixin,QDialog):
     def MirrorSelection(self , ObjectList):
         for eachObject in ObjectList:
             ObjectTransformDic = RMUncategorized.ObjectTransformDic([eachObject])
-            Side = self.NameConv.RMGetFromName(eachObject , "side")
+            Side = self.NameConv.get_from_name(eachObject, "side")
             if Side == "R":
-                OpositObject = self.NameConv.RMSetFromName(eachObject, "L", "side")
+                OpositObject = self.NameConv.set_from_name(eachObject, "L", "side")
                 if cmds.objExists(OpositObject):
-                    RMUncategorized.SetObjectTransformDic({OpositObject : ObjectTransformDic[eachObject]}, MirrorTranslateX = 1 , MirrorTranslateY = 1 , MirrorTranslateZ = -1 , MirrorRotateX = -1 , MirrorRotateY = -1 , MirrorRotateZ = 1)
+                    RMUncategorized.SetObjectTransformDic({OpositObject: ObjectTransformDic[eachObject]}, MirrorTranslateX = 1 , MirrorTranslateY = 1 , MirrorTranslateZ = -1 , MirrorRotateX = -1 , MirrorRotateY = -1 , MirrorRotateZ = 1)
                 else:
                     print 'object not found %s'%OpositObject
             else:
-                OpositObject = self.NameConv.RMSetFromName(eachObject , "R", "side")
+                OpositObject = self.NameConv.set_from_name(eachObject, "R", "side")
                 if cmds.objExists(OpositObject):
                     RMUncategorized.SetObjectTransformDic({OpositObject : ObjectTransformDic[eachObject]}, MirrorTranslateX = 1 , MirrorTranslateY = 1 , MirrorTranslateZ = -1 , MirrorRotateX = -1 , MirrorRotateY = -1 , MirrorRotateZ = 1)
                 else:

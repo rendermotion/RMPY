@@ -6,7 +6,7 @@ print controls_list
 name_conv = RMNameConvention.RMNameConvention()
 for each in controls_list:
     shapes = each.getShapes()
-    side = name_conv.RMGetFromName(each, 'side')
+    side = name_conv.get_from_name(each, 'side')
     if shapes:
         shapes[0].overrideEnabled.set(1)
         if side == 'L':

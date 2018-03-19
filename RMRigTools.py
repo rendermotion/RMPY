@@ -3,6 +3,7 @@ import maya.api.OpenMaya as om
 import math
 import pymel.core as pm
 import inspect
+reload(RMNameConvention)
 
 def average(*args):
     average_result = []
@@ -19,18 +20,18 @@ def average(*args):
 def connectWithLimits(AttrX, AttrY, keys):
     AttrX = validate_pymel_nodes(AttrX)
     AttrY = validate_pymel_nodes(AttrY)
-    value = pm.listConnections(AttrY, destination = False, plugs=True, skipConversionNodes = True)
+    value = pm.listConnections(AttrY, destination=False, plugs=True, skipConversionNodes=True)
     if value:
         print value[0].node()
         if pm.objectType(value[0].node()) == 'plusMinusAverage':
             plusMinus = value[0].node()
-            if AttrX.get(type=True) in ['float','doubleLinear','doubleAngle']:
+            if AttrX.get(type=True) in ['float', 'doubleLinear', 'doubleAngle']:
                 for eachKey in keys:
                     pm.setDrivenKeyframe('%s' % plusMinus.input1D[len(plusMinus.input1D.elements())],
                                            currentDriver='%s' % AttrX, dv=eachKey[0], v=eachKey[1])
             # elif attribute_source.get(type=True) in [vector]:
             #    print 'connecting vector'
-            elif AttrX.get(type=True) in ['double3', 'doubleAngle']:
+            elif AttrX.get(type=True) in ['double3']:
                 for eachKey in keys:
                     pm.setDrivenKeyframe('%s' % plusMinus.input3D[len(plusMinus.input3D.elements()) % 3],
                                            currentDriver='%s' % AttrX, dv=eachKey[0], v=eachKey[1])
@@ -38,7 +39,7 @@ def connectWithLimits(AttrX, AttrY, keys):
 
                 print 'could not add data type: %s' % AttrX.get(type=True)
         else:
-            if AttrX.get(type=True) in ['float','doubleLinear','doubleAngle']:
+            if AttrX.get(type=True) in ['float','doubleLinear', 'doubleAngle']:
                 plusMinus = pm.shadingNode("plusMinusAverage", asUtility=True, name="additiveConnection")
                 value[0] // AttrY
                 value[0] >> plusMinus.input1D[0]
@@ -69,7 +70,7 @@ def connectAttr(attribute_source, attribute_destination, name = 'additiveConnect
         print value[0].node()
         if pm.objectType(value[0].node()) == 'plusMinusAverage':
             plusMinus = value[0].node()
-            if attribute_source.get(type=True) in ['doubleLinear']:
+            if attribute_source.get(type=True) in ['float','doubleLinear', 'doubleAngle']:
                 attribute_source >> plusMinus.input1D[len(plusMinus.input1D.elements())]
             #elif attribute_source.get(type=True) in [vector]:
             #    print 'connecting vector'
@@ -79,7 +80,7 @@ def connectAttr(attribute_source, attribute_destination, name = 'additiveConnect
 
                 print 'could not add data type: %s' % attribute_source.get(type=True)
         else:
-            if attribute_source.get(type=True) in ['doubleLinear']:
+            if attribute_source.get(type=True) in ['float', 'doubleLinear', 'doubleAngle']:
                 plusMinus = pm.shadingNode("plusMinusAverage", asUtility=True, name="additiveConnection")
                 value[0] // attribute_destination
                 value[0] >> plusMinus.input1D[0]
@@ -218,15 +219,14 @@ def RMCreateGroupOnObj(Obj, Type="inserted", NameConv = None):
 
     Group = pm.group(empty=True)
 
-    if NameConv.RMIsNameInFormat(Obj):
-        Group = NameConv.RMRenameBasedOnBaseName(Obj, Group, {'objectType': "transform"})
+    if NameConv.is_name_in_format(Obj):
+        Group = NameConv.rename_based_on_base_name(Obj, Group, objectType="transform")
     else:
         ValidNameList = Obj.split("_")
         ValidName = ""
         for eachToken in ValidNameList:
             ValidName += eachToken
-        NewName = NameConv.RMSetNameInFormat(
-            {'name': NameConv.RMAddToNumberedString(ValidName, "Group"), 'objectType': "transform"})
+        NewName = NameConv.set_name_in_format(name = NameConv.add_to_numbered_string(ValidName, "Group"), objectType= "transform")
         Group = pm.rename(Group, NewName)
 
     RMAlign(Obj, Group, 3)
@@ -413,7 +413,7 @@ def create_bones_at_points(PointArray, NameConv=None, ZAxisOrientation="Y"):
         pm.select(cl=True)
 
         newJoint = pm.joint(p=[0, 0, 0], name="joint")
-        jointArray.append(NameConv.RMRenameBasedOnBaseName(str(PointArray[index]), str(newJoint), {}))
+        jointArray.append(NameConv.rename_based_on_base_name(str(PointArray[index]), str(newJoint)))
 
         if index == 0:
             pm.parent(jointArray[0], ParentJoint)
@@ -488,7 +488,7 @@ def RMCreateBonesAtPoints(PointArray, NameConv=None, ZAxisOrientation="Y"):
         pm.select(cl=True)
 
         newJoint = pm.joint(p=[0, 0, 0], name="joint")
-        NameConv.RMRenameBasedOnBaseName(PointArray[index], newJoint, {})
+        NameConv.rename_based_on_base_name(PointArray[index], newJoint)
         jointArray.append(newJoint)
 
         if index == 0:
@@ -546,17 +546,17 @@ def RMCreateLineBetwenPoints(Point1, Point2, NameConv=None):
 
     Curve = pm.curve(degree=1, p=[[0, 0, 0], [1, 0, 0]], name="curveLineBetweenPnts")
 
-    Curve = NameConv.RMRenameBasedOnBaseName(Point1, Curve, {'name': Curve})
+    Curve = NameConv.rename_based_on_base_name(Point1, Curve, name=Curve)
 
     NumCVs = pm.getAttr(Curve + ".controlPoints", size=True)
 
     Cluster1, Cluster1Handle = pm.cluster(Curve + ".cv[0]", relative=True, name="clusterLineBetweenPnts")
-    Cluster1 = NameConv.RMRenameBasedOnBaseName(Point1, Cluster1, {'name': Cluster1})
-    Cluster1Handle = NameConv.RMRenameBasedOnBaseName(Point1, Cluster1Handle, {'name': Cluster1Handle})
+    Cluster1 = NameConv.rename_based_on_base_name(Point1, Cluster1, name= Cluster1)
+    Cluster1Handle = NameConv.rename_based_on_base_name(Point1, Cluster1Handle, name= Cluster1Handle)
 
     Cluster2, Cluster2Handle = pm.cluster(Curve + ".cv[1]", relative=True, name="clusterLineBetweenPnts")
-    Cluster2 = NameConv.RMRenameBasedOnBaseName(Point2, Cluster2, {'name': Cluster2})
-    Cluster2Handle = NameConv.RMRenameBasedOnBaseName(Point2, Cluster2Handle, {'name': Cluster2Handle})
+    Cluster2 = NameConv.rename_based_on_base_name(Point2, Cluster2, name= Cluster2)
+    Cluster2Handle = NameConv.rename_based_on_base_name(Point2, Cluster2Handle, name= Cluster2Handle)
 
     pm.setAttr(Curve + ".overrideEnabled", 1)
     pm.setAttr(Curve + ".overrideDisplayType", 1)
@@ -565,12 +565,12 @@ def RMCreateLineBetwenPoints(Point1, Point2, NameConv=None):
     RMAlign(Point2, Cluster1Handle, 1)
 
     PointConstraint1 = pm.pointConstraint(Point1, Cluster1Handle, name="PointConstraintLineBetweenPnts")
-    PointConstraint1 = NameConv.RMRenameBasedOnBaseName(Point1, PointConstraint1, {'name': PointConstraint1})
+    PointConstraint1 = NameConv.rename_based_on_base_name(Point1, PointConstraint1, name= PointConstraint1)
     PointConstraint2 = pm.pointConstraint(Point2, Cluster2Handle, name="PointConstraintLineBetweenPnts")
-    PointConstraint2 = NameConv.RMRenameBasedOnBaseName(Point2, PointConstraint2, {'name': PointConstraint2})
+    PointConstraint2 = NameConv.rename_based_on_base_name(Point2, PointConstraint2, name= PointConstraint2)
 
     DataGroup = pm.group(em=True, name="DataLineBetweenPnts")
-    DataGroup = NameConv.RMRenameBasedOnBaseName(Point1, DataGroup, {'name': DataGroup})
+    DataGroup = NameConv.rename_based_on_base_name(Point1, DataGroup, name= DataGroup)
     pm.parent(Cluster1Handle, DataGroup)
     pm.parent(Cluster2Handle, DataGroup)
     pm.parent(Curve, DataGroup)
@@ -594,11 +594,11 @@ def RMCreateClustersOnCurve(curve, NameConv=None):
         print "Open Line"
         for i in range(0, (degree + spans)):
             Cluster2Handle, cluster = pm.cluster(curve + ".cv[" + str(i) + "]", name="ClusterOnCurve")
-            if NameConv.RMIsNameInFormat(curve):
-                cluster = NameConv.RMRenameBasedOnBaseName(curve, cluster, {'name': cluster})
+            if NameConv.is_name_in_format(curve):
+                cluster = NameConv.rename_based_on_base_name(curve, cluster, name=cluster)
                 # Cluster2Handle = NameConv.RMRenameBasedOnBaseName(curve, Cluster2Handle, NewName = Cluster2Handle)
             else:
-                cluster = NameConv.RMRenameNameInFormat(cluster, {})
+                cluster = NameConv.rename_name_in_format(cluster)
                 # Cluster2Handle = NameConv.RMRenameNameInFormat(Cluster2Handle)
             clusterList.append(cluster)
             pm.setAttr(cluster + ".visibility", 0)
@@ -608,11 +608,11 @@ def RMCreateClustersOnCurve(curve, NameConv=None):
         for i in range(0, spans):
             Cluster2Handle, cluster = pm.cluster(curve + ".cv[" + str(i) + "]", name="ClusterOnCurve")
             print cluster
-            if NameConv.RMIsNameInFormat(curve):
-                cluster = NameConv.RMRenameBasedOnBaseName(curve, cluster, {'name': cluster})
+            if NameConv.is_name_in_format(curve):
+                cluster = NameConv.rename_based_on_base_name(curve, cluster, name= cluster)
                 # Cluster2Handle = NameConv.RMRenameBasedOnBaseName(curve, Cluster2Handle, NewName = Cluster2Handle)
             else:
-                cluster = NameConv.RMRenameNameInFormat(cluster, {})
+                cluster = NameConv.rename_name_in_format(cluster)
                 # Cluster2Handle = NameConv.RMRenameNameInFormat(Cluster2Handle)
             clusterList.append(cluster)
             pm.setAttr(cluster + ".visibility", 0)
@@ -632,7 +632,7 @@ def objectsInListExists(objectsLists,verbose = True ):
     return exists
 
 class boundingBoxInfo(object):
-    def __init__(self, Object):
+    def __init__(self, scene_object):
         self.xmin = None
         self.ymin = None
         self.zmin = None
@@ -640,8 +640,8 @@ class boundingBoxInfo(object):
         self.ymax = None
         self.zmax = None
 
-        if Object.__class__ == list:
-            for eachObject in Objects:
+        if scene_object.__class__ == list:
+            for eachObject in scene_object:
                 Values = pm.xform(eachObject, q=True, bb=True)
                 if self.xmin == None or self.xmin > Values[0]:
                     self.xmin = Values[0]
@@ -655,10 +655,18 @@ class boundingBoxInfo(object):
                     self.ymax = Values[4]
                 if self.zmax == None or self.zmax < Values[5]:
                     self.zmax = Values[5]
-        elif Object.__class__ in [str, unicode]:
-            self.BaseObject = Object
-            Values = pm.xform(Object, q=True, bb=True)
-            self.position = pm.xform(Object, q=True, rp=True, worldSpace=True)
+
+        else:
+            if scene_object.__class__ in [str, unicode]:
+                scene_object = validate_pymel_nodes(scene_object)
+            elif pm.general.PyNode in inspect.getmro(type(scene_object)):
+                pass
+            else:
+                raise AttributeError
+
+            self.BaseObject = scene_object
+            Values = pm.xform(scene_object, q=True, bb=True)
+            self.position = pm.xform(scene_object, q=True, rp=True, worldSpace=True)
             self.xmin = Values[0]
             self.ymin = Values[1]
             self.zmin = Values[2]
@@ -680,7 +688,8 @@ class boundingBoxInfo(object):
         self.offsetZ = (self.minDistanceToCenterZ - self.maxDistanceToCenterZ) / 2
 
     def recalculate(self):
-        self.position = pm.xform(Object, q=True, rp=True, worldSpace=True)
+
+        self.position = pm.xform(self.BaseObject, q=True, rp=True, worldSpace=True)
         self.lenX = Values[3] - Values[0]
         self.lenY = Values[4] - Values[1]
         self.lenZ = Values[5] - Values[2]
@@ -729,7 +738,7 @@ class RMRigTools(object):
             pm.select(cl=True)
 
             newJoint = pm.joint(p=[0, 0, 0], name="joint")
-            self.NameConv.RMRenameBasedOnBaseName(PointArray[index], newJoint, {'objectType': 'joint'})
+            self.NameConv.rename_based_on_base_name(PointArray[index], newJoint, objectType='joint')
             jointArray.append(newJoint)
 
             if index == 0:
@@ -803,7 +812,7 @@ class RMRigTools(object):
             pm.select(cl=True)
 
             newJoint = pm.joint(p=[0, 0, 0], name="joint")
-            self.NameConv.RMRenameBasedOnBaseName(PointArray[index], newJoint, {'objectType': 'joint'})
+            self.NameConv.rename_based_on_base_name(PointArray[index], newJoint, objectType='joint')
             jointArray.append(newJoint)
 
             if index == 0:
@@ -861,10 +870,10 @@ class RMRigTools(object):
         '''
         Group = pm.group(empty=True)
 
-        if self.NameConv.RMIsNameInFormat(Obj):
-            self.NameConv.RMRenameBasedOnBaseName(Obj, Group, {})
+        if self.NameConv.is_name_in_format(Obj):
+            self.NameConv.rename_based_on_base_name(Obj, Group)
             if name is not None:
-                self.NameConv.RMRenameSetFromName(Group, name, 'name')
+                self.NameConv.rename_set_from_name(Group, name, 'name')
         else:
             if name is None:
                 ValidNameList = Obj.split("_")
@@ -873,7 +882,7 @@ class RMRigTools(object):
                     ValidName += eachToken
             else:
                 ValidName = name
-            NewName = self.NameConv.RMSetNameInFormat({'name': ValidName , 'objectType': "transform"})
+            NewName = self.NameConv.set_name_in_format(name= ValidName , objectType= "transform")
             pm.rename(Group, NewName)
 
         RMAlign(Obj, Group, 3)
@@ -904,23 +913,23 @@ class RMRigTools(object):
             numElements = len(fullListPoint)
             knotVector = range(-degree + 1, 0) + range(numElements)
             Curve = pm.curve(degree=degree, p=fullListPoint, periodic=periodic, name='line', k=knotVector)
-        self.NameConv.RMRenameBasedOnBaseName(pointList[0], Curve, {'name': Curve})
+        self.NameConv.rename_based_on_base_name(pointList[0], Curve, name=Curve)
         return Curve
 
     def RMCreateLineBetwenPoints(self, Point1, Point2):
         Curve = pm.curve(degree=1, p=[[0, 0, 0], [1, 0, 0]], name="curveLineBetweenPnts")
 
-        self.NameConv.RMRenameBasedOnBaseName(Point1, Curve, {'name': Curve})
+        self.NameConv.rename_based_on_base_name(Point1, Curve, name=Curve)
 
         NumCVs = pm.getAttr(Curve + ".controlPoints", size=True)
 
         Cluster1, Cluster1Handle = pm.cluster(Curve + ".cv[0]", relative=True, name="clusterLineBetweenPnts")
-        self.NameConv.RMRenameBasedOnBaseName(Point1, Cluster1, {'name': Cluster1})
-        self.NameConv.RMRenameBasedOnBaseName(Point1, Cluster1Handle, {'name': Cluster1Handle})
+        self.NameConv.rename_based_on_base_name(Point1, Cluster1, name=Cluster1)
+        self.NameConv.rename_based_on_base_name(Point1, Cluster1Handle, name= Cluster1Handle)
 
         Cluster2, Cluster2Handle = pm.cluster(Curve + ".cv[1]", relative=True, name="clusterLineBetweenPnts")
-        self.NameConv.RMRenameBasedOnBaseName(Point2, Cluster2, {'name': Cluster2})
-        self.NameConv.RMRenameBasedOnBaseName(Point2, Cluster2Handle, {'name': Cluster2Handle})
+        self.NameConv.rename_based_on_base_name(Point2, Cluster2, name=Cluster2)
+        self.NameConv.rename_based_on_base_name(Point2, Cluster2Handle, name=Cluster2Handle)
 
         pm.setAttr(Curve + ".overrideEnabled", 1)
         pm.setAttr(Curve + ".overrideDisplayType", 1)
@@ -929,12 +938,12 @@ class RMRigTools(object):
         RMAlign(Point2, Cluster1Handle, 1)
 
         PointConstraint1 = pm.pointConstraint(Point1, Cluster1Handle, name="PointConstraintLineBetweenPnts")
-        self.NameConv.RMRenameBasedOnBaseName(Point1, PointConstraint1, {'name': PointConstraint1})
+        self.NameConv.rename_based_on_base_name(Point1, PointConstraint1, name=PointConstraint1)
         PointConstraint2 = pm.pointConstraint(Point2, Cluster2Handle, name="PointConstraintLineBetweenPnts")
-        self.NameConv.RMRenameBasedOnBaseName(Point2, PointConstraint2, {'name': PointConstraint2})
+        self.NameConv.rename_based_on_base_name(Point2, PointConstraint2, name=PointConstraint2)
 
         DataGroup = pm.group(em=True, name="DataLineBetweenPnts")
-        self.NameConv.RMRenameBasedOnBaseName(Point1, DataGroup, {'name': DataGroup})
+        self.NameConv.rename_based_on_base_name(Point1, DataGroup, name= DataGroup)
         pm.parent(Cluster1Handle, DataGroup)
         pm.parent(Cluster2Handle, DataGroup)
         pm.parent(Curve, DataGroup)
@@ -949,11 +958,11 @@ class RMRigTools(object):
         if form == 0 or form == 1:
             for i in range(0, (degree + spans)):
                 Cluster2Handle, cluster = pm.cluster(curve + ".cv[" + str(i) + "]", name="ClusterOnCurve")
-                if self.NameConv.RMIsNameInFormat(curve):
-                    self.NameConv.RMRenameBasedOnBaseName(curve, cluster, {'name': cluster})
+                if self.NameConv.is_name_in_format(curve):
+                    self.NameConv.rename_based_on_base_name(curve, cluster, name=cluster)
                     # Cluster2Handle = self.NameConv.RMRenameBasedOnBaseName(curve, Cluster2Handle, NewName = Cluster2Handle)
                 else:
-                    self.NameConv.RMRenameNameInFormat(cluster, {})
+                    self.NameConv.rename_name_in_format(cluster)
                     # Cluster2Handle = self.NameConv.RMRenameNameInFormat(Cluster2Handle)
                 clusterList.append(cluster)
                 pm.setAttr(cluster + ".visibility", 0)
@@ -963,11 +972,11 @@ class RMRigTools(object):
             for i in range(0, spans):
                 Cluster2Handle, cluster = pm.cluster(curve + ".cv[" + str(i) + "]", name="ClusterOnCurve")
                 print cluster
-                if self.NameConv.RMIsNameInFormat(curve):
-                    self.NameConv.RMRenameBasedOnBaseName(curve, cluster, {'name': cluster})
+                if self.NameConv.is_name_in_format(curve):
+                    self.NameConv.rename_based_on_base_name(curve, cluster, name=cluster)
                     # Cluster2Handle = self.NameConv.RMRenameBasedOnBaseName(curve, Cluster2Handle, NewName = Cluster2Handle)
                 else:
-                    self.NameConv.RMRenameNameInFormat(cluster, {})
+                    self.NameConv.rename_name_in_format(cluster)
                     # Cluster2Handle = self.NameConv.RMRenameNameInFormat(Cluster2Handle)
                 clusterList.append(cluster)
                 pm.setAttr(cluster + ".visibility", 0)
@@ -985,7 +994,7 @@ class RMRigTools(object):
         DeltaVector = (Distance / (numberOfPoints + 1)) * ResultVector.normal()
         for index in range(0, numberOfPoints):
             newLocator = pm.spaceLocator(name=name)
-            self.NameConv.RMRenameBasedOnBaseName(Obj01, newLocator, {})
+            self.NameConv.rename_based_on_base_name(Obj01, newLocator)
             locatorList.append(newLocator)
             # locatorList.append(self.NameConv.RMRenameNameInFormat(newLocator, {}))
             Obj1position = Vector01 + DeltaVector * (index + 1)
@@ -1012,7 +1021,7 @@ class RMRigTools(object):
         # DeltaVector = (Distance/(numberOfPoints+1))*ResultVector.normal()
         for index in range(0, numberOfPoints):
             newLocator = pm.spaceLocator(name=name)
-            locatorList.append(self.NameConv.RMRenameNameInFormat(newLocator, {}))
+            locatorList.append(self.NameConv.rename_name_in_format(newLocator))
             TempValue = TempValue + initialSize + (DeltaVector) * (numberOfPoints - index)
             Obj1position = Vector01 + TempValue * ResultVector.normal()
             print ("vectorValue=%s" % Obj1position.length())

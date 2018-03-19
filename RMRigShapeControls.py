@@ -76,12 +76,12 @@ class RMRigShapeControls(object):
             Ctrl = RMCreateCubeLine(JntLength * Xratio, JntLength * Yratio, JntLength * Zratio, name=defaultName,
                                     centered=centered)
 
-        if name == '' and self.NameConv.RMIsNameInFormat(Obj):
-            self.NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {})
+        if name == '' and self.NameConv.is_name_in_format(Obj):
+            self.NameConv.rename_based_on_base_name(Obj, Ctrl)
         else:
-            self.NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {'name': Ctrl})
+            self.NameConv.rename_based_on_base_name(Obj, Ctrl, name=Ctrl)
 
-        self.NameConv.RMRenameSetFromName(Ctrl, "control", "objectType")
+        self.NameConv.rename_set_from_name(Ctrl, "control", "objectType")
 
         RMRigTools.RMAlign(Obj, Ctrl, 3)
 
@@ -102,12 +102,12 @@ class RMRigShapeControls(object):
             Ctrl, Shape = pm.circle(normal=[1, 0, 0], radius=radius, name=defaultName)
 
         if name == 'circularControl':
-            if self.NameConv.RMIsNameInFormat(Obj):
-                self.NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {})
+            if self.NameConv.is_name_in_format(Obj):
+                self.NameConv.rename_based_on_base_name(Obj, Ctrl)
             else:
-                self.NameConv.RMRenameNameInFormat(Ctrl, {'name': name, "objectType": "control"})
+                self.NameConv.rename_name_in_format(Ctrl, name=name, objectType='control')
         else:
-            self.NameConv.RMRenameNameInFormat(Ctrl, {'name': name, "objectType": "control"})
+            self.NameConv.rename_name_in_format(Ctrl, name=name, objectType='control')
         RMRigTools.RMAlign(Obj, Ctrl, 3)
 
         ResetGroup = self.rigTools.RMCreateGroupOnObj(Ctrl)
@@ -144,14 +144,14 @@ class RMRigShapeControls(object):
 
             pm.makeIdentity(Ctrl, apply=True, t=1, r=1, s=1)
 
-            if name != '' and self.NameConv.RMIsNameInFormat(Obj):
+            if name != '' and self.NameConv.is_name_in_format(Obj):
 
-                self.NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {})
+                self.NameConv.rename_based_on_base_name(Obj, Ctrl)
 
             else:
-                self.NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {'name': Ctrl})
+                self.NameConv.rename_based_on_base_name(Obj, Ctrl, name=Ctrl)
 
-            self.NameConv.RMRenameSetFromName(Ctrl, "control", "objectType")
+            self.NameConv.rename_set_from_name(Ctrl, "control", "objectType")
             RMRigTools.RMAlign(Obj, Ctrl, 3)
 
             ParentGroup = self.rigTools.RMCreateGroupOnObj(Ctrl)
@@ -245,12 +245,12 @@ def RMCreateBoxCtrl(Obj, NameConv=None, Xratio=1, Yratio=1, Zratio=1, ParentBase
         Ctrl = RMCreateCubeLine(JntLength * Xratio, JntLength * Yratio, JntLength * Zratio, name=defaultName,
                                 centered=centered)
 
-    if name == '' and NameConv.RMIsNameInFormat(Obj):
-        NameConv.RMRenameBasedOnBaseName(Obj, Ctrl,{})
+    if name == '' and NameConv.is_name_in_format(Obj):
+        NameConv.rename_based_on_base_name(Obj, Ctrl)
     else:
-        NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {'name': Ctrl})
+        NameConv.rename_based_on_base_name(Obj, Ctrl, name = Ctrl)
 
-    NameConv.RMRenameSetFromName(Ctrl, "control", "objectType")
+    NameConv.rename_set_from_name(Ctrl, "control", "objectType")
 
     RMRigTools.RMAlign(Obj, Ctrl, 3)
 
@@ -273,13 +273,13 @@ def RMCircularControl(Obj, radius=1, NameConv=None, axis="X", name=""):
     elif axis in "xX":
         Ctrl, Shape = pm.circle(normal=[1, 0, 0], radius=radius, name=defaultName)
 
-    if name == '' and NameConv.RMIsNameInFormat(Obj):
+    if name == '' and NameConv.is_name_in_format(Obj):
 
-        NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {})
+        NameConv.rename_based_on_base_name(Obj, Ctrl)
     else:
-        NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {'name': Ctrl})
+        NameConv.rename_based_on_base_name(Obj, Ctrl, name=Ctrl)
 
-    NameConv.RMRenameSetFromName(Ctrl, "control", "objectType")
+    NameConv.rename_set_from_name(Ctrl, "control", "objectType")
 
     RMRigTools.RMAlign(Obj, Ctrl, 3)
 
@@ -321,14 +321,14 @@ def RMImportMoveControl(Obj, scale=1, NameConv=None, name='', Type="move"):
 
         pm.makeIdentity(Ctrl, apply=True, t=1, r=1, s=1)
 
-        if name != '' and NameConv.RMIsNameInFormat(Obj):
+        if name != '' and NameConv.is_name_in_format(Obj):
 
-            NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {})
+            NameConv.rename_based_on_base_name(Obj, Ctrl)
 
         else:
 
-            NameConv.RMRenameBasedOnBaseName(Obj, Ctrl, {'name': Ctrl})
-        NameConv.RMRenameSetFromName(Ctrl, "control", "objectType")
+            NameConv.rename_based_on_base_name(Obj, Ctrl, name = Ctrl)
+        NameConv.rename_set_from_name(Ctrl, "control", "objectType")
 
         RMRigTools.RMAlign(Obj, Ctrl, 3)
 

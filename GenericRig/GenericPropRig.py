@@ -16,7 +16,7 @@ def getMeshObjects(Objects):
     OtherObjects = []
     NameConv = RMNameConvention.RMNameConvention()
     for eachObject in Objects:
-        if NameConv.RMGuessObjType(eachObject) == "msh":
+        if NameConv.guess_object_type(eachObject) == "msh":
             MeshObjects.append(eachObject)
         else:
             OtherObjects.append(eachObject)
@@ -51,19 +51,19 @@ def SinglePropRig(Object, referencePositionControl):
                                                    name=NameList[0] + "Ctrl")
         joint = cmds.joint(name=NameList[0] + "jnt")
 
-    Ctrl = NameConv.RMRenameNameInFormat(Ctrl, {'objectType':"control"})
+    Ctrl = NameConv.rename_name_in_format(Ctrl, {'objectType': "control"})
     ResetGroup = RMRigTools.RMCreateGroupOnObj(Ctrl)
     cmds.parent(ResetGroup, GRS.groups["controls"]["group"])
     rigJntGrp = cmds.ls("*SimpleRigJoints*")
     if len(rigJntGrp) == 0:
         jointGroup = cmds.group(empty=True, name="SimpleRigJoints")
-        jointGroup = NameConv.RMRenameNameInFormat(jointGroup,{})
+        jointGroup = NameConv.rename_name_in_format(jointGroup, {})
         cmds.parent(jointGroup, GRS.groups["rig"]['group'])
     else:
         jointGroup = rigJntGrp
     RMRigTools.RMAlign(referencePositionControl, ResetGroup, 3)
 
-    joint = NameConv.RMRenameNameInFormat(joint,{})
+    joint = NameConv.rename_name_in_format(joint, {})
 
     RMRigTools.RMAlign(referencePositionControl, joint, 3)
     ResetJoint = RMRigTools.RMCreateGroupOnObj(joint)

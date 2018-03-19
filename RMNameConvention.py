@@ -59,61 +59,15 @@ def validate_input_nodes(nodes):
 
 
 class RMNameConvention(object):
-    def __init__(self, DefaultValues = ["C", "Object", 'Rig', "UDF"], convention = None):
-        if convention == None:
-            self.NameConvention = {
-                "name": 1,
-                'side': 0,
-                'objectType': 3,
-                "system": 2
-            }
-            convention = self.NameConvention
-        else:
-            self.NameConvention = convention
+    def __init__(self, *tokens, **values):
 
-        '''
-        self.validation = {'side': ['LF', 'RH', 'MD'],'objectType' : ['JNT','SKNJNT','NUB','SKN','UDF','SHP','MSH','RMSH','GRP','PNC',
-                                                                'ORC','PRC','PVC','CTRL','pnt','IKH','IKF','RVS','MULT','CND','BLT','CUI',
-                                                                'DBTW','CLS','PMA','B2A','MPH','FFD','BS','AIM','CFME','LFT','PSFI','GUIDE']}
-        self.translator = {'objectType':{
-                            "joint": "JNT",
-                            "skinjoint": "SKNJNT",
-                            "GUIDE":'GUIDE',
-                            "nub": "NUB",
-                            "skin": "SKN",
-                            "undefined": "UDF",
-                            "nurbsCurve": "SHP",
-                            "mesh": "MSH",
-                            "renderMesh": "RMSH",
-                            "transform": "GRP",
-                            "pointConstraint": "PNC",
-                            "orientConstraint": "ORC",
-                            "parentConstraint": "PRC",
-                            "poleVectorConstraint": "PVC",
-                            "control": "CTRL",
-                            "locator": "pnt",
-                            "ikHandle": "IKH",
-                            "ikEffector": "IKF",
-                            "reverse": "RVS",
-                            "multiplyDivide": "MULT",
-                            "condition": "CND",
-                            "baseLattice": "BLT",
-                            "curveInfo": "CUI",
-                            "distanceBetween": "DBTW",
-                            "cluster": "CLS",
-                            "plusMinusAverage": "PMA",
-                            "blendTwoAttr": "B2A",
-                            "motionPath": "MPH",
-                            "ffd": "FFD",
-                            "blendShape": "BS",
-                            "aimConstraint": "AIM",
-                            "curveFromMeshEdge": "CFME",
-                            "loft": "LFT",
-                            "pointOnSurfaceInfo": "PSFI"
-                            },
-                            'side':{'left':'LF', 'right':'RH', 'middle':'MD'}
-                            }
-        '''
+        if len(tokens) == 0:
+            tokens = ['side', 'name', 'system', 'objectType']
+
+        self.name_convention = {}
+        for index, each in enumerate(tokens):
+            self.name_convention[each] = index
+
         self.validation = {'side': ['L', 'R', 'C'],
                            'objectType': ['jnt', 'sknjnt', 'nub', 'skn', 'UDF', 'shp', 'msh', 'rmsh', 'grp', 'pnc',
                                           'orc', 'prc', 'pvc', 'ctr', 'pnt', 'ikh', 'ikf', 'rvs', 'mult', 'cnd', 'blt',
@@ -166,12 +120,24 @@ class RMNameConvention(object):
             "baseLattice": "blt",
             "locator": "loc"
         }
+        self.default_names = {}
+        for eachName in self.name_convention.keys():
+            if eachName in values.keys():
+                self.default_names[eachName] = values[eachName]
+            else:
+                if eachName == 'name':
+                    self.default_names[eachName] = 'object'
+                elif eachName == 'side':
+                    self.default_names[eachName] = 'C'
+                elif eachName == 'objectType':
+                    self.default_names[eachName] = 'UDF'
+                elif eachName == 'system':
+                    self.default_names[eachName] = 'rig'
+                else:
+                    print eachName
+                    raise 'error must provide a default value for each token not token found %s'%eachName
 
-        self.DefaultNames = {}
-        for eachName in self.NameConvention:
-            self.DefaultNames[eachName] = DefaultValues[self.NameConvention[eachName]]
-
-    def RMTokenValidation(self, Token , TokenName):
+    def token_validation(self, Token, TokenName):
         if TokenName in self.validation:
             if Token in self.validation[TokenName]:
                 return Token
@@ -179,22 +145,22 @@ class RMNameConvention(object):
                 if Token in self.translator[TokenName]:
                     return self.translator[TokenName][Token]
                 else:
-                    return self.DefaultNames[TokenName]
+                    return self.default_names[TokenName]
         else:
             return Token
 
-    def RMGetFromName(self, ObjName, Token):
-        if Token in self.NameConvention:
-            if self.RMIsNameInFormat(ObjName):
+    def get_from_name(self, ObjName, Token):
+        if Token in self.name_convention:
+            if self.is_name_in_format(ObjName):
                 splitString = ObjName.split("_")
-                return splitString[self.NameConvention[Token]]
+                return splitString[self.name_convention[Token]]
             else:
-                return self.DefaultNames[Token]
+                return self.default_names[Token]
         else:
             print 'Error no such token in name convention'
             return None
 
-    def RMSetFromName(self, ObjName, TextString, Token, mode = "regular"):
+    def set_from_name(self, ObjName, TextString, Token, mode ="regular"):
         'Valid Modes are regular add, and prefix'
         returnTuple = ()
         if (type(ObjName) == str) or (type(ObjName) == unicode):
@@ -206,19 +172,19 @@ class RMNameConvention(object):
         for eachObj in ObjectList:
             splitString = eachObj.split("_")
             if mode == 'regular':
-               splitString[self.NameConvention[Token]] = self.RMTokenValidation(TextString, Token)
+               splitString[self.name_convention[Token]] = self.token_validation(TextString, Token)
             elif mode == 'add':
-                splitString[self.NameConvention[Token]] = self.RMAddToNumberedString(
-                    splitString[self.NameConvention[Token]], TextString)
+                splitString[self.name_convention[Token]] = self.add_to_numbered_string(
+                    splitString[self.name_convention[Token]], TextString)
             elif mode == 'prefix':
-                splitString[self.NameConvention[Token]] = self.RMAddToNumberedString(TextString, splitString[self.NameConvention[Token]])
+                splitString[self.name_convention[Token]] = self.add_to_numbered_string(TextString, splitString[self.name_convention[Token]])
             returnTuple += tuple(["_".join(splitString)])
         if len(returnTuple) == 1:
             return str(returnTuple[0])
         else:
             return returnTuple
 
-    def RMRenameSetFromName(self, ObjName, TextString, Token, mode="regular"):
+    def rename_set_from_name(self, ObjName, TextString, Token, mode="regular"):
         ObjName = validate_input_nodes(ObjName)
         returnListType = False
         if (type(ObjName) == str) or (type(ObjName) == unicode):
@@ -241,8 +207,8 @@ class RMNameConvention(object):
                 simpleName = fullNameToken[0]
                 complement = ''
 
-            newName = self.RMSetFromName(simpleName, TextString, Token, mode=mode)
-            newName = self.RMUniqueName(newName)
+            newName = self.set_from_name(simpleName, TextString, Token, mode=mode)
+            newName = self.unique_name(newName)
             cmds.rename(eachObj, newName)
             returnList.append(newName)
         if returnListType == True:
@@ -250,7 +216,7 @@ class RMNameConvention(object):
         else:
             return newName
 
-    def RMStringPlus1(self, NameString):
+    def string_plus_1(self, NameString):
         Value = re.split(r"([0-9]+$)", NameString)
         Name = Value[0]
         if len(Value) >= 2:
@@ -259,50 +225,50 @@ class RMNameConvention(object):
             Number = "0"
         return Name + Number.zfill(2)
 
-    def RMAddToNumberedString(self, Name, AddName):
+    def add_to_numbered_string(self, Name, AddName):
         Value = re.split(r"([0-9]+$)", Name)
         if len(Value) >= 2:
             return Value[0].title() + (AddName.title()) + Value[1]
         else:
             return Value[0].title() + (AddName.title())
 
-    def RMUniqueName(self, currentName):
-        ObjName = self.RMGetFromName(currentName, 'name')
+    def unique_name(self, currentName):
+        ObjName = self.get_from_name(currentName, 'name')
         Value = re.split(r"([0-9]+$)", ObjName)
         Name = Value[0]
-        currentName = self.RMSetFromName(currentName, self.RMStringPlus1(Name), 'name')
+        currentName = self.set_from_name(currentName, self.string_plus_1(Name), 'name')
         while (cmds.objExists(currentName)):
-            Name = self.RMStringPlus1(Name)
-            currentName = self.RMSetFromName(currentName, Name, 'name')
+            Name = self.string_plus_1(Name)
+            currentName = self.set_from_name(currentName, Name, 'name')
         return currentName
 
-    def RMGetTypeFromKey(self, Type):
+    def get_type_from_key(self, Type):
         if Type in self.translator['objectType']:
             return self.translator['objectType'][Type]
         else:
             return self.translator['objectType']['undefined']
 
-    def RMSetNameInFormat(self, wantedNameDic):
+    def set_name_in_format(self, **wantedNameDic):
         '''the wanted Name Dic should be on the form {tokenName: wantedToken} where all the tokenName keys are part of the NameConvention Dictionary'''
         nameDic={}
-        for eachKey in self.NameConvention:
+        for eachKey in self.name_convention:
             if eachKey in wantedNameDic:
                 nameDic[eachKey] = str(wantedNameDic[eachKey])
             else:
-                nameDic[eachKey] = self.DefaultNames[eachKey]
+                nameDic[eachKey] = self.default_names[eachKey]
 
-        for eachToken in self.NameConvention:
-            nameDic[eachToken] = self.RMTokenValidation(nameDic[eachToken], eachToken)
+        for eachToken in self.name_convention:
+            nameDic[eachToken] = self.token_validation(nameDic[eachToken], eachToken)
 
         returnName = []
-        for keys in sorted(self.NameConvention, key=self.NameConvention.get):
+        for keys in sorted(self.name_convention, key=self.name_convention.get):
             returnName.append(nameDic[keys])
         ReturnNameInFormat = "_".join(returnName)
-        return self.RMUniqueName(ReturnNameInFormat)
+        return self.unique_name(ReturnNameInFormat)
 
-    def RMRenameNameInFormat(self, Name, wantedNameDic, useName = False):
+    def rename_name_in_format(self, Name, **wantedNameDic):
+        useName = wantedNameDic.pop('useName', False)
         Name = validate_input_nodes(Name)
-
         NewNameArray = ()
         NameList = []
         if type(Name) == list:
@@ -318,41 +284,44 @@ class RMNameConvention(object):
             for eachToken in NameTokens:
                 NewName += eachToken
             if useName:
-                wantedNameDic['name'] = NewName
-            NewName = self.RMSetNameInFormat(wantedNameDic)
+                wantedNameDic['name'] = self.remove_namespace(NewName)
+            NewName = self.set_name_in_format(**wantedNameDic)
             Names = cmds.rename(Names, NewName)
             if 'objectType' not in wantedNameDic:
-                NewNameArray += tuple([self.RMRenameGuessTypeInName(Names)])
+                NewNameArray += tuple([self.rename_guess_type_in_name(Names)])
             else:
-                Token = self.RMTokenValidation(wantedNameDic['objectType'], 'objectType')
-                NewNameArray += tuple([self.RMRenameSetFromName(Names,Token, 'objectType')])
+                Token = self.token_validation(wantedNameDic['objectType'], 'objectType')
+                NewNameArray += tuple([self.rename_set_from_name(Names, Token, 'objectType')])
 
         if len(NewNameArray) == 1:
             return NewNameArray[0]
         return NewNameArray
 
-    def RMIsNameInFormat(self, obj_name):
+    def is_name_in_format(self, obj_name):
         obj_name = validate_input_nodes(obj_name)
-        splitString = obj_name.split("_")
+        string_in_name = str(obj_name)
+        splitString = string_in_name.split("_")
+        print splitString
+        print self.name_convention.keys()
         valid = True
-        if len(splitString) == len(self.NameConvention.keys()):
+        if len(splitString) == len(self.name_convention.keys()):
             for keys in self.validation:
-                if keys in self.NameConvention:
-                    if splitString[self.NameConvention[keys]] in self.validation[keys]:
+                if keys in self.name_convention:
+                    if splitString[self.name_convention[keys]] in self.validation[keys]:
                         valid = valid and True
-                    else :
-                        print 'key not found: %s'%keys
-                        print '%s not found in %s'% (splitString[self.NameConvention[keys]], self.validation[keys])
+                    else:
+                        print 'key not found: %s' % keys
+                        print '%s not found in %s' % (splitString[self.name_convention[keys]], self.validation[keys])
                         valid = False
             return valid
         else:
             print 'Not same token number'
             return False
 
-    def RMGuessObjType (self, scene_object):
+    def guess_object_type (self, scene_object):
         scene_object = validate_input_nodes(scene_object)
         ObjType = cmds.objectType(scene_object)
-        ObjType = self.RMTokenValidation(ObjType,'objectType')
+        ObjType = self.token_validation(ObjType, 'objectType')
 
         if cmds.objectType(scene_object) == "transform":
             children = cmds.listRelatives(scene_object, shapes=True)
@@ -368,7 +337,7 @@ class RMNameConvention(object):
             print 'Type not identified:', cmds.objectType(scene_object)
         return ObjType
 
-    def RMRenameGuessTypeInName(self, current_name):
+    def rename_guess_type_in_name(self, current_name):
         ''' this functions renames a name in format and adds the correct objectType described on the type dictionary
             to acomplish this, will look the objectType maya command and will match the type on the dictionary,
             this token will be placed on the objectType token place, and the object will be renamed to the new name.
@@ -384,10 +353,10 @@ class RMNameConvention(object):
         for current_name in NameList:
             NewName = current_name
             if cmds.objExists(NewName):
-                if self.RMIsNameInFormat(NewName):
-                    Type = self.RMGuessObjType(current_name)
-                    NewName = self.RMSetFromName(NewName, Type, "objectType")
-            NewName = self.RMUniqueName(NewName)
+                if self.is_name_in_format(NewName):
+                    Type = self.guess_object_type(current_name)
+                    NewName = self.set_from_name(NewName, Type, "objectType")
+            NewName = self.unique_name(NewName)
             cmds.rename(current_name, NewName)
             NewNameArray.append(NewName)
 
@@ -396,27 +365,27 @@ class RMNameConvention(object):
         else:
             return NewNameArray
 
-    def RMRenameBasedOnBaseName(self, base_name, obj_to_rename, wantedNameDic):
+    def rename_based_on_base_name(self, base_name, obj_to_rename, **wantedNameDic):
 
         obj_to_rename =validate_input_nodes(obj_to_rename)
         base_name = validate_input_nodes(base_name)
 
         wantedNameCreated={}
-        if self.RMIsNameInFormat(base_name):
+        if self.is_name_in_format(base_name):
             baseNameTokens = base_name.split('_')
-            for eachToken in self.NameConvention:
+            for eachToken in self.name_convention:
                 if eachToken in wantedNameDic:
                     wantedNameCreated[eachToken] = str(wantedNameDic [eachToken])
                 else:
-                    wantedNameCreated[eachToken] = baseNameTokens[self.NameConvention[eachToken]]
+                    wantedNameCreated[eachToken] = baseNameTokens[self.name_convention[eachToken]]
 
-                wantedNameCreated['objectType']= self.RMGuessObjType(obj_to_rename)
+                wantedNameCreated['objectType']= self.guess_object_type(obj_to_rename)
         else:
-            for eachToken in self.NameConvention:
+            for eachToken in self.name_convention:
                 if eachToken in wantedNameDic:
                     wantedNameCreated[eachToken] = str(wantedNameDic [eachToken])
                 else:
-                    wantedNameCreated[eachToken] = self.DefaultNames [eachToken]
+                    wantedNameCreated[eachToken] = self.default_names [eachToken]
             if not 'name' in wantedNameDic:
                 NamesList = obj_to_rename.split("_")
                 NewName = ""
@@ -425,30 +394,35 @@ class RMNameConvention(object):
                 wantedNameCreated['name'] = NewName
 
         if cmds.objExists(obj_to_rename):
-            NewName = self.RMSetNameInFormat(wantedNameCreated)
+            NewName = self.set_name_in_format(**wantedNameCreated)
             cmds.rename(obj_to_rename, NewName)
             return NewName
         else:
             return False
 
-    def RMGetAShortName(self, scene_object):
+    def get_a_short_name(self, scene_object):
         scene_object = validate_input_nodes(scene_object)
-        if self.RMIsNameInFormat(scene_object):
-            Value = re.split(r"([0-9]+$)", self.RMGetFromName(scene_object, 'name'))
+        if self.is_name_in_format(scene_object):
+            Value = re.split(r"([0-9]+$)", self.get_from_name(scene_object, 'name'))
             return Value[0]
         else:
             Value = re.split(r"([0-9]+$)", scene_object)
             return Value[0]
 
+    def remove_namespace(self, name):
+        tokens = name.split(':')
+        name_token = tokens[len(tokens)-1].split('|')
+        return name_token[len(name_token)-1]
+
+    def set_defaults_from_name(self, base_name, **read_tokens):
+        if self.is_name_in_format(base_name):
+            for each_token in read_tokens.keys():
+                if each_token in self.default_names:
+                    self.default_names[each_token] = re.split(r"([0-9]+$)", self.get_from_name(base_name,
+                                                                                               each_token))[0]
+
+if __name__ == '__main__':
+    name_conv= RMNameConvention()
+    name_conv.set_defaults_from_name('L_main_now_msh', side=True, name=True, system=True, objectType=True)
 
 
-
-
-            # NameConv = RMNameConvention()
-            # NewName = NameConv.RMGuessObjType("joint1")
-
-
-
-
-            #
-            # print NameConv.RMSetFromName ("Character01_LF_pinky00_jnt_Rig",NameConv.RMStringPlus1("pinky"), 'Name')

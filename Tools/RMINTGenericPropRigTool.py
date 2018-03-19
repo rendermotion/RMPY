@@ -44,11 +44,11 @@ class main(MayaQWidgetDockableMixin, QDialog):
         NoisePatternRig.CreateControlOnSelection(centerPivot = True)
 
     def LoadSelectionAsCntrlObjPushBtnPressed(self):
-        Object = cmds.ls(selection = True)[0]
+        Object = cmds.ls(selection=True)[0]
         self.ui.ControllineEdit.setText(Object)
     
     def AddNoiseBtnPressed(self):
-        Object = cmds.ls(selection = True)[0]
+        Object = cmds.ls(selection=True)[0]
         NoisePatternRig.addNoiseOnControl([Object], self.ui.ControllineEdit.text())
 
     def CreateGenericRigStructure(self):

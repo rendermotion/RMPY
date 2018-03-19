@@ -19,8 +19,8 @@ class RMGenericJointChainRig(object):
         self.CreateJointChainSquareRig(jointChain, UDaxis=UDaxis)
 
     def CreateJointChainSquareRig(self, JointChain, UDaxis="Y"):
-        if self.NameConv.RMIsNameInFormat(JointChain[0]):
-            if self.NameConv.RMGetFromName(JointChain[0], "Side") == "LF":
+        if self.NameConv.is_name_in_format(JointChain[0]):
+            if self.NameConv.get_from_name(JointChain[0], "side") == "LF":
                 sideVariation = 1
             else:
                 sideVariation = -1
@@ -78,7 +78,7 @@ def setInName(selection):
             Value = re.split(r"([0-9]+$)", Name[len(Name) - 1])
             NewName = Value[0]
             cmds.rename(eachJoint,
-                        NameConv.RMSetNameInFormat(Name=NewName, Side="RH", Type=NameConv.RMGuessObjType(eachJoint)))
+                        NameConv.set_name_in_format(Name=NewName, side="R", Type=NameConv.guess_object_type(eachJoint)))
 
 
 def lastTwoJointsInChain(selection):

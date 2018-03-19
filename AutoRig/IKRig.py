@@ -147,11 +147,11 @@ class IKRig(GenericRig):
         self.root_joints.setParent(self.rig_structure.joints)
         self.root_controls = pm.group(empty=True, name='ikControls')
         print self.root_controls
-        self.name_conv.RMRenameNameInFormat(self.root_controls, {}, useName=True)
+        self.name_conv.rename_name_in_format(self.root_controls, useName=True)
 
         self.root_kinematics = pm.group(empty=True, name='ikKinematics')
         print self.root_kinematics
-        self.name_conv.RMRenameNameInFormat(self.root_kinematics, {}, useName=True)
+        self.name_conv.rename_name_in_format(self.root_kinematics, useName=True)
 
         #self.ik_handle.setParent(self.root_kinematics)
 
@@ -173,20 +173,20 @@ class IKRig(GenericRig):
             Yratio=.3,
             Zratio=.3,
             ParentBaseSize=True,
-            name="%sIK" % self.name_conv.RMGetAShortName(self.joints[ik_end]))
+            name="%sIK" % self.name_conv.get_a_short_name(self.joints[ik_end]))
         # self.ikControl = self.name_conv.RMRenameBasedOnBaseName(self.joints[len(self.joints)-1], self.ikControl, NewName = self.name_conv.RMGetAShortName(self.joints[len(self.joints)-1]) + "IK")
         RMRigTools.RMLockAndHideAttributes(self.controls['ikHandle'], "111111000h")
 
         self.ik_handle, effector = pm.ikHandle(sj=self.joints[ik_start],
                                                ee=self.joints[ik_end],
                                                sol="ikRPsolver", name="LimbIKHandle")
-        self.name_conv.RMRenameBasedOnBaseName(self.joints[ik_end], self.ik_handle, {})
-        self.name_conv.RMRenameBasedOnBaseName(self.joints[ik_end], effector, {})
+        self.name_conv.rename_based_on_base_name(self.joints[ik_end], self.ik_handle, {})
+        self.name_conv.rename_based_on_base_name(self.joints[ik_end], effector, {})
 
         pm.orientConstraint(self.controls['ikHandle'], self.joints[ik_end])
 
         point_constraint = pm.pointConstraint(self.controls['ikHandle'], self.ik_handle, name="LimbCntrlHandleConstraint")
-        self.name_conv.RMRenameBasedOnBaseName(self.joints[ik_end], point_constraint, {})
+        self.name_conv.rename_based_on_base_name(self.joints[ik_end], point_constraint, {})
         self.kinematics.append(self.ik_handle)
 
         RMRigTools.RMChangeRotateOrder(self.controls['ikHandle'], 'yzx')
@@ -208,7 +208,7 @@ class IKRig(GenericRig):
         VP2 = om.MVector(pm.xform(node_list[1], a=True, ws=True, q=True, rp=True))
         VP3 = om.MVector(pm.xform(node_list[2], a=True, ws=True, q=True, rp=True))
         PoleVector = pm.spaceLocator(name="poleVector")
-        PoleVector = self.name_conv.RMRenameBasedOnBaseName(node_list[1], PoleVector, {'name': PoleVector})
+        PoleVector = self.name_conv.rename_based_on_base_name(node_list[1], PoleVector, {'name': PoleVector})
         pm.xform(PoleVector, ws=True, t=self.pole_vector(VP1, VP2, VP3))
         return PoleVector
 
@@ -223,7 +223,7 @@ class IKRig(GenericRig):
 
         self.reset_controls['poleVector'], self.controls['poleVector'] = self.rig_controls.RMCreateBoxCtrl(locator,
                                                                                                     customSize=distancia / 5,
-                                                                                                    name=self.name_conv.RMGetAShortName(
+                                                                                                    name=self.name_conv.get_a_short_name(
                                                                                                         self.joints[
                                                                                                             1]) + "PoleVectorIK",
                                                                                                     centered=True)
@@ -232,8 +232,8 @@ class IKRig(GenericRig):
         pm.parentConstraint(self.rig_structure.world, curve)
 
         pole_vector_cnstraint = pm.poleVectorConstraint(self.controls['poleVector'], ik_handle, name="PoleVector")
-        self.name_conv.RMRenameBasedOnBaseName(self.controls['poleVector'], pole_vector_cnstraint,
-                                              {'name': pole_vector_cnstraint})
+        self.name_conv.rename_based_on_base_name(self.controls['poleVector'], pole_vector_cnstraint,
+                                                 {'name': pole_vector_cnstraint})
         self.kinematics.append(data_group)
         pm.delete(locator)
 
@@ -262,9 +262,9 @@ class IKRig(GenericRig):
 
         totalDistance = self.BoneChainLenght(self.joints)
         transformStartPoint = pm.spaceLocator(name="StretchyIkHandleStartPoint")
-        transformStartPoint = self.name_conv.RMRenameNameInFormat(transformStartPoint, {}, useName=True)
+        transformStartPoint = self.name_conv.rename_name_in_format(transformStartPoint, useName=True)
         transformEndPoint = pm.spaceLocator(name="StretchyIkHandleEndPoint")
-        transformEndPoint = self.name_conv.RMRenameNameInFormat(transformEndPoint, {}, useName=True)
+        transformEndPoint = self.name_conv.rename_name_in_format(transformEndPoint, useName=True)
 
         if self.root_joints:
             pm.parent(transformStartPoint, self.root_joints)
@@ -274,26 +274,26 @@ class IKRig(GenericRig):
         EndPointConstraint = pm.pointConstraint(ik_handle, transformEndPoint)
 
         distanceNode = pm.shadingNode("distanceBetween", asUtility=True,
-                                      name="IKBaseDistanceNode" + self.name_conv.RMGetAShortName(self.joints[2]))
-        distanceNode = self.name_conv.RMRenameBasedOnBaseName(self.joints[2], distanceNode, {'name': distanceNode})
+                                      name="IKBaseDistanceNode" + self.name_conv.get_a_short_name(self.joints[2]))
+        distanceNode = self.name_conv.rename_based_on_base_name(self.joints[2], distanceNode, {'name': distanceNode})
 
         pm.connectAttr(transformStartPoint + ".worldPosition[0]", distanceNode + ".point1", f=True)
         pm.connectAttr(transformEndPoint + ".worldPosition[0]", distanceNode + ".point2", f=True)
 
         conditionNode = pm.shadingNode("condition", asUtility=True,
-                                       name="IkCondition" + self.name_conv.RMGetAShortName(self.joints[2]))
-        conditionNode = self.name_conv.RMRenameBasedOnBaseName(self.joints[2], conditionNode,
-                                                               {'name': conditionNode})
+                                       name="IkCondition" + self.name_conv.get_a_short_name(self.joints[2]))
+        conditionNode = self.name_conv.rename_based_on_base_name(self.joints[2], conditionNode,
+                                                                 {'name': conditionNode})
         pm.connectAttr(distanceNode + ".distance", conditionNode + ".colorIfFalseR", f=True)
         pm.connectAttr(distanceNode + ".distance", conditionNode + ".secondTerm", f=True)
         pm.setAttr(conditionNode + ".operation", 3)
         pm.setAttr(conditionNode + ".firstTerm", totalDistance)
         pm.setAttr(conditionNode + ".colorIfTrueR", totalDistance)
         multiplyDivide = pm.shadingNode("multiplyDivide", asUtility=True,
-                                        name="IKStretchMultiply" + self.name_conv.RMGetAShortName(
+                                        name="IKStretchMultiply" + self.name_conv.get_a_short_name(
                                             self.joints[2]))
-        multiplyDivide = self.name_conv.RMRenameBasedOnBaseName(self.joints[2], multiplyDivide,
-                                                                {'name': multiplyDivide})
+        multiplyDivide = self.name_conv.rename_based_on_base_name(self.joints[2], multiplyDivide,
+                                                                  {'name': multiplyDivide})
 
         pm.connectAttr(conditionNode + ".outColorR", multiplyDivide + ".input1X", f=True)
         pm.setAttr(multiplyDivide + ".input2X", totalDistance)
@@ -302,18 +302,18 @@ class IKRig(GenericRig):
         # self.SPSW.AddEnumParameters(["off","on"], self.ikControl, Name = "StretchyIK")
         self.rig_space_switch.AddNumericParameter(self.controls['ikHandle'], Name="StretchyIK")
         IKSwitchDivide = pm.shadingNode("multiplyDivide", asUtility=True,
-                                        name="IkSwitchDivide" + self.name_conv.RMGetAShortName(self.joints[2]))
-        IKSwitchDivide = self.name_conv.RMRenameBasedOnBaseName(self.joints[2], IKSwitchDivide,
-                                                                {'name': IKSwitchDivide})
+                                        name="IkSwitchDivide" + self.name_conv.get_a_short_name(self.joints[2]))
+        IKSwitchDivide = self.name_conv.rename_based_on_base_name(self.joints[2], IKSwitchDivide,
+                                                                  {'name': IKSwitchDivide})
         pm.connectAttr("%s.StretchyIK" % self.controls['ikHandle'], IKSwitchDivide + ".input1X")
         pm.setAttr(IKSwitchDivide + ".input2X", 10)
         pm.setAttr(IKSwitchDivide + ".operation", 2)
 
         IkSwitchblendTwoAttr = pm.shadingNode("blendTwoAttr", asUtility=True,
-                                              name="IkSwitchBlendTwoAttr" + self.name_conv.RMGetAShortName(
+                                              name="IkSwitchBlendTwoAttr" + self.name_conv.get_a_short_name(
                                                   self.joints[2]))
-        IkSwitchblendTwoAttr = self.name_conv.RMRenameBasedOnBaseName(self.joints[2], IkSwitchblendTwoAttr,
-                                                                      {'name': IkSwitchblendTwoAttr})
+        IkSwitchblendTwoAttr = self.name_conv.rename_based_on_base_name(self.joints[2], IkSwitchblendTwoAttr,
+                                                                        {'name': IkSwitchblendTwoAttr})
 
         pm.connectAttr(multiplyDivide + ".outputX", IkSwitchblendTwoAttr + ".input[1]", force=True)
         pm.setAttr(IkSwitchblendTwoAttr + ".input[0]", 1)

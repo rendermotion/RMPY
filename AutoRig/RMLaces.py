@@ -35,7 +35,7 @@ class RMlaces(object):
             # print "Open Line"
             for i in range(0, (degree + spans)):
                 cluster = cmds.cluster(masterCurve + ".cv[" + str(i) + "]", name='ClusterOnCurve')
-                cluster = self.NameConv.RMRenameNameInFormat(cluster, {}, useName=True)
+                cluster = self.NameConv.rename_name_in_format(cluster, useName=True)
                 if mode == "multi":
                     self.RMAddToCluster(i, curve[1:], cluster)
                 clusterList.append(cluster[1])
@@ -45,7 +45,7 @@ class RMlaces(object):
             # print "periodic Line"
             for i in range(0, spans):
                 cluster = cmds.cluster(masterCurve + ".cv[" + str(i) + "]", name='ClusterOnCurve')
-                cluster = self.NameConv.RMRenameNameInFormat(cluster, {}, useName=True)
+                cluster = self.NameConv.rename_name_in_format(cluster, useName=True)
                 if mode == "multi":
                     self.RMAddToCluster(i, curve[1:], cluster)
                 clusterList.append(cluster[1])
@@ -71,7 +71,7 @@ class RMlaces(object):
         UpVectorObject = None
         if UpVectorType == "object":
             UpVectorObject = cmds.group(empty=True, name='upVector')
-            UpVectorObject = self.NameConv.RMRenameNameInFormat(UpVectorObject, {}, useName=True)
+            UpVectorObject = self.NameConv.rename_name_in_format(UpVectorObject, useName=True)
 
         jointArray = []
 
@@ -84,7 +84,7 @@ class RMlaces(object):
             else:
                 Newjoint = cmds.spaceLocator(name="LaceRefLocator")
 
-            Newjoint = self.NameConv.RMRenameNameInFormat(Newjoint, {}, useName=True)
+            Newjoint = self.NameConv.rename_name_in_format(Newjoint, useName=True)
             jointArray.append(Newjoint)
 
         self.RMNodesOnCurve(jointArray, curve, UpVectorType=UpVectorType, UpVectorArray=UpVectorArray,
@@ -113,7 +113,7 @@ class RMlaces(object):
             else:
                 motionPath = cmds.pathAnimation(eachJoint, c=curve, follow=True, worldUpType="scene")
             cmds.setKeyframe(motionPath, v=(step * nodeCount), at="uValue")
-            self.NameConv.RMRenameNameInFormat(motionPath, {'name': motionPath})
+            self.NameConv.rename_name_in_format(motionPath, name=motionPath)
             nodeCount += 1
         value = cmds.currentTime(q=True)
         cmds.currentTime(value + 1, e=True)
@@ -123,7 +123,7 @@ class RMlaces(object):
         cubeLineArray = []
         for obj in points:
             cubeLine = self.shpCtrl.RMCreateCubeLine(5, 5, 5, centered=True,
-                                                     name=self.NameConv.RMSetNameInFormat({'name': name}))
+                                                     name=self.NameConv.set_name_in_format({'name': name}))
 
             RMRigTools.RMAlign(obj, cubeLine, 1)
             cmds.makeIdentity(cubeLine, apply=True, t=True, r=True, s=True)
@@ -139,7 +139,7 @@ class RMlaces(object):
         cntrls = cmds.group(empty=True, name="LaceCntrls")
         skinJoints = cmds.group(empty=True, name="LaceSkinJoints")
 
-        rig, cntrls, skinJoints = self.NameConv.RMRenameNameInFormat([rig, cntrls, skinJoints], {}, useName=True)
+        rig, cntrls, skinJoints = self.NameConv.rename_name_in_format([rig, cntrls, skinJoints], useName=True)
 
         cmds.parent(skinJoints, rig)
         for i in lacesSystem["joints"]:
@@ -165,7 +165,7 @@ class RMlaces(object):
 
         cntrls = cmds.group(empty=True, name='LaceCntrls')
         controls = self.RMcreateContolForPnts(clusterObjects, "laceControl")
-        cntrls, clusters = self.NameConv.RMRenameNameInFormat([cntrls, clusters], {}, useName=True)
+        cntrls, clusters = self.NameConv.rename_name_in_format([cntrls, clusters], useName=True)
 
         for eachControl in controls:
             cmds.parent(eachControl, cntrls)
@@ -184,13 +184,13 @@ class RMlaces(object):
 
         cmds.parent(skinJoints, rig)
         cmds.parent(UpVectorNodes, rig)
-        rig, UpVectorNodes, skinJoints = self.NameConv.RMRenameNameInFormat([rig, UpVectorNodes, skinJoints], {},
-                                                                            useName=True)
+        rig, UpVectorNodes, skinJoints = self.NameConv.rename_name_in_format([rig, UpVectorNodes, skinJoints],
+                                                                             useName=True)
 
         index = 0
         for i in lacesSystem["joints"]:
             cmds.parent(i, skinJoints)
-            lacesSystem["joints"][index] = self.NameConv.RMRenameSetFromName(i, "skinjoint", Token="objectType")
+            lacesSystem["joints"][index] = self.NameConv.rename_set_from_name(i, "skinjoint", Token="objectType")
             index += 1
 
         for i in UpVectorArray["joints"]:

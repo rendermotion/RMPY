@@ -64,8 +64,8 @@ class RMLimbIKFK(object):
         
 
         self.IKparentGroup , self.IKjointStructure = self.RMLimbJointEstructure(RootReferencePoint)
-        self.NameConv.RMRenameSetFromName(self.IKjointStructure,"Limbik" ,"system")
-        self.NameConv.RMRenameSetFromName(self.IKparentGroup,"Limbik" ,"system")
+        self.NameConv.rename_set_from_name(self.IKjointStructure, "Limbik", "system")
+        self.NameConv.rename_set_from_name(self.IKparentGroup, "Limbik", "system")
 
         self.RMCreateIKControls()
         self.RMMakeIkStretchy(self.IkHandle)
@@ -78,17 +78,17 @@ class RMLimbIKFK(object):
 
 
         self.FKparentGroup, self.FKjointStructure = self.RMLimbJointEstructure(RootReferencePoint)
-        self.NameConv.RMRenameSetFromName(self.FKjointStructure,"Limbfk" ,"system")
-        self.NameConv.RMRenameSetFromName(self.FKparentGroup,"Limbfk" ,"system")
+        self.NameConv.rename_set_from_name(self.FKjointStructure, "Limbfk", "system")
+        self.NameConv.rename_set_from_name(self.FKparentGroup, "Limbfk", "system")
         self.RMCreateFKControls(AxisFree=FKAxisFree)
 
         self.SknParentGroup, self.SknJointStructure = self.RMLimbJointEstructure(RootReferencePoint)
-        self.NameConv.RMRenameSetFromName(self.SknJointStructure,"Limbskn" ,"system")
-        self.NameConv.RMRenameSetFromName(self.SknParentGroup,"Limbskn" ,"system")
+        self.NameConv.rename_set_from_name(self.SknJointStructure, "Limbskn", "system")
+        self.NameConv.rename_set_from_name(self.SknParentGroup, "Limbskn", "system")
 
         self.RMSkinSpaceSwitch()
-        self.IKControls = pm.group(empty=True, name = "%sIkControls"%self.NameConv.RMGetAShortName(RootReferencePoint))
-        self.NameConv.RMRenameNameInFormat(self.IKControls,{'side': self.NameConv.RMGetFromName(RootReferencePoint, "side")})
+        self.IKControls = pm.group(empty=True, name="%sIkControls" % self.NameConv.get_a_short_name(RootReferencePoint))
+        self.NameConv.rename_name_in_format(self.IKControls, side=self.NameConv.get_from_name(RootReferencePoint, "side"))
         pm.parent(self.IKControlResetPoint, self.IKControls)
         pm.parent(self.PoleVectorControlResetPnt, self.IKControls)
 
@@ -100,21 +100,21 @@ class RMLimbIKFK(object):
         self.TJArm.RMCreateTwistJoints(self.SknJointStructure[0], self.SknJointStructure[1],LookAtAxis = LookAtAxis)
 
         constraintTJArm=pm.parentConstraint(self.SknParentGroup, self.TJArm.TwistControlResetPoint, mo=True)
-        self.NameConv.RMRenameBasedOnBaseName(self.SknJointStructure[1], constraintTJArm, {})
+        self.NameConv.rename_based_on_base_name(self.SknJointStructure[1], constraintTJArm)
         
         self.TJElbow.RMCreateTwistJoints(self.SknJointStructure[1], self.SknJointStructure[2],LookAtAxis = LookAtAxis)
 
 
         constraintTJElbow = pm.parentConstraint(self.SknJointStructure[0], self.TJElbow.TwistControlResetPoint, mo=True)
-        self.NameConv.RMRenameBasedOnBaseName(self.SknJointStructure[1], constraintTJElbow, {})
+        self.NameConv.rename_based_on_base_name(self.SknJointStructure[1], constraintTJElbow)
 
         pm.parent(self.TJElbow.TwistResetJoints, self.TJArm.TwistJoints[len(self.TJArm.TwistJoints) - 1])
-        self.NameConv.RMRenameSetFromName( self.TJElbow.TwistJoints, "sknjnt", "objectType")
-        self.NameConv.RMRenameSetFromName( self.TJArm.TwistJoints, "sknjnt", "objectType")
+        self.NameConv.rename_set_from_name(self.TJElbow.TwistJoints, "sknjnt", "objectType")
+        self.NameConv.rename_set_from_name(self.TJArm.TwistJoints, "sknjnt", "objectType")
 
 
         self.limbMover = pm.group(empty = True, name = "armMover")
-        self.NameConv.RMRenameNameInFormat( self.limbMover, {'system': "joints"})
+        self.NameConv.rename_name_in_format(self.limbMover, system="joints")
         pm.parent( self.FKparentGroup , self.limbMover)
         pm.parent( self.IKparentGroup , self.limbMover)
         pm.parent( self.SknParentGroup, self.limbMover)
@@ -151,29 +151,29 @@ class RMLimbIKFK(object):
             self.IKjointStructure = self.RMIdentifyIKJoints(ikHandle)
         totalDistance = self.BoneChainLenght(self.IKjointStructure)
         transformStartPoint = pm.spaceLocator(name="StretchyIkHandleStartPoint")
-        self.NameConv.RMRenameNameInFormat(transformStartPoint, {})
+        self.NameConv.rename_name_in_format(transformStartPoint)
         transformEndPoint = pm.spaceLocator(name="StretchyIkHandleEndPoint")
-        self.NameConv.RMRenameNameInFormat(transformEndPoint,{})
+        self.NameConv.rename_name_in_format(transformEndPoint)
         if self.IKparentGroup:
             print (self.IKparentGroup,self.IKparentGroup.__class__)
             pm.parent(transformStartPoint, self.IKparentGroup)
             pm.parent(transformEndPoint, self.IKparentGroup)
 
-        StartPointConstraint = pm.pointConstraint(self.IKjointStructure[0],transformStartPoint)
+        StartPointConstraint = pm.pointConstraint(self.IKjointStructure[0], transformStartPoint)
         EndPointConstraint = pm.pointConstraint(ikHandle, transformEndPoint)
 
         distanceNode = pm.shadingNode("distanceBetween",
                                       asUtility=True,
                                       name="IKBaseDistanceNode%s" %
-                                           self.NameConv.RMGetAShortName(self.IKjointStructure[2]))
+                                           self.NameConv.get_a_short_name(self.IKjointStructure[2]))
 
-        self.NameConv.RMRenameBasedOnBaseName(self.IKjointStructure[2], distanceNode,  {'name': distanceNode})
+        self.NameConv.rename_based_on_base_name(self.IKjointStructure[2], distanceNode, name=distanceNode)
 
         pm.connectAttr("%s.worldPosition[0]" % transformStartPoint, "%s.point1" % distanceNode,f=True)
         pm.connectAttr("%s.worldPosition[0]" % transformEndPoint, "%s.point2" % distanceNode,f=True)
         
-        conditionNode = pm.shadingNode("condition", asUtility=True,name="IkCondition" + self.NameConv.RMGetAShortName(self.IKjointStructure[2]))
-        self.NameConv.RMRenameBasedOnBaseName(self.IKjointStructure[2] , conditionNode, {'name': conditionNode})
+        conditionNode = pm.shadingNode("condition", asUtility=True, name="IkCondition" + self.NameConv.get_a_short_name(self.IKjointStructure[2]))
+        self.NameConv.rename_based_on_base_name(self.IKjointStructure[2], conditionNode, name=conditionNode)
         pm.connectAttr("%s.distance" % distanceNode, "%s.colorIfFalseR" % conditionNode,f=True)
         pm.connectAttr("%s.distance" % distanceNode, "%s.secondTerm" % conditionNode,f=True)
         pm.setAttr("%s.operation" % conditionNode, 3)
@@ -181,9 +181,9 @@ class RMLimbIKFK(object):
         pm.setAttr("%s.colorIfTrueR" % conditionNode, totalDistance)
         multiplyDivide = pm.shadingNode("multiplyDivide", asUtility=True,
                                         name="IKStretchMultiply%s" %
-                                             self.NameConv.RMGetAShortName(self.IKjointStructure[2]))
-        self.NameConv.RMRenameBasedOnBaseName(self.IKjointStructure[2],
-                                              multiplyDivide, {'name': multiplyDivide})
+                                             self.NameConv.get_a_short_name(self.IKjointStructure[2]))
+        self.NameConv.rename_based_on_base_name(self.IKjointStructure[2],
+                                                multiplyDivide, name=multiplyDivide)
 
         pm.connectAttr("%s.outColorR" % conditionNode, "%s.input1X" % multiplyDivide, f=True)
         pm.setAttr("%s.input2X" % multiplyDivide, totalDistance)
@@ -194,18 +194,18 @@ class RMLimbIKFK(object):
         self.SPSW.AddNumericParameter(self.ikControl, Name="StretchyIK")
         IKSwitchDivide = pm.shadingNode("multiplyDivide",
                                         asUtility=True,
-                                        name="IkSwitchDivide%s" % self.NameConv.RMGetAShortName(self.IKjointStructure[2]))
-        self.NameConv.RMRenameBasedOnBaseName(self.IKjointStructure[2],
-                                              IKSwitchDivide, {'name': IKSwitchDivide})
+                                        name="IkSwitchDivide%s" % self.NameConv.get_a_short_name(self.IKjointStructure[2]))
+        self.NameConv.rename_based_on_base_name(self.IKjointStructure[2],
+                                                IKSwitchDivide, name=IKSwitchDivide)
         pm.connectAttr("%s.StretchyIK" % self.ikControl, "%s.input1X" % IKSwitchDivide)
         pm.setAttr("%s.input2X" % IKSwitchDivide, 10)
         pm.setAttr("%s.operation" % IKSwitchDivide, 2)
 
-        IkSwitchblendTwoAttr = pm.shadingNode("blendTwoAttr",asUtility=True,
+        IkSwitchblendTwoAttr = pm.shadingNode("blendTwoAttr", asUtility=True,
                                               name="IkSwitchBlendTwoAttr%s" %
-                                                   self.NameConv.RMGetAShortName(self.IKjointStructure[2]))
-        self.NameConv.RMRenameBasedOnBaseName(self.IKjointStructure[2], IkSwitchblendTwoAttr,
-                                              {'name': IkSwitchblendTwoAttr})
+                                                   self.NameConv.get_a_short_name(self.IKjointStructure[2]))
+        self.NameConv.rename_based_on_base_name(self.IKjointStructure[2], IkSwitchblendTwoAttr,
+                                                name=IkSwitchblendTwoAttr)
 
         pm.connectAttr("%s.outputX" % multiplyDivide, "%s.input[1]" % IkSwitchblendTwoAttr, force=True)
         pm.setAttr("%s.input[0]" % IkSwitchblendTwoAttr, 1)
@@ -242,14 +242,14 @@ class RMLimbIKFK(object):
     
     def RMCreateFKControls(self, AxisFree = "111"):
         #ArmParent ,FKFirstLimbControl = self.shapeControls.RMCreateBoxCtrl(self.FKjointStructure[0],Xratio=1,Yratio=.3,Zratio=.3, name = self.NameConv.RMGetAShortName(self.FKjointStructure[0]) + "FK")
-        ArmParent ,FKFirstLimbControl = self.shapeControls.RMCircularControl(self.FKjointStructure[0], radius = RMRigTools.RMLenghtOfBone(self.FKjointStructure[0])/2, name = self.NameConv.RMGetAShortName(self.FKjointStructure[0]) + "FK")
+        ArmParent ,FKFirstLimbControl = self.shapeControls.RMCircularControl(self.FKjointStructure[0], radius = RMRigTools.RMLenghtOfBone(self.FKjointStructure[0])/2, name =self.NameConv.get_a_short_name(self.FKjointStructure[0]) + "FK")
         
         RMRigTools.RMLinkHerarchyRotation(self.FKjointStructure[0], self.FKjointStructure[0],FKFirstLimbControl)
 
         RMRigTools.RMLockAndHideAttributes(FKFirstLimbControl,'000111000h')
 
         #SecondLimbParent ,FKSecondLimbControl = self.shapeControls.RMCreateBoxCtrl(self.FKjointStructure[1],Xratio=1,Yratio=.3,Zratio=.3, name = self.NameConv.RMGetAShortName(self.FKjointStructure[1])+ "FK")
-        SecondLimbParent ,FKSecondLimbControl = self.shapeControls.RMCircularControl(self.FKjointStructure[1], radius = RMRigTools.RMLenghtOfBone(self.FKjointStructure[1])/2, name = self.NameConv.RMGetAShortName(self.FKjointStructure[1]) + "FK")
+        SecondLimbParent ,FKSecondLimbControl = self.shapeControls.RMCircularControl(self.FKjointStructure[1], radius = RMRigTools.RMLenghtOfBone(self.FKjointStructure[1])/2, name =self.NameConv.get_a_short_name(self.FKjointStructure[1]) + "FK")
 
         pm.parent(SecondLimbParent, FKFirstLimbControl)
 
@@ -257,7 +257,7 @@ class RMLimbIKFK(object):
         RMRigTools.RMLockAndHideAttributes (FKSecondLimbControl,'000%s000h'%AxisFree)
 
         #ThirdLimbParent ,FKTrirdLimbControl = self.shapeControls.RMCreateBoxCtrl(self.FKjointStructure[2], Xratio=.3, Yratio=.3, Zratio=.3 , ParentBaseSize = True, name = self.NameConv.RMGetAShortName(self.FKjointStructure[2]) + "FK")
-        ThirdLimbParent ,FKTrirdLimbControl = self.shapeControls.RMCircularControl(self.FKjointStructure[2], radius = RMRigTools.RMLenghtOfBone(self.FKjointStructure[1])/3, name = self.NameConv.RMGetAShortName(self.FKjointStructure[2]) + "FK")
+        ThirdLimbParent ,FKTrirdLimbControl = self.shapeControls.RMCircularControl(self.FKjointStructure[2], radius = RMRigTools.RMLenghtOfBone(self.FKjointStructure[1])/3, name =self.NameConv.get_a_short_name(self.FKjointStructure[2]) + "FK")
 
         
         pm.parent(ThirdLimbParent, FKSecondLimbControl)
@@ -284,20 +284,20 @@ class RMLimbIKFK(object):
                                                                                       Yratio=.3,
                                                                                       Zratio=.3,
                                                                                       ParentBaseSize=True,
-                                                                                      name=self.NameConv.RMGetAShortName("%sIK" % self.IKjointStructure[len(self.IKjointStructure)-1]))
+                                                                                      name=self.NameConv.get_a_short_name("%sIK" % self.IKjointStructure[len(self.IKjointStructure) - 1]))
         #self.ikControl = self.NameConv.RMRenameBasedOnBaseName(self.IKjointStructure[len(self.IKjointStructure)-1], self.ikControl, NewName = self.NameConv.RMGetAShortName(self.IKjointStructure[len(self.IKjointStructure)-1]) + "IK")
         RMRigTools.RMLockAndHideAttributes(self.ikControl, "111111000h")
         
         self.IkHandle, effector = pm.ikHandle(sj=self.IKjointStructure[0],
                                               ee=self.IKjointStructure[len(self.IKjointStructure)-1],
                                               sol="ikRPsolver", name="LimbIKHandle")
-        self.NameConv.RMRenameBasedOnBaseName(self.IKjointStructure[len(self.IKjointStructure)-1], self.IkHandle, {})
-        self.NameConv.RMRenameBasedOnBaseName(self.IKjointStructure[len(self.IKjointStructure)-1], effector, {})
+        self.NameConv.rename_based_on_base_name(self.IKjointStructure[len(self.IKjointStructure) - 1], self.IkHandle)
+        self.NameConv.rename_based_on_base_name(self.IKjointStructure[len(self.IKjointStructure) - 1], effector)
 
         pm.orientConstraint(self.ikControl, self.IKjointStructure[len(self.IKjointStructure)-1])
 
         PointConstraint = pm.pointConstraint(self.ikControl, self.IkHandle, name="LimbCntrlHandleConstraint")
-        self.NameConv.RMRenameBasedOnBaseName(self.IKjointStructure[len(self.IKjointStructure)-1], PointConstraint, {})
+        self.NameConv.rename_based_on_base_name(self.IKjointStructure[len(self.IKjointStructure) - 1], PointConstraint)
         self.kinematics.append(self.IkHandle)
 
         RMRigTools.RMChangeRotateOrder (self.ikControl, 'yzx')
@@ -322,7 +322,7 @@ class RMLimbIKFK(object):
         Length = (V1.length() + V2.length())/2
         result = ((Vy + Vx) * Length) + VP2
         PoleVector = pm.spaceLocator(name="poleVector")
-        self.NameConv.RMRenameBasedOnBaseName(JointList[1], PoleVector,{'name':PoleVector})
+        self.NameConv.rename_based_on_base_name(JointList[1], PoleVector, name=PoleVector)
 
         pm.xform(PoleVector, ws=True, t=result)
         return PoleVector
@@ -335,14 +335,14 @@ class RMLimbIKFK(object):
         
         distancia = RMRigTools.RMPointDistance(locator, self.IKjointStructure[1])
 
-        self.PoleVectorControlResetPnt, self.PoleVectorControl = self.shapeControls.RMCreateBoxCtrl(locator, customSize=distancia / 5, name=self.NameConv.RMGetAShortName(self.IKjointStructure[1]) + "PoleVectorIK", centered = True)
+        self.PoleVectorControlResetPnt, self.PoleVectorControl = self.shapeControls.RMCreateBoxCtrl(locator, customSize=distancia / 5, name=self.NameConv.get_a_short_name(self.IKjointStructure[1]) + "PoleVectorIK", centered = True)
 
         dataGroup, Curve = self.rig_tools.RMCreateLineBetwenPoints(self.PoleVectorControl, self.IKjointStructure[1])
         pm.parent(Curve, self.PoleVectorControl)
         pm.parentConstraint(self.world, Curve)
 
-        PoleVectorCnstraint = pm.poleVectorConstraint(self.PoleVectorControl, IKHandle, name = "PoleVector")
-        self.NameConv.RMRenameBasedOnBaseName(self.PoleVectorControl, PoleVectorCnstraint,{'name': PoleVectorCnstraint} )
+        PoleVectorCnstraint = pm.poleVectorConstraint(self.PoleVectorControl, IKHandle, name="PoleVector")
+        self.NameConv.rename_based_on_base_name(self.PoleVectorControl, PoleVectorCnstraint, name=PoleVectorCnstraint)
 
         self.kinematics.append(dataGroup)
         pm.delete(locator)

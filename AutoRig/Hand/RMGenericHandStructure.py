@@ -16,17 +16,17 @@ class GenericHandJointStructure(object):
         else:
             self.NameConv = NameConv
 
-        self.rig_tools = RMRigTools.RMRigTools(NameConv = self.NameConv)
+        self.rig_tools = RMRigTools.RMRigTools(NameConv=self.NameConv)
         self.palmJoint = ""
         self.fingerRoots = []
         self.fingers = []
 
     def CreateHandJointStructure(self, Palm):
         referenceRoots = pm.listRelatives(Palm, children=True, type="transform")
-        palmJoint = pm.joint(name=self.NameConv.RMGetFromName(Palm, "name"))
+        palmJoint = pm.joint(name=self.NameConv.get_from_name(Palm, "name"))
 
         RMRigTools.RMAlign(Palm, palmJoint, 3)
-        self.NameConv.RMRenameBasedOnBaseName(Palm, palmJoint, {'system': "Rig"})
+        self.NameConv.rename_based_on_base_name(Palm, palmJoint, system="rig")
         self.fingers = []
 
         for eachPoint in referenceRoots:

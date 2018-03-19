@@ -22,9 +22,9 @@ class BSManager(object):
 			BSName = BSGroups + "BS"
 			cmds.duplicate(BSDefinition[BSGroups]['original'], name = BSName + BSGroups)
 			blendShapeOriginalGeo = BSName + BSGroups
-			blendShapeOriginalGeo = self.NameConv.RMRenameNameInFormat( blendShapeOriginalGeo, System = "rig" )
+			blendShapeOriginalGeo = self.NameConv.rename_name_in_format(blendShapeOriginalGeo, System ="rig")
 			cmds.blendShape(blendShapeOriginalGeo, name = BSName)
-			BSName = self.NameConv.RMRenameNameInFormat(BSName, System = "rig" )
+			BSName = self.NameConv.rename_name_in_format(BSName, System ="rig")
 			NumBS = 0
 			for keys in BSDefinition[BSGroups]['attributes']:
 				if cmds.objExists(keys):

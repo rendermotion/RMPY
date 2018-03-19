@@ -24,14 +24,14 @@ class RMSpaceSwitch(object):
             if sswtype == "enum":
                 SpaceObjectShortName =[]
                 for eachObject in SpaceObjects:
-                    SpaceObjectShortName.append(self.NameConv.RMGetAShortName(eachObject))
+                    SpaceObjectShortName.append(self.NameConv.get_a_short_name(eachObject))
                 self.AddEnumParameters(SpaceObjectShortName, ControlObject, Name = Name)
             else:
                 if Name=="":
                     index = 0
                     SwitchName = 'SW'
                     for eachString in SpaceObjects:
-                        SwitchName = SwitchName + self.NameConv.RMGetAShortName(eachString).title()
+                        SwitchName = SwitchName + self.NameConv.get_a_short_name(eachString).title()
                         index = index + 1
                     Name = SwitchName
 
@@ -57,18 +57,18 @@ class RMSpaceSwitch(object):
                     parentConstraint = pm.parentConstraint (eachObject, AfectedObject, mo = mo, name = AfectedObject + "SpaceSwitchConstraint")
                     WA = pm.parentConstraint (parentConstraint, q=True, weightAliasList=True)
             
-            pm.setAttr("%s.interpType"%parentConstraint , 0)
+            pm.setAttr("%s.interpType"%parentConstraint, 0)
 
-            if self.NameConv.RMIsNameInFormat (AfectedObject):
-                self.NameConv.RMRenameBasedOnBaseName(AfectedObject, reverse, {'name': reverse})
-                self.NameConv.RMRenameBasedOnBaseName(AfectedObject, multiply,{'name': multiply})
-                self.NameConv.RMRenameBasedOnBaseName(AfectedObject, parentConstraint
-                                                                            , {'name': Name})
+            if self.NameConv.is_name_in_format (AfectedObject):
+                self.NameConv.rename_based_on_base_name(AfectedObject, reverse, name=reverse)
+                self.NameConv.rename_based_on_base_name(AfectedObject, multiply, name=multiply)
+                self.NameConv.rename_based_on_base_name(AfectedObject, parentConstraint
+                                                        , name=Name)
 
             else:
-                self.NameConv.RMRenameNameInFormat(reverse, {})
-                self.NameConv.RMRenameNameInFormat(multiply, {})
-                self.NameConv.RMRenameNameInFormat(parentConstraint, {})
+                self.NameConv.rename_name_in_format(reverse)
+                self.NameConv.rename_name_in_format(multiply)
+                self.NameConv.rename_name_in_format(parentConstraint)
 
             pm.connectAttr( multiply + ".outputX", WA[1])
             pm.connectAttr( reverse  + ".outputX", WA[0])
@@ -85,20 +85,20 @@ class RMSpaceSwitch(object):
         '''
         SpaceObjectShortName =[]
         for eachObject in SpaceObjects:
-            SpaceObjectShortName.append(self.NameConv.RMGetAShortName(eachObject))
+            SpaceObjectShortName.append(self.NameConv.get_a_short_name(eachObject))
 
         self.AddEnumParameters(SpaceObjectShortName, ControlObject, Name = Name)
 
         index = 0
         for eachObject in SpaceObjects:
             if constraintType == "point":
-                parentConstraint = pm.pointConstraint (eachObject, AfectedObject, mo = mo, name = self.NameConv.RMGetAShortName(AfectedObject) + "SpaceSwitchConstraint")
+                parentConstraint = pm.pointConstraint (eachObject, AfectedObject, mo = mo, name =self.NameConv.get_a_short_name(AfectedObject) + "SpaceSwitchConstraint")
             
             elif constraintType == "orient":
-                parentConstraint = pm.orientConstraint (eachObject, AfectedObject, mo = mo, name = self.NameConv.RMGetAShortName(AfectedObject) + "SpaceSwitchConstraint")
+                parentConstraint = pm.orientConstraint (eachObject, AfectedObject, mo = mo, name =self.NameConv.get_a_short_name(AfectedObject) + "SpaceSwitchConstraint")
             
             else:
-                parentConstraint = pm.parentConstraint (eachObject, AfectedObject, mo = mo, name = self.NameConv.RMGetAShortName(AfectedObject) + "SpaceSwitchConstraint")
+                parentConstraint = pm.parentConstraint (eachObject, AfectedObject, mo = mo, name =self.NameConv.get_a_short_name(AfectedObject) + "SpaceSwitchConstraint")
 
             Switch = pm.shadingNode('condition', asUtility=True, name = Name + "SWCondition")
             pm.connectAttr(ControlObject + "." + Name, Switch + ".firstTerm")
@@ -117,16 +117,16 @@ class RMSpaceSwitch(object):
                 TL = pm.parentConstraint (parentConstraint, q = True, targetList = True)
 
             pm.connectAttr (Switch + ".outColorR", WA[index])
-            if self.NameConv.RMIsNameInFormat(AfectedObject):
-                self.NameConv.RMRenameBasedOnBaseName(AfectedObject, Switch, {'name': Switch})
+            if self.NameConv.is_name_in_format(AfectedObject):
+                self.NameConv.rename_based_on_base_name(AfectedObject, Switch, name =Switch)
             else:
-                self.NameConv.RMRenameNameInFormat(Switch, {})
+                self.NameConv.rename_name_in_format(Switch)
             index += 1
         
-        if self.NameConv.RMIsNameInFormat(AfectedObject):
-            self.NameConv.RMRenameBasedOnBaseName(AfectedObject,parentConstraint, {'name': parentConstraint})
+        if self.NameConv.is_name_in_format(AfectedObject):
+            self.NameConv.rename_based_on_base_name(AfectedObject, parentConstraint, name=parentConstraint)
         else:
-            self.NameConv.RMRenameNameInFormat(parentConstraint, {})
+            self.NameConv.rename_name_in_format(parentConstraint)
     
     def IsSpaceSwitch(self, Control, SpaceSwitchName = "spaceSwitch"):
         AttributeList = pm.listAttr(Control)
@@ -160,7 +160,7 @@ class RMSpaceSwitch(object):
         for eachEnum in SpaceSwDic['enums']:
             parentConstraint = pm.parentConstraint (SpaceSwDic['enums'][eachEnum]['object'], AfectedObject,
                                                     mo=True,
-                                                    name=self.NameConv.RMGetAShortName("%sSpaceSwitchConstraint" % AfectedObject))
+                                                    name=self.NameConv.get_a_short_name("%sSpaceSwitchConstraint" % AfectedObject))
             WA = pm.parentConstraint (parentConstraint, q = True, weightAliasList = True)
             pm.connectAttr (SpaceSwDic['enums'][eachEnum]['condition'] + ".outColorR", WA[index])
             index += 1
@@ -183,19 +183,19 @@ class RMSpaceSwitch(object):
     def AddSpaceObject(self, ControlObject, SpaceObject, SpaceSwitchName = "spaceSwitch"):
         SpaceSwDic = self.GetSpaceSwitchDic( ControlObject, SpaceSwitchName = SpaceSwitchName)
         
-        EnumDic = self.AddEnumParameters([self.NameConv.RMGetAShortName(SpaceObject)],ControlObject)
+        EnumDic = self.AddEnumParameters([self.NameConv.get_a_short_name(SpaceObject)], ControlObject)
 
         Switch = pm.shadingNode('condition', asUtility=True, name = SpaceSwitchName + "SWCondition")
         pm.connectAttr(ControlObject + "." + SpaceSwitchName, Switch + ".firstTerm")
-        pm.setAttr (Switch +".secondTerm", EnumDic[self.NameConv.RMGetAShortName(SpaceObject)])
+        pm.setAttr (Switch +".secondTerm", EnumDic[self.NameConv.get_a_short_name(SpaceObject)])
         pm.setAttr (Switch +".operation", 0)
         pm.setAttr (Switch +".colorIfTrueR", 1)
         pm.setAttr (Switch +".colorIfFalseR", 0)
 
-        if self.NameConv.RMIsNameInFormat(ControlObject):
-            self.NameConv.RMRenameBasedOnBaseName(ControlObject, Switch, {'name': Switch})
+        if self.NameConv.is_name_in_format(ControlObject):
+            self.NameConv.rename_based_on_base_name(ControlObject, Switch, name=Switch)
         else:
-            self.NameConv.RMRenameNameInFormat(Switch, {})
+            self.NameConv.rename_name_in_format(Switch)
 
         for eachConstraint in SpaceSwDic['constraints']:
             Object = SpaceSwDic['constraints'][eachConstraint]['object']
@@ -380,7 +380,7 @@ class RMSpaceSwitch(object):
         SWMultDiv = ""
         if (self.AddNumericParameter (ControlObject, Name = SpaceSwitchName)):
             SWMultDiv = pm.shadingNode("multiplyDivide",asUtility = True ,name = SpaceSwitchName + "SWMultDivide" )
-            self.NameConv.RMRenameBasedOnBaseName(ControlObject, SWMultDiv, {'name': SWMultDiv})
+            self.NameConv.rename_based_on_base_name(ControlObject, SWMultDiv, name=SWMultDiv)
             pm.connectAttr(ControlObject+"."+SpaceSwitchName ,SWMultDiv+".input1X")
             pm.setAttr(SWMultDiv+".input2X",10)
             pm.setAttr(SWMultDiv+".operation",2)
@@ -396,13 +396,13 @@ class RMSpaceSwitch(object):
                 reverseSW = ConnectionsList[0]
             else :
                 reverseSW = pm.shadingNode('reverse', asUtility=True, name = SpaceSwitchName + "SWReverse")
-                self.NameConv.RMRenameBasedOnBaseName(ControlObject, reverseSW, {'name' :"SWReverse"})
+                self.NameConv.rename_based_on_base_name(ControlObject, reverseSW, name="SWReverse")
                 pm.connectAttr( SWMultDiv + ".outputX", reverseSW + ".inputX")
 
-                if self.NameConv.RMIsNameInFormat (ControlObject):
-                    self.NameConv.RMRenameBasedOnBaseName(ControlObject,reverseSW, {'name': reverseSW})
+                if self.NameConv.is_name_in_format (ControlObject):
+                    self.NameConv.rename_based_on_base_name(ControlObject, reverseSW, name=reverseSW)
                 else:
-                    self.NameConv.RMRenameNameInFormat(reverseSW,{})
+                    self.NameConv.rename_name_in_format(reverseSW)
 
             self.RMListConstraint(Constrained, Constraints, reverseSW + ".outputX")
 
@@ -414,38 +414,38 @@ class RMSpaceSwitch(object):
     def RMListConstraint(self,Constrained, Constraint, Connection):
         index = 0
         for eachObject in Constrained:
-            constraint = pm.parentConstraint(Constraint[index] , eachObject, name = "SpaceSwitch" + self.NameConv.RMGetAShortName(eachObject))
-            self.NameConv.RMRenameBasedOnBaseName(eachObject, constraint, {'name': self.NameConv.RMGetAShortName(constraint)})
+            constraint = pm.parentConstraint(Constraint[index], eachObject, name = "SpaceSwitch" + self.NameConv.get_a_short_name(eachObject))
+            self.NameConv.rename_based_on_base_name(eachObject, constraint, name=self.NameConv.get_a_short_name(constraint))
             WA = pm.parentConstraint (constraint, q = True, weightAliasList = True)
             TL = pm.parentConstraint (constraint, q = True, targetList = True)
             ConstraintIndex = TL.index(Constraint[index])
             pm.connectAttr(Connection, WA[ConstraintIndex])
-            index +=  1
+            index += 1
 
     def ConstraintVisibility(self, Objects , ControlObject , SpaceSwitchName = 'spaceSwitch', reverse = False ):
         if (self.AddNumericParameter (ControlObject, Name = SpaceSwitchName)):
             SWMultDiv = pm.shadingNode("multiplyDivide",asUtility = True ,name = SpaceSwitchName + "SWMultDivide" )
-            self.NameConv.RMRenameBasedOnBaseName(ControlObject, SWMultDiv, {'name': SWMultDiv})
+            self.NameConv.rename_based_on_base_name(ControlObject, SWMultDiv, name=SWMultDiv)
             pm.connectAttr(ControlObject+"."+SpaceSwitchName ,SWMultDiv+".input1X")
             pm.setAttr(SWMultDiv+".input2X",10)
             pm.setAttr(SWMultDiv+".operation",2)
         else:
-            SWMultDiv = pm.listConnections(ControlObject + "." + SpaceSwitchName, type = "multiplyDivide")[0]
+            SWMultDiv = pm.listConnections(ControlObject + "." + SpaceSwitchName, type="multiplyDivide")[0]
 
         if reverse == True:
-            ConnectionsList = pm.listConnections (SWMultDiv + ".outputX", type = "reverse")
+            ConnectionsList = pm.listConnections (SWMultDiv + ".outputX", type="reverse")
             reverseSW = ""
             if ConnectionsList and len(ConnectionsList) >= 1:
                 reverseSW = ConnectionsList[0]
             else :
                 reverseSW = pm.shadingNode('reverse', asUtility=True, name = SpaceSwitchName + "SWReverse")
-                self.NameConv.RMRenameBasedOnBaseName(ControlObject, reverseSW, {'name': "SWReverse"})
+                self.NameConv.rename_based_on_base_name(ControlObject, reverseSW, name="SWReverse")
                 pm.connectAttr( SWMultDiv + ".outputX", reverseSW + ".inputX")
 
-                if self.NameConv.RMIsNameInFormat (ControlObject):
-                    self.NameConv.RMRenameBasedOnBaseName(ControlObject,reverseSW, {'name': reverseSW})
+                if self.NameConv.is_name_in_format (ControlObject):
+                    self.NameConv.rename_based_on_base_name(ControlObject, reverseSW, name=reverseSW)
                 else:
-                    self.NameConv.RMRenameNameInFormat(reverseSW,{})
+                    self.NameConv.rename_name_in_format(reverseSW)
             for eachObject in Objects:
                 pm.connectAttr(reverseSW + ".outputX", eachObject + ".visibility")
         

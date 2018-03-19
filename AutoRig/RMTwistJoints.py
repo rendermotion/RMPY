@@ -48,8 +48,8 @@ class RMTwistJoints(object):
                                                                   Xratio=.1,
                                                                   Yratio=.1,
                                                                   Zratio=.1,
-                                                                  customSize=Distance/5 ,
-                                                                  name="TwistOrigin%s" % self.NameConv.RMGetAShortName(TwistJoint).title())
+                                                                  customSize=Distance/5,
+                                                                  name="TwistOrigin%s" % self.NameConv.get_a_short_name(TwistJoint).title())
         #control = self.NameConv.RMRenameBasedOnBaseName(TwistJoint , control,  NewName = self.NameConv.RMGetAShortName(control))
         #resetPoint = self.NameConv.RMRenameBasedOnBaseName(TwistJoint , resetPoint,  NewName = self.NameConv.RMGetAShortName(resetPoint))
         
@@ -69,19 +69,19 @@ class RMTwistJoints(object):
         pm.aimConstraint( LookAtObject,self.TwistJoints[0], aim = [1,0,0], worldUpVector = [0,0,1], worldUpType = "object", worldUpObject = control)
 
         TwistJointDivide = pm.shadingNode("multiplyDivide", asUtility=True,
-                                          name="TwistJoint%s" % self.NameConv.RMGetAShortName( TwistJoint).title())
-        self.NameConv.RMRenameBasedOnBaseName(TwistJoint, TwistJointDivide,
-                                              {'name': self.NameConv.RMGetAShortName(TwistJointDivide)})
+                                          name="TwistJoint%s" % self.NameConv.get_a_short_name(TwistJoint).title())
+        self.NameConv.rename_based_on_base_name(TwistJoint, TwistJointDivide,
+                                                name=self.NameConv.get_a_short_name(TwistJointDivide))
 
 
-        TwistAddition = pm.shadingNode( "plusMinusAverage", asUtility = True, name = "TwistJointAdd" + self.NameConv.RMGetAShortName( TwistJoint).title())
-        self.NameConv.RMRenameBasedOnBaseName(TwistJoint, TwistAddition,
-                                              {'name': self.NameConv.RMGetAShortName(TwistAddition)})
+        TwistAddition = pm.shadingNode( "plusMinusAverage", asUtility = True, name = "TwistJointAdd" + self.NameConv.get_a_short_name(TwistJoint).title())
+        self.NameConv.rename_based_on_base_name(TwistJoint, TwistAddition,
+                                                name=self.NameConv.get_a_short_name(TwistAddition))
         NegativeLookAtRotation = pm.shadingNode("multiplyDivide", asUtility=True,
                                                 name="NegativeLookAtRotation%s" %
-                                                     self.NameConv.RMGetAShortName(TwistJoint).title())
-        self.NameConv.RMRenameBasedOnBaseName(TwistJoint , NegativeLookAtRotation,
-                                              {'name': self.NameConv.RMGetAShortName(NegativeLookAtRotation)})
+                                                     self.NameConv.get_a_short_name(TwistJoint).title())
+        self.NameConv.rename_based_on_base_name(TwistJoint, NegativeLookAtRotation,
+                                                name=self.NameConv.get_a_short_name(NegativeLookAtRotation))
         pm.connectAttr( LookAtObject + ".rotateX", NegativeLookAtRotation + ".input1X")
         pm.setAttr("%s.input2X" % NegativeLookAtRotation, -1)
         pm.setAttr("%s.operation" % NegativeLookAtRotation, 1)
@@ -110,15 +110,15 @@ class RMTwistJoints(object):
             transformEndPoint = "endPoint"
 
         transformStartPoint = pm.spaceLocator(name=transformStartPoint)
-        self.NameConv.RMRenameNameInFormat(transformStartPoint, {})
+        self.NameConv.rename_name_in_format(transformStartPoint)
         transformEndPoint = pm.spaceLocator(name=transformEndPoint)
-        self.NameConv.RMRenameNameInFormat(transformEndPoint, {})
+        self.NameConv.rename_name_in_format(transformEndPoint)
 
         StartPointConstraint = pm.pointConstraint(Point01, transformStartPoint)
         EndPointConstraint = pm.pointConstraint(Point02, transformEndPoint)
 
         distanceNode = pm.shadingNode("distanceBetween", asUtility=True, name="DistanceNode")
-        self.NameConv.RMRenameBasedOnBaseName(Point01, distanceNode, {'name': distanceNode})
+        self.NameConv.rename_based_on_base_name(Point01, distanceNode, name=distanceNode)
 
         pm.connectAttr("%s.worldPosition[0]" % transformStartPoint, "%s.point1" % distanceNode, f=True)
         pm.connectAttr("%s.worldPosition[0]" % transformEndPoint, "%s.point2" % distanceNode, f=True)
@@ -126,17 +126,17 @@ class RMTwistJoints(object):
         return [transformStartPoint, transformEndPoint], distanceNode
 
     def RMStretchyTwistJoints(self):
-        locators , distanceNode = self.RMDistanceBetweenPointsMeasure(self.TwistOrigin, self.TwistEnd,"Twist" + self.NameConv.RMGetAShortName(self.TwistOrigin).title())
+        locators , distanceNode = self.RMDistanceBetweenPointsMeasure(self.TwistOrigin, self.TwistEnd,"Twist" + self.NameConv.get_a_short_name(self.TwistOrigin).title())
 
         stretchyRefGroup = pm.group(empty=True, name="StretchyRefPoints%s" %
-                                    self.NameConv.RMGetAShortName(self.TwistOrigin).title())
-        self.NameConv.RMRenameBasedOnBaseName(self.TwistOrigin, stretchyRefGroup, {'name': stretchyRefGroup})
+                                    self.NameConv.get_a_short_name(self.TwistOrigin).title())
+        self.NameConv.rename_based_on_base_name(self.TwistOrigin, stretchyRefGroup, name= stretchyRefGroup)
         RMRigTools.RMParentArray(stretchyRefGroup, locators)
 
         TwistJointDivide = pm.shadingNode("multiplyDivide", asUtility=True,
-                                          name="StretchyTwistJoint%s" % self.NameConv.RMGetAShortName(self.TwistOrigin).title())
+                                          name="StretchyTwistJoint%s" % self.NameConv.get_a_short_name(self.TwistOrigin).title())
         #self.NameConv.RMRenameNameInFormat(TwistJointDivide,{})
-        self.NameConv.RMRenameBasedOnBaseName(self.TwistOrigin, TwistJointDivide, {'name': TwistJointDivide})
+        self.NameConv.rename_based_on_base_name(self.TwistOrigin, TwistJointDivide, name=TwistJointDivide)
 
         pm.connectAttr("%s.distance" % distanceNode, "%s.input1X" % TwistJointDivide)
         pm.setAttr("%s.input2X" % TwistJointDivide, (len(self.TwistJoints) - 1))
@@ -156,11 +156,10 @@ class RMTwistJoints(object):
         for count in range(0, NumberOfTB + 1):
             Locator = pm.spaceLocator()
             if AlignObject:
-                if self.NameConv.RMIsNameInFormat (AlignObject):
-                    self.NameConv.RMRenameBasedOnBaseName(AlignObject, Locator,
-                                                          {'name': 'TwistJoint%s' %
-                                                                   (self.NameConv.RMGetFromName(AlignObject,
-                                                                                                "name").capitalize())})#.capitalize()
+                if self.NameConv.is_name_in_format(AlignObject):
+                    self.NameConv.rename_based_on_base_name(AlignObject, Locator,
+                                                            name='TwistJoint%s' %
+                                                            (self.NameConv.get_from_name(AlignObject,"name").capitalize()))#.capitalize()
             locatorsList.append(Locator)
             pm.xform(Locator, translation=list(InitialPoint+(StepVector*count)), worldSpace=True)
             RMRigTools.RMAlign(AlignObject, Locator, 2)
