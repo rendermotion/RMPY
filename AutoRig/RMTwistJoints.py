@@ -1,7 +1,7 @@
 import pymel.core as pm
 import maya.api.OpenMaya as om
-from RMPY import RMNameConvention
-reload(RMNameConvention)
+from RMPY import nameConvention
+reload(nameConvention)
 from RMPY import RMRigTools
 reload(RMRigTools)
 from RMPY import RMRigShapeControls
@@ -10,7 +10,7 @@ reload(RMRigShapeControls)
 class RMTwistJoints(object):
     def __init__(self, NameConv = None):
         if not NameConv:
-            self.NameConv = RMNameConvention.RMNameConvention()
+            self.NameConv = nameConvention.NameConvention()
         else:
             self.NameConv = NameConv
         self.kinematics = []

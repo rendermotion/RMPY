@@ -4,7 +4,7 @@ source "RMRigTools.mel";
 source "RMRigShapeControls.mel";
 source "RMRibbonSystem.mel";
 source "RMRiggMath.mel";
-source "RMNameConvention.mel";
+source "NameConvention.mel";
 source "RMRibbonSystem.mel";
 
 

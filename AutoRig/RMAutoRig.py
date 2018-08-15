@@ -6,7 +6,7 @@ from RMPY.AutoRig import RMSpine
 from RMPY.AutoRig import RMNeckHead
 from RMPY.AutoRig import RMVisibilitySwitch
 import maya.mel as mel
-from RMPY import RMNameConvention
+from RMPY import nameConvention
 try:
     from MetacubeScripts import MetacubeFileNameConvention
 except:
@@ -25,7 +25,7 @@ reload(RMNeckHead)
 reload(RMLimbIKFK)
 reload(RMSpaceSwitch)
 reload(RMGenericHandRig)
-reload(RMNameConvention)
+reload(nameConvention)
 reload(RMVisibilitySwitch)
 reload(RMRigShapeControls)
 reload(RMRigTools)
@@ -34,7 +34,7 @@ reload(RMSpine)
 class RMBiped(object):
     def __init__(self, NameConv = None):
         if not NameConv:
-            self.NameConv = RMNameConvention.RMNameConvention()
+            self.NameConv = nameConvention.NameConvention()
         else:
             self.NameConv = NameConv
         self.NameConv.default_names["LastName"] = "Character01"
@@ -349,7 +349,7 @@ class RMBiped(object):
         self.Visibility()
 
         
-        #mover01Reset, Mover01 = RMRigShapeControls.RMCircularControl ( "world" , axis = "Y" ,radius = self.Spine.SpineLength * 3  , name = "mover02")
+        #mover01Reset, Mover01 = RMRigShapeControls.circular_control ( "world" , axis = "Y" ,radius = self.Spine.SpineLength * 3  , name = "mover02")
 
         #self.SPSW.
 

@@ -1,11 +1,11 @@
 import pymel.core as pm
-from RMPY import RMNameConvention
+from RMPY import nameConvention
 from RMPY import RMRigTools
-from RMPY.Rig import SystemStructure
+from RMPY.rig import systemStructure
 from RMPY import RMRigShapeControls
 reload(RMRigShapeControls)
 reload(RMRigTools)
-reload(SystemStructure)
+reload(systemStructure)
 
 class singleJointRig():
     def __init__(self):
@@ -18,7 +18,7 @@ class singleJointRig():
     def create_locator_base(self, *locatorList, **kwargs):
         static = kwargs.pop('static', False)
         scaleXZ = kwargs.pop('scaleXZ', False)
-        self.system = SystemStructure.SystemStructure(locatorList[0])
+        self.system = systemStructure.SystemStructure(locatorList[0])
         for each in locatorList:
             reset_joint = pm.group(empty=True, name='resteJoint')
             RMRigTools.RMAlign(each, reset_joint, 3)

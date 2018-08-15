@@ -1,7 +1,7 @@
 import pymel.core as pm
 import maya.api.OpenMaya as om
-from RMPY import RMNameConvention
-reload(RMNameConvention)
+from RMPY import nameConvention
+reload(nameConvention)
 from RMPY import RMRigTools
 reload(RMRigTools)
 from RMPY import RMRigShapeControls
@@ -14,7 +14,7 @@ import math
 class RMSpine(object):
     def __init__(self,NameConv = None):
         if not NameConv:
-            self.NameConv = RMNameConvention.RMNameConvention()
+            self.NameConv = nameConvention.NameConvention()
         else:
             self.NameConv = NameConv
         self.kinematics = []
@@ -122,7 +122,7 @@ class RMSpine(object):
         self.kinematics.append(ClustersGroup)
         self.kinematics.append(self.spineIK)
 
-        #ResetCOG, COG = RMRigShapeControls.RMCreateBoxCtrl(self.spineJoints[0],Yratio=3,Zratio=3)
+        #ResetCOG, COG = RMRigShapeControls.create_box_ctrl(self.spineJoints[0],Yratio=3,Zratio=3)
         ResetCOG, COG = RMRigShapeControls.RMImportMoveControl(self.spineJoints[0], scale = RMRigTools.RMLenghtOfBone(self.spineJoints[0]) * 7)
 
         self.NameConv.rename_set_from_name(COG, "COG", "name")
@@ -275,7 +275,7 @@ class RMSpine(object):
         return rootHip , hipJoints
     
     def RMCreateHipSystem(self):
-        #resetHipControl, hipControl = RMRigShapeControls.RMCircularControl(self.rootHip,radius = self.SpineLength *.7,name = "hip")
+        #resetHipControl, hipControl = RMRigShapeControls.circular_control(self.rootHip,radius = self.SpineLength *.7,name = "hip")
         resetHipControl, hipControl = RMRigShapeControls.RMImportMoveControl(self.rootHip, scale = self.SpineLength, name = "hip",Type = "circleDeform")
         pm.parent( resetHipControl, self.COG)
         pm.parentConstraint( hipControl, self.hipJoints[0])

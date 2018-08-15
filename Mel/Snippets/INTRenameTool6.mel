@@ -1,4 +1,4 @@
-source "RMNameConvention";
+source "NameConvention";
 
 
 if (`window -q -ex RenameObjectsWindow`) deleteUI RenameObjectsWindow;

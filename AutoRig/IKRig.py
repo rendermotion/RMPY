@@ -3,13 +3,13 @@ import maya.OpenMayaUI as mui
 import maya.api.OpenMaya as om
 
 import math
-from RMPY import RMNameConvention
+from RMPY import nameConvention
 from RMPY import RMRigTools
 from RMPY import RMRigShapeControls
-from RMPY.AutoRig import RigStructure
+from RMPY.AutoRig import rigStructure
 from RMPY.AutoRig import RMSpaceSwitch
 
-reload(RigStructure)
+reload(rigStructure)
 
 class IKRigModel(object):
     def __init__(self):
@@ -28,11 +28,11 @@ class IKRigModel(object):
 class GenericRig(object):
     def __init__(self, name_conv=None):
         if not name_conv:
-            self.name_conv = RMNameConvention.RMNameConvention()
+            self.name_conv = nameConvention.NameConvention()
         else:
             self.name_conv = name_conv
         self.rig_tools = RMRigTools.RMRigTools()
-        self.rig_structure = RigStructure.RigStructure()
+        self.rig_structure = rigStructure.RigStructure()
         self.rig_controls = RMRigShapeControls.RMRigShapeControls()
         self.rig_space_switch = RMSpaceSwitch.RMSpaceSwitch()
 

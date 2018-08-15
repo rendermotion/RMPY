@@ -1,4 +1,4 @@
-source "RMNameConvention.mel";
+source "NameConvention.mel";
 source "RMRiggMath.mel";
 
 global proc RMAlign (string $obj1, string $obj2,int $flag){
@@ -77,7 +77,7 @@ global proc string RMCreateGrouponObj (string $Obj, int $flag)
 //La vandera en caso de ser 1, busará al padre de Obj y a este emparentará el nuevo grupo
 //La función regresa el nuevo grupo
 
-global proc float RMLenghtOfBone (string $Bone ){
+global proc float lenght_of_bone (string $Bone ){
     string $temp[]=`listRelatives -c $Bone`;
     if ((`size $temp`!=0)&&(`objectType $temp[0]`!="locator")){
         return `getAttr ($temp[0]+".translateX")`;

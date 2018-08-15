@@ -1,6 +1,6 @@
 import maya.cmds as cmds
 import RMRigTools
-import RMNameConvention
+import nameConvention
 import RMblendShapesTools
 BSlist = {'phonetics': {
 					'attributes' :{'O':{},'CH':{},'E':{},'I':{},'A':{},'P':{},'WQ':{},'FV':{},'close':{},'Sv01':{},'Sv02':{},'MBP':{},'L':{},'superO':{}},
@@ -14,7 +14,7 @@ class BSManager(object):
 		if NameConv:
 			self.NameConv = NameConv
 		else:
-			self.NameConv = RMNameConvention.RMNameConvention()
+			self.NameConv = nameConvention.NameConvention()
 		RigTools = RMRigTools.RMRigTools(self.NameConv)
 
 	def ApplyBlendShapes(self,BSDefinition):

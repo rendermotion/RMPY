@@ -1,13 +1,13 @@
-from RMPY import RMNameConvention
+from RMPY import nameConvention
 from RMPY import RMRigTools
 import pymel.core as pm
-reload(RMNameConvention)
+reload(nameConvention)
 
 def get_key(searc_value, search_dic):
     for key, value in search_dic.iteritems():
         if value == searc_value:
             return key
-original_name_conv = RMNameConvention.RMNameConvention()
+original_name_conv = nameConvention.NameConvention()
 original_name_conv.name_convention = {
                 "CharacteName": 0,
                 "name": 2,
@@ -19,7 +19,7 @@ original_name_conv.validation['side'] = ['LF', 'RH', 'MD']
 original_name_conv.translator['side'] = {'left': 'LF', 'right': 'RH', 'center': 'MD'}
 original_name_conv.default_names['side'] = 'MD'
 
-name_conv = RMNameConvention.RMNameConvention()
+name_conv = nameConvention.NameConvention()
 
 def changeNameConv(correct_object):
 

@@ -1,7 +1,7 @@
 import maya.cmds as cmds
 from RMPY.AutoRig import RMTwistJoints
 from RMPY.AutoRig import RMRibbon
-from RMPY import RMNameConvention
+from RMPY import nameConvention
 from RMPY import RMUncategorized
 reload (RMUncategorized)
 reload ( RMRibbon )
@@ -9,7 +9,7 @@ from RMPY import RMRigTools
 
 
 def AddRibbon (SknJointStructure, SknParentGroup, currentTwists,ToDeleteNodes,LookAtAxis = "Y"):
-    NameConv = RMNameConvention.RMNameConvention()
+    NameConv = nameConvention.NameConvention()
     ObjectTransformDiclist = RMUncategorized.ObjectTransformDic(currentTwists)
     for i in ToDeleteNodes:
         if cmds.objExists(i):

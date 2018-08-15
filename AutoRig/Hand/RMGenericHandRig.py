@@ -3,9 +3,9 @@ from RMPY import RMRigTools
 
 reload(RMRigTools)
 
-from RMPY import RMNameConvention
+from RMPY import nameConvention
 
-reload(RMNameConvention)
+reload(nameConvention)
 
 from RMPY import RMRigShapeControls
 
@@ -21,7 +21,7 @@ reload(RMGenericHandStructure)
 class RMGenericHandRig(object):
     def __init__(self, NameConv=None):
         if not NameConv:
-            self.NameConv = RMNameConvention.RMNameConvention()
+            self.NameConv = nameConvention.NameConvention()
         else:
             self.NameConv = NameConv
         self.GHS = RMGenericHandStructure.GenericHandJointStructure(NameConv=NameConv)
@@ -70,7 +70,7 @@ class RMGenericHandRig(object):
             self.NameConv.rename_set_from_name(eachFinger, "sknjnt", "objectType")
 
         # self.PalmControl
-        # RMRigShapeControls.RMCreateBoxCtrl(self.GHS.palmJoint, Yratio = .5, size = palmLen, NameConv =  NameConv)
+        # RMRigShapeControls.create_box_ctrl(self.GHS.palmJoint, Yratio = .5, size = palmLen, NameConv =  NameConv)
 
     def CreateHandStructure(self, PalmReferencePoint):
         self.GHS.CreateHandJointStructure(PalmReferencePoint)

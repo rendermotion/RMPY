@@ -1,19 +1,19 @@
 import random
 import pymel.core as pm
 from RMPY import RMRigTools
-from RMPY import RMNameConvention
+from RMPY import nameConvention
 from RMPY import RMRigShapeControls
 from RMPY.AutoRig import RMGenericRigStructure
 import pprint
 reload (RMRigTools)
 reload (RMRigShapeControls)
 reload (RMGenericRigStructure )
-reload (RMNameConvention)
+reload (nameConvention)
 
 def getMeshObjects(Objects):
     MeshObjects = []
     OtherObjects = []
-    NameConv=RMNameConvention.RMNameConvention()
+    NameConv=nameConvention.NameConvention()
     for eachObject in Objects:
         if NameConv.guess_object_type(eachObject) == "msh":
             MeshObjects.append(eachObject)
@@ -26,7 +26,7 @@ def SinglePropRig(scene_object, referencePositionControl, centerPivot = False):
     #elif Object.__class__ in [str,unicode]:
     GRS = RMGenericRigStructure.genericRigStructure()
 
-    NameConv = RMNameConvention.RMNameConvention()
+    NameConv = nameConvention.NameConvention()
     bbMesh   = RMRigTools.boundingBoxInfo(scene_object)
     CtrlPosition = pm.xform(referencePositionControl,q=True,rp=True, worldSpace = True)
 

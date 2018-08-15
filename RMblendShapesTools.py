@@ -1,20 +1,20 @@
 import maya.cmds as cmds
 import pprint as pp
-import RMNameConvention
-import RMRigTools
+from RMPY import nameConvention
+from RMPY import RMRigTools
 import maya.mel as mel
 
 
 def RMblendShapeTargetDic (BSNode):
     #AliasNames=cmds.listAttr((BSNode +".weight"),m=True);
     InputTargetGroup=cmds.getAttr ((BSNode+".inputTarget[0].inputTargetGroup"),mi=True);
-    BlendShapeDic={}
+    BlendShapeDic = {}
     for eachTarget in InputTargetGroup:
-        AliasName=cmds.listAttr((BSNode +".weight["+str(eachTarget)+"]"),m=True);
+        AliasName = cmds.listAttr((BSNode +".weight["+str(eachTarget)+"]"),m=True);
         BlendShapeDic[str(AliasName[0])]={}
-        BlendShapeDic[str(AliasName[0])]["TargetGroup"]=eachTarget
+        BlendShapeDic[str(AliasName[0])]["TargetGroup"] = eachTarget
         Items = cmds.getAttr ((BSNode+".inputTarget[0].inputTargetGroup["+str(eachTarget)+"].inputTargetItem"), mi=True);
-        BlendShapeDic[str(AliasName[0])]["Items"]=Items
+        BlendShapeDic[str(AliasName[0])]["Items"] = Items
     return BlendShapeDic
 '''
 def invertCurrentPaintTargetWeights(ObjectName,index):
@@ -42,29 +42,56 @@ pp.pprint (RMblendShapeTargetDic('blendShape20'))
 invertCurrentPaintTargetWeights('blendShape20',3)
 '''
 def invertCurrentPaintTargetWeights(ObjectName, index):
-    cmds.setAttr("%s.inputTarget[0].paintTargetIndex[%s]"%ObjectName, index)
-    weights = cmds.getAttr("%s.inputTarget[0].paintTargetWeights"%ObjectName)
-    newWeights = []
-    index=0
-    for i in weights[0]:
-        cmds.setAttr("%s.inputTarget[0].paintTargetWeights[%s]"% (ObjectName,index),float(1.0)- i)
-        index+=1
-    weights = cmds.getAttr("%s.inputTarget[0].paintTargetWeights"%ObjectName)
 
-def copyCurrentPaintTargetWeights(ObjectName, indexSource, indexDestination):
-    weights = cmds.getAttr("%s.inputTarget[0].inputTargetGroup[%s].targetWeights"%(ObjectName, indexSource))
-    newWeights = []
-    index=0
-    for i in weights[0]:
-        cmds.setAttr("%s.inputTarget[0].inputTargetGroup[%s].targetWeights[%s]"% (ObjectName,indexDestination,index),float(1.0)- i)
-        index+=1
+    if index != -1:
+        weight_map_target = 'inputTargetGroup[%s].targetWeights' % index
+    else:
+        weight_map_target = 'baseWeights'
+
+    weights = cmds.getAttr("%s.inputTarget[0].%s[*]" % (ObjectName, weight_map_target))
+    weight_index = cmds.getAttr("%s.inputTarget[0].%s" % (ObjectName, weight_map_target), multiIndices=True)
+    destination_geo = cmds.listConnections('{}.outputGeometry'.format(ObjectName), source=False)[0]
+    vertex_number = cmds.polyEvaluate(destination_geo, vertex=True)
+
+    for index_vertex in range(vertex_number):
+        if index_vertex in weight_index:
+            value = weights[weight_index.index(index_vertex)]
+        else:
+            value = 1
+        cmds.setAttr("%s.inputTarget[0].%s[%s]" % (ObjectName,weight_map_target, index_vertex), float(1.0) - value)
+
+
+def copyCurrentPaintTargetWeights(ObjectName, index_source, index_destination):
+
+    if index_source != -1:
+        weight_map_source = 'inputTargetGroup[%s].targetWeights' % index_source
+    else:
+        weight_map_source = 'baseWeights'
+
+    if index_destination != -1:
+        weight_map_destination = 'inputTargetGroup[%s].targetWeights' % index_destination
+    else:
+        weight_map_destination = 'baseWeights'
+
+    weights = cmds.getAttr("%s.inputTarget[0].%s[*]" % (ObjectName, weight_map_source))
+    weight_index = cmds.getAttr("%s.inputTarget[0].%s" % (ObjectName, weight_map_source), multiIndices=True)
+
+    destination_weight_index = cmds.getAttr("%s.inputTarget[0].%s" % (ObjectName, weight_map_destination),
+                                            multiIndices=True)
+    for vertex_index in set(weight_index + destination_weight_index):
+        if vertex_index in weight_index:
+            set_value = weights[weight_index.index(vertex_index)]
+        else:
+            set_value = 1.0
+        cmds.setAttr("%s.inputTarget[0].%s[%s]" % (ObjectName, weight_map_destination, vertex_index), set_value)
+
 
 class BSManager(object):
     def __init__(self, NameConv=None) :
         if NameConv:
             self.NameConv = NameConv
         else:
-            self.NameConv = RMNameConvention.RMNameConvention()
+            self.NameConv = nameConvention.NameConvention()
         RigTools = RMRigTools.RMRigTools(self.NameConv)
         self.FaceBlendShapeDic = {}
 

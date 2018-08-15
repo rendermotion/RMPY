@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'UI_BipedRig.ui'
 #
-# Created: Wed Nov 01 23:16:44 2017
+# Created: Wed Mar 21 21:43:33 2018
 #      by: pyside-uic 0.2.14 running on PySide 1.2.0
 #
 # WARNING! All changes made in this file will be lost!

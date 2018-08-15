@@ -99,13 +99,13 @@ global proc string[] RMCreateIKControlsLeg (string $IKroot , string $Systemparen
 	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Ex5;
 	//Crea un control posicionado y RMAligndo a la extremidad 4
 	float $FeetSize=`RMDistancia $Ex4 $Ex5`;
-   //string $IKcontrol = ` RMCreateBoxCtrl $Ex4`;
+   //string $IKcontrol = ` create_box_ctrl $Ex4`;
     string $IKcontrol=$Ex4;
 	$IKcontrol=`RMSetFromName $IKcontrol 3 "ctr"`;
 	$IKcontrol=`RMSetFromName $IKcontrol 4 "IK"`;
 	$IKcontrol=`RMUniqueName $IKcontrol`;
 
-    RMCreateCubeLine $FeetSize $FeetSize $FeetSize $IKcontrol;
+    create_cube_line $FeetSize $FeetSize $FeetSize $IKcontrol;
     move -r ($FeetSize/2) 0 0 ($IKcontrol+".scalePivot") ($IKcontrol+".rotatePivot");
 	move -rpr -a 0 0 0 $IKcontrol;
 	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $IKcontrol;
@@ -313,7 +313,7 @@ global proc string[] RMCreateIKControlsLeg (string $IKroot , string $Systemparen
 	$IKcontrol=`RMSetFromName $IKcontrol 4 "IK"`;
 	$IKcontrol=`RMUniqueName $IKcontrol`;
 
-    RMCreateCubeLine $FeetSize $FeetSize $FeetSize $IKcontrol;
+    create_cube_line $FeetSize $FeetSize $FeetSize $IKcontrol;
     move -r ($FeetSize/2) 0 0 ($IKcontrol+".scalePivot") ($IKcontrol+".rotatePivot");
 	move -rpr -a 0 0 0 $IKcontrol;
 	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $IKcontrol;
@@ -540,10 +540,10 @@ global proc string[] RMCreateIKControlsArm (string $IKroot , string $Systemparen
 	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Ex2;
 	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $Ex3;
 	//Crea un control posicionado y RMAligndo a la extremidad 4
-    float $Lenghtbone = `RMLenghtOfBone $Ex3`/5;
+    float $Lenghtbone = `lenght_of_bone $Ex3`/5;
     string $IKcontrol=`RMSetFromName $Ex4 3 "ctr"`;
     $IKcontrol=`RMUniqueName $IKcontrol`;
-    $IKcontrol = `RMCreateCubeLine $Lenghtbone $Lenghtbone $Lenghtbone $IKcontrol`;
+    $IKcontrol = `create_cube_line $Lenghtbone $Lenghtbone $Lenghtbone $IKcontrol`;
     move -r ($Lenghtbone/2) 0 0 ($IKcontrol+".scalePivot") ($IKcontrol+".rotatePivot");
 	move -rpr -a 0 0 0 $IKcontrol;
 	makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $IKcontrol;
@@ -608,7 +608,7 @@ global proc string[] RMCreateIKControlsArm (string $IKroot , string $Systemparen
 
 global proc string[] RMCreateFKControlsArm (string $FKroot,string $Systemparent)
 	{    
-	float $Tam=`RMLenghtOfBone $FKroot`;
+	float $Tam=`lenght_of_bone $FKroot`;
 	string $Ex1 = $FKroot;
 	string $temp[]=`listRelatives -c $Ex1`;
 	string $temp1[]=`listRelatives -c $temp[0]`;
@@ -616,9 +616,9 @@ global proc string[] RMCreateFKControlsArm (string $FKroot,string $Systemparent)
 	string $Ex2=$temp[0];
 	string $Ex3=$temp1[0];
 	string $Ex4=$temp2[0];
-/*	string $CntrlExt1 = `RMCreateBoxCtrl $Ex1`;
-	string $CntrlExt2 = `RMCreateBoxCtrl $Ex3`;
-	string $CntrlExt3 = `RMCreateBoxCtrl $Ex4`;*/
+/*	string $CntrlExt1 = `create_box_ctrl $Ex1`;
+	string $CntrlExt2 = `create_box_ctrl $Ex3`;
+	string $CntrlExt3 = `create_box_ctrl $Ex4`;*/
 	
 	string $CntrlExt1 = `RMCreaControl $Ex1 ($Tam*1/2)`;
 	string $CntrlExt2 = `RMCreaControl $Ex3 ($Tam*1/2)`;
@@ -681,7 +681,7 @@ global proc string[] RMCreateFKControlsArm (string $FKroot,string $Systemparent)
 /*Crea la herarquia de los controles IK Para La Pierna*/
 global proc string[] RMCreateFKControlsLeg (string $FKroot,string $Systemparent)
 	{    
-	float $Tam=`RMLenghtOfBone $FKroot`;
+	float $Tam=`lenght_of_bone $FKroot`;
 	string $Ex1 = $FKroot;
 	string $temp[]=`listRelatives -c $Ex1`;
 	string $temp1[]=`listRelatives -c $temp[0]`;
@@ -691,9 +691,9 @@ global proc string[] RMCreateFKControlsLeg (string $FKroot,string $Systemparent)
 	string $Ex3=$temp1[0];
 	string $Ex4=$temp2[0];
     string $Ex5=$temp3[0];
-/*	string $CntrlExt1 = `RMCreateBoxCtrl $Ex1`;
-	string $CntrlExt2 = `RMCreateBoxCtrl $Ex3`;
-	string $CntrlExt3 = `RMCreateBoxCtrl $Ex4`;*/
+/*	string $CntrlExt1 = `create_box_ctrl $Ex1`;
+	string $CntrlExt2 = `create_box_ctrl $Ex3`;
+	string $CntrlExt3 = `create_box_ctrl $Ex4`;*/
 	string $CntrlExt1 = `RMCreaControl $Ex1 ($Tam*1/2)`;
 	string $CntrlExt2 = `RMCreaControl $Ex3 ($Tam*1/2)`;
 	string $CntrlExt3 = `RMCreaControl $Ex4 ($Tam*1/4)`;
@@ -810,7 +810,7 @@ global proc RMRebuildJXTLeg(string $side,string $IKControls[],string $FKControls
 	/////////////////////
 	//Calcula La RMDistancia entre la clavicula y el Brazo para redimensionar la Clavicula	
 	float $ClavSize = `RMDistancia $ORGArmroot $JXTArmrootParent[0]`;
-	//float $ClavSize = RMLenghtOfBone ($JXTArmrootParent[0]);
+	//float $ClavSize = lenght_of_bone ($JXTArmrootParent[0]);
 	scale -scaleXYZ ($ClavSize+1) ($ClavSize+1) ($ClavSize+1) $JXTArmControl;
 	makeIdentity -apply true -t 0 -r 0 -s 1 -n 0 $JXTArmControl;
 	//RMAlign EL control De la clavicula a su nacimiento
@@ -889,7 +889,7 @@ global proc RMRebuildJXTLeg(string $side,string $IKControls[],string $FKControls
     string $Ribbon1Controls[]=`listRelatives -c $Ribbon01[2]`;
     string $Ribbon2Controls[]=`listRelatives -c $Ribbon02[2]`;
     
-    float  $LongitudBrazo = `RMLenghtOfBone $JXTArmroot2`;
+    float  $LongitudBrazo = `lenght_of_bone $JXTArmroot2`;
     string $MidControl =`RMCreaControl $JXTArmroot2 ($LongitudBrazo/3)`;
     string $MidControlParent=`RMCreateGrouponObj $MidControl 1`;
     
@@ -927,7 +927,7 @@ global proc RMCreateMainGroupsAndControls()
 {
   	string $hips=`RMObjNameToVar "*HipLow_jnt*"`;
   	//string $hips=`RMObjNameToVar "*HipLowNub_jnt"`;
-    float $r=`RMLenghtOfBone $hips`;
+    float $r=`lenght_of_bone $hips`;
     $r=$r*10;
     
     $newName=$hips;

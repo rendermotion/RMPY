@@ -1,4 +1,4 @@
-global proc string RMCreateCubeLine(float $height,float $lenght,float $width,string $name)
+global proc string create_cube_line(float $height,float $lenght,float $width,string $name)
 {
     string $shapes[];
     $shapes[0]=`curve -d 1 -p 0         (-$lenght/2) ($width/2) -p 0         (-$lenght/2) (-$width/2) -n $name`;
@@ -15,7 +15,7 @@ global proc string RMCreateCubeLine(float $height,float $lenght,float $width,str
     $shapes[9]=`curve -d 1 -p 0          (-$lenght/2) ($width/2)  -p 0         ($lenght/2) ($width/2) -n ($name+"_9")`;
     $shapes[10]=`curve -d 1 -p ($height) (-$lenght/2) (-$width/2) -p ($height) ($lenght/2) (-$width/2) -n ($name+"_10")`;
     $shapes[11]=`curve -d 1 -p ($height) (-$lenght/2) ($width/2)  -p ($height) ($lenght/2) ($width/2) -n ($name+"_11")`;
-    RMTurnToOne $shapes;
+    turn_to_one $shapes;
     return $shapes[0];
 }
 
@@ -37,30 +37,30 @@ global proc string RMCreateCubeControl (float $Sizev,string $name)
     $shapes[9]=`curve -d 1 -p 0 (-$lenght/2) ($width/2) -p 0 ($lenght/2) ($width/2) -n ($name+"_9")`;
     $shapes[10]=`curve -d 1 -p ($height) (-$lenght/2) (-$width/2) -p ($height) ($lenght/2) (-$width/2) -n ($name+"_10")`;
     $shapes[11]=`curve -d 1 -p ($height) (-$lenght/2) ($width/2) -p ($height) ($lenght/2) ($width/2) -n ($name+"_11")`;
-    RMTurnToOne $shapes;
+    turn_to_one $shapes;
     return $shapes[0];
 }
 
-global proc string RMCreateBoxCtrl(string $bone){
+global proc string create_box_ctrl(string $bone){
     string $temp=`RMObjNameToVar $bone`;
     string $CntlName=`RMSetFromName $temp 3 "ctr"`;
     string $tempArray[]=`listRelatives -c $bone`;
   
     if (`size $tempArray`!=0){
-        float $Lenghtbone = `RMLenghtOfBone $temp`;
-        $CntlName=`RMCreateCubeLine $Lenghtbone ($Lenghtbone/4) ($Lenghtbone/4) $CntlName`;
+        float $Lenghtbone = `lenght_of_bone $temp`;
+        $CntlName=`create_cube_line $Lenghtbone ($Lenghtbone/4) ($Lenghtbone/4) $CntlName`;
     }
     else {
         string $tempArray[]=`listRelatives -p $bone`;
-        float $Lenghtbone = `RMLenghtOfBone $tempArray[0]`;
-        $CntlName=`RMCreateCubeLine ($Lenghtbone/4) ($Lenghtbone/4) ($Lenghtbone/4) $CntlName`;
+        float $Lenghtbone = `lenght_of_bone $tempArray[0]`;
+        $CntlName=`create_cube_line ($Lenghtbone/4) ($Lenghtbone/4) ($Lenghtbone/4) $CntlName`;
     }
     RMAlign $temp $CntlName 3;
     return $CntlName;
 }
 
 /*Funcion que convierte un conjunto de lineas dadas en el arreglo $shapes en una sola que es $shapes[0]*/
-global proc RMTurnToOne(string $shapes[])
+global proc turn_to_one(string $shapes[])
 {
     int $sizeArray=`size $shapes`;
     int $i;

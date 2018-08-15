@@ -22,7 +22,7 @@ global proc RMRebuildSpine(){
 	//string $temp[]=`listRelatives -c $hips`;
 	//Obtiene el Nodo de la columna
 	string $Spine=`RMObjNameToVar "*Spine4_pnt_rfr"`;
-    float $SpineSize=`RMLenghtOfBone $hips`; 
+    float $SpineSize=`lenght_of_bone $hips`;
 	//Crea Un control en La cadera
 
 	string $HipsControl=`RMCreaControl $hips $SpineSize`;
@@ -49,7 +49,7 @@ global proc RMRebuildSpine(){
    $newName=`RMUniqueName $newName`;
    $CntrlCabeza=`rename $CntrlCabeza $newName`;
 	
-   float $HeadSize=`RMLenghtOfBone $Head`;
+   float $HeadSize=`lenght_of_bone $Head`;
 
    scale -scaleXYZ $HeadSize $HeadSize $HeadSize $CntrlCabeza;
    makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $CntrlCabeza;
@@ -79,10 +79,10 @@ global proc RMRebuildSpine(){
    float $Height=`RMDistancia $Controls[0] $Controls[1]`;
    string $SpineFK1=`RMSetFromName $Controls[0] 2 "SpineFK1"`;
    $SpineFK1=`RMUniqueName $SpineFK1`;
-   RMCreateCubeLine $Height ($Height*1.5) ($Height*1.5) $SpineFK1;
+   create_cube_line $Height ($Height*1.5) ($Height*1.5) $SpineFK1;
    
    $SpineFK2=`RMUniqueName $SpineFK1`;
-   RMCreateCubeLine $Height ($Height*1.5) ($Height*1.5)  $SpineFK2;
+   create_cube_line $Height ($Height*1.5) ($Height*1.5)  $SpineFK2;
    
    RMAlign $Controls[0] $SpineFK1 3;
    RMAlign $Controls[1] $SpineFK2 3;

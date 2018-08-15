@@ -21,7 +21,7 @@ import pymel.core as pm
 import os
 from RMPY import RMUncategorized
 from RMPY.AutoRig import RMAutoRig
-from RMPY import RMNameConvention
+from RMPY import nameConvention
 from RMPY.AutoRig.snippets import CorrectPoleVectorsOrientation
 from RMPY.AutoRig.snippets import RedoClavicleSpaceSwitch
 from RMPY.AutoRig.snippets import SkeletonHands
@@ -43,7 +43,7 @@ class main(MayaQWidgetDockableMixin,QDialog):
         self.setWindowTitle('AutoRig')
 
         if not NameConv:
-            self.NameConv = RMNameConvention.RMNameConvention()
+            self.NameConv = nameConvention.NameConvention()
         else:
             self.NameConv = NameConv
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>485</width>
-    <height>669</height>
+    <width>516</width>
+    <height>698</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,6 +28,9 @@
            <layout class="QVBoxLayout" name="verticalLayout_4">
             <item>
              <widget class="QPushButton" name="RenameTool">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="text">
                <string>Rename Tool</string>
               </property>
@@ -54,6 +57,42 @@
               </property>
               <property name="text">
                <string>Move Attributes</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBox_4">
+           <property name="title">
+            <string>Create Locators</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_14">
+            <item>
+             <widget class="QPushButton" name="create_locators_at_nodes_btn">
+              <property name="text">
+               <string>locator at nodes</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="three_points_locators_btn">
+              <property name="toolTip">
+               <string>select tree points or vertices a locator will be created over the first element, aiming to the second one, and using the third as up vector.</string>
+              </property>
+              <property name="text">
+               <string>Three point locators</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="locator_at_average_btn">
+              <property name="toolTip">
+               <string>select some vertex or objects and a locator will be created at the average position</string>
+              </property>
+              <property name="text">
+               <string>locator at average</string>
               </property>
              </widget>
             </item>
@@ -104,13 +143,6 @@
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_10">
             <item>
-             <widget class="QPushButton" name="AlignRotation">
-              <property name="text">
-               <string>AlignRotation</string>
-              </property>
-             </widget>
-            </item>
-            <item>
              <widget class="QPushButton" name="AlignPosition">
               <property name="text">
                <string>AlignPosition</string>
@@ -118,9 +150,26 @@
              </widget>
             </item>
             <item>
+             <widget class="QPushButton" name="AlignRotation">
+              <property name="text">
+               <string>AlignRotation</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QPushButton" name="AlignAll">
               <property name="text">
                <string>Align Pos &amp; Rot</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="align_at_locator">
+              <property name="toolTip">
+               <string>select two objects the first will point to the second one, if you select three, the third object will be the up vector</string>
+              </property>
+              <property name="text">
+               <string>Align at locator</string>
               </property>
              </widget>
             </item>

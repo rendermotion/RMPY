@@ -1,9 +1,9 @@
 import pymel.core as pm
-from RMPY import RMNameConvention
+from RMPY import nameConvention
 controls_list = pm.ls('*_ctr')
 print controls_list
 #controls_list = pm.ls(selection = True)
-name_conv = RMNameConvention.RMNameConvention()
+name_conv = nameConvention.NameConvention()
 for each in controls_list:
     shapes = each.getShapes()
     side = name_conv.get_from_name(each, 'side')

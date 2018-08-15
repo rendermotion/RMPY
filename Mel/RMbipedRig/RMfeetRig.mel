@@ -1,4 +1,4 @@
-source "RMNameConvention.mel";
+source "NameConvention.mel";
 source "RMRigTools.mel";
 source "RMRigShapeControls.mel";
 source "RMRiggMath.mel";
@@ -175,7 +175,7 @@ global proc StandardReverseFeet(string $originPoint){
 
 	$FeetControl = `RMSetFromName $FeetControl 3 "ctrl"`;
 
-	$FeetControl =RMCreateCubeLine($Length,$Width,($Width/2),$FeetControl);
+	$FeetControl =create_cube_line($Length,$Width,($Width/2),$FeetControl);
 	
 	
 	RMAlign  $originPoint $FeetControl 3;

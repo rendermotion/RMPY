@@ -44,7 +44,7 @@ global proc RMCreateJointsOnSelected(string $Box,string $Box2)
     //==================================================================================================//
     string $PartNewName = (RMGetFromName($Original,0)+"_"+RMGetFromName($Original,1)+"_"+RMGetFromName($Original,2));
     string $CharacterName =(RMGetFromName($Original,0)+"_"+RMGetFromName($Original,1)+"_");
-    circle -c 0 0 0 -nr 1 0 0 -sw 360 -r (RMLenghtOfBone($jointArray[0])/4) -d 3 -ut 0 -tol 0.01 -s 8 -ch 1 -n $PartNewName;
+    circle -c 0 0 0 -nr 1 0 0 -sw 360 -r (lenght_of_bone($jointArray[0])/4) -d 3 -ut 0 -tol 0.01 -s 8 -ch 1 -n $PartNewName;
     RMAlign $jointArray[0] ($PartNewName) 3;
     RMCreateGrouponObj($PartNewName,1);
     RMAlign ($PartNewName) ($PartNewName+"Group_grp") 3;

@@ -19,7 +19,7 @@ except ImportError:
 import maya.mel as mel
 import os
 
-import RMPY.RMNameConvention
+import RMPY.nameConvention
 from RMPY.snippets import NoisePatternRig
 
 reload(FormGenericPropRig)
@@ -31,7 +31,7 @@ def getMayaWindow():
 
 class main(MayaQWidgetDockableMixin, QDialog):
     def __init__(self, NameConv=None, parent=None):
-        super(main,self).__init__(parent = getMayaWindow())
+        super(main,self).__init__(parent=getMayaWindow())
         self.ui=FormGenericPropRig.Ui_Form()
         self.ui.setupUi(self)
         self.setWindowTitle('Generic Prop Rig Tool')

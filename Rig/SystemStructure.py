@@ -1,6 +1,6 @@
 import pymel.core as pm
-from RMPY import RMNameConvention
-reload(RMNameConvention)
+from RMPY import nameConvention
+reload(nameConvention)
 class RigStructureModel():
     def __init__(self):
         self.kinematics = None
@@ -13,7 +13,7 @@ class RigStructureModel():
 class SystemStructure():
     def __init__(self, *args):
         self._model = RigStructureModel()
-        self.name_conv = RMNameConvention.RMNameConvention()
+        self.name_conv = nameConvention.NameConvention()
         if args:
             self.name_conv.default_names['system'] = self.name_conv.get_a_short_name(args[0])
             self.name_conv.default_names['side'] = self.name_conv.get_from_name(args[0], 'side')
@@ -65,6 +65,9 @@ class SystemStructure():
         else:
             self._model.settings = pm.spaceLocator(name='settings')
             self.name_conv.rename_name_in_format(self._model.settings, useName=True)
+        pm.addAttr(self._model.settings, ln='worldScale', at='double', k=True)
+
+        self._model.settings.worldScale.set(1)
 
         self._model.controls.setParent(self._model.root)
         self._model.joints.setParent(self._model.root)

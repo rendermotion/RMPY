@@ -3,7 +3,7 @@ import maya.cmds as cmds
 
 class validator(object):
     def __init__(self):
-        self._translator={}
+        self._translator = {}
         self._validator =[]
         self._default = ''
     @property
@@ -22,9 +22,9 @@ class validator(object):
             return value
         elif value in self._translator:
             return self._translator[value]
-        elif self._translator=={}:
+        elif self._translator == {}:
             return value
-        elif self._default=='':
+        elif self._default == '':
             raise RuntimeError('no valid validator, assign a default value, or a dictionary')
         else:
             return self._default
@@ -58,7 +58,7 @@ def validate_input_nodes(nodes):
     return str(nodes)
 
 
-class RMNameConvention(object):
+class NameConvention(object):
     def __init__(self, *tokens, **values):
 
         if len(tokens) == 0:
@@ -135,7 +135,7 @@ class RMNameConvention(object):
                     self.default_names[eachName] = 'rig'
                 else:
                     print eachName
-                    raise 'error must provide a default value for each token not token found %s'%eachName
+                    raise 'error must provide a default value for each token not token found %s' % eachName
 
     def token_validation(self, Token, TokenName):
         if TokenName in self.validation:
@@ -301,8 +301,6 @@ class RMNameConvention(object):
         obj_name = validate_input_nodes(obj_name)
         string_in_name = str(obj_name)
         splitString = string_in_name.split("_")
-        print splitString
-        print self.name_convention.keys()
         valid = True
         if len(splitString) == len(self.name_convention.keys()):
             for keys in self.validation:
@@ -422,7 +420,7 @@ class RMNameConvention(object):
                                                                                                each_token))[0]
 
 if __name__ == '__main__':
-    name_conv= RMNameConvention()
+    name_conv= NameConvention()
     name_conv.set_defaults_from_name('L_main_now_msh', side=True, name=True, system=True, objectType=True)
 
 

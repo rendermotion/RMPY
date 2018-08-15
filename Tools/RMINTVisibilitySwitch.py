@@ -23,7 +23,7 @@ import os
 from RMPY import RMUncategorized
 
 from RMPY.AutoRig import RMVisibilitySwitch
-from RMPY import RMNameConvention
+from RMPY import nameConvention
 reload(RMVisibilitySwitch)
 
 def getMayaWindow():

@@ -1,12 +1,12 @@
 import pymel.core as pm
-from RMPY import RMNameConvention
+from RMPY import nameConvention
 from RMPY import RMRigTools
 
 
 class RMVisibilitySwitch(object):
     def __init__(self, NameConv=None):
         if not NameConv:
-            self.NameConv = RMNameConvention.RMNameConvention()
+            self.NameConv = nameConvention.NameConvention()
         else:
             self.NameConv = NameConv
         self.ControlObject = None

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'UI_CopyPosition.ui'
 #
-# Created: Wed Nov 01 23:16:45 2017
+# Created: Wed Mar 21 21:43:33 2018
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!

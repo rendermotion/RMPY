@@ -2,7 +2,7 @@ source "RMRigFunctions.mel";
 source "RMRigShapeControls.mel";
 source "RMRigTools.mel";
 source "RMRigFK.mel";
-source "RMNameConvention.mel";
+source "NameConvention.mel";
 
 global proc RMFKCreateonSelected()
 {

@@ -1,7 +1,7 @@
 import maya.cmds as cmds
 import maya.mel as mel
 import RMRigTools
-import RMNameConvention
+import nameConvention
 import RMRigShapeControls
 
 
@@ -10,7 +10,7 @@ import RMRigShapeControls
 class RMBookPage(object):
     def __init__(self, NameConv=None):
         if not NameConv:
-            self.NameConv = RMNameConvention.RMNameConvention()
+            self.NameConv = nameConvention.NameConvention()
         else:
             self.NameConv = NameConv
         self.kinematics = []

@@ -1,4 +1,4 @@
-source "RMNameConvention.mel";
+source "NameConvention.mel";
 source "RMRiggMath.mel";
 source "RMCreateArmPoints.mel";
 source "RMCreateHandPoints.mel";

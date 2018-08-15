@@ -1,7 +1,7 @@
 import random
 import maya.cmds as cmds
 import RMRigTools
-import RMNameConvention
+import nameConvention
 import RMRigShapeControls
 from AutoRig import RMGenericRigStructure
 import pprint
@@ -14,7 +14,7 @@ reload(RMGenericRigStructure)
 def getMeshObjects(Objects):
     MeshObjects = []
     OtherObjects = []
-    NameConv = RMNameConvention.RMNameConvention()
+    NameConv = nameConvention.NameConvention()
     for eachObject in Objects:
         if NameConv.guess_object_type(eachObject) == "msh":
             MeshObjects.append(eachObject)
@@ -28,7 +28,7 @@ def SinglePropRig(Object, referencePositionControl):
     # elif Object.__class__ in [str,unicode]:
     GRS = RMGenericRigStructure.genericRigStructure()
 
-    NameConv = RMNameConvention.RMNameConvention()
+    NameConv = nameConvention.NameConvention()
     bbMesh = RMRigTools.boundingBoxInfo(Object)
     CtrlPosition = cmds.xform(referencePositionControl, q=True, rp=True, worldSpace=True)
     NameList = Object.split(".")

@@ -2,9 +2,9 @@ from RMPY import RMRigTools
 
 reload(RMRigTools)
 import re
-from RMPY import RMNameConvention
+from RMPY import nameConvention
 
-reload(RMNameConvention)
+reload(nameConvention)
 
 import pymel.core as pm
 
@@ -12,7 +12,7 @@ import pymel.core as pm
 class GenericHandJointStructure(object):
     def __init__(self, NameConv=None):
         if not NameConv:
-            self.NameConv = RMNameConvention.RMNameConvention()
+            self.NameConv = nameConvention.NameConvention()
         else:
             self.NameConv = NameConv
 

@@ -1,8 +1,8 @@
 import maya.cmds as cmds
 from RMPY.AutoRig import RMSpaceSwitch
-from RMPY import RMNameConvention
+from RMPY import nameConvention
 from RMPY import RMRigTools
-reload(RMNameConvention)
+reload(nameConvention)
 reload(RMSpaceSwitch)
 
 def clavicleSpaceSwitch():
@@ -15,7 +15,7 @@ def clavicleSpaceSwitch():
 	LimbArmRightikControl= cmds.ls("*_RH_wristIK00_ctr_Rig")[0]
 	LimbArmLeftikControl= cmds.ls("*_LF_wristIK00_ctr_Rig")[0]
 
-	NameConv = RMNameConvention.RMNameConvention()
+	NameConv = nameConvention.NameConvention()
 
 	moverWorld = cmds.group( empty = True, name ="moverWorld")
 	cmds.parent(moverWorld, kinematics)

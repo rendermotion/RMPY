@@ -1,6 +1,6 @@
 import maya.cmds as cmds
 from RMPY import RMRigTools
-from RMPY import RMNameConvention
+from RMPY import nameConvention
 from RMPY import RMRigShapeControls
 
 import re
@@ -11,7 +11,7 @@ class RMGenericJointChainRig(object):
         if NameConv:
             self.NameConv = NameConv
         else:
-            self.NameConv = RMNameConvention.RMNameConvention()
+            self.NameConv = nameConvention.NameConvention()
 
     def CreateJointChainRig(self, node, UDaxis="Y"):
         jointChain = RMRigTools.RMCustomPickWalk(node, "joint", -1)
@@ -70,7 +70,7 @@ class RMGenericJointChainRig(object):
 
 
 def setInName(selection):
-    NameConv = RMNameConvention.RMNameConvention()
+    NameConv = nameConvention.NameConvention()
     for eachObject in selection:
         childJoints = RMRigTools.RMCustomPickWalk(eachObject, "joint", -1)
         for eachJoint in childJoints:

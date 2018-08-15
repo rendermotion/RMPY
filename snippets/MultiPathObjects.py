@@ -1,8 +1,8 @@
 import maya.cmds as cmds
-from RMPY import RMNameConvention
+from RMPY import nameConvention
 
-reload(RMNameConvention)
-NameConv = RMNameConvention.RMNameConvention()
+reload(nameConvention)
+NameConv = nameConvention.NameConvention()
 
 
 # cmds.addAttr(control,at="float", ln = "Percent", h = 0, k = 1)
@@ -10,7 +10,7 @@ NameConv = RMNameConvention.RMNameConvention()
 
 def pathFollow(curve, control, objectArray, NameConv=None):
     if not NameConv:
-        NameConv = RMNameConvention.RMNameConvention()
+        NameConv = nameConvention.NameConvention()
     controlAttr = cmds.listAttr(control)
     if "Percent" not in controlAttr:
         cmds.addAttr(control, at="float", ln="Percent", h=0, k=1)

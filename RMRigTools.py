@@ -1,9 +1,9 @@
-from RMPY import RMNameConvention
+from RMPY import nameConvention
 import maya.api.OpenMaya as om
 import math
 import pymel.core as pm
 import inspect
-reload(RMNameConvention)
+reload(nameConvention)
 
 def average(*args):
     average_result = []
@@ -215,7 +215,7 @@ def RMCreateGroupOnObj(Obj, Type="inserted", NameConv = None):
     "world","child","parent","inserted"
     '''
     if not NameConv:
-        NameConv = RMNameConvention.RMNameConvention()
+        NameConv = nameConvention.NameConvention()
 
     Group = pm.group(empty=True)
 
@@ -391,7 +391,7 @@ def RMChangeRotateOrder(Object, rotationOrder):
 def create_bones_at_points(PointArray, NameConv=None, ZAxisOrientation="Y"):
     PointArray = validate_pymel_nodes(PointArray)
     if not NameConv:
-        NameConv = RMNameConvention.RMNameConvention()
+        NameConv = nameConvention.NameConvention()
 
     jointArray = []
 
@@ -466,7 +466,7 @@ def create_bones_at_points(PointArray, NameConv=None, ZAxisOrientation="Y"):
 
 def RMCreateBonesAtPoints(PointArray, NameConv=None, ZAxisOrientation="Y"):
     if not NameConv:
-        NameConv = RMNameConvention.RMNameConvention()
+        NameConv = nameConvention.NameConvention()
 
     jointArray = []
 
@@ -542,7 +542,7 @@ def RMCreateBonesAtPoints(PointArray, NameConv=None, ZAxisOrientation="Y"):
 
 def RMCreateLineBetwenPoints(Point1, Point2, NameConv=None):
     if not NameConv:
-        NameConv = RMNameConvention.RMNameConvention()
+        NameConv = nameConvention.NameConvention()
 
     Curve = pm.curve(degree=1, p=[[0, 0, 0], [1, 0, 0]], name="curveLineBetweenPnts")
 
@@ -579,7 +579,7 @@ def RMCreateLineBetwenPoints(Point1, Point2, NameConv=None):
 
 def RMCreateClustersOnCurve(curve, NameConv=None):
     if not NameConv:
-        NameConv = RMNameConvention.RMNameConvention()
+        NameConv = nameConvention.NameConvention()
 
     degree = pm.getAttr(curve + ".degree")
     spans = pm.getAttr(curve + ".spans")
@@ -713,7 +713,7 @@ class boundingBoxInfo(object):
 class RMRigTools(object):
     def __init__(self, NameConv=None):
         if NameConv == None:
-            self.NameConv = RMNameConvention.RMNameConvention()
+            self.NameConv = nameConvention.NameConvention()
         else:
             self.NameConv = NameConv
 

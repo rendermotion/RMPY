@@ -181,7 +181,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
     def SCCombineButtonPressed(self):
         mel.eval('''source RMRigShapeControls.mel;
 		string $temp[]=`ls -sl`;
-		RMTurnToOne $temp;''')
+		turn_to_one $temp;''')
 
     def AttributeTransferBtnPressed(self):
         mel.eval('''source RMAttributes.mel;

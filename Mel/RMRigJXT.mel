@@ -18,8 +18,8 @@ global proc RMRebuildJXT(string $side,string $IKControls[],string $FKControls[],
 	select -r ReferenceControls;
 	doDelete;
 	
-	float $ClavSize = (`RMLenghtOfBone $ORGArmroot`/2);
-	//float $ClavSize = RMLenghtOfBone ($JXTArmrootParent[0]);
+	float $ClavSize = (`lenght_of_bone $ORGArmroot`/2);
+	//float $ClavSize = lenght_of_bone ($JXTArmrootParent[0]);
 	scale -scaleXYZ ($ClavSize/2) ($ClavSize/2) ($ClavSize/2) $JXTArmControl;
 	makeIdentity -apply true -t 0 -r 0 -s 1 -n 0 $JXTArmControl;
 	//RMAlign EL control De la clavicula a su nacimiento
@@ -70,7 +70,7 @@ global proc RMRebuildJXT(string $side,string $IKControls[],string $FKControls[],
     string $Ribbon1Controls[]=`listRelatives -c $Ribbon01[2]`;
     string $Ribbon2Controls[]=`listRelatives -c $Ribbon02[2]`;
     
-    float  $LongitudBrazo = `RMLenghtOfBone $JXTArmroot2`;
+    float  $LongitudBrazo = `lenght_of_bone $JXTArmroot2`;
     string $MidControl =`RMCreaControl $JXTArmroot2 ($LongitudBrazo/3)`;
     string $MidControlParent=`RMCreateGrouponObj $MidControl 1`;
     
@@ -121,7 +121,7 @@ global proc string RMRebuild3Part (string $firstBone,string $Prefix){
 	}
 	/*else
 	{
-		$parent[0]=RMCreaControl ($firstBone, RMLenghtOfBone($firstBone));
+		$parent[0]=RMCreaControl ($firstBone, lenght_of_bone($firstBone));
 		parentConstraint -mo $parent[0] $Joint1Parent;
 	}*/
 	

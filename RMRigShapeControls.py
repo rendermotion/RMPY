@@ -1,13 +1,14 @@
 import pymel.core as pm
 from RMPY import RMRigTools
 import os
-from RMPY import RMNameConvention
+from RMPY.core import config
+from RMPY import nameConvention
 
-reload(RMNameConvention)
+reload(nameConvention)
 class RMRigShapeControls(object):
     def __init__(self, NameConv=None):
         if NameConv is None:
-            self.NameConv = RMNameConvention.RMNameConvention()
+            self.NameConv = nameConvention.NameConvention()
         else:
             self.NameConv = NameConv
         self.rigTools = RMRigTools.RMRigTools(NameConv=self.NameConv)
@@ -21,7 +22,7 @@ class RMRigShapeControls(object):
 
     def RMCreateCubeLine(self, height, length, width, centered=False, offsetX=float(0.0), offsetY=float(0.0),
                          offsetZ=float(0.0), name=""):
-        if centered == True:
+        if centered:
             offsetX = offsetX - float(height) / 2.0
         if name == "":
             defaultName = "CubeLine"
@@ -221,7 +222,7 @@ def RMCreateCubeLine(height, length, width, centered=False, offsetX=0, offsetY=0
 def RMCreateBoxCtrl(Obj, NameConv=None, Xratio=1, Yratio=1, Zratio=1, ParentBaseSize=False, customSize=0, name="",
                     centered=False):
     if not NameConv:
-        NameConv = RMNameConvention.RMNameConvention()
+        NameConv = nameConvention.NameConvention()
     if name == "":
         defaultName = "BoxControl"
     else:
@@ -261,7 +262,7 @@ def RMCreateBoxCtrl(Obj, NameConv=None, Xratio=1, Yratio=1, Zratio=1, ParentBase
 def RMCircularControl(Obj, radius=1, NameConv=None, axis="X", name=""):
     Obj = RMRigTools.validate_pymel_nodes(Obj)
     if not NameConv:
-        NameConv = RMNameConvention.RMNameConvention()
+        NameConv = nameConvention.NameConvention()
     if name == '':
         defaultName = "circularControl"
     else:
@@ -297,7 +298,7 @@ def RMImportMoveControl(Obj, scale=1, NameConv=None, name='', Type="move"):
         "circleDeform": {"filename": "ControlCircularDeform.mb", "object": "CircularDeform"}
     }
     if not NameConv:
-        NameConv = RMNameConvention.RMNameConvention()
+        NameConv = nameConvention.NameConvention()
     path = os.path.dirname(RMRigTools.__file__)
     RMPYPATH = os.path.split(path)
     FinalPath = os.path.join(RMPYPATH[0], "RMPY\AutoRig\RigShapes", MoversTypeDic[Type]["filename"])
@@ -311,8 +312,6 @@ def RMImportMoveControl(Obj, scale=1, NameConv=None, name='', Type="move"):
         return None
 
     Ctrl = pm.ls(MoversTypeDic[Type]["object"])[0]
-    print '********'
-    print Ctrl
     if pm.objExists(Ctrl):
         if name != '':
             Ctrl = pm.rename(Ctrl, name)

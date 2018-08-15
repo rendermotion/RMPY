@@ -1,6 +1,6 @@
 import maya.cmds as cmds
 from RMPY import RMRigTools
-from RMPY import RMNameConvention
+from RMPY import nameConvention
 
 
 class EyeRig(object):
@@ -8,7 +8,7 @@ class EyeRig(object):
         if NameConv:
             self.NameConv = NameConv
         else:
-            self.NameConv = RMNameConvention.RMNameConvention()
+            self.NameConv = nameConvention.NameConvention()
 
     def EyeLidsSetUp(self, EyeNode):
 

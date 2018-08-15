@@ -61,7 +61,7 @@ class main(MayaQWidgetDockableMixin, QDialog):
             print "BSNode:%s"%BSNode
             print "TargerEdited:%s"%self.BSdictionary[BsName.text()]["TargetGroup"]
             index = self.BSdictionary[BsName.text()]["TargetGroup"]
-            RMblendShapesTools.copyCurrentPaintTargetWeights(BSNode, index,index)
+            RMblendShapesTools.invertCurrentPaintTargetWeights(BSNode, index)
             #invertCurrentPaintTargetWeights(BSNode,self.BSdictionary[BsName.text()]["TargetGroup"])
 
 

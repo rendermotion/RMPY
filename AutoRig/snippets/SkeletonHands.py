@@ -1,9 +1,9 @@
 import maya.cmds as cmds
-from RMPY import RMNameConvention
+from RMPY import nameConvention
 from RMPY import RMRigTools
 
 def skeletonHands():
-    NameConv = RMNameConvention.RMNameConvention()
+    NameConv = nameConvention.NameConvention()
     palmGroups = ["R_middle00_Rig_grp", "R_ring00_Rig_grp", "R_pinky00_Rig_grp", "R_index00_Rig_grp",
                   "L_middle00_Rig_grp", "L_ring00_Rig_grp", "L_pinky00_Rig_grp", "L_index00_Rig_grp"]
     for eachGroup in palmGroups:

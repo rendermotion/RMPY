@@ -6,8 +6,8 @@ from RMPY import RMRigTools
 reload(RMRigTools)
 from RMPY import RMRigShapeControls
 reload (RMRigShapeControls)
-from RMPY import RMNameConvention
-reload (RMNameConvention)
+from RMPY import nameConvention
+reload (nameConvention)
 from RMPY.AutoRig import RMSpaceSwitch
 reload (RMSpaceSwitch)
 import math
@@ -17,7 +17,7 @@ reload (RMTwistJoints)
 class RMLimbIKFK(object):
     def __init__(self, worldNode = None , NameConv = None):
         if not NameConv:
-            self.NameConv = RMNameConvention.RMNameConvention()
+            self.NameConv = nameConvention.NameConvention()
         else:
             self.NameConv = NameConv
         self.shapeControls = RMRigShapeControls.RMRigShapeControls( NameConv = NameConv)
@@ -241,14 +241,14 @@ class RMLimbIKFK(object):
 
     
     def RMCreateFKControls(self, AxisFree = "111"):
-        #ArmParent ,FKFirstLimbControl = self.shapeControls.RMCreateBoxCtrl(self.FKjointStructure[0],Xratio=1,Yratio=.3,Zratio=.3, name = self.NameConv.RMGetAShortName(self.FKjointStructure[0]) + "FK")
+        #ArmParent ,FKFirstLimbControl = self.shapeControls.create_box_ctrl(self.FKjointStructure[0],Xratio=1,Yratio=.3,Zratio=.3, name = self.NameConv.RMGetAShortName(self.FKjointStructure[0]) + "FK")
         ArmParent ,FKFirstLimbControl = self.shapeControls.RMCircularControl(self.FKjointStructure[0], radius = RMRigTools.RMLenghtOfBone(self.FKjointStructure[0])/2, name =self.NameConv.get_a_short_name(self.FKjointStructure[0]) + "FK")
         
         RMRigTools.RMLinkHerarchyRotation(self.FKjointStructure[0], self.FKjointStructure[0],FKFirstLimbControl)
 
         RMRigTools.RMLockAndHideAttributes(FKFirstLimbControl,'000111000h')
 
-        #SecondLimbParent ,FKSecondLimbControl = self.shapeControls.RMCreateBoxCtrl(self.FKjointStructure[1],Xratio=1,Yratio=.3,Zratio=.3, name = self.NameConv.RMGetAShortName(self.FKjointStructure[1])+ "FK")
+        #SecondLimbParent ,FKSecondLimbControl = self.shapeControls.create_box_ctrl(self.FKjointStructure[1],Xratio=1,Yratio=.3,Zratio=.3, name = self.NameConv.RMGetAShortName(self.FKjointStructure[1])+ "FK")
         SecondLimbParent ,FKSecondLimbControl = self.shapeControls.RMCircularControl(self.FKjointStructure[1], radius = RMRigTools.RMLenghtOfBone(self.FKjointStructure[1])/2, name =self.NameConv.get_a_short_name(self.FKjointStructure[1]) + "FK")
 
         pm.parent(SecondLimbParent, FKFirstLimbControl)
@@ -256,7 +256,7 @@ class RMLimbIKFK(object):
         RMRigTools.RMLinkHerarchyRotation (self.FKjointStructure[1], self.FKjointStructure[1], FKSecondLimbControl)
         RMRigTools.RMLockAndHideAttributes (FKSecondLimbControl,'000%s000h'%AxisFree)
 
-        #ThirdLimbParent ,FKTrirdLimbControl = self.shapeControls.RMCreateBoxCtrl(self.FKjointStructure[2], Xratio=.3, Yratio=.3, Zratio=.3 , ParentBaseSize = True, name = self.NameConv.RMGetAShortName(self.FKjointStructure[2]) + "FK")
+        #ThirdLimbParent ,FKTrirdLimbControl = self.shapeControls.create_box_ctrl(self.FKjointStructure[2], Xratio=.3, Yratio=.3, Zratio=.3 , ParentBaseSize = True, name = self.NameConv.RMGetAShortName(self.FKjointStructure[2]) + "FK")
         ThirdLimbParent ,FKTrirdLimbControl = self.shapeControls.RMCircularControl(self.FKjointStructure[2], radius = RMRigTools.RMLenghtOfBone(self.FKjointStructure[1])/3, name =self.NameConv.get_a_short_name(self.FKjointStructure[2]) + "FK")
 
         

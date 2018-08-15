@@ -1,4 +1,4 @@
-source "RMNameConvention.mel";
+source "NameConvention.mel";
 source "RMRigShapeControls.mel";
 source "RMRiggControllers.mel";
 source "RMRibbonSystem.mel";
@@ -543,7 +543,7 @@ global proc RMRebuildJXTArm(string $side,string $IKControls[],string $FKControls
     string $Ribbon1Controls[]=`listRelatives -c $Ribbon01[2]`;
     string $Ribbon2Controls[]=`listRelatives -c $Ribbon02[2]`;
     
-    float  $LongitudBrazo = `RMLenghtOfBone $JXTArmroot2`;
+    float  $LongitudBrazo = `lenght_of_bone $JXTArmroot2`;
     string $MidControl =`RMCreaControl $JXTArmroot2 ($LongitudBrazo/3)`;
     string $MidControlParent=`RMCreateGrouponObj $MidControl 1`;
     
@@ -686,7 +686,7 @@ global proc string[] RMLinkFinguer(string $rootFinguer){
     string $FingerF3 = `RMCustomPickWalk $rootFinguer "joint" 3`;
     //string $FingerF4 = `RMCustomPickWalk $rootFinguer "joint" 4`;
     //Obtengo la longitud del segundo hueso que sera la longitud del hueso de la palma
-    float $FingerLenght = `RMLenghtOfBone $FingerF2`;
+    float $FingerLenght = `lenght_of_bone $FingerF2`;
     //Creo el NombredelHueso de la palma Agregandole al nombre del Dedo el prefijo Palm
     string $palmFingerJnt = `RMAddToName $rootFinguer "Palm"`;
     
@@ -727,7 +727,7 @@ global proc string[] RMLinkFinguer(string $rootFinguer){
     $FingerCntrl =`RMSetFromName $FingerCntrl 4 "rig"`;
     $FingerCntrl = `RMAddToName $FingerCntrl "Control"`;
 	//Crea el Control del Dedo
-    $FingerCntrl=`RMCreateCubeLine ($FingerLenght/2) ($FingerLenght/2) ($FingerLenght/2) $FingerCntrl`;
+    $FingerCntrl=`create_cube_line ($FingerLenght/2) ($FingerLenght/2) ($FingerLenght/2) $FingerCntrl`;
     move -r ($FingerLenght/6) 0 0 ($FingerCntrl+".scalePivot") ($FingerCntrl+".rotatePivot");
     move -rpr -a 0 0 0 $FingerCntrl;
     makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $FingerCntrl;
@@ -1036,7 +1036,7 @@ global proc RMRebuildSpine(){
 	//string $temp[]=`listRelatives -c $hips`;
 	//Obtiene el Nodo de la columna
 	string $Spine=`RMObjNameToVar "*Spine4_jnt_rig"`;
-    float $SpineSize=`RMLenghtOfBone $hips`; 
+    float $SpineSize=`lenght_of_bone $hips`;
 	//Crea Un control en La cadera
 
 	string $HipsControl=`RMCreaControl $hips $SpineSize`;
@@ -1063,7 +1063,7 @@ global proc RMRebuildSpine(){
    $newName=`RMUniqueName $newName`;
    $CntrlCabeza=`rename $CntrlCabeza $newName`;
 	
-   float $HeadSize=`RMLenghtOfBone $Head`;
+   float $HeadSize=`lenght_of_bone $Head`;
 
    scale -scaleXYZ $HeadSize $HeadSize $HeadSize $CntrlCabeza;
    makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $CntrlCabeza;
@@ -1093,10 +1093,10 @@ global proc RMRebuildSpine(){
    float $Height=`RMDistancia $Controls[0] $Controls[1]`;
    string $SpineFK1=`RMSetFromName $Controls[0] 2 "SpineFK1"`;
    $SpineFK1=`RMUniqueName $SpineFK1`;
-   RMCreateCubeLine $Height ($Height*1.5) ($Height*1.5) $SpineFK1;
+   create_cube_line $Height ($Height*1.5) ($Height*1.5) $SpineFK1;
    
    $SpineFK2=`RMUniqueName $SpineFK1`;
-   RMCreateCubeLine $Height ($Height*1.5) ($Height*1.5)  $SpineFK2;
+   create_cube_line $Height ($Height*1.5) ($Height*1.5)  $SpineFK2;
    
    RMAlign $Controls[0] $SpineFK1 3;
    RMAlign $Controls[1] $SpineFK2 3;

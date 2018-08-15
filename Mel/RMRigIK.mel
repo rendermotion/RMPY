@@ -2,7 +2,7 @@ source "RMRigFunctions.mel";
 source "RMRigShapeControls.mel";
 source "RMRigTools.mel";
 source "RMRigFK.mel";
-source "RMNameConvention.mel";
+source "NameConvention.mel";
 
 global proc RMIKCreateonSelected()
 {
@@ -197,7 +197,7 @@ global proc string[] RMCreatePoleVector (string $IKHandle)
     $CntrlName=`RMUniqueName $CntrlName`;
     //////////////////////////////////////////////////////////////////7
     //Crea el Cntrl, donde Cntrl Tiene los el cubo del Pole Vector
-    $Cntrl=`RMCreateCubeLine ($RMDistancia/10) ($RMDistancia/10) ($RMDistancia/10) $CntrlName`;
+    $Cntrl=`create_cube_line ($RMDistancia/10) ($RMDistancia/10) ($RMDistancia/10) $CntrlName`;
     
     move -r ($RMDistancia/20) 0 0 ($Cntrl+".scalePivot") ($Cntrl+".rotatePivot");
     move -rpr -a 0 0 0 $Cntrl;
@@ -236,7 +236,7 @@ global proc string[] RMCreateIKControls (string $IKroot,int $depth)
     {
         
         $Ex2=$Childs[0];
-        $Lenghtbone = `RMLenghtOfBone $Ex2`/3;
+        $Lenghtbone = `lenght_of_bone $Ex2`/3;
         
         $Childs=`listRelatives -c $Ex2`;
         $Tam=`size $Childs`;
@@ -252,7 +252,7 @@ global proc string[] RMCreateIKControls (string $IKroot,int $depth)
 
     string $IKcontrol=`RMSetFromName $Ex2 3 "ctr"`;
     $IKcontrol=`RMUniqueName $IKcontrol`;
-    $IKcontrol = `RMCreateCubeLine $Lenghtbone $Lenghtbone $Lenghtbone $IKcontrol`;
+    $IKcontrol = `create_cube_line $Lenghtbone $Lenghtbone $Lenghtbone $IKcontrol`;
     move -r ($Lenghtbone/2) 0 0 ($IKcontrol+".scalePivot") ($IKcontrol+".rotatePivot");
     move -rpr -a 0 0 0 $IKcontrol;
     makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $IKcontrol;
@@ -281,7 +281,7 @@ global proc string[] RMCreateIKNoStretchyControls (string $IKroot,int $depth)
     {
         
         $Ex2=$Childs[0];
-        $Lenghtbone = `RMLenghtOfBone $Ex2`/3;
+        $Lenghtbone = `lenght_of_bone $Ex2`/3;
         
         $Childs=`listRelatives -c $Ex2`;
         $Tam=`size $Childs`;
@@ -297,7 +297,7 @@ global proc string[] RMCreateIKNoStretchyControls (string $IKroot,int $depth)
 
     string $IKcontrol=`RMSetFromName $Ex2 3 "ctr"`;
     $IKcontrol=`RMUniqueName $IKcontrol`;
-    $IKcontrol = `RMCreateCubeLine $Lenghtbone $Lenghtbone $Lenghtbone $IKcontrol`;
+    $IKcontrol = `create_cube_line $Lenghtbone $Lenghtbone $Lenghtbone $IKcontrol`;
     move -r ($Lenghtbone/2) 0 0 ($IKcontrol+".scalePivot") ($IKcontrol+".rotatePivot");
     move -rpr -a 0 0 0 $IKcontrol;
     makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $IKcontrol;

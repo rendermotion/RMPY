@@ -1,4 +1,4 @@
-source "RMNameConvention.mel";
+source "NameConvention.mel";
 
 
 global proc RMConnect3to2 (string $pD1,string $pD2,string $pD3, string $pDn1,string $pDn2, float $Limit, float $mval)

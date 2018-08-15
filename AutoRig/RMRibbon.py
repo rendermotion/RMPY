@@ -1,5 +1,5 @@
 import maya.api.OpenMaya as om
-from RMPY import RMNameConvention
+from RMPY import nameConvention
 from RMPY import RMRigTools
 from RMPY import RMRigShapeControls
 import pymel.core as pm
@@ -8,7 +8,7 @@ import pymel.core as pm
 class RMRibbon(object):
     def __init__(self, name_conv = None):
         if not name_conv:
-            self.name_conv = RMNameConvention.RMNameConvention()
+            self.name_conv = nameConvention.NameConvention()
         else:
             self.name_conv = name_conv
         self.rig_controls = RMRigShapeControls.RMRigShapeControls(NameConv=name_conv)

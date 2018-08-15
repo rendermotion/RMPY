@@ -63,7 +63,7 @@ def SpiralOfPointsStraight(initRadius, endRadius, numberOfPoints, startPoint, en
 		#jointArray.reverse()
 		angle=20
 		for joints in jointArray[:-1]:
-			#angle = 180 - SegmentAngleInCircle(currentRadius, RMRigTools.RMLenghtOfBone(joints) )
+			#angle = 180 - SegmentAngleInCircle(currentRadius, RMRigTools.lenght_of_bone(joints) )
 			
 			if index > 0:
 				angle = getAngle (currentRadius ,joints,jointArray[index-1])

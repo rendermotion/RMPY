@@ -2,16 +2,16 @@ import pymel.core as pm
 from RMPY import RMRigTools
 
 reload(RMRigTools)
-from RMPY import RMNameConvention
+from RMPY import nameConvention
 
-reload(RMNameConvention)
+reload(nameConvention)
 from RMPY import RMRigShapeControls
 
 
 class RMFeetRig(object):
     def __init__(self, NameConv=None):
         if not NameConv:
-            self.NameConv = RMNameConvention.RMNameConvention()
+            self.NameConv = nameConvention.NameConvention()
         else:
             self.NameConv = NameConv
         self.rig_tools = RMRigTools.RMRigTools()

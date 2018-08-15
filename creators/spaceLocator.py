@@ -1,12 +1,15 @@
 import pymel.core as pm
 from RMPY import RMRigTools
-from RMPY import RMNameConvention
-reload(RMNameConvention)
+from RMPY.rig import genericRig
+from core import validate
 
-class spaceLocator(object):
-    def __init__(self):
-        self.nodes = []
-        self.name_conv = RMNameConvention.RMNameConvention()
+reload(genericRig)
+reload(validate)
+
+class SpaceLocator(genericRig.GenericRig):
+    def __init__(self, *args):
+        super(SpaceLocator, self).__init__(*args)
+        self.name_conv.default_names['system'] = 'reference'
 
     def create_vertex_base(self, *vertex_list):
         position = []
@@ -19,16 +22,16 @@ class spaceLocator(object):
         self.name_conv.rename_name_in_format(new_space_locator)
         new_space_locator.translate.set(RMRigTools.average(*position))
 
-    def create_node_base(self, *node_list):
-        pass
-
     def create_point_base(self, *point_list):
-        pass
+        for each in point_list:
+            position = validate.as_vector(each)
+            new_locator = pm.spaceLocator()
+            self.name_conv.rename_name_in_format(new_locator)
+            new_locator.translate.set([position[0],position[1],position[2]])
 
 if __name__ == '__main__':
-    spcLoc = spaceLocator()
-    spcLoc.name_conv.default_names['system'] = 'reference'
-    selection = pm.ls(selection=True)
-    spcLoc.create_vertex_base(*selection)
+    selection = pm.ls(orderedSelection=True)
+    spcLoc = SpaceLocator()
+    spcLoc.create_point_base(*selection)
     #for each_vtx in selection:
     #    spcLoc.create_vertex_base(*each_vtx)

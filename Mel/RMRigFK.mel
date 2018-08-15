@@ -1,7 +1,7 @@
 source "RMRigFunctions.mel";
 source "RMRigShapeControls.mel";
 source "RMRigTools.mel";
-source "RMNameConvention.mel";
+source "NameConvention.mel";
 
 global proc RMFKCreateonSelected()
 {
@@ -25,7 +25,7 @@ global proc string[] RMCreateFKControls (string $FKroot,int $depth)
     {
         //if (`objectType -isType "transform" $Ex`!=0)
        	//{
-            $Tam=`RMLenghtOfBone $Ex`;
+            $Tam=`lenght_of_bone $Ex`;
             $CntrlExt[$Index] = `RMCreaControl $Ex ($Tam*1/2)`;
             $GrupoCntrl[$Index]= `RMCreateGrouponObj $CntrlExt[$Index] 1`;
             pointConstraint $Ex $GrupoCntrl[$Index];
