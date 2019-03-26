@@ -11,17 +11,14 @@ Getting started
 First you should understand how the architecture is structured and the different parts that conform a rig.
 
 Chapters:
-    toctree::
-        :maxdepth: 1
 
-        name_convention
+.. toctree::
+    :maxdepth: 1
 
-        creators
-
-        rigs
-
-        tools
-
+    name_convention
+    creators
+    rigs
+    tools
 
 License
 ~~~~~~~
