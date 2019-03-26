@@ -20,7 +20,7 @@
         <entry file="file://$PROJECT_DIR$/Tools/RMINTcopyPosition.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="510">
-              <caret line="66" column="36" lean-forward="true" selection-start-line="66" selection-start-column="36" selection-end-line="66" selection-end-column="36" />
+              <caret line="66" column="36" selection-start-line="66" selection-start-column="36" selection-end-line="66" selection-end-column="36" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -34,15 +34,8 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/rig/genericRig.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="21" column="49" selection-start-line="21" selection-start-column="49" selection-end-line="21" selection-end-column="49" />
-              <folding>
-                <element signature="e#0#27#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
+        <entry file="file://$PROJECT_DIR$/docs/name_convention.rst">
+          <provider selected="true" editor-type-id="restructured-text-editor" />
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
@@ -201,7 +194,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/AutoRig/RMNeckHead.py" />
         <option value="$PROJECT_DIR$/AutoRig/RMRibbon.py" />
         <option value="$PROJECT_DIR$/AutoRig/RMTwistJoints.py" />
         <option value="$PROJECT_DIR$/AutoRig/Hand/RMGenericHandRig.py" />
@@ -251,6 +243,7 @@
         <option value="$PROJECT_DIR$/nameConvention.py" />
         <option value="$PROJECT_DIR$/creators/creatorsBase.py" />
         <option value="$PROJECT_DIR$/core/config.py" />
+        <option value="$PROJECT_DIR$/docs/name_convention.rst" />
         <option value="$PROJECT_DIR$/docs/index.rst" />
       </list>
     </option>
@@ -285,6 +278,11 @@
             </path>
             <path>
               <item name="RMPY" type="b2602c69:ProjectViewProjectNode" />
+              <item name="RMPY" type="462c0819:PsiDirectoryNode" />
+              <item name="docs" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="RMPY" type="b2602c69:ProjectViewProjectNode" />
               <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
             </path>
             <path>
@@ -304,6 +302,14 @@
               <item name="&lt; MayaPy 2.7 &gt;" type="70bed36:NamedLibraryElementNode" />
               <item name="Development" type="462c0819:PsiDirectoryNode" />
               <item name="RMPY" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="RMPY" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; MayaPy 2.7 &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="Development" type="462c0819:PsiDirectoryNode" />
+              <item name="RMPY" type="462c0819:PsiDirectoryNode" />
+              <item name="docs" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -464,13 +470,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Tools/RMINTRigDisplay.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="7" column="35" selection-start-line="7" selection-start-column="35" selection-end-line="7" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Tools/Resources/build_resources.bat">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -798,12 +797,15 @@
     <entry file="file://$PROJECT_DIR$/Tools/RMINTcopyPosition.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="510">
-          <caret line="66" column="36" lean-forward="true" selection-start-line="66" selection-start-column="36" selection-end-line="66" selection-end-column="36" />
+          <caret line="66" column="36" selection-start-line="66" selection-start-column="36" selection-end-line="66" selection-end-column="36" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>
         </state>
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/docs/name_convention.rst">
+      <provider selected="true" editor-type-id="restructured-text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/docs/index.rst">
       <provider selected="true" editor-type-id="restructured-text-editor" />
