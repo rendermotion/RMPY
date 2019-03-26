@@ -201,7 +201,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/AutoRig/RMGenericJointRig.py" />
         <option value="$PROJECT_DIR$/AutoRig/RMNeckHead.py" />
         <option value="$PROJECT_DIR$/AutoRig/RMRibbon.py" />
         <option value="$PROJECT_DIR$/AutoRig/RMTwistJoints.py" />
@@ -252,6 +251,7 @@
         <option value="$PROJECT_DIR$/nameConvention.py" />
         <option value="$PROJECT_DIR$/creators/creatorsBase.py" />
         <option value="$PROJECT_DIR$/core/config.py" />
+        <option value="$PROJECT_DIR$/docs/index.rst" />
       </list>
     </option>
   </component>
@@ -401,6 +401,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="1912" y="-8" width="1936" height="1096" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49690977" visible="true" weight="0.21548998" />
       <window_info id="Structure" order="1" weight="0.24973656" />
