@@ -26,7 +26,7 @@ from RMPY.GenericRig import RMUnfoldRig
 from RMPY import RMUncategorized
 
 from RMPY.AutoRig import RMRigFK
-
+print 'executed'
 reload(RMRigFK)
 
 
@@ -190,7 +190,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
 
     def ExtractGeoFunct(self):
         RMUncategorized.ExtractGeometry()
-
+print 'executed'
 
 if __name__ == '__main__':
     w = main()

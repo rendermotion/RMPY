@@ -418,8 +418,7 @@ class Laces(genericRig.GenericRig):
                 'UpVectorSystem': UpVectorArray, 'pathFollowObjects': lacesSystem}
 
 if __name__ == '__main__':
-    rope_root = pm.ls('C_rope00_reference_grp')[0]
+    rope_root = pm.ls(selection=True)
     laces_rig = Laces()
-    print rope_root.getChildren()
-    laces_rig.create_point_base(*rope_root.getChildren(),
-                                offset_axis='y', centered=True)
+    laces_rig.create_point_base(*rope_root,
+                                offset_axis='y', centered=True, world_align=True)
