@@ -14,11 +14,10 @@ Chapters:
 
 .. toctree::
     :maxdepth: 1
-
-    name_convention
-    creators
-    rigs
-    tools
+     name_convention
+     creators
+     rigs
+     tools
 
 License
 ~~~~~~~
