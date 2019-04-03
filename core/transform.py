@@ -4,6 +4,14 @@ from RMPY.core import config
 
 
 def align(*args, **kwargs):
+    """
+    General align function\n 
+    args[0]: the first element to which everithing will be aligned.\n
+    args[1:] the elements that will be aligned.\n
+    kwargs:\n
+        translate: align in translation, default value True\n
+        rotate: align rotation, default value True\n
+    """
     translate = kwargs.pop('translate', True)
     rotate = kwargs.pop('rotate', True)
     main_object = validate.as_pymel_nodes(args[0])
@@ -29,6 +37,10 @@ def align(*args, **kwargs):
                 pm.xform(each, ws=True, ro=obj_rotation)
 
 def joint_length(scene_joint):
+    """
+    Calculates the length of the joint based on the distance of the joint childrens, 
+    if there are no joint childrens it will return the joint size. 
+    """
     children = pm.listRelatives(scene_joint, children=True)
     if children:
         if len(children) > 0 and pm.objectType(children[0]) != "locator":
@@ -40,6 +52,11 @@ def joint_length(scene_joint):
 
 
 def joint_size(scene_joint):
+    """
+    The size of the joint, which is the radius, 
+    in case the object provided its not a joint, it will return 1
+    scene_joint: the joint that will be measured
+    """
     if pm.objectType(scene_joint) == "joint":
         radius = pm.getAttr(scene_joint + ".radius")
         return (radius * 2)
@@ -47,6 +64,19 @@ def joint_size(scene_joint):
         return 1.0
     
 def is_close(a, b, rel_tol=1e-09, abs_tol=0.0):
+    """
+    Compares two values by a relative threshold or an absolute 
+    threshold depending which one is greather,
+    if the diference between a and b is greather than the tolerance,
+    it will return True, otherwise it will return false.\n
+    rel_tol : by default this value will be 1e-9, and it will multiply to the higher value of a and b 
+    and this will be the tolerance of the comparision unles the absolute tolerance is greater.\n
+    abs_tol:by default this value is 0, and it serves as a comparision only if it is greather than the 
+    maximum value a and b mulyiplyed by the relative tolerance.\n
+    :a: first value to compare\n
+    :b: second value to compare\n
+    :return: True or false depending if the values are close one to each other
+    """
     return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
 
 
@@ -122,7 +152,7 @@ def aim_vector_based(*args, **kwargs):
 
 
 def aim_point_based(*args, **kwargs):
-    """makes an object aim on the desired direction
+    """Makes an object aim on the desired direction.\n
     :param args: the arguments goes on the following order
          args[0]:The main scene Node that will be transformed, this is the destination node
 
