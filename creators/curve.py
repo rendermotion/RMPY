@@ -1,7 +1,7 @@
 import pymel.core as pm
 from RMPY.rig import genericRig
 
-
+'''
 class Creator(genericRig.GenericRig):
     def __init__(self, *args, **kwargs):
         super(Creator, self).__init__(*args, **kwargs)
@@ -27,9 +27,9 @@ class Creator(genericRig.GenericRig):
                 created_curve = pm.curve(degree=degree, p=fullListPoint, periodic=periodic, name='line', k=knotVector)
         self.name_conv.rename_based_on_base_name(pointList[0], created_curve, name=created_curve)
         return created_curve
-
 '''
-class Creator(RigBase.RigBase):
+
+class Creator(genericRig.GenericRig):
     def __init__(self, *args, **kwargs):
         super(Creator, self).__init__(*args,**kwargs)
 
@@ -88,7 +88,7 @@ class Creator(RigBase.RigBase):
                 Curve = pm.curve(degree=degree, p=fullListPoint, periodic=periodic, name='line', k=knotVector)
         self.name_conv.rename_name_in_format(Curve, name = str(Curve))
         return Curve
-        '''
+
 if __name__ == '__main__':
     shape = Creator()
     selection = pm.ls(selection=True)

@@ -1,14 +1,27 @@
-.. RMPY documentation master file, created by
-   sphinx-quickstart on Wed Mar 27 19:03:12 2019.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
 
-Welcome to RMPY's documentation!
-================================
+what is RMPY
+============
+
+RMPY it is a set of functions and classes that make easy to do rigging in maya.
+It is a structured way to create rigs using an architecture that simplifies and makes clear the creation of rigs.
+
+
+Getting started
+---------------
+First you should understand how the architecture is structured and the different parts that conform a rig.
+
+Chapters:
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+    :maxdepth: 1
+
+    name_convention
+    creators
+    rigs
+    tools
+
+License
+~~~~~~~
 
 
 
@@ -18,3 +31,5 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+

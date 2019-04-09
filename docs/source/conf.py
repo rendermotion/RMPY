@@ -12,9 +12,11 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import os
+import sys
+
+sys.path.insert(0, os.path.abspath('D://Development/maya'))
+
 
 
 # -- Project information -----------------------------------------------------
@@ -177,3 +179,7 @@ epub_exclude_files = ['search.html']
 
 
 # -- Extension configuration -------------------------------------------------
+# Packages / modules to mock so that build does not fail.
+autodoc_mock_imports = ['pymel', 'pymel.core', 'maya.api', 'maya.api',
+               'maya.cmds', 'maya.OpenMayaUI',
+               'maya.api.OpenMaya']
