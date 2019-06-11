@@ -1,13 +1,13 @@
 import maya.cmds as cmds
 import pymel.core as pm
 import maya.mel as mel
-from RMPY.rig import genericRig
+from RMPY.rig import baseRig
 from RMPY.core import config
 from RMPY.core import validate
 from RMPY.core import transform
 from RMPY.creators import curve
 
-reload(genericRig)
+reload(baseRig)
 reload(transform)
 
 
@@ -41,7 +41,7 @@ class LacesModel(object):
         self.clusters_parent = None
 
 
-class Laces(genericRig.GenericRig):
+class Laces(baseRig.BaseRig):
     def __init__(self, *args, **kwargs):
         super(Laces, self).__init__(*args, **kwargs)
         self._model = LacesModel()

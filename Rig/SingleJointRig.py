@@ -1,13 +1,15 @@
 import pymel.core as pm
 from RMPY import nameConvention
 from RMPY import RMRigTools
+from RMPY.rig import baseRig
 from RMPY.rig import systemStructure
 from RMPY import RMRigShapeControls
 reload(RMRigShapeControls)
 reload(RMRigTools)
 reload(systemStructure)
 
-class singleJointRig():
+
+class SingleJointRig(baseRig.BaseRig):
     def __init__(self):
         self.system = None
         self.joints = []
@@ -15,7 +17,7 @@ class singleJointRig():
         self.reset_controls = []
         self.control_shapes = RMRigShapeControls.RMRigShapeControls()
 
-    def create_locator_base(self, *locatorList, **kwargs):
+    def create_point_base(self, *locatorList, **kwargs):
         static = kwargs.pop('static', False)
         scaleXZ = kwargs.pop('scaleXZ', False)
         self.system = systemStructure.SystemStructure(locatorList[0])
@@ -47,9 +49,10 @@ class singleJointRig():
                 control.scaleXZ >> joint.scaleX
                 control.scaleXZ >> joint.scaleZ
 
+
 if __name__ == '__main__':
     selection = pm.ls(selection=True)
-    rigjoint =singleJointRig()
+    rigjoint =SingleJointRig()
     rigjoint.create_locator_base(*selection, static=True, scaleXZ=True)
 
 

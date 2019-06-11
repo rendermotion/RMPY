@@ -1,11 +1,13 @@
 import pymel.core as pm
 
+
 class RigStructureModel():
     def __init__(self):
         self.kinematics = 'kinematics'
         self.joints = 'joints'
         self.controls = 'controls'
         self.world = 'world'
+
 
 class RigStructure():
     def __init__(self):

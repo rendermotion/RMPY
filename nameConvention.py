@@ -1,17 +1,19 @@
 import re
 import maya.cmds as cmds
 
+
 class validator(object):
     def __init__(self):
         self._translator = {}
-        self._validator =[]
+        self._validator = []
         self._default = ''
+
     @property
     def translator(self):
         return self.translator
 
     @translator.setter
-    def translator(self,value):
+    def translator(self, value):
         self.translator = value
         self._validator = []
         for each_value in self._translator:
@@ -28,22 +30,27 @@ class validator(object):
             raise RuntimeError('no valid validator, assign a default value, or a dictionary')
         else:
             return self._default
+
     @property
     def default(self):
         return self._default
+
     @default.setter
-    def default(self,new_value):
+    def default(self, new_value):
         self._default = self.validate(new_value)
+
     @classmethod
     def validator_from_default(cls, default_value):
         new_instance = cls()
         new_instance.default = default_value
         return new_instance
+
     @classmethod
     def validator_from_dictionary(cls, translator_dictionary):
         new_instance = cls()
         new_instance.translator = translator_dictionary
         return new_instance
+
     @classmethod
     def validator_from_dictionary_default(cls, translator_dictionary, default_value):
         new_instance = cls()
@@ -113,7 +120,6 @@ class NameConvention(object):
             'side': {'left': 'L', 'right': 'R', 'center': 'C'}
         }
 
-
         self.ShapeDictionary = {
             "nurbsCurve": "shp",
             "mesh": "msh",
@@ -160,7 +166,7 @@ class NameConvention(object):
             print 'Error no such token in name convention'
             return None
 
-    def set_from_name(self, ObjName, TextString, Token, mode ="regular"):
+    def set_from_name(self, ObjName, TextString, Token, mode="regular"):
         'Valid Modes are regular add, and prefix'
         returnTuple = ()
         if (type(ObjName) == str) or (type(ObjName) == unicode):
@@ -172,12 +178,13 @@ class NameConvention(object):
         for eachObj in ObjectList:
             splitString = eachObj.split("_")
             if mode == 'regular':
-               splitString[self.name_convention[Token]] = self.token_validation(TextString, Token)
+                splitString[self.name_convention[Token]] = self.token_validation(TextString, Token)
             elif mode == 'add':
                 splitString[self.name_convention[Token]] = self.add_to_numbered_string(
                     splitString[self.name_convention[Token]], TextString)
             elif mode == 'prefix':
-                splitString[self.name_convention[Token]] = self.add_to_numbered_string(TextString, splitString[self.name_convention[Token]])
+                splitString[self.name_convention[Token]] = self.add_to_numbered_string(TextString, splitString[
+                    self.name_convention[Token]])
             returnTuple += tuple(["_".join(splitString)])
         if len(returnTuple) == 1:
             return str(returnTuple[0])
@@ -201,7 +208,7 @@ class NameConvention(object):
         for eachObj in ObjectList:
             fullNameToken = eachObj.split('|')
             if len(fullNameToken) > 1:
-                simpleName = fullNameToken[len(fullNameToken)-1]
+                simpleName = fullNameToken[len(fullNameToken) - 1]
                 complement = '|'.join(fullNameToken[:-1])
             else:
                 simpleName = fullNameToken[0]
@@ -250,7 +257,7 @@ class NameConvention(object):
 
     def set_name_in_format(self, **wantedNameDic):
         '''the wanted Name Dic should be on the form {tokenName: wantedToken} where all the tokenName keys are part of the NameConvention Dictionary'''
-        nameDic={}
+        nameDic = {}
         for eachKey in self.name_convention:
             if eachKey in wantedNameDic:
                 nameDic[eachKey] = str(wantedNameDic[eachKey])
@@ -316,7 +323,7 @@ class NameConvention(object):
             print 'Not same token number'
             return False
 
-    def guess_object_type (self, scene_object):
+    def guess_object_type(self, scene_object):
         scene_object = validate_input_nodes(scene_object)
         ObjType = cmds.objectType(scene_object)
         ObjType = self.token_validation(ObjType, 'objectType')
@@ -365,25 +372,25 @@ class NameConvention(object):
 
     def rename_based_on_base_name(self, base_name, obj_to_rename, **wantedNameDic):
 
-        obj_to_rename =validate_input_nodes(obj_to_rename)
+        obj_to_rename = validate_input_nodes(obj_to_rename)
         base_name = validate_input_nodes(base_name)
 
-        wantedNameCreated={}
+        wantedNameCreated = {}
         if self.is_name_in_format(base_name):
             baseNameTokens = base_name.split('_')
             for eachToken in self.name_convention:
                 if eachToken in wantedNameDic:
-                    wantedNameCreated[eachToken] = str(wantedNameDic [eachToken])
+                    wantedNameCreated[eachToken] = str(wantedNameDic[eachToken])
                 else:
                     wantedNameCreated[eachToken] = baseNameTokens[self.name_convention[eachToken]]
 
-                wantedNameCreated['objectType']= self.guess_object_type(obj_to_rename)
+                wantedNameCreated['objectType'] = self.guess_object_type(obj_to_rename)
         else:
             for eachToken in self.name_convention:
                 if eachToken in wantedNameDic:
-                    wantedNameCreated[eachToken] = str(wantedNameDic [eachToken])
+                    wantedNameCreated[eachToken] = str(wantedNameDic[eachToken])
                 else:
-                    wantedNameCreated[eachToken] = self.default_names [eachToken]
+                    wantedNameCreated[eachToken] = self.default_names[eachToken]
             if not 'name' in wantedNameDic:
                 NamesList = obj_to_rename.split("_")
                 NewName = ""
@@ -409,8 +416,8 @@ class NameConvention(object):
 
     def remove_namespace(self, name):
         tokens = name.split(':')
-        name_token = tokens[len(tokens)-1].split('|')
-        return name_token[len(name_token)-1]
+        name_token = tokens[len(tokens) - 1].split('|')
+        return name_token[len(name_token) - 1]
 
     def set_defaults_from_name(self, base_name, **read_tokens):
         if self.is_name_in_format(base_name):
@@ -419,9 +426,7 @@ class NameConvention(object):
                     self.default_names[each_token] = re.split(r"([0-9]+$)", self.get_from_name(base_name,
                                                                                                each_token))[0]
 
+
 if __name__ == '__main__':
-    name_conv= NameConvention()
+    name_conv = NameConvention()
     name_conv.set_defaults_from_name('L_main_now_msh', side=True, name=True, system=True, objectType=True)
-
-
-

@@ -19,6 +19,7 @@ Chapters:
     creators
     rigs
     tools
+    system structure
 
 License
 ~~~~~~~

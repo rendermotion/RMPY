@@ -1,5 +1,5 @@
 import pymel.core as pm
-from RMPY.rig import genericRig
+from RMPY.rig import baseRig
 
 '''
 class Creator(genericRig.GenericRig):
@@ -29,7 +29,7 @@ class Creator(genericRig.GenericRig):
         return created_curve
 '''
 
-class Creator(genericRig.GenericRig):
+class Creator(baseRig.BaseRig):
     def __init__(self, *args, **kwargs):
         super(Creator, self).__init__(*args,**kwargs)
 

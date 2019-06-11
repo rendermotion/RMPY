@@ -4,11 +4,18 @@ from RMPY.AutoRig import RMSpaceSwitch
 from RMPY import nameConvention
 from RMPY.rig import systemStructure
 from RMPY.rig import controls
-#from RMPY.AutoRig import RigStructure
+# from RMPY.AutoRig import RigStructure
 reload(systemStructure)
 
+class BaseModel(object):
+    def __init__(self, *args, **kwargs):
+        self.joints = []
+        self.reset_joints = []
+        self.controls = []
+        self.reset_controls = []
 
-class GenericRig(object):
+
+class BaseRig(object):
     def __init__(self, *args, **kwargs):
         self.rig_tools = kwargs.pop('rig_tools', RMRigTools.RMRigTools())
         self.rig_controls = kwargs.pop('rig_controls', controls.Controls())

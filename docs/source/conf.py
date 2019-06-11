@@ -180,6 +180,6 @@ epub_exclude_files = ['search.html']
 
 # -- Extension configuration -------------------------------------------------
 # Packages / modules to mock so that build does not fail.
-autodoc_mock_imports = ['pymel', 'pymel.core', 'maya.api', 'maya.api',
-               'maya.cmds', 'maya.OpenMayaUI',
-               'maya.api.OpenMaya']
+autodoc_mock_imports = ['pymel', 'pymel.core', 'maya.api', 'maya.api', 'maya',
+                       'maya.cmds', 'maya.OpenMayaUI',
+                       'maya.api.OpenMaya']
