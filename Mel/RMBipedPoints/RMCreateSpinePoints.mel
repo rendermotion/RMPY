@@ -1,6 +1,6 @@
 source "RMRiggMath.mel";
 source "RMRigTools.mel";
-source "NameConvention.mel";
+source "RMNameConvention.mel";
 
 global proc string[] RMCreateSpinePoints (vector $Origin ,vector $DirectionVector ,float $SpineLength){
     $DirectionVector = unit ($DirectionVector);

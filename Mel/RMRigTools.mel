@@ -1,4 +1,4 @@
-source "NameConvention.mel";
+source "RMNameConvention.mel";
 source "RMRiggMath.mel";
 
 global proc RMAlign (string $obj1, string $obj2,int $flag){
