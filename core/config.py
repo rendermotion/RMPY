@@ -8,6 +8,10 @@ default_reference_system_name = 'reference'
 
 
 def get_file_path():
+    """
+    This function is used to calculate the initial path where all the saving functions will save,
+    the path can be changed anytime directly by modifiying the config variable file_path.
+    """
     scene_filename = pm.sceneName()
     if scene_filename != '':
         tokens = scene_filename.split('/')
