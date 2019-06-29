@@ -1,13 +1,11 @@
 import pymel.core as pm
-import maya.OpenMayaUI as mui
 import maya.api.OpenMaya as om
 
 import math
 from RMPY import nameConvention
 from RMPY import RMRigTools
 from RMPY import RMRigShapeControls
-from RMPY.AutoRig import rigStructure
-from RMPY.AutoRig import RMSpaceSwitch
+from RMPY.AutoRig import RMSpaceSwitch, rigStructure
 
 reload(rigStructure)
 

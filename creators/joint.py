@@ -14,9 +14,10 @@ reload(transform)
 reload(spaceLocator)
 reload(creatorsBase)
 
-class Creator(creatorsBase.Creator):
+
+class Joint(creatorsBase.Creator):
     def __init__(self, *args, **kwargs):
-        super(Creator, self).__init__(*args, **kwargs)
+        super(Joint, self).__init__(*args, **kwargs)
         self.group_creator = group.Creator()
 
     def point_base(self, *point_array, **kwargs):
@@ -42,7 +43,7 @@ class Creator(creatorsBase.Creator):
 
             joint_array.append(new_joint)
 
-            self.name_conv.rename_name_in_format(new_joint, name='joint')
+            self.name_convention.rename_name_in_format(new_joint, name='joint')
 
             if index > 0:
                 new_joint.setParent(joint_array[index-1])
@@ -87,9 +88,9 @@ class Creator(creatorsBase.Creator):
 
             newJoint = pm.joint(p=[0, 0, 0], name="joint")
             jointArray.append(newJoint)
-            self.name_conv.rename_name_in_format(str(newJoint),
-                                                 name=self.name_conv.get_a_short_name(str(PointArray[index])),
-                                                 side=self.name_conv.get_from_name(str(PointArray[index]), 'side'))
+            self.name_convention.rename_name_in_format(str(newJoint),
+                                                 name=self.name_convention.get_a_short_name(str(PointArray[index])),
+                                                 side=self.name_convention.get_from_name(str(PointArray[index]), 'side'))
 
             if index == 0:
                 pm.parent(jointArray[0], ParentJoint)
@@ -214,7 +215,8 @@ class Creator(creatorsBase.Creator):
             else:
                 self.default_orient(each_joint)
 
+
 if __name__ == '__main__':
     root = pm.ls('L_bodyWing00_reference_GRP')[0]
-    joints = Creator()
+    joints = Joint()
     joints.point_base(*root.getChildren(), orient_type='bend_orient')

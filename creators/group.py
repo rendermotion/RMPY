@@ -7,14 +7,13 @@ from RMPY import RMNameConvention
 from RMPY.creators import creatorsBase
 reload(creatorsBase)
 
-import re
 
-class Creator(creatorsBase.Creator):
+class Group(creatorsBase.Creator):
     def __init__(self, *args, **kwargs):
-        super(Creator, self).__init__(*args, **kwargs)
+        super(Group, self).__init__(*args, **kwargs)
 
     def point_base(self, *scene_nodes, **kwargs):
-        super(Creator, self).point_base(*scene_nodes, **kwargs)
+        super(Group, self).point_base(*scene_nodes, **kwargs)
         """
             type of group can be: "world","child","parent","inserted","sibling"
         """
@@ -27,7 +26,7 @@ class Creator(creatorsBase.Creator):
             new_group = pm.group(empty=True)
             transform.align(each_node, new_group)
             self.setup_name_conv_node_base(each_node, name=name)
-            self.name_conv.rename_name_in_format(new_group)
+            self.name_convention.rename_name_in_format(new_group)
 
             new_groups_result.append(new_group)
 
@@ -52,5 +51,5 @@ class Creator(creatorsBase.Creator):
 
 
 if __name__ == '__main__':
-    groups = Creator()
+    groups = Group()
     groups.point_base('C_lasserAimCenter_reference_LOC', type='parent')

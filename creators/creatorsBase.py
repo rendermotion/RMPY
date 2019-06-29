@@ -4,21 +4,27 @@ from RMPY.core import config
 
 class CreatorBase(object):
     def __init__(self, *args, **kwargs):
-        self.name_conv = kwargs.pop('name_conv', nameConvention.NameConvention())
+        self.name_convention = kwargs.pop('name_convention', nameConvention.NameConvention())
 
     def point_base(self, *args, **kwargs):
-        self.setup_name_conv_node_base(args[0], **kwargs)
+        self.setup_name_convention_node_base(args[0], **kwargs)
 
     def shape_base(self, *args, **kwargs):
-        self.setup_name_conv_node_base(args[0], **kwargs)
+        self.setup_name_convention_node_base(args[0], **kwargs)
 
-    def setup_name_conv_node_base(self, *args, **kwargs):
-        if kwargs.pop('name') == config.default_reference_system_name:
-            self.name_conv.default_names['system'] = self.name_conv.get_a_short_name(args[0])
+    def setup_name_convention_node_base(self, *args, **kwargs):
+        pop_name = kwargs.pop('name')
+        system_name = self.name_convention.get_from_name(args[0], 'system')
+        if system_name == config.default_reference_system_name:
+            if pop_name:
+                self.name_convention.default_names['name'] = pop_name
+            self.name_convention.default_names['system'] = self.name_convention.get_a_short_name(args[0])
         else:
-            self.name_conv.default_names['name'] = self.name_conv.get_a_short_name(args[0])
-            self.name_conv.default_names['system'] = self.get_from_name(args[0], 'system')
+            if pop_name:
+                self.name_convention.default_names['name'] = pop_name
+            else:
+                self.name_convention.default_names['name'] = self.name_convention.get_a_short_name(args[0])
+            self.name_convention.default_names['system'] = self.name_convention.get_from_name(args[0], 'system')
 
-        self.name_conv.default_names['side'] = self.name_conv.get_from_name(args[0], 'side')
+        self.name_convention.default_names['side'] = self.name_convention.get_from_name(args[0], 'side')
 
-print 'done'

@@ -43,86 +43,62 @@ class SystemStructure(object):
         to create all members at once, otherwise, they will be created as needed.
         :return:
         """
-        self._create_root()
+        self._create_kinematics()
+        self._create_joints()
+        self._create_controls()
+        self._create_display()
 
     def _create_kinematics(self):
         """
         Creates the kinematics group
         :return: none
         """
-        kinematics_name = self.name_conv.set_name_in_format(name='kinematics')
-        kinematics = pm.ls(kinematics_name)
-        if kinematics:
-            self._model.kinematics = kinematics[0]
-        else:
-            self._model.kinematics = pm.group(empty=True, name='kinematics')
-            self.name_conv.rename_name_in_format(self._model.kinematics, useName=True)
-            self.root.visibility >> self._model.kinematics.visibility
-
+        self._model.kinematics = pm.group(empty=True, name='kinematics')
+        self.name_conv.rename_name_in_format(self._model.kinematics, useName=True)
+        self.root.visibility >> self._model.kinematics.visibility
+        self.kinematics.setParent(self._model.root)
 
     def _create_joints(self):
         """
         Creates the joints group
         :return:
         """
-        joints_name = self.name_conv.set_name_in_format(name='joints')
-        joints = pm.ls(joints_name)
-        if joints:
-            self._model.joints = joints[0]
-        else:
-            self._model.joints = pm.group(empty=True, name='joints')
-            self.name_conv.rename_name_in_format(self._model.joints, useName=True)
-            self.root.visibility >> self._model.joints.visibility
+        self._model.joints = pm.group(empty=True, name='joints')
+        self.joints.setParent(self.root)
+        self.name_conv.rename_name_in_format(self._model.joints, name='joints')
+        self.root.visibility >> self._model.joints.visibility
+        self.joints.setParent(self._model.root)
 
     def _create_controls(self):
         """
         Creates the controls group
         :return:
         """
-        controls_name = self.name_conv.set_name_in_format(name='controls')
-        controls = pm.ls(controls_name)
-        if controls:
-            self._model.controls = controls[0]
-        else:
-            self._model.controls = pm.group(empty=True, name='controls')
-            self.name_conv.rename_name_in_format(self._model.controls, useName=True)
-
+        self._model.controls = pm.group(empty=True, name='controls')
+        self.name_conv.rename_name_in_format(self._model.controls, useName=True)
         self._model.controls.setParent(self._model.root)
-        self._model.joints.setParent(self._model.root)
-        self._model.kinematics.setParent(self._model.root)
 
     def _create_display(self):
-        system_name = self.name_conv.set_name_in_format(name='display')
-        system = pm.ls(system_name)
-        if system:
-            self._model.display = system[0]
-        else:
-            self._model.display = pm.group(empty=True, name='display')
-            self.name_conv.rename_name_in_format(self._model.root, useName=True)
-            self._model.display.overrideEnabled.set(True)
-            self._model.display.overrideDisplayType.set(1)
+
+        self._model.display = pm.group(empty=True, name='display')
+        self.name_conv.rename_name_in_format(self._model.display, useName=True)
+
+        self.display.overrideEnabled.set(True)
+        self.display.overrideDisplayType.set(1)
+
+        self.display.setParent(self._model.root)
 
     def _create_root(self):
         """
         creates the base root node of the system
         :return: None
         """
-        system_name = self.name_conv.set_name_in_format(name='system')
-        system = pm.ls(system_name)
-        if system:
-            self._model.root = system[0]
-        else:
-            self._model.root = pm.group(empty=True, name='system')
-            self.name_conv.rename_name_in_format(self._model.root, useName=True)
+        self._model.root = pm.group(empty=True, name='system')
+        self.name_conv.rename_name_in_format(self._model.root, useName=True)
 
-        settings_name = self.name_conv.set_name_in_format(name='settings')
-        settings = pm.ls(settings_name)
-        if settings:
-            self._model.settings = settings[0]
-        else:
-            self._model.settings = pm.spaceLocator(name='settings')
-            self.name_conv.rename_name_in_format(self._model.settings, useName=True)
-            self._model.settings.setParent(self._model.root)
+        self._model.settings = pm.spaceLocator(name='settings')
+        self.name_conv.rename_name_in_format(self._model.settings, useName=True)
+        self._model.settings.setParent(self._model.root)
         pm.addAttr(self._model.settings, ln='worldScale', at='double', k=True)
         self._model.settings.worldScale.set(1)
 
@@ -132,8 +108,17 @@ class SystemStructure(object):
         A property to refer to the kinematics group as a pymel node
         """
         if not self._model.kinematics:
-           self.create()
+           self._create_kinematics()
         return self._model.kinematics
+
+    @property
+    def display(self):
+        """
+        A property to refer to the kinematics group as a pymel node
+        """
+        if not self._model.display:
+            self._create_display()
+        return self._model.display
 
     @property
     def joints(self):
@@ -141,7 +126,7 @@ class SystemStructure(object):
         A property to refer to the joints group as a pymel node
         """
         if not self._model.joints:
-            self.create()
+            self._create_joints()
         return self._model.joints
 
     @property
@@ -150,7 +135,7 @@ class SystemStructure(object):
         A property to refer to the controls group as a pymel node
         """
         if not self._model.controls:
-            self.create()
+            self._create_controls()
         return self._model.controls
 
     @property
