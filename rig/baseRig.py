@@ -16,7 +16,23 @@ class BaseModel(object):
 
 
 class BaseRig(object):
+    """Base rig is the base class to be used on any rig. it contains an instance of the main classes that 
+    will be used when creating a rig. 
+    The members that contains the Base rig are the following.
+    name_conv, an instance of the nameConvention class used to rename all elements on the rig.
+    rig_system a class that contains the maya hierarchical structure used as base for all the systems
+    rig_creators the functions used to create all kind of nodes on maya trough an interface that it is 
+    easy to use and standard. 
+    
+    """
     def __init__(self, *args, **kwargs):
+        """
+        initializes all the variables on the rig
+        by default looks for inherited properties, like name_convention, or system structure, that can be 
+        passed as kwargs.
+        :name_conv:
+        :rig_system: 
+        """
         self.rig_tools = kwargs.pop('rig_tools', RMRigTools.RMRigTools())
         self.rig_controls = kwargs.pop('rig_controls', controls.Controls())
         self.space_switch = kwargs.pop('space_switch', RMSpaceSwitch.RMSpaceSwitch())
@@ -24,9 +40,17 @@ class BaseRig(object):
         self.rig_system = kwargs.pop('rig_system', systemStructure.SystemStructure())
 
     def create_point_base(self, *args, **kwargs):
+        """
+        base function for point creation, it validates the args values and turnthem in to points.
+        it creates two arrays one of objects, one of points, and one of rotation vectors
+        """
         self.setup_name_conv_node_base(args[0])
-
+    def node_base(self, *args, **kwargs):
+        """
+        base function for node creation, it gets as input any kind of nodes and returns them as a 
+        """
     def create_shape_base(self, *args, **kwargs):
+    
         self.setup_name_conv_node_base(args[0])
 
     def setup_name_conv_node_base(self, *args):
