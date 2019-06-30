@@ -20,7 +20,6 @@ class RMRigFK(object):
 
     def createFKControlsOnListPoints(self, ListPoints, controlShape="cube"):
         self.rootJoints, jointArray = RMRigTools.RMCreateBonesAtPoints(ListPoints)
-
         index = 0
         for eachJoint in jointArray[:-1]:
             if controlShape == "cube":

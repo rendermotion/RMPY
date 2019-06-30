@@ -7,6 +7,7 @@ def get_key(searc_value, search_dic):
     for key, value in search_dic.iteritems():
         if value == searc_value:
             return key
+
 original_name_conv = nameConvention.NameConvention()
 original_name_conv.name_convention = {
                 "CharacteName": 0,
@@ -24,7 +25,6 @@ name_conv = nameConvention.NameConvention()
 def changeNameConv(correct_object):
 
     correct_object = RMRigTools.validate_pymel_nodes(correct_object)
-    print correct_object
     for each in correct_object:
         name = original_name_conv.get_from_name(each, 'name')
         side = original_name_conv.get_from_name(each, 'side')
@@ -40,6 +40,7 @@ def changeNameConv(correct_object):
 
 
 if __name__ == '__main__':
-
     selection = pm.ls('Character01_MD_Spine_pnt_rfr')
+    print selection
     changeNameConv(selection)
+

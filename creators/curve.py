@@ -1,53 +1,57 @@
 import pymel.core as pm
-from RMPY.rig import baseRig
+import maya.cmds as cmds
+from RMPY.core import dataValidators
+from RMPY.creators import creatorsBase
 
-'''
-class Creator(genericRig.GenericRig):
+
+class Curve(creatorsBase.Creator):
     def __init__(self, *args, **kwargs):
-        super(Creator, self).__init__(*args, **kwargs)
+        super(Curve, self).__init__(*args, **kwargs)
 
-    def create_point_base(self, *pointList, **kwargs):
-        super(Creator, self).create_point_base(*pointList, **kwargs)
-
-        periodic = kwargs.pop('periodic', False)
-        degree = kwargs.pop('degree', 3)
-        ep =kwargs.pop('ep', False)
-
-        listofPoints = [pm.xform('%s' % eachPointList, q=True, ws=True, rp=True) for eachPointList in pointList]
-
-        if ep:
-            created_curve = pm.curve(degree=degree, ep=listofPoints, name='line')
-        else:
-            if not periodic:
-                created_curve = pm.curve(degree=degree, p=listofPoints, name='line')
-            else:
-                fullListPoint = listofPoints + listofPoints[:3]
-                numElements = len(fullListPoint)
-                knotVector = range(-degree + 1, 0) + range(numElements)
-                created_curve = pm.curve(degree=degree, p=fullListPoint, periodic=periodic, name='line', k=knotVector)
-        self.name_conv.rename_based_on_base_name(pointList[0], created_curve, name=created_curve)
-        return created_curve
-'''
-
-class Creator(baseRig.BaseRig):
-    def __init__(self, *args, **kwargs):
-        super(Creator, self).__init__(*args,**kwargs)
-
-    def curve_base(self, curve, number_of_cvs=4):
+    def curve_base(self, curve, **kwargs):
+        super(Curve, self).curve_base(curve, **kwargs)
+        spans = kwargs.pop('spans', 4)
+        rebuild_type = kwargs.pop('rebuildType', 0)
+        keep_range = kwargs.pop('keepRange', 2)
         curve = dataValidators.as_pymel_nodes(curve)
 
         if curve.form() == 'periodic':
-            if number_of_cvs >= 3:
-                curve = pm.rebuildCurve(curve, spans=number_of_cvs, keepRange=2)[0]
+            if spans >= 3:
+                curve = pm.rebuildCurve(curve, rebuildType=rebuild_type, spans=spans, keepRange=keep_range,
+                                        **kwargs)[0]
                 return curve
             else:
                 return None
         else:
-            if number_of_cvs >= 4:
-                curve = pm.rebuildCurve(curve, spans=number_of_cvs - 3, keepRange=2)[0]
+            if spans >= 4:
+                curve = pm.rebuildCurve(curve, rebuildType=rebuild_type, spans=spans, keepRange=keep_range,
+                                        **kwargs)[0]
                 return curve
             else:
                 return None
+
+    def on_surface_point_base(self, *points, **kwargs):
+        surface = kwargs.pop('surface', None)
+        periodic = kwargs.pop('periodic', False)
+        degree = kwargs.pop('degree', 3)
+        points = [dataValidators.as_2d_vector(each_point) for each_point in points]
+        if surface:
+            surface = dataValidators.as_pymel_nodes(surface)
+            if not periodic:
+                curve = pm.curveOnSurface(surface, degree=degree, positionUV=points,
+                                          name=self.name_convention.set_name_in_format(
+                                              name='curveOnSurface', objectType='nurbsCurve'))
+            else:
+                full_list_point = points + points[:3]
+                number_of_elements = len(full_list_point)
+                knot_vector = range(-degree + 1, 0) + range(number_of_elements)
+                curve = pm.curveOnSurface(surface, degree=degree, positionUV=full_list_point, periodic=periodic,
+                                          name=self.name_convention.set_name_in_format(
+                                              name='curveOnsurface', objectType='nurbsCurve'), k=knot_vector)
+            return curve
+        else:
+            print 'must provide a surface as key word argument'
+        return None
 
     def animation_base(self, animated_node):
         end_play_back = pm.playbackOptions(q=True, maxTime=True)
@@ -58,41 +62,66 @@ class Creator(baseRig.BaseRig):
             positions.append(dataValidators.as_vector_position(animated_node))
         return self.point_base(positions)
 
-    def point_base(self, *listofPoints, **kwargs):
+    def point_base(self, *list_of_points, **kwargs):
+        self.setup_name_conv_node_base(*list_of_points, **kwargs)
         periodic = kwargs.pop('periodic', False)
         degree = kwargs.pop('degree', 3)
         ep = kwargs.pop('ep', False)
 
-        listofPoints = [dataValidators.as_vector_position(each_point) for each_point in listofPoints]
+        list_of_points = [dataValidators.as_vector_position(each_point) for each_point in list_of_points]
 
         if not periodic:
             if ep:
-                Curve = pm.curve(degree=degree, ep=listofPoints, name='line')
+                curve = pm.curve(degree=degree, ep=list_of_points, name='line', **kwargs)
             else:
-                Curve = pm.curve(degree=degree, p=listofPoints, name='line')
+                curve = pm.curve(degree=degree, p=list_of_points, name='line', **kwargs)
         else:
-            fullListPoint = listofPoints + listofPoints[:3]
             if ep:
-                fullListPoint = listofPoints + listofPoints[:3]
-                numElements = len(fullListPoint)
-                knotVector = range(-degree + 1, 0) + range(numElements)
-                # knotVector = (-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0)
-                Curve = pm.curve(degree=degree, ep=fullListPoint, periodic=periodic, name='line', k=knotVector)
-                # for each in fullListPoint:
-                #    new_locator = pm.spaceLocator()
-                #    new_locator.translate.set(each)
+                full_list_point = list_of_points + list_of_points[:3]
+                num_elements = len(full_list_point)
+                knot_vector = range(-degree + 1, 0) + range(num_elements)
+                curve = pm.curve(degree=degree, periodic=True, p=full_list_point, k=knot_vector, name='line', **kwargs)
+                for ep_point, position_point in zip(curve.ep, list_of_points):
+                    pm.select()
+                    pm.move(ep_point, *position_point, moveXYZ=True, worldSpace=True)
             else:
-                fullListPoint = listofPoints + listofPoints[:3]
-                numElements = len(fullListPoint)
-                knotVector = range(-degree + 1, 0) + range(numElements)
-                Curve = pm.curve(degree=degree, p=fullListPoint, periodic=periodic, name='line', k=knotVector)
-        self.name_conv.rename_name_in_format(Curve, name = str(Curve))
-        return Curve
+                full_list_point = list_of_points + list_of_points[:3]
+                num_elements = len(full_list_point)
+                knot_vector = range(-degree + 1, 0) + range(num_elements)
+                curve = pm.curve(degree=degree, p=full_list_point, periodic=periodic, name='line', k=knot_vector, **kwargs)
+        self.name_convention.rename_name_in_format(curve, name=str(curve))
+        return curve
+
+    @staticmethod
+    def fix_shape_name(object_list):
+        """
+        :param object_list: receives a list of an object name, and renames the shapes to match the objects name.
+        :return:no return value
+        """
+        for each_object in object_list:
+            shapes = each_object.getShapes()
+            for each_shape in shapes:
+                index = 0
+                if each_shape.intermediateObject.get():
+                    print 'found intermediate'
+                else:
+                    print 'found Shape'
+                    if index > 0:
+                        each_shape.rename('%sShape%s' % (each_object, index))
+                    else:
+                        each_shape.rename('%sShape' % each_object)
+                    index += 1
+
+    @staticmethod
+    def turn_to_one(curveArray):
+        for eachCurve in curveArray[1:]:
+            shapesInCurve = pm.listRelatives(eachCurve, s=True, children=True)
+            for eachShape in shapesInCurve:
+                pm.parent(eachShape, curveArray[0], shape=True, add=True)
+                pm.delete(eachCurve)
 
 if __name__ == '__main__':
-    shape = Creator()
-    selection = pm.ls(selection=True)
-    new_shape = shape.animation_base(selection[0])
-    the_final_shape = shape.curve_base(new_shape, number_of_cvs=6)
-
-
+    selection = pm.ls('C_plates00_reference_GRP')[0]
+    nurbs_curve = Curve()
+    nurbs_curve.point_base(*selection.getChildren(), ep=True)
+    nurbs_curve.point_base()

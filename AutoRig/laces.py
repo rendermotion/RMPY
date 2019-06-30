@@ -3,7 +3,7 @@ import pymel.core as pm
 import maya.mel as mel
 from RMPY.rig import baseRig
 from RMPY.core import config
-from RMPY.core import validate
+from RMPY.core import dataValidators
 from RMPY.core import transform
 from RMPY.creators import curve
 
@@ -12,7 +12,7 @@ reload(transform)
 
 
 def RebuildWithNCVs(numberOfCvs, curve):
-    curve = validate.as_pymel_nodes(curve)
+    curve = dataValidators.as_pymel_nodes(curve)
     if curve.form() == 'periodic':
         if numberOfCvs >= 3:
             curve = pm.rebuildCurve(curve, spans=numberOfCvs, keepRange=2)[0]
@@ -118,10 +118,10 @@ class Laces(baseRig.BaseRig):
 
     def RMCreateClustersOnCurve(self, curve=None):
         if type(curve) in [list, tuple]:
-            masterCurve = validate.as_pymel_nodes(curve[0])
+            masterCurve = dataValidators.as_pymel_nodes(curve[0])
             mode = "multi"
         else:
-            masterCurve = validate.as_pymel_nodes(curve)
+            masterCurve = dataValidators.as_pymel_nodes(curve)
             mode = "single"
         degree = pm.getAttr('%s.degree' % masterCurve)
         spans = pm.getAttr('%s.spans' % masterCurve)
@@ -230,7 +230,7 @@ class Laces(baseRig.BaseRig):
             else:
                 motionPath = pm.pathAnimation(each_joint, c=curve, follow=True, worldUpType="scene")
 
-            motionPath = validate.as_pymel_nodes(motionPath)
+            motionPath = dataValidators.as_pymel_nodes(motionPath)
 
             listAddDoubleLinear = each_joint.listConnections(type='addDoubleLinear', source=False)
             pm.delete(listAddDoubleLinear)

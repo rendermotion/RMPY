@@ -1,6 +1,7 @@
 import pymel.core as pm
-from RMPY.core import validate
+from RMPY.core import dataValidators
 from RMPY.core import config
+import maya.api.OpenMaya as om
 
 
 def align(*args, **kwargs):
@@ -14,8 +15,8 @@ def align(*args, **kwargs):
     """
     translate = kwargs.pop('translate', True)
     rotate = kwargs.pop('rotate', True)
-    main_object = validate.as_pymel_nodes(args[0])
-    objects_to_align = validate.as_pymel_nodes(args[1:])
+    main_object = dataValidators.as_pymel_nodes(args[0])
+    objects_to_align = dataValidators.as_pymel_nodes(args[1:])
     for each in objects_to_align:
         if translate:
             obj_position = pm.xform(main_object, q=True, ws=True, rp=True)
@@ -35,6 +36,7 @@ def align(*args, **kwargs):
             else:
                 obj_rotation = pm.xform(main_object, q=True, ws=True, ro=True)
                 pm.xform(each, ws=True, ro=obj_rotation)
+
 
 def joint_length(scene_joint):
     """
@@ -62,7 +64,8 @@ def joint_size(scene_joint):
         return (radius * 2)
     else:
         return 1.0
-    
+
+
 def is_close(a, b, rel_tol=1e-09, abs_tol=0.0):
     """
     Compares two values by a relative threshold or an absolute 
@@ -80,24 +83,35 @@ def is_close(a, b, rel_tol=1e-09, abs_tol=0.0):
     return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
 
 
+def point_distance(point01, point02):
+    #point01 = dataValidators.as_pymel_nodes(point01)
+    #point02 = dataValidators.as_pymel_nodes(point02)
+
+    position01 = pm.xform(point01, q=True, ws=True, rp=True)
+    position02 = pm.xform(point02, q=True, ws=True, rp=True)
+    vector01, vector02 = om.MVector(position01), om.MVector(position02)
+    result_vector = vector01 - vector02
+    return om.MVector(result_vector).length()
+
+
 def aim_vector_based(*args, **kwargs):
-    destination = validate.as_pymel_nodes(args[0])
+    destination = dataValidators.as_pymel_nodes(args[0])
 
     aim_axis = kwargs.pop('aim_axis', config.orient_axis[0])
     up_axis = kwargs.pop('up_axis', config.orient_axis[1])
 
-    position_source01 = validate.as_vector_position(destination)
+    position_source01 = dataValidators.as_vector_position(destination)
     destination_position = kwargs.pop('destination_position',
                                       [position_source01[0], position_source01[1], position_source01[2], 1.0])
 
     if len(destination_position) == 3:
         destination_position.append(1.0)
 
-    x_dir = validate.as_vector_position(args[1])
+    x_dir = dataValidators.as_vector_position(args[1])
     x_dir.normalize()
 
     if len(args) == 3:
-        up_vector = validate.as_vector_position(args[2])
+        up_vector = dataValidators.as_vector_position(args[2])
     else:
         up_vector = [0, 1, 0]
 
@@ -175,14 +189,14 @@ def aim_point_based(*args, **kwargs):
     edit_translate = kwargs.pop('edit_translate', True)
 
     if len(args) == 3:
-        position_source01 = validate.as_vector_position(args[1])
-        position_source02 = validate.as_vector_position(args[2])
+        position_source01 = dataValidators.as_vector_position(args[1])
+        position_source02 = dataValidators.as_vector_position(args[2])
         up_vector = pm.datatypes.Vector(0.0, 1.0, 0.0)
 
     elif len(args) == 4:
-        position_source01 = validate.as_vector_position(args[1])
-        position_source02 = validate.as_vector_position(args[2])
-        position_source03 = validate.as_vector_position(args[3])
+        position_source01 = dataValidators.as_vector_position(args[1])
+        position_source02 = dataValidators.as_vector_position(args[2])
+        position_source03 = dataValidators.as_vector_position(args[3])
         up_vector = position_source03 - position_source01
     else:
         raise AttributeError
@@ -200,8 +214,8 @@ def aim_point_based(*args, **kwargs):
 
 
 def equidistant(*args):
-    init_position = validate.as_vector_position(args[0])
-    end_position = validate.as_vector_position(args[-1])
+    init_position = dataValidators.as_vector_position(args[0])
+    end_position = dataValidators.as_vector_position(args[-1])
     direction_vector = end_position - init_position
     distance = direction_vector.length()
     step_vector = direction_vector.normal() * (distance / (len(args)-1))
@@ -241,19 +255,3 @@ class Transform(object):
 if __name__ == '__main__':
     selection = pm.ls(selection=True)
     #equidistant(*selection)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
