@@ -19,8 +19,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/creators/constraint.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="698">
-              <caret line="33" column="20" selection-start-line="33" selection-start-column="20" selection-end-line="33" selection-end-column="20" />
+            <state relative-caret-position="713">
+              <caret line="23" column="43" lean-forward="true" selection-start-line="23" selection-start-column="43" selection-end-line="23" selection-end-column="43" />
               <folding>
                 <element signature="e#0#36#0" expanded="true" />
               </folding>
@@ -58,7 +58,7 @@
         <entry file="file://$PROJECT_DIR$/creators/creatorsBase.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="255">
-              <caret line="16" column="75" lean-forward="true" selection-start-line="16" selection-start-column="75" selection-end-line="16" selection-end-column="75" />
+              <caret line="16" column="75" selection-start-line="16" selection-start-column="75" selection-end-line="16" selection-end-column="75" />
               <folding>
                 <element signature="e#0#31#0" expanded="true" />
               </folding>
@@ -79,7 +79,7 @@
         <entry file="file://$PROJECT_DIR$/creators/controls.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="306">
-              <caret line="26" column="40" lean-forward="true" selection-start-line="26" selection-start-column="40" selection-end-line="26" selection-end-column="40" />
+              <caret line="26" column="40" selection-start-line="26" selection-start-column="40" selection-end-line="26" selection-end-column="40" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -91,7 +91,7 @@
         <entry file="file://$PROJECT_DIR$/RMRigTools.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="4301">
-              <caret line="257" lean-forward="true" selection-start-line="257" selection-end-line="257" />
+              <caret line="257" selection-start-line="257" selection-end-line="257" />
             </state>
           </provider>
         </entry>
@@ -100,7 +100,7 @@
         <entry file="file://$PROJECT_DIR$/core/transform.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="850">
-              <caret line="53" lean-forward="true" selection-start-line="53" selection-end-line="53" />
+              <caret line="53" selection-start-line="53" selection-end-line="53" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -265,16 +265,17 @@
     <option name="selectedSdk" value="C:\Program Files\Autodesk\Maya2018\bin\mayapy.exe" />
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="2704" />
-    <option name="y" value="94" />
-    <option name="width" value="476" />
-    <option name="height" value="940" />
+    <option name="x" value="1912" />
+    <option name="y" value="-8" />
+    <option name="width" value="1936" />
+    <option name="height" value="1096" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -297,6 +298,12 @@
               <item name="RMPY" type="b2602c69:ProjectViewProjectNode" />
               <item name="maya" type="462c0819:PsiDirectoryNode" />
               <item name="RMPY" type="462c0819:PsiDirectoryNode" />
+              <item name="creators" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="RMPY" type="b2602c69:ProjectViewProjectNode" />
+              <item name="maya" type="462c0819:PsiDirectoryNode" />
+              <item name="RMPY" type="462c0819:PsiDirectoryNode" />
               <item name="rig" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -312,7 +319,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -430,7 +436,7 @@
     <frame x="1912" y="-8" width="1936" height="1096" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49535602" visible="true" weight="0.21496312" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49535602" visible="true" weight="0.16385669" />
       <window_info id="Structure" order="1" weight="0.24973656" />
       <window_info id="Favorites" order="2" sideWeight="0.504644" side_tool="true" weight="0.21496312" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -859,6 +865,19 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/creators/constraint.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="713">
+          <caret line="23" column="43" lean-forward="true" selection-start-line="23" selection-start-column="43" selection-end-line="23" selection-end-column="43" />
+          <folding>
+            <element signature="e#0#36#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Program Files/Autodesk/Maya2018/Python/Lib/site-packages/pymel/core/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/creators/creators.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
@@ -879,7 +898,7 @@
     <entry file="file://$PROJECT_DIR$/creators/creatorsBase.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
-          <caret line="16" column="75" lean-forward="true" selection-start-line="16" selection-start-column="75" selection-end-line="16" selection-end-column="75" />
+          <caret line="16" column="75" selection-start-line="16" selection-start-column="75" selection-end-line="16" selection-end-column="75" />
           <folding>
             <element signature="e#0#31#0" expanded="true" />
           </folding>
@@ -896,7 +915,7 @@
     <entry file="file://$PROJECT_DIR$/creators/controls.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="306">
-          <caret line="26" column="40" lean-forward="true" selection-start-line="26" selection-start-column="40" selection-end-line="26" selection-end-column="40" />
+          <caret line="26" column="40" selection-start-line="26" selection-start-column="40" selection-end-line="26" selection-end-column="40" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
@@ -906,14 +925,14 @@
     <entry file="file://$PROJECT_DIR$/RMRigTools.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4301">
-          <caret line="257" lean-forward="true" selection-start-line="257" selection-end-line="257" />
+          <caret line="257" selection-start-line="257" selection-end-line="257" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/transform.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="850">
-          <caret line="53" lean-forward="true" selection-start-line="53" selection-end-line="53" />
+          <caret line="53" selection-start-line="53" selection-end-line="53" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
@@ -925,19 +944,6 @@
         <state>
           <folding>
             <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Program Files/Autodesk/Maya2018/Python/Lib/site-packages/pymel/core/__init__.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/creators/constraint.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="698">
-          <caret line="33" column="20" selection-start-line="33" selection-start-column="20" selection-end-line="33" selection-end-column="20" />
-          <folding>
-            <element signature="e#0#36#0" expanded="true" />
           </folding>
         </state>
       </provider>
