@@ -1,18 +1,20 @@
 import pymel.core as pm
-from RMPY.rig import baseRig
+from RMPY.rig import rigBase
+reload(rigBase)
 
 
-class RigFKModel(baseRig.BaseModel):
+class RigFKModel(rigBase.BaseModel):
     def __init__(self):
         super(RigFKModel, self).__init__()
 
 
-class RigFK(baseRig.BaseRig):
+class RigFK(rigBase.RigBase):
     def __init__(self, *args, **kwargs):
         super(RigFK, self).__init__(*args, **kwargs)
+        self.create.joint.point_base('L_index04_rig_pnt')
 
     def create_point_base(self, *args, **kwargs):
-        reset_joints, joint_list = self.create.joints.point_base(*args, **kwargs)
+        reset_joints, joint_list = self.create.joint.point_base(*args, **kwargs)
         self.reset_joints.append(reset_joints)
         self.reset_joints.setParent(self.rig_system.joints)
         self.joints.append(joint_list)

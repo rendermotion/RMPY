@@ -3,7 +3,7 @@ import pymel.core as pm
 from RMPY.creators import creatorsBase
 
 
-class Connect(creatorsBase.Creator):
+class Connect(creatorsBase.CreatorsBase):
     def __init__(self, *args, **kwargs):
         super(Connect, self).__init__(*args, **kwargs)
 

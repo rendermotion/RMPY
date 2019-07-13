@@ -2,7 +2,7 @@ from RMPY import nameConvention
 from RMPY.core import config
 
 
-class CreatorBase(object):
+class CreatorsBase(object):
     def __init__(self, *args, **kwargs):
         self.name_convention = kwargs.pop('name_convention', nameConvention.NameConvention())
 
@@ -13,7 +13,7 @@ class CreatorBase(object):
         self.setup_name_convention_node_base(args[0], **kwargs)
 
     def setup_name_convention_node_base(self, *args, **kwargs):
-        pop_name = kwargs.pop('name')
+        pop_name = kwargs.pop('name', None)
         system_name = self.name_convention.get_from_name(args[0], 'system')
         if system_name == config.default_reference_system_name:
             if pop_name:
@@ -27,4 +27,14 @@ class CreatorBase(object):
             self.name_convention.default_names['system'] = self.name_convention.get_from_name(args[0], 'system')
 
         self.name_convention.default_names['side'] = self.name_convention.get_from_name(args[0], 'side')
+
+    def _dictionary(self):
+        result_dict = dict(type=str(self.__class__.__name__),
+                           data=self._representation())
+        return result_dict
+
+    def _representation(self):
+        return 'no _representation defined for function'
+
+
 

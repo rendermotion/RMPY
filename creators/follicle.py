@@ -1,9 +1,11 @@
 import pymel.core as pm
 from RMPY import RMRigTools
+from RMPY.creators import creatorsBase
 
 
-class Follicle(object):
-    def __init__(self):
+class Follicle(creatorsBase.CreatorsBase):
+    def __init__(self, *args, **kwargs):
+        super(creatorsBase, self).__init__(*args, **kwargs)
         self.Hys = None
         self.hair_system()
 

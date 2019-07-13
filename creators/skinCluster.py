@@ -2,21 +2,23 @@ import pymel.core as pm
 from RMPY import nameConvention
 import maya.cmds as cmds
 import pymel.core as pm
+from pprint import pprint as pp
 from RMPY.creators import creatorsBase
 from RMPY.core import dataManager
+reload(dataManager)
+reload(creatorsBase)
 
 
 def get_from_node(node):
     """:returns a skin cluster asociated with the node"""
     history_nodes = pm.listHistory(node, interestLevel=2)
-
     for each in history_nodes:
         if each.__class__ == pm.nodetypes.SkinCluster:
             return each
     return None
 
 
-class SkinCluster(creatorsBase.CreatorBase):
+class SkinCluster(creatorsBase.CreatorsBase):
     def __init__(self, *args, **kwargs):
         super(SkinCluster, self).__init__(*args, **kwargs)
         self.skin_node = None
@@ -77,12 +79,15 @@ class SkinCluster(creatorsBase.CreatorBase):
         weight_dictionary = {}
         vertex_index = cmds.getAttr('%s.weightList' % self.skin_node, mi=True)
         weight_dictionary['influences'] = self.influence()
+        weight_dictionary['geometry'] = pm.listConnections(self.skin_node.outputGeometry[0],
+                                                           source=False)[0]
         weight_dictionary['weights'] = {}
 
         for each_vertex in vertex_index:
             joint_list = cmds.getAttr('%s.weightList[%s].weights' % (self.skin_node, each_vertex), mi=True)
             weight_value = cmds.getAttr('%s.weightList[%s].weights' % (self.skin_node, each_vertex))[0]
             weight_dictionary['weights'][each_vertex] = [joint_list, weight_value]
+
         return weight_dictionary
 
     def apply_weights_dictionary(self, *args, **kwargs):
@@ -139,7 +144,7 @@ class SkinCluster(creatorsBase.CreatorBase):
                     new_skin_cluster = pm.skinCluster(list_joints, each_node)
                     skin_cluster_list.append(new_skin_cluster)
                     self.name_convention.rename_name_in_format(new_skin_cluster,
-                                                         name=self.name_convention.get_a_short_name(each_node))
+                                                               name=self.name_convention.get_a_short_name(each_node))
                     pm.copySkinWeights(source, destination, influenceAssociation=['label', 'name',
                                                                                   'closestJoint', 'oneToOne'])
         return new_skin_cluster
@@ -151,9 +156,14 @@ class SkinCluster(creatorsBase.CreatorBase):
                 return each
         return None
 
+    def _representation(self):
+        return self.get_weights_dictionary()
+
 
 if __name__ == '__main__':
-    skin_cluster01 = SkinCluster.by_node('skinCluster2')
-    skin_cluster01.save('BackBar')
+    skin_cluster01 = SkinCluster.by_node('skinCluster1')
+    pp(skin_cluster01._dictionary())
+
+    #skin_cluster01.save('BackBar')
     # skin_cluster01.load('metal_ring_front')
     # skin_cluster01.apply_weights_dictionary(geometry='metalGrey_C_metalRing_0001_mid_GES')

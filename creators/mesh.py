@@ -1,6 +1,7 @@
 import maya.api as om
-
-geometry = RMRigTools.validate_pymel_nodes(geometry)
+from RMPY.core import dataValidators
+import pymel.core as pm
+geometry = dataValidators.as_pymel_nodes(pm.ls(selection=True))
 # vertex_destination_list = destination.vtx
 result = {}
 

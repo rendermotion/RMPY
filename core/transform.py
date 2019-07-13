@@ -94,6 +94,14 @@ def point_distance(point01, point02):
     return om.MVector(result_vector).length()
 
 
+def average(*args):
+    result = pm.datatypes.Vector(0, 0, 0)
+    for each in args:
+        result += dataValidators.as_vector(each)
+    result = result / len(args)
+    return result
+
+
 def aim_vector_based(*args, **kwargs):
     destination = dataValidators.as_pymel_nodes(args[0])
 

@@ -4,32 +4,30 @@ from RMPY.core import config
 from RMPY.core import transform
 import maya.api.OpenMaya as om
 from RMPY.creators import group
-from RMPY import RMNameConvention
+from RMPY import nameConvention
 from RMPY.core import transform
 from RMPY.creators import spaceLocator
 from RMPY.creators import creatorsBase
 
 reload(group)
-reload(transform)
 reload(spaceLocator)
-reload(creatorsBase)
 
 
-class Joint(creatorsBase.Creator):
+class Joint(creatorsBase.CreatorsBase):
     def __init__(self, *args, **kwargs):
         super(Joint, self).__init__(*args, **kwargs)
-        self.group_creator = group.Creator()
+        self.group_creator = group.Group()
 
     def point_base(self, *point_array, **kwargs):
-        #super(Creator, self).point_base(*point_array, **kwargs)
+        # super(Creator, self).point_base(*point_array, **kwargs)
         """
         orient_type:
             'default': uses default maya joint orient
             'bend_orient': uses the bend vector of the orient to define joint orientation
             'point_orient': uses the axis of the point based to define orientation
         """
-        aim_axis = kwargs.pop('aim_axis', config.orient_axis[0])
-        up_axis = kwargs.pop('up_axis', config.orient_axis[1])
+        aim_axis = kwargs.pop('aim_axis', config.axis_order[0])
+        up_axis = kwargs.pop('up_axis', config.axis_order[1])
         orient_type = kwargs.pop('orient_type', 'bend_orient')
 
         point_array = dataValidators.as_pymel_nodes(point_array)
@@ -64,7 +62,7 @@ class Joint(creatorsBase.Creator):
         return reset_joints, joint_array
 
     def point_based(self, PointArray, ZAxisOrientation = "Y"):
-        ZAxisOrientation = config.orient_axis[1]
+        ZAxisOrientation = config.axis_order[1]
 
         PointArray = dataValidators.as_pymel_nodes(PointArray)
         jointArray = []
@@ -116,7 +114,7 @@ class Joint(creatorsBase.Creator):
 
                     pm.parent(jointArray[0], AxisOrientJoint)
                     pm.parent(jointArray[index], jointArray[index - 1])
-                    pm.joint(jointArray[index - 1], edit=True, orientJoint=config.orient_axis)
+                    pm.joint(jointArray[index - 1], edit=True, orientJoint=config.axis_order)
 
                     pm.parent(jointArray[index - 1], world=True)
                     pm.delete(AxisOrientJoint)
@@ -125,7 +123,7 @@ class Joint(creatorsBase.Creator):
 
                 else:
                     pm.parent(jointArray[index], jointArray[index - 1])
-                    pm.joint(jointArray[index - 1], edit=True, orientJoint=config.orient_axis)
+                    pm.joint(jointArray[index - 1], edit=True, orientJoint=config.axis_order)
                 # , sao="yup" )
 
                 if index >= 2:
@@ -146,12 +144,12 @@ class Joint(creatorsBase.Creator):
             if index == len(PointArray) - 1:
                 transform.align(jointArray[index - 1], jointArray[index], rotate=False)
                 pm.makeIdentity(jointArray[index], apply=True, t=0, r=1, s=0)
-            jointArray[index].rotateOrder.set(config.orient_axis)
+            jointArray[index].rotateOrder.set(config.axis_order)
         return ParentJoint, jointArray
 
     def default_orient(self, *joint_list, **kwargs):
-        aim_axis = kwargs.pop('aim_axis', config.orient_axis[0])
-        up_axis = kwargs.pop('up_axis', config.orient_axis[1])
+        aim_axis = kwargs.pop('aim_axis', config.axis_order[0])
+        up_axis = kwargs.pop('up_axis', config.axis_order[1])
         axis = '%s%s%s' % (aim_axis, up_axis, filter(lambda ch: ch not in '%s%s' % (aim_axis, up_axis), 'xyz'))
         for each_joint in joint_list:
             joint_child = each_joint.getChildren(type='joint')
@@ -170,7 +168,7 @@ class Joint(creatorsBase.Creator):
             pm.makeIdentity(each_joint, t=False, r=True, s=False, apply=True)
 
     def bend_orient(self, *joint_list):
-        space_locator = spaceLocator.Creator()
+        space_locator = spaceLocator.SpaceLocator()
         for each_joint in joint_list:
             print 'each_joint'
             parent = each_joint.getParent()
@@ -217,6 +215,6 @@ class Joint(creatorsBase.Creator):
 
 
 if __name__ == '__main__':
-    root = pm.ls('L_bodyWing00_reference_GRP')[0]
+    # root = pm.ls('L_bodyWing00_reference_GRP')[0]
     joints = Joint()
-    joints.point_base(*root.getChildren(), orient_type='bend_orient')
+    # joints.point_base(*root.getChildren(), orient_type='bend_orient')

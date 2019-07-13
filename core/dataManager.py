@@ -1,6 +1,5 @@
-import pymel.core as pm
-import config
-import jason
+from RMPY.core import config
+import  json
 
 
 class DataManager(object):
@@ -17,6 +16,7 @@ class DataManager(object):
 
     def load(self, *args, **kwargs):
         pass
+
 
 if __name__ == '__main__':
     pass

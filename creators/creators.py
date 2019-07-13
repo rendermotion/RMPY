@@ -1,17 +1,16 @@
-from RMPY.creators.curve import Curve
-from RMPY.creators.spaceLocator import SpaceLocator
+from RMPY.creators import curve as CurveCreator
+from RMPY.creators import spaceLocator
 from RMPY.creators.skinCluster import SkinCluster
-from RMPY.creators.group import Group
-from RMPY.creators.joint import Joint
-from RMPY.creators.connect import Connect
+from RMPY.creators import group as groupCreator
+from RMPY.creators import joint as jointCreator
+from RMPY.creators import connect as connectCreator
 
-
-curve = Curve()
-space_locator = SpaceLocator()
+curve = CurveCreator.Curve()
+space_locator = spaceLocator.SpaceLocator()
 skin_cluster = SkinCluster()
-group = Group()
-joint = Joint()
-connect = Connect()
+group = groupCreator.Group()
+joint = jointCreator.Joint()
+connect = connectCreator.Connect()
 
 creators_list = [curve, space_locator, skin_cluster, group, joint, connect]
 

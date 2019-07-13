@@ -2,9 +2,9 @@ import pymel.core as pm
 import maya.cmds as cmds
 from RMPY.core import dataValidators
 from RMPY.creators import creatorsBase
+reload(creatorsBase)
 
-
-class Curve(creatorsBase.Creator):
+class Curve(creatorsBase.CreatorsBase):
     def __init__(self, *args, **kwargs):
         super(Curve, self).__init__(*args, **kwargs)
 

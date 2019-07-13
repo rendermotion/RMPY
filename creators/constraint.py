@@ -3,7 +3,7 @@ import pymel.core as pm
 from RMPY.creators import creatorsBase
 
 
-class Constraint(creatorsBase.CreatorBase):
+class Constraint(creatorsBase.CreatorsBase):
     def __init__(self, *args, **kwargs):
         super(Constraint, self).__init__(*args, **kwargs)
         self.constraint_type = []

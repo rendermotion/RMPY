@@ -3,7 +3,9 @@ from RMPY.rig import systemStructure
 from RMPY.creators import creators
 from RMPY.core import config
 import pymel.core as pm
+from RMPY.core import main as rm
 reload(systemStructure)
+reload(creators)
 
 
 class BaseModel(object):
@@ -17,7 +19,7 @@ class BaseModel(object):
         self.attach_points = dict(root=None, tip=None)
 
 
-class BaseRig(object):
+class RigBase(object):
     """Base rig is the base class to be used on any rig. it contains an instance of the main classes that 
     will be used when creating a rig. 
     The members that contains the Base rig are the following.
@@ -35,13 +37,12 @@ class BaseRig(object):
         :name_conv:
         :rig_system: 
         """
-        self.rig_tools = kwargs.pop('rig_tools', RMRigTools.RMRigTools())
-        self.rig_controls = kwargs.pop('rig_controls', controls.Controls())
-        self.space_switch = kwargs.pop('space_switch', RMSpaceSwitch.RMSpaceSwitch())
-        self.name_conv = kwargs.pop('name_conv', nameConvention.NameConvention())
+
         self.name_convention = kwargs.pop('name_convention', nameConvention.NameConvention())
+        self.rm = rm
         self.rig_system = kwargs.pop('rig_system', systemStructure.SystemStructure())
-        self.creators = creators
+        self.create = creators
+
         self.model = BaseModel()
 
     @property
@@ -77,7 +78,7 @@ class BaseRig(object):
         base function for point creation, it validates the args values and turnthem in to points.
         it creates two arrays one of objects, one of points, and one of rotation vectors
         """
-        self.setup_name_conv_node_base(args[0])
+        self.setup_name_convention_node_base(args[0])
         
     def node_base(self, *args, **kwargs):
         """
@@ -87,7 +88,7 @@ class BaseRig(object):
         self.setup_name_convention_node_base(args[0], **kwargs)
 
     def setup_name_convention_node_base(self, *args, **kwargs):
-        pop_name = kwargs.pop('name')
+        pop_name = kwargs.pop('name', None)
         system_name = self.name_convention.get_from_name(args[0], 'system')
         if system_name == config.default_reference_system_name:
             if pop_name:
@@ -107,7 +108,7 @@ class BaseRig(object):
 
     def update_name_convention(self):
         self.rig_system.name_convention = self.name_convention
-        for each in self.creators.creators_list:
+        for each in self.create.creators_list:
             each.name_convention = self.name_convention
 
     def create_selection_base(self, **kwargs):
@@ -115,6 +116,8 @@ class BaseRig(object):
         self.create_point_base(selection, **kwargs)
 
 
+if __name__ == '__main__':
+    print creators.joint.point_base('L_index04_rig_pnt')
 
 
 

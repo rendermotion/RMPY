@@ -3,12 +3,10 @@ from RMPY.core import dataValidators
 from RMPY.core import config
 from RMPY.core import transform
 from RMPY.core import hierarchy
-from RMPY import RMNameConvention
 from RMPY.creators import creatorsBase
-reload(creatorsBase)
 
 
-class Group(creatorsBase.Creator):
+class Group(creatorsBase.CreatorsBase):
     def __init__(self, *args, **kwargs):
         super(Group, self).__init__(*args, **kwargs)
 
@@ -25,7 +23,7 @@ class Group(creatorsBase.Creator):
         for each_node in scene_nodes:
             new_group = pm.group(empty=True)
             transform.align(each_node, new_group)
-            self.setup_name_conv_node_base(each_node, name=name)
+            self.setup_name_convention_node_base(each_node, name=name)
             self.name_convention.rename_name_in_format(new_group)
 
             new_groups_result.append(new_group)

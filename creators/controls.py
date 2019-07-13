@@ -11,7 +11,7 @@ from RMPY.creators import creatorsBase
 reload(config)
 
 
-class Controls(creatorsBase.CreatorBase):
+class Controls(creatorsBase.CreatorsBase):
     def __init__(self, *args, **kwargs):
         super(Controls, self).__init__(*args, **kwargs)
         self.rigTools = RMRigTools.RMRigTools(NameConv=self.name_convention)

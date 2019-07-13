@@ -3,7 +3,7 @@ import os
 import sys
 
 axis_order = 'xyz'
-#axis_order = 'zyx'
+
 default_reference_system_name = 'reference'
 
 
