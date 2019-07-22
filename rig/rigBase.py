@@ -43,35 +43,51 @@ class RigBase(object):
         self.rig_system = kwargs.pop('rig_system', systemStructure.SystemStructure())
         self.create = creators
 
-        self.model = BaseModel()
+        self._model = BaseModel()
 
     @property
     def joints(self):
-        return self.model.joints
+        return self._model.joints
+
+    @joints.setter
+    def joints(self, value):
+        self._model.joints = value
 
     @property
     def reset_joints(self):
-        return self.model.reset_joints
+        return self._model.reset_joints
+
+    @reset_joints.setter
+    def reset_joints(self, value):
+        self._model.reset_joints = value
 
     @property
     def controls(self):
-        return self.model.controls
+        return self._model.controls
+
+    @controls.setter
+    def controls(self, value):
+        self._model.controls = value
 
     @property
     def reset_controls(self):
-        return self.model.reset_controls
+        return self._model.reset_controls
+
+    @reset_controls.setter
+    def reset_controls(self, value):
+        self._model.reset_controls = value
 
     @property
     def inputs(self):
-        return self.model.inputs
+        return self._model.inputs
 
     @property
     def outputs(self):
-        return self.model.outputs
+        return self._model.outputs
 
     @property
     def attach_points(self):
-        return self.model.attach_points
+        return self._model.attach_points
 
     def create_point_base(self, *args, **kwargs):
         """

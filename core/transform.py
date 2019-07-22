@@ -2,7 +2,7 @@ import pymel.core as pm
 from RMPY.core import dataValidators
 from RMPY.core import config
 import maya.api.OpenMaya as om
-
+reload(dataValidators)
 
 def align(*args, **kwargs):
     """
@@ -105,8 +105,8 @@ def average(*args):
 def aim_vector_based(*args, **kwargs):
     destination = dataValidators.as_pymel_nodes(args[0])
 
-    aim_axis = kwargs.pop('aim_axis', config.orient_axis[0])
-    up_axis = kwargs.pop('up_axis', config.orient_axis[1])
+    aim_axis = kwargs.pop('aim_axis', config.axis_order[0])
+    up_axis = kwargs.pop('up_axis', config.axis_order[1])
 
     position_source01 = dataValidators.as_vector_position(destination)
     destination_position = kwargs.pop('destination_position',
@@ -114,7 +114,6 @@ def aim_vector_based(*args, **kwargs):
 
     if len(destination_position) == 3:
         destination_position.append(1.0)
-
     x_dir = dataValidators.as_vector_position(args[1])
     x_dir.normalize()
 
@@ -192,8 +191,8 @@ def aim_point_based(*args, **kwargs):
           edit_translate: does the destination node should change, position, or only orientation.
     """
     destination = args[0]
-    aim_axis = kwargs.pop('aim_axis', config.orient_axis[0])
-    up_axis = kwargs.pop('up_axis', config.orient_axis[1])
+    aim_axis = kwargs.pop('aim_axis', config.axis_order[0])
+    up_axis = kwargs.pop('up_axis', config.axis_order[1])
     edit_translate = kwargs.pop('edit_translate', True)
 
     if len(args) == 3:
@@ -216,7 +215,6 @@ def aim_point_based(*args, **kwargs):
 
     x_dir = position_source02 - position_source01
     x_dir.normalize()
-
     aim_vector_based(destination, x_dir, up_vector, aim_axis=aim_axis, up_axis=up_axis,
                      destination_position=destination_position)
 
@@ -234,7 +232,6 @@ def equidistant(*args):
 class Axis(object):
     def __init__(self, *args, **kwargs):
         self.node = pm.ls(args[0])[0]
-        print self.node
     @property
     def x(self):
         matrix = self.node.getMatrix(worldSpace=True)
@@ -262,4 +259,5 @@ class Transform(object):
 
 if __name__ == '__main__':
     selection = pm.ls(selection=True)
-    #equidistant(*selection)
+    selection.insert(0, selection[0])
+    aim_point_based(*selection)

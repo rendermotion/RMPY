@@ -10,21 +10,39 @@ class Constraint(creatorsBase.CreatorsBase):
         self.define_constraints(**kwargs)
 
     def node_base(self, *args, **kwargs):
+        super(Constraint, self).node_base(*args, **kwargs)
         if len(args) >= 2:
-                self.constraint(*args, constraints_list=self.constraint_type, **kwargs)
+                self.constraint(*args, **kwargs)
         else:
             raise AttributeError('you should provide at least 2 attributes')
 
     def node_list_base(self, *args, **kwargs):
         if len(args) >= 2 and len(args[0]) == len(args[1]):
             for driver, driven in zip(args[0], args[1]):
-                self.constraint(driver, driven, constraints_list=self.constraint_type, **kwargs)
+                self.constraint(driver, driven, **kwargs)
+
+    def point(self, *args, **kwargs):
+        self.define_constraints(point=True, scale=False, parent=False, orient=False)
+        self.node_base(*args, **kwargs)
+
+    def parent(self, *args, **kwargs):
+        self.define_constraints(point=False, scale=False, parent=True, orient=False)
+        self.node_base(*args, **kwargs)
+
+    def scale(self, *args, **kwargs):
+        self.define_constraints(point=False, scale=True, parent=False, orient=False)
+        self.node_base(*args, **kwargs)
+
+    def orient(self, *args, **kwargs):
+        self.define_constraints(point=False, scale=False, parent=False, orient=True)
+        self.node_base(*args, **kwargs)
 
     def define_constraints(self, **kwargs):
         parent = kwargs.pop('parent', True)
         point = kwargs.pop('point', False)
         orient = kwargs.pop('orient', False)
         scale = kwargs.pop('scale', True)
+        self.constraint_type = []
         if parent:
             self.constraint_type.append(pm.parentConstraint)
         if point:
@@ -35,9 +53,12 @@ class Constraint(creatorsBase.CreatorsBase):
             self.constraint_type.append(pm.scaleConstraint)
 
     def constraint(self, *args, **kwargs):
+        name = kwargs.pop('name', 'constraint')
         constraints = []
         for each_constraint in self.constraint_type:
-            constraints.append(each_constraint(*args, **kwargs))
+            new_constraint = each_constraint(*args, **kwargs)
+            constraints.append(new_constraint)
+            self.name_convention.rename_name_in_format(new_constraint, name=name)
 
 
 if __name__ == '__main__':

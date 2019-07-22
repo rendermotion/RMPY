@@ -30,6 +30,7 @@ def as_pymel_nodes(nodes):
 
 
 def as_vector_position(input_data):
+
     if input_data.__class__ == pm.general.MeshVertex:
         return pm.datatypes.Vector(input_data.getPosition(space='world'))
 
@@ -41,7 +42,10 @@ def as_vector_position(input_data):
     elif input_data.__class__ == list:
         return pm.datatypes.Vector(input_data)
 
-    
+    elif input_data.__class__ == pm.datatypes.Vector:
+        return input_data
+
+
 def as_vector_rotation(input_data):
     if input_data.__class__ == pm.general.MeshVertex:
         return pm.datatypes.Vector(input_data.getNormal(space='world'))

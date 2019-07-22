@@ -1,5 +1,6 @@
 from RMPY import nameConvention
 from RMPY.core import config
+reload(nameConvention)
 
 
 class CreatorsBase(object):
@@ -9,7 +10,10 @@ class CreatorsBase(object):
     def point_base(self, *args, **kwargs):
         self.setup_name_convention_node_base(args[0], **kwargs)
 
-    def shape_base(self, *args, **kwargs):
+    def node_base(self, *args, **kwargs):
+        self.setup_name_convention_node_base(args[0], **kwargs)
+
+    def curve_base(self, *args, **kwargs):
         self.setup_name_convention_node_base(args[0], **kwargs)
 
     def setup_name_convention_node_base(self, *args, **kwargs):

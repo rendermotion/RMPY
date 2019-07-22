@@ -1,14 +1,14 @@
 import pymel.core as pm
 from RMPY.core import dataValidators
 from RMPY.core import config
-from RMPY.core import transform
 import maya.api.OpenMaya as om
 from RMPY.creators import group
-from RMPY import nameConvention
 from RMPY.core import transform
 from RMPY.creators import spaceLocator
 from RMPY.creators import creatorsBase
-
+from RMPY.core import main as rm
+reload(transform)
+reload(creatorsBase)
 reload(group)
 reload(spaceLocator)
 
@@ -170,7 +170,6 @@ class Joint(creatorsBase.CreatorsBase):
     def bend_orient(self, *joint_list):
         space_locator = spaceLocator.SpaceLocator()
         for each_joint in joint_list:
-            print 'each_joint'
             parent = each_joint.getParent()
             child = each_joint.getChildren(type='joint')
             if parent:
@@ -215,6 +214,8 @@ class Joint(creatorsBase.CreatorsBase):
 
 
 if __name__ == '__main__':
-    # root = pm.ls('L_bodyWing00_reference_GRP')[0]
+    root = pm.ls('L_index01_rig_pnt')[0]
+    root_finger = pm.ls('L_index01_rig_pnt')[0]
+    finger_points = rm.descendents_list(root_finger)
     joints = Joint()
-    # joints.point_base(*root.getChildren(), orient_type='bend_orient')
+    joints.point_base(*finger_points, orient_type='bend_orient')

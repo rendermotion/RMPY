@@ -20,6 +20,7 @@ class Controls(creatorsBase.CreatorsBase):
         super(Controls, self).point_base(*points, **kwargs)
         object_type = kwargs.pop('type', 'box')
         size = kwargs.pop('size', False)
+        controls_list=[]
         if size:
             if object_type == 'box':
                 kwargs['x_ratio'] = size
@@ -30,11 +31,14 @@ class Controls(creatorsBase.CreatorsBase):
 
         if object_type == 'box':
             for each in points:
-                self.create_box_ctrl(each, **kwargs)
+                controls_list.append(self.create_box_ctrl(each, **kwargs))
 
         elif object_type == 'circular':
             for each in points:
-                self.create_circular_control(each, ** kwargs)
+                controls_list.append(self.create_circular_control(each, ** kwargs))
+        if len(points) == 1:
+            return controls_list[0]
+        return controls_list
 
     @staticmethod
     def create_cube_line(height, length, width, centered=False,
@@ -199,7 +203,6 @@ def combine_shapes(curveArray):
 
 
 if __name__ == '__main__':
-    joint = pm.ls('C_space00_test_jnt')[0]
-    locator = pm.ls('C_space_test_loc')[0]
+    joint = pm.ls('L_joint01_rig_jnt')[0]
     shapeControls = Controls()
-    shapeControls.create_point_base(joint, centered=True)
+    shapeControls.point_base(joint, centered=True)

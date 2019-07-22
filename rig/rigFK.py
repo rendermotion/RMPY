@@ -11,24 +11,21 @@ class RigFKModel(rigBase.BaseModel):
 class RigFK(rigBase.RigBase):
     def __init__(self, *args, **kwargs):
         super(RigFK, self).__init__(*args, **kwargs)
-        self.create.joint.point_base('L_index04_rig_pnt')
 
     def create_point_base(self, *args, **kwargs):
         reset_joints, joint_list = self.create.joint.point_base(*args, **kwargs)
         self.reset_joints.append(reset_joints)
-        self.reset_joints.setParent(self.rig_system.joints)
+        self.reset_joints[0].setParent(self.rig_system.joints)
         self.joints.append(joint_list)
 
         for index, eachJoint in enumerate(joint_list[:-1]):
-            reset_group, control = self.create.control.point_base(eachJoint, **kwargs)
+            reset_group, control = self.create.controls.point_base(eachJoint, **kwargs)
             self.reset_controls.append(reset_group)
             self.controls.append(control)
             if index == 0:
-                reset_group.setParent = self.rig_system.controls
+                reset_group.setParent(self.rig_system.controls)
             else:
                 pm.parent(reset_group, self.controls[index-1])
-
-            pm.parentConstraint(control, eachJoint, mo=False)
-            pm.scaleConstraint(control, eachJoint, mo=False)
+            self.create.constraint.node_base(control, eachJoint, mo=True)
 
 

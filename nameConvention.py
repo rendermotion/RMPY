@@ -77,10 +77,9 @@ class NameConvention(object):
 
         self.validation = {'side': ['L', 'R', 'C'],
                            'objectType': ['jnt', 'sknjnt', 'nub', 'skn', 'UDF', 'shp', 'msh', 'rmsh', 'grp', 'pnc',
-                                          'orc', 'prc', 'pvc', 'ctr', 'pnt', 'ikh', 'ikf', 'rvs', 'mult', 'cnd', 'blt',
-                                          'cui',
-                                          'dbtw', 'cls', 'pma', 'b2a', 'mph', 'ffd', 'bs', 'aim', 'cfme', 'lft', 'psfi',
-                                          'guide']}
+                                          'orc', 'prc', 'scc', 'pvc', 'ctr', 'pnt', 'ikh', 'ikf', 'rvs', 'mult', 'cnd',
+                                          'blt', 'cui', 'dbtw', 'cls', 'clsh', 'pma', 'b2a', 'mph', 'ffd', 'bs', 'aim',
+                                          'cfme', 'lft', 'psfi', 'guide']}
         self.translator = {'objectType': {
             "joint": "jnt",
             "skinjoint": "sknjnt",
@@ -95,6 +94,7 @@ class NameConvention(object):
             "pointConstraint": "pnc",
             "orientConstraint": "orc",
             "parentConstraint": "prc",
+            "scaleConstraint": "scc",
             "poleVectorConstraint": "pvc",
             "control": "ctr",
             "locator": "pnt",
@@ -107,6 +107,7 @@ class NameConvention(object):
             "curveInfo": "cui",
             "distanceBetween": "dbtw",
             "cluster": "cls",
+            'clusterHandle': 'clsh',
             "plusMinusAverage": "pma",
             "blendTwoAttr": "b2a",
             "motionPath": "mph",
@@ -123,6 +124,7 @@ class NameConvention(object):
         self.ShapeDictionary = {
             "nurbsCurve": "shp",
             "mesh": "msh",
+            'clusterHandle': 'clsh',
             "baseLattice": "blt",
             "locator": "loc"
         }

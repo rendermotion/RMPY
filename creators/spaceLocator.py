@@ -1,13 +1,18 @@
+
 import pymel.core as pm
 from RMPY import RMRigTools
 from RMPY.creators import creatorsBase
 from RMPY.core import dataValidators
+# from RMPY.creators import motionPath
+from RMPY.core import config
+from RMPY.core import transform
+import maya.api.OpenMaya as om
+import math
 
-
-class SpaceLocator(creatorsBase.CreatorsBase):
+''' class SpaceLocator(creatorsBase.CreatorsBase):
     def __init__(self, *args):
         super(SpaceLocator, self).__init__(*args)
-        self.name_convention.default_names['system'] = 'reference'
+        self.name_conventionention.default_names['system'] = 'reference'
 
     def create_vertex_base(self, *vertex_list):
         position = []
@@ -18,35 +23,21 @@ class SpaceLocator(creatorsBase.CreatorsBase):
             else:
                 print each.__class__
         new_space_locator = pm.spaceLocator()
-        self.name_convention.rename_name_in_format(new_space_locator)
+        self.name_conventionention.rename_name_in_format(new_space_locator)
         new_space_locator.translate.set(RMRigTools.average(*position))
 
     def point_base(self, *point_list):
         for each in point_list:
             position = dataValidators.as_vector(each)
             new_locator = pm.spaceLocator()
-            self.name_convention.rename_name_in_format(new_locator)
+            self.name_conventionention.rename_name_in_format(new_locator)
             new_locator.translate.set([position[0], position[1], position[2]])
+'''
 
 
-import pymel.core as pm
-from RMPY import RMRigTools
-from RMPY.creators import creatorsBase
-from RMPY.creators import motionPath
-from RMPY.core import dataValidators
-from RMPY.core import config
-from RMPY.core import transform
-import maya.api.OpenMaya as om
-import math
-
-reload(motionPath)
-reload(creatorsBase)
-reload(transform)
-
-
-class Creator(creatorsBase.Creator):
+class SpaceLocator(creatorsBase.CreatorsBase):
     def __init__(self, *args, **kwargs):
-        super(Creator, self).__init__(*args, **kwargs)
+        super(SpaceLocator, self).__init__(*args, **kwargs)
 
     def node_base(self, *transforms_list, **kwargs):
         transforms_list = dataValidators.as_pymel_nodes(transforms_list)
@@ -67,9 +58,9 @@ class Creator(creatorsBase.Creator):
                     transform.align(each, locator, translate=False)
             locator_list.append(locator)
             if name:
-                self.name_conv.rename_name_in_format(locator, name=name)
+                self.name_convention.rename_name_in_format(locator, name=name)
             else:
-                self.name_conv.rename_name_in_format(locator)
+                self.name_convention.rename_name_in_format(locator)
         return locator_list
 
     def aim_base(self, *points, **kwargs):
@@ -78,9 +69,9 @@ class Creator(creatorsBase.Creator):
         transform.aim_point_based(locator, *points, **kwargs)
         # RMRigTools.point_based_aim(locator, *points, **kwargs)
         if name:
-            self.name_conv.rename_name_in_format(locator, name=name)
+            self.name_convention.rename_name_in_format(locator, name=name)
         else:
-            self.name_conv.rename_name_in_format(locator)
+            self.name_convention.rename_name_in_format(locator)
         return locator
 
     def point_base(self, *points, **kwargs):
@@ -99,9 +90,9 @@ class Creator(creatorsBase.Creator):
         new_locator.translate.set(RMRigTools.mid_point(*points_list))
 
         if name:
-            self.name_conv.rename_name_in_format(new_locator, name=name)
+            self.name_convention.rename_name_in_format(new_locator, name=name)
         else:
-            self.name_conv.rename_name_in_format(new_locator)
+            self.name_convention.rename_name_in_format(new_locator)
         return new_locator
 
     def in_between_points(self, obj01, obj02, number_of_points, name="inBetween", align="FirstObj"):
@@ -117,7 +108,7 @@ class Creator(creatorsBase.Creator):
         delta_vector = (distance / (number_of_points + 1)) * result_vector.normal()
         for index in range(0, number_of_points):
             new_locator = pm.spaceLocator(name=name)
-            self.name_conv.rename_name_in_format(str(new_locator), name=name)
+            self.name_convention.rename_name_in_format(str(new_locator), name=name)
             locator_list.append(new_locator)
             obj_position = vector01 + delta_vector * (index + 1)
             pm.xform(locator_list[index], ws=True, t=obj_position)
@@ -137,7 +128,7 @@ class Creator(creatorsBase.Creator):
             VP2 = om.MVector(pm.xform(node_list[1], a=True, ws=True, q=True, rp=True))
             VP3 = om.MVector(pm.xform(node_list[2], a=True, ws=True, q=True, rp=True))
             PoleVector = pm.spaceLocator(name="poleVector")
-            PoleVector = self.name_conv.rename_based_on_base_name(node_list[1], PoleVector, name=PoleVector)
+            PoleVector = self.name_convention.rename_based_on_base_name(node_list[1], PoleVector, name=PoleVector)
             pm.xform(PoleVector, ws=True, t=self.pole_vector_point(VP1, VP2, VP3))
             return PoleVector
         else:
@@ -168,7 +159,7 @@ class Creator(creatorsBase.Creator):
         result = ((Vy + Vx) * Length) + vp2
         return result
 
-    def curve_base(self, *curves, **kwargs):
+    '''def curve_base(self, *curves, **kwargs):
         motion_path = motionPath.Creator()
 
         number_of_points = kwargs.pop('number_of_points', 5)
@@ -186,12 +177,12 @@ class Creator(creatorsBase.Creator):
             pm.delete(motion_path_node)
             main_list_of_points.append(point_list)
         return main_list_of_points
-
+    '''
 
 if __name__ == '__main__':
     # selection = pm.ls('C_line_arm_SHP')
     root = pm.ls(selection=True)
-    space_locator = Creator()
+    space_locator = SpaceLocator()
     space_locator.in_between_points(root[0], root[1], 10)
     # selection = pm.ls(selection=True)
     # space_locator.curve_base(*selection, name='arm')
