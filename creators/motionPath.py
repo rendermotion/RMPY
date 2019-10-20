@@ -5,13 +5,13 @@ import pymel.core as pm
 reload(creatorsBase)
 
 
-class Creator(creatorsBase.Creator):
+class MotionPath(creatorsBase.CreatorsBase):
     def __init__(self, *args, **kwargs):
-        super(Creator, self).__init__(*args, **kwargs)
+        super(MotionPath, self).__init__(*args, **kwargs)
         self.curve = None
 
     def node_base(self, *nodes, **kwargs):
-        super(Creator, self).node_base(*nodes, **kwargs)
+        super(MotionPath, self).node_base(*nodes, **kwargs)
         """
         creates a motion path on the provided nodes and attaches them to a curve
         you can control the up vector, and make it one object, or a list of objects one for each Node List

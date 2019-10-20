@@ -14,6 +14,7 @@ class RMFeetRig(object):
             self.NameConv = nameConvention.NameConvention()
         else:
             self.NameConv = NameConv
+
         self.rig_tools = RMRigTools.RMRigTools()
         self.StandardFeetPointsDic = None
 

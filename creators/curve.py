@@ -23,12 +23,14 @@ class Curve(creatorsBase.CreatorsBase):
             else:
                 return None
         else:
-            if spans >= 4:
+            if spans >= 1:
                 curve = pm.rebuildCurve(curve, rebuildType=rebuild_type, spans=spans, keepRange=keep_range,
                                         **kwargs)[0]
                 return curve
             else:
                 return None
+
+        return curve
 
     def on_surface_point_base(self, *points, **kwargs):
         surface = kwargs.pop('surface', None)

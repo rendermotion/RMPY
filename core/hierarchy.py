@@ -24,5 +24,4 @@ def descendents_list(transform_node):
 
 
 if __name__ == '__main__':
-
     insert_in_hierarchy('R_arm00_reference_GRP', 'null1', insert_type='children')

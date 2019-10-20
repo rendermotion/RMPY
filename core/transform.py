@@ -4,6 +4,7 @@ from RMPY.core import config
 import maya.api.OpenMaya as om
 reload(dataValidators)
 
+
 def align(*args, **kwargs):
     """
     General align function\n 
@@ -97,7 +98,7 @@ def point_distance(point01, point02):
 def average(*args):
     result = pm.datatypes.Vector(0, 0, 0)
     for each in args:
-        result += dataValidators.as_vector(each)
+        result += dataValidators.as_vector_position(each)
     result = result / len(args)
     return result
 
@@ -220,6 +221,11 @@ def aim_point_based(*args, **kwargs):
 
 
 def equidistant(*args):
+    """
+    Distributes any transform nodes between the position of the first and the last node provided.
+     :arg: only works with transform nodes, each one of the objects that will be distribute they should not be provided
+     as a list,  just one after the other.
+     """
     init_position = dataValidators.as_vector_position(args[0])
     end_position = dataValidators.as_vector_position(args[-1])
     direction_vector = end_position - init_position

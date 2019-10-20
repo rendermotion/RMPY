@@ -8,6 +8,7 @@ from RMPY import RMRigShapeControls
 from RMPY.AutoRig import RMSpaceSwitch, rigStructure
 from RMPY.rig import rigBase
 import RMPY.core.main as rm
+from RMPY.rig import rigLineBetweenPoints
 
 reload(rigBase)
 reload(rigStructure)
@@ -36,6 +37,8 @@ class IKRig(rigBase.RigBase):
         self._model = IKRigModel()
         self.rig_space_switch = RMSpaceSwitch.RMSpaceSwitch()
         self.guides = None
+        self.joints = None
+
     @property
     def model(self):
         return self._model
@@ -142,7 +145,7 @@ class IKRig(rigBase.RigBase):
         self.structure()
 
     def structure(self):
-        self.root_joints.setParent(self.rig_structure.joints)
+        self.root_joints.setParent(self.rig_system.joints)
         self.root_controls = pm.group(empty=True, name='ikControls')
         print self.root_controls
         self.name_convention.rename_name_in_format(self.root_controls, useName=True)
@@ -158,8 +161,8 @@ class IKRig(rigBase.RigBase):
 
         for each_control in self.reset_controls:
             self.reset_controls[each_control].setParent(self.root_controls)
-        self.root_controls.setParent(self.rig_structure.controls)
-        self.root_kinematics.setParent(self.rig_structure.kinematics)
+        self.root_controls.setParent(self.rig_system.controls)
+        self.root_kinematics.setParent(self.rig_system.kinematics)
 
     def IKCreate(self, ik_start=0, ik_end=None):
         if not ik_end:
@@ -173,7 +176,8 @@ class IKRig(rigBase.RigBase):
             z_ratio=.3,
             parent_base_size=True,
             name="%sIK" % self.name_convention.get_a_short_name(self.joints[ik_end]))
-        # self.ikControl = self.name_convention.RMRenameBasedOnBaseName(self.joints[len(self.joints)-1], self.ikControl, NewName = self.name_convention.RMGetAShortName(self.joints[len(self.joints)-1]) + "IK")
+        # self.ikControl = self.name_convention.RMRenameBasedOnBaseName(self.joints[len(self.joints)-1], self.ikControl,
+        # NewName = self.name_convention.RMGetAShortName(self.joints[len(self.joints)-1]) + "IK")
         RMRigTools.RMLockAndHideAttributes(self.controls['ikHandle'], "111111000h")
 
         self.ik_handle, effector = pm.ikHandle(sj=self.joints[ik_start],
@@ -198,62 +202,33 @@ class IKRig(rigBase.RigBase):
         StartJoint = pm.ikHandle(ik_handle, q=True, startJoint=True)
         return RMRigTools.FindInHieararchy(StartJoint, EndJoint)
 
-    def get_polevector_from_reference_nodes(self, node_list):
-        """
-        :param node_list: list of 3 nodes where the pole vector will be calculated.  
-        :return: a space locator that it is located where the pole vector should be.
-        """
-        VP1 = om.MVector(pm.xform(node_list[0], a=True, ws=True, q=True, rp=True))
-        VP2 = om.MVector(pm.xform(node_list[1], a=True, ws=True, q=True, rp=True))
-        VP3 = om.MVector(pm.xform(node_list[2], a=True, ws=True, q=True, rp=True))
-        PoleVector = pm.spaceLocator(name="poleVector")
-        PoleVector = self.name_convention.rename_based_on_base_name(node_list[1], PoleVector, name=PoleVector)
-        pm.xform(PoleVector, ws=True, t=self.pole_vector(VP1, VP2, VP3))
-        return PoleVector
-
     def create_pole_vector(self, ik_handle=None):
         if not ik_handle:
             ik_handle = self.ik_handle
+
         if not self.joints:
             self.joints = self.identify_joints(ik_handle)
-        locator = self.get_polevector_from_reference_nodes(self.joints)
 
-        distancia = RMRigTools.RMPointDistance(locator, self.joints[1])
+        locator = self.create.space_locator.pole_vector(*self.joints)
+        distance = self.rm.point_distance(locator, self.joints[1])
 
         self.reset_controls['poleVector'], self.controls['poleVector'] = \
             self.create.controls.point_base(locator,
                                             type='box',
-                                            size=distancia / 5,
+                                            size=distance / 5,
                                             name=self.name_convention.get_a_short_name(
                                                 self.joints[
                                                     1]) + "PoleVectorIK",
                                             centered=True)
-        data_group, curve = self.rig_tools.RMCreateLineBetwenPoints(self.controls['poleVector'], self.joints[1])
-        pm.parent(curve, self.controls['poleVector'])
-        pm.parentConstraint(self.rig_structure.world, curve)
+        line_between_points = rigLineBetweenPoints.LineBetweenPoints(rig_system=self.rig_system)
+        line_between_points.create_point_base(self.controls['poleVector'], self.joints[1])
+        pm.parent(line_between_points.curve, self.rig_system.display)
 
         pole_vector_cnstraint = pm.poleVectorConstraint(self.controls['poleVector'], ik_handle, name="PoleVector")
         self.name_convention.rename_based_on_base_name(self.controls['poleVector'], pole_vector_cnstraint,
                                                        name=pole_vector_cnstraint)
-        self.kinematics.append(data_group)
+
         pm.delete(locator)
-
-    def pole_vector(self, VP1, VP2, VP3):
-        V1 = VP2 - VP1
-        V2 = VP3 - VP2
-        Angle = math.radians((math.degrees(V1.angle(V2)) + 180) / 2 - 90)
-        zAxis = (V1 ^ V2).normal()
-        yAxis = (V2 ^ zAxis).normal()
-        xAxis = V2.normal()
-
-        Y1 = math.cos(Angle)
-        X1 = -math.sin(Angle)
-        Vy = yAxis * Y1
-        Vx = xAxis * X1
-
-        Length = (V1.length() + V2.length()) / 2
-        result = ((Vy + Vx) * Length) + VP2
-        return result
 
     def make_stretchy(self, ik_handle=None):
         if not ik_handle:

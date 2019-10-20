@@ -79,7 +79,7 @@ class NameConvention(object):
                            'objectType': ['jnt', 'sknjnt', 'nub', 'skn', 'UDF', 'shp', 'msh', 'rmsh', 'grp', 'pnc',
                                           'orc', 'prc', 'scc', 'pvc', 'ctr', 'pnt', 'ikh', 'ikf', 'rvs', 'mult', 'cnd',
                                           'blt', 'cui', 'dbtw', 'cls', 'clsh', 'pma', 'b2a', 'mph', 'ffd', 'bs', 'aim',
-                                          'cfme', 'lft', 'psfi', 'guide']}
+                                          'cfme', 'lft', 'psfi', 'guide', 'unc']}
         self.translator = {'objectType': {
             "joint": "jnt",
             "skinjoint": "sknjnt",
@@ -106,6 +106,7 @@ class NameConvention(object):
             "baseLattice": "blt",
             "curveInfo": "cui",
             "distanceBetween": "dbtw",
+            'unitConversion': 'unc',
             "cluster": "cls",
             'clusterHandle': 'clsh',
             "plusMinusAverage": "pma",

@@ -32,10 +32,10 @@ class SystemStructure(object):
     """
     def __init__(self, *args):
         self._model = RigStructureModel()
-        self.name_conv = nameConvention.NameConvention()
+        self.name_convention = nameConvention.NameConvention()
         if args:
-            self.name_conv.default_names['system'] = self.name_conv.get_a_short_name(args[0])
-            self.name_conv.default_names['side'] = self.name_conv.get_from_name(args[0], 'side')
+            self.name_convention.default_names['system'] = self.name_convention.get_a_short_name(args[0])
+            self.name_convention.default_names['side'] = self.name_convention.get_from_name(args[0], 'side')
 
     def create(self):
         """
@@ -54,9 +54,9 @@ class SystemStructure(object):
         :return: none
         """
         self._model.kinematics = pm.group(empty=True, name='kinematics')
-        self.name_conv.rename_name_in_format(self._model.kinematics, useName=True)
+        self.name_convention.rename_name_in_format(self._model.kinematics, useName=True)
         self.root.visibility >> self._model.kinematics.visibility
-        self.kinematics.setParent(self._model.root)
+        self.kinematics.setParent(self.root)
 
     def _create_joints(self):
         """
@@ -65,9 +65,9 @@ class SystemStructure(object):
         """
         self._model.joints = pm.group(empty=True, name='joints')
         self.joints.setParent(self.root)
-        self.name_conv.rename_name_in_format(self._model.joints, name='joints')
+        self.name_convention.rename_name_in_format(self._model.joints, name='joints')
         self.root.visibility >> self._model.joints.visibility
-        self.joints.setParent(self._model.root)
+        self.joints.setParent(self.root)
 
     def _create_controls(self):
         """
@@ -75,18 +75,18 @@ class SystemStructure(object):
         :return:
         """
         self._model.controls = pm.group(empty=True, name='controls')
-        self.name_conv.rename_name_in_format(self._model.controls, useName=True)
-        self._model.controls.setParent(self._model.root)
+        self.name_convention.rename_name_in_format(self._model.controls, useName=True)
+        self._model.controls.setParent(self.root)
 
     def _create_display(self):
 
         self._model.display = pm.group(empty=True, name='display')
-        self.name_conv.rename_name_in_format(self._model.display, useName=True)
+        self.name_convention.rename_name_in_format(self._model.display, useName=True)
 
         self.display.overrideEnabled.set(True)
         self.display.overrideDisplayType.set(1)
 
-        self.display.setParent(self._model.root)
+        self.display.setParent(self.root)
 
     def _create_root(self):
         """
@@ -94,10 +94,10 @@ class SystemStructure(object):
         :return: None
         """
         self._model.root = pm.group(empty=True, name='system')
-        self.name_conv.rename_name_in_format(self._model.root, useName=True)
+        self.name_convention.rename_name_in_format(self._model.root, useName=True)
 
         self._model.settings = pm.spaceLocator(name='settings')
-        self.name_conv.rename_name_in_format(self._model.settings, useName=True)
+        self.name_convention.rename_name_in_format(self._model.settings, useName=True)
         self._model.settings.setParent(self._model.root)
         pm.addAttr(self._model.settings, ln='worldScale', at='double', k=True)
         self._model.settings.worldScale.set(1)

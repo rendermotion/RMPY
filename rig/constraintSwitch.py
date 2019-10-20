@@ -5,16 +5,16 @@ reload(rigBase)
 
 class ConstraintSwitchModel(rigBase.BaseModel):
     def __init__(self):
+        super(ConstraintSwitchModel, self).__init__()
         self.outputs = []
         self.list_a = []
         self.list_b = []
         self.constraints = []
-        self.controls = None
         self.attribute_output_a = None
         self.attribute_output_b = None
 
 
-class ConstraintSwitch(rigBase.BaseRig):
+class ConstraintSwitch(rigBase.RigBase):
     def __init__(self, *args, **kwargs):
         super(ConstraintSwitch, self).__init__(*args, **kwargs)
         self._model = ConstraintSwitchModel()
@@ -92,7 +92,7 @@ class ConstraintSwitch(rigBase.BaseRig):
         constraint_type = kwargs.pop('constraint_type', 'parent')
         output_type = kwargs.pop('output_type', 'joint')
         root_group = pm.group(empty=True)
-        self.name_conv.rename_name_in_format(root_group, name='intermediate')
+        self.name_convention.rename_name_in_format(root_group, name='intermediate')
         if output_type == 'group' or output_type == 'locator':
             root_group.setParent(self.rig_system.kinematics)
         else:
@@ -101,13 +101,13 @@ class ConstraintSwitch(rigBase.BaseRig):
             for index, (constraint_a, constraint_b) in enumerate(zip(list_a, list_b)):
                 if not destination:
                     if output_type == 'group':
-                        output = self.rig_create.group.point_base(constraint_a, name='intermediate')
+                        output = self.create.group.point_base(constraint_a, name='intermediate')
                         output.setParent(root_group)
                     elif output_type == 'locator':
-                        output = self.rig_create.space_locator.point_base(constraint_a, name='intermediate')
+                        output = self.create.space_locator.point_base(constraint_a, name='intermediate')
                         output.setParent(root_group)
                     else:
-                        reset, output = self.rig_create.joint.point_base(constraint_a, name='intermediate')
+                        reset, output = self.create.joint.point_base(constraint_a, name='intermediate')
                         reset.setParent(root_group)
                 else:
                     output = destination[index]
@@ -129,8 +129,8 @@ class ConstraintSwitch(rigBase.BaseRig):
 
         reverse = pm.shadingNode('reverse', asUtility=True, name="reverse")
         multiply = pm.createNode('unitConversion', name="multiplier")
-        self.name_conv.rename_name_in_format(reverse)
-        self.name_conv.rename_name_in_format(multiply)
+        self.name_convention.rename_name_in_format(reverse)
+        self.name_convention.rename_name_in_format(multiply)
 
         pm.connectAttr('{}.{}'.format(self.controls[0], attribute_name), "{}.input".format(multiply))
         pm.setAttr("{}.conversionFactor".format(multiply), 0.1)

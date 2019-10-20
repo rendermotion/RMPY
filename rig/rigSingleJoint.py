@@ -4,6 +4,7 @@ from RMPY import RMRigTools
 from RMPY.rig import rigBase
 from RMPY.rig import systemStructure
 from RMPY import RMRigShapeControls
+reload(rigBase)
 
 
 class ModelSingleJoint(rigBase.BaseModel):
@@ -14,28 +15,30 @@ class ModelSingleJoint(rigBase.BaseModel):
 class RigSingleJoint(rigBase.RigBase):
     def __init__(self, *args, **kwargs):
         super(RigSingleJoint, self).__init__(*args, ** kwargs)
-        self.system = None
-
+        self._model = ModelSingleJoint()
         self.control_shapes = RMRigShapeControls.RMRigShapeControls()
 
-    def create_point_base(self, *locatorList, **kwargs):
+    def create_point_base(self, *locator_list, **kwargs):
+        super(RigSingleJoint, self).create_point_base(*locator_list, **kwargs)
         static = kwargs.pop('static', False)
         scaleXZ = kwargs.pop('scaleXZ', False)
-        self.system = systemStructure.SystemStructure(locatorList[0])
-        for each in locatorList:
+
+        for each in locator_list:
             reset_joint = pm.group(empty=True, name='resteJoint')
-            RMRigTools.RMAlign(each, reset_joint, 3)
+            self.rm.align(each, reset_joint)
             joint = pm.joint(name='joint')
-            RMRigTools.RMAlign(joint, reset_joint, 3)
+            self.rm.align(joint, reset_joint)
 
             self.joints.append(joint)
-            self.system.name_conv.rename_name_in_format(reset_joint)
-            self.system.name_conv.rename_name_in_format(joint)
+            self.name_convention.rename_name_in_format(reset_joint)
+            self.name_convention.rename_name_in_format(joint)
 
             joint.setParent(reset_joint)
             reset_control, control = self.control_shapes.RMCreateBoxCtrl(joint, centered=True)
-            reset_control.setParent(self.system.controls)
-            reset_joint.setParent(self.system.joints)
+            self.reset_controls.append(reset_control)
+            self.controls.append(control)
+            reset_control.setParent(self.rig_system.controls)
+            reset_joint.setParent(self.rig_system.joints)
             if static:
                 control.translate >> joint.translate
                 control.rotate >> joint.rotate
@@ -53,8 +56,8 @@ class RigSingleJoint(rigBase.RigBase):
 
 if __name__ == '__main__':
     selection = pm.ls(selection=True)
-    rigjoint =RigSingleJoint()
-    rigjoint.create_locator_base(*selection, static=True, scaleXZ=True)
+    rig_joint = RigSingleJoint()
+    rig_joint.create_point_base(*selection, static=True, scaleXZ=True)
 
 
 

@@ -8,10 +8,6 @@ from RMPY.creators import controls as controlsCreator
 from RMPY.creators import constraint as constraintCreator
 from RMPY.creators import cluster as clusterCreator
 
-reload(clusterCreator)
-reload(jointCreator)
-reload(controlsCreator)
-reload(constraintCreator)
 constraint = constraintCreator.Constraint()
 controls = controlsCreator.Controls()
 cluster = clusterCreator.Cluster()

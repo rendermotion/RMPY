@@ -100,7 +100,7 @@ class RMSpine(object):
 
         RMRigTools.RMAlign(joints[len(joints)-1],chestJoint,3)
         #pm.parent(chestJoint, joints[len(joints)-1])
-        pm.makeIdentity(chestJoint, apply = True , r = False, t = True, s = True, n = 0)
+        pm.makeIdentity(chestJoint, apply = True , r = False, t = True, s = True, n=0)
         pm.xform(chestJoint,t=[SpineLength/4,0,0],os=True, relative=True )
         return rootSpine, joints, chestJoint
 
@@ -118,12 +118,12 @@ class RMSpine(object):
 
         Clusters = RMRigTools.RMCreateClustersOnCurve(self.spineCurve)
         ClustersGroup = RMRigTools.RMCreateGroupOnObj(Clusters[0])
-        RMRigTools.RMParentArray(ClustersGroup,Clusters[1:])
+        RMRigTools.RMParentArray(ClustersGroup, Clusters[1:])
         self.kinematics.append(ClustersGroup)
         self.kinematics.append(self.spineIK)
 
         #ResetCOG, COG = RMRigShapeControls.create_box_ctrl(self.spineJoints[0],Yratio=3,Zratio=3)
-        ResetCOG, COG = RMRigShapeControls.RMImportMoveControl(self.spineJoints[0], scale = RMRigTools.RMLenghtOfBone(self.spineJoints[0]) * 7)
+        ResetCOG, COG = RMRigShapeControls.RMImportMoveControl(self.spineJoints[0], scale=RMRigTools.RMLenghtOfBone(self.spineJoints[0]) * 7)
 
         self.NameConv.rename_set_from_name(COG, "COG", "name")
         
@@ -134,7 +134,7 @@ class RMSpine(object):
 
         SpineLength = RMRigTools.RMPointDistance(COG,Chest)
 
-        ResetChestRotation, ChestRotation = RMRigShapeControls.RMCircularControl ( Chest  , radius = SpineLength ,name = "ChestRotation" )
+        ResetChestRotation, ChestRotation = RMRigShapeControls.RMCircularControl (Chest, radius = SpineLength ,name = "ChestRotation" )
 
         pm.parent(ResetChestRotation, Chest)
 
@@ -148,7 +148,7 @@ class RMSpine(object):
 
 
         pm.setAttr(self.spineIK + ".dTwistControlEnable",1)
-        pm.setAttr(self.spineIK + ".dWorldUpType",4)
+        pm.setAttr(self.spineIK + ".dWorldUpType", 4)
         #pm.setAttr(self.spineIK + ".dForwardAxis",0)#Valid Option only in Maya 2016
         pm.setAttr(self.spineIK + ".dWorldUpAxis",0)
         pm.connectAttr(COG + ".worldMatrix[0]", self.spineIK + ".dWorldUpMatrix")
@@ -166,7 +166,7 @@ class RMSpine(object):
 
         self.secondaryControls
         for eachPosition in locators:
-            ControlGroup , NewControl = RMRigShapeControls.RMImportMoveControl( eachPosition, scale = SpineLength)
+            ControlGroup , NewControl = RMRigShapeControls.RMImportMoveControl(eachPosition, scale=SpineLength)
             self.secondaryControls.append(NewControl)
             ChestGroups.append(ControlGroup)
             ChestControls.append(NewControl)
@@ -186,8 +186,8 @@ class RMSpine(object):
         pm.xform(ChestChildGroup, t = [-SpineLength/2, 0 ,0], os = True,relative = True)
         spineEnds = [COG, ChestChildGroup]
 
-        self.RMRedistributeConstraint( AllSpine, Clusters, 3, ConstraintType = "parent")
-        self.RMRedistributeConstraint( spineEnds, ChestGroups, 3, ConstraintType = "parent")
+        self.RMRedistributeConstraint(AllSpine, Clusters, 3, ConstraintType="parent")
+        self.RMRedistributeConstraint(spineEnds, ChestGroups, 3, ConstraintType="parent")
 
 
         DeformedShape, OrigShape = pm.listRelatives(self.spineCurve, children = True,shapes=True)
@@ -248,8 +248,8 @@ class RMSpine(object):
             pm.setAttr(SpineInversScaleRatio + ".input2X", -1)
             pm.setAttr(SpineInversScaleRatio + ".operation", 3)
 
-            pm.connectAttr( SpineInversScaleRatio + ".outputX", eachJoint + ".scaleY")
-            pm.connectAttr( SpineInversScaleRatio + ".outputX", eachJoint + ".scaleZ")
+            pm.connectAttr(SpineInversScaleRatio + ".outputX", eachJoint + ".scaleY")
+            pm.connectAttr(SpineInversScaleRatio + ".outputX", eachJoint + ".scaleZ")
             index += 1
 
 

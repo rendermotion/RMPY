@@ -75,8 +75,16 @@ class Controls(creatorsBase.CreatorsBase):
         curve = pm.curve(d=1, p=point_array, name=default_name)
         return curve
 
-    def create_box_ctrl(self, Obj, x_ratio=1, y_ratio=1, z_ratio=1,
-                        parent_base_size=False, custom_size=0, name="", centered=False):
+    def create_box_ctrl(self, Obj, **kwargs):
+
+        x_ratio = kwargs.pop('x_ratio', 1)
+        y_ratio = kwargs.pop('y_ratio', 1)
+        z_ratio = kwargs.pop('z_ratio', 1)
+        parent_base_size = kwargs.pop('parent_base_size', False)
+        custom_size = kwargs.pop('custom_size', 0)
+        name = kwargs.pop('name', '')
+        centered = kwargs.pop('centered', False)
+
 
         Obj = dataValidators.as_pymel_nodes(Obj)
         if name == "":

@@ -4,10 +4,8 @@ from RMPY.creators import creators
 from RMPY.core import config
 import pymel.core as pm
 from RMPY.core import main as rm
+
 reload(systemStructure)
-reload(creators)
-
-
 class BaseModel(object):
     def __init__(self, *args, **kwargs):
         self.joints = []
@@ -23,7 +21,7 @@ class RigBase(object):
     """Base rig is the base class to be used on any rig. it contains an instance of the main classes that 
     will be used when creating a rig. 
     The members that contains the Base rig are the following.
-    name_conv, an instance of the nameConvention class used to rename all elements on the rig.
+    name_convention, an instance of the nameConvention class used to rename all elements on the rig.
     rig_system a class that contains the maya hierarchical structure used as base for all the systems
     rig_creators the functions used to create all kind of nodes on maya trough an interface that it is 
     easy to use and standard. 
@@ -32,9 +30,9 @@ class RigBase(object):
     def __init__(self, *args, **kwargs):
         """
         initializes all the variables on the rig
-        by default looks for inherited properties, like name_convention, or system structure, that can be 
+        by default looks for inherited properties, like name_conventionention, or system structure, that can be
         passed as kwargs.
-        :name_conv:
+        :name_convention:
         :rig_system: 
         """
 
@@ -94,14 +92,16 @@ class RigBase(object):
         base function for point creation, it validates the args values and turnthem in to points.
         it creates two arrays one of objects, one of points, and one of rotation vectors
         """
-        self.setup_name_convention_node_base(args[0])
+        self.setup_name_convention_node_base(*args, **kwargs)
         
     def node_base(self, *args, **kwargs):
         """
         base function for node creation, it gets as input any kind of nodes and returns them as a 
         """
+        self.setup_name_convention_node_base(*args, **kwargs)
+
     def create_shape_base(self, *args, **kwargs):
-        self.setup_name_convention_node_base(args[0], **kwargs)
+        self.setup_name_convention_node_base(*args, **kwargs)
 
     def setup_name_convention_node_base(self, *args, **kwargs):
         pop_name = kwargs.pop('name', None)
