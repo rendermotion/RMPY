@@ -29,7 +29,6 @@ from RMPY.AutoRig import RMRigFK
 print 'executed'
 reload(RMRigFK)
 
-
 def getMayaWindow():
     ptr = mui.MQtUtil.mainWindow()
     return wrapInstance(long(ptr), QMainWindow)

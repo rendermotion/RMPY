@@ -1,13 +1,11 @@
 import pymel.core as pm
-from RMPY import RMRigTools
 from RMPY.creators import creatorsBase
 from RMPY.core import dataValidators
 from RMPY.creators import motionPath
-from RMPY.core import config
 from RMPY.core import transform
 import maya.api.OpenMaya as om
 import math
-reload(motionPath)
+
 
 ''' class SpaceLocator(creatorsBase.CreatorsBase):
     def __init__(self, *args):

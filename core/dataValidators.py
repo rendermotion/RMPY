@@ -23,8 +23,6 @@ def as_pymel_nodes(nodes):
             return return_list[0]
         except:
             raise (AttributeError, 'object/s do not exist::%s' % nodes)
-
-
     else:
         return return_list
 

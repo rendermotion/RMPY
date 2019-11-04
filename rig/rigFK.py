@@ -1,6 +1,5 @@
 import pymel.core as pm
 from RMPY.rig import rigBase
-reload(rigBase)
 
 
 class RigFKModel(rigBase.BaseModel):
@@ -33,4 +32,7 @@ class RigFK(rigBase.RigBase):
             self.create.constraint.node_base(control, eachJoint, mo=True)
 
 
+if __name__ == '__main__':
+    rig_fk = RigFK()
+    rig_fk.create_point_base(u'R_leg01_reference_pnt', u'R_Knee01_reference_pnt', u'R_ankle01_reference_pnt')
 

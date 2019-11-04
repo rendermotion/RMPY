@@ -1,17 +1,9 @@
 import pymel.core as pm
-import maya.api.OpenMaya as om
-
-import math
-from RMPY import nameConvention
 from RMPY import RMRigTools
-from RMPY import RMRigShapeControls
-from RMPY.AutoRig import RMSpaceSwitch, rigStructure
+from RMPY.AutoRig import RMSpaceSwitch
 from RMPY.rig import rigBase
 import RMPY.core.main as rm
 from RMPY.rig import rigLineBetweenPoints
-
-reload(rigBase)
-reload(rigStructure)
 
 
 class IKRigModel(rigBase.BaseModel):
@@ -20,9 +12,11 @@ class IKRigModel(rigBase.BaseModel):
         self.name = ''
         self.guides = []
         self.ik_handle = None
+        self.pole_vector_line = None
+        self.line_between_points_rig = None
 
-        self.controls = {'poleVector': None, 'ikHandle': None}
-        self.reset_controls = {'poleVector': None, 'ikHandle': None}
+        self.controls_dict = {'poleVector': None, 'ikHandle': None}
+        self.reset_controls_dict = {'poleVector': None, 'ikHandle': None}
 
         self.root_kinematics = None
         self.root_joints = None
@@ -38,26 +32,27 @@ class IKRig(rigBase.RigBase):
         self.rig_space_switch = RMSpaceSwitch.RMSpaceSwitch()
         self.guides = None
         self.joints = None
+        self.line_between_points_rig = None
+
+    @property
+    def controls_dict(self):
+        return self._model.controls_dict
+
+    @property
+    def reset_controls_dict(self):
+        return self._model.reset_controls_dict
+
+    @property
+    def line_between_points_rig(self):
+        return self._model.line_between_points_rig
+
+    @line_between_points_rig.setter
+    def line_between_points_rig(self, value):
+        self._model.line_between_points_rig = value
 
     @property
     def model(self):
         return self._model
-
-    @property
-    def joints(self):
-        return self._model.joints
-
-    @joints.setter
-    def joints(self, joint_list):
-        self._model.joints = joint_list
-
-    @property
-    def controls(self):
-        return self._model.controls
-
-    @controls.setter
-    def controls(self, controls_list):
-        self._model.controls = controls_list
 
     @property
     def ik_handle(self):
@@ -94,14 +89,6 @@ class IKRig(rigBase.RigBase):
     @root_joints.setter
     def root_joints(self,maya_node):
         self._model.root_joints = maya_node
-
-    @property
-    def reset_controls(self):
-        return self._model.reset_controls
-
-    @reset_controls.setter
-    def reset_controls(self, scene_node):
-        self._model.reset_controls = scene_node
 
     @property
     def root_controls(self):
@@ -154,13 +141,13 @@ class IKRig(rigBase.RigBase):
         print self.root_kinematics
         self.name_convention.rename_name_in_format(self.root_kinematics, useName=True)
 
-        #self.ik_handle.setParent(self.root_kinematics)
+        # self.ik_handle.setParent(self.root_kinematics)
 
         for each_kinematics in self.kinematics:
             each_kinematics.setParent(self.root_kinematics)
 
-        for each_control in self.reset_controls:
-            self.reset_controls[each_control].setParent(self.root_controls)
+        for each_control in self.reset_controls_dict:
+            self.reset_controls_dict[each_control].setParent(self.root_controls)
         self.root_controls.setParent(self.rig_system.controls)
         self.root_kinematics.setParent(self.rig_system.kinematics)
 
@@ -168,7 +155,7 @@ class IKRig(rigBase.RigBase):
         if not ik_end:
             ik_end = len(self.joints)-1
 
-        self.reset_controls['ikHandle'], self.controls['ikHandle'] = self.create.controls.point_base(
+        reset_ikHandle, control_ikHandle = self.create.controls.point_base(
             self.joints[ik_end],
             type='box',
             x_ratio=.3,
@@ -176,9 +163,14 @@ class IKRig(rigBase.RigBase):
             z_ratio=.3,
             parent_base_size=True,
             name="%sIK" % self.name_convention.get_a_short_name(self.joints[ik_end]))
+
+        self.reset_controls.append(reset_ikHandle)
+        self.controls.append(control_ikHandle)
+        self.reset_controls_dict['ikHandle'] = reset_ikHandle
+        self.controls_dict['ikHandle'] = control_ikHandle
         # self.ikControl = self.name_convention.RMRenameBasedOnBaseName(self.joints[len(self.joints)-1], self.ikControl,
         # NewName = self.name_convention.RMGetAShortName(self.joints[len(self.joints)-1]) + "IK")
-        RMRigTools.RMLockAndHideAttributes(self.controls['ikHandle'], "111111000h")
+        RMRigTools.RMLockAndHideAttributes(self.controls_dict['ikHandle'], "111111000h")
 
         self.ik_handle, effector = pm.ikHandle(sj=self.joints[ik_start],
                                                ee=self.joints[ik_end],
@@ -186,13 +178,12 @@ class IKRig(rigBase.RigBase):
         self.name_convention.rename_based_on_base_name(self.joints[ik_end], self.ik_handle)
         self.name_convention.rename_based_on_base_name(self.joints[ik_end], effector)
 
-        pm.orientConstraint(self.controls['ikHandle'], self.joints[ik_end])
+        pm.orientConstraint(self.controls_dict['ikHandle'], self.joints[ik_end])
 
-        point_constraint = pm.pointConstraint(self.controls['ikHandle'], self.ik_handle, name="LimbCntrlHandleConstraint")
+        point_constraint = pm.pointConstraint(self.controls_dict['ikHandle'], self.ik_handle, name="LimbCntrlHandleConstraint")
         self.name_convention.rename_based_on_base_name(self.joints[ik_end], point_constraint)
         self.kinematics.append(self.ik_handle)
-
-        RMRigTools.RMChangeRotateOrder(self.controls['ikHandle'], 'yzx')
+        RMRigTools.RMChangeRotateOrder(self.controls_dict['ikHandle'], 'yzx')
 
     def identify_joints(self, ik_handle):
         endEffector = pm.ikHandle(ik_handle, q=True, endEffector=True)
@@ -212,7 +203,7 @@ class IKRig(rigBase.RigBase):
         locator = self.create.space_locator.pole_vector(*self.joints)
         distance = self.rm.point_distance(locator, self.joints[1])
 
-        self.reset_controls['poleVector'], self.controls['poleVector'] = \
+        reset_controls_pole_vector, controls_pole_vector = \
             self.create.controls.point_base(locator,
                                             type='box',
                                             size=distance / 5,
@@ -220,12 +211,22 @@ class IKRig(rigBase.RigBase):
                                                 self.joints[
                                                     1]) + "PoleVectorIK",
                                             centered=True)
-        line_between_points = rigLineBetweenPoints.LineBetweenPoints(rig_system=self.rig_system)
-        line_between_points.create_point_base(self.controls['poleVector'], self.joints[1])
-        pm.parent(line_between_points.curve, self.rig_system.display)
+        self.reset_controls.append(reset_controls_pole_vector)
+        self.controls.append(controls_pole_vector)
 
-        pole_vector_cnstraint = pm.poleVectorConstraint(self.controls['poleVector'], ik_handle, name="PoleVector")
-        self.name_convention.rename_based_on_base_name(self.controls['poleVector'], pole_vector_cnstraint,
+        self.reset_controls_dict['poleVector'] = reset_controls_pole_vector
+        self.controls_dict['poleVector'] = controls_pole_vector
+
+        self.line_between_points_rig = rigLineBetweenPoints.LineBetweenPoints(rig_system=self.rig_system)
+        self.line_between_points_rig.create_point_base(self.controls_dict['poleVector'], self.joints[1])
+
+        self.controls_dict['poleVector'].visibility >> self.line_between_points_rig.curve.visibility
+        self.controls_dict['poleVector'].lodVisibility >> self.line_between_points_rig.curve.lodVisibility
+
+        pm.parent(self.line_between_points_rig.curve, self.rig_system.display)
+
+        pole_vector_cnstraint = pm.poleVectorConstraint(self.controls_dict['poleVector'], ik_handle, name="PoleVector")
+        self.name_convention.rename_based_on_base_name(self.controls_dict['poleVector'], pole_vector_cnstraint,
                                                        name=pole_vector_cnstraint)
 
         pm.delete(locator)
@@ -276,12 +277,12 @@ class IKRig(rigBase.RigBase):
         pm.setAttr(multiplyDivide + ".operation", 2)
 
         # self.SPSW.AddEnumParameters(["off","on"], self.ikControl, Name = "StretchyIK")
-        self.rig_space_switch.AddNumericParameter(self.controls['ikHandle'], Name="StretchyIK")
+        self.rig_space_switch.AddNumericParameter(self.controls_dict['ikHandle'], Name="StretchyIK")
         IKSwitchDivide = pm.shadingNode("multiplyDivide", asUtility=True,
                                         name="IkSwitchDivide" + self.name_convention.get_a_short_name(self.joints[2]))
         IKSwitchDivide = self.name_convention.rename_based_on_base_name(self.joints[2], IKSwitchDivide,
                                                                   name=IKSwitchDivide)
-        pm.connectAttr("%s.StretchyIK" % self.controls['ikHandle'], IKSwitchDivide + ".input1X")
+        pm.connectAttr("%s.StretchyIK" % self.controls_dict['ikHandle'], IKSwitchDivide + ".input1X")
         pm.setAttr(IKSwitchDivide + ".input2X", 10)
         pm.setAttr(IKSwitchDivide + ".operation", 2)
 

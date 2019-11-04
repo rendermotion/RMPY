@@ -77,9 +77,9 @@ class RigSplineIK(rigBase.RigBase):
 
 if __name__ == '__main__':
     rig_spine = RigSplineIK()
-    spine_root = pm.ls('C_Spine01_rig_pnt')[0]
-    spine_points = [u'C_Spine01_rig_pnt', u'C_Spine02_rig_pnt', u'C_Spine03_rig_pnt',
-                    u'C_Spine04_rig_pnt', u'C_Spine05_rig_pnt']
+    spine_root = pm.ls('C_Spine01_reference_pnt')[0]
+    spine_points = [u'C_Spine01_reference_pnt', u'C_Spine02_reference_pnt', u'C_Spine03_reference_pnt',
+                    u'C_Spine04_reference_pnt', u'C_Spine05_reference_pnt']
     rig_spine.create_point_base(*spine_points)
     rig_spine.stretchy_ik()
 

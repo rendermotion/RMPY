@@ -55,7 +55,7 @@ class SystemStructure(object):
         """
         self._model.kinematics = pm.group(empty=True, name='kinematics')
         self.name_convention.rename_name_in_format(self._model.kinematics, useName=True)
-        self.root.visibility >> self._model.kinematics.visibility
+        self.settings.visibility >> self._model.kinematics.visibility
         self.kinematics.setParent(self.root)
 
     def _create_joints(self):
@@ -66,7 +66,7 @@ class SystemStructure(object):
         self._model.joints = pm.group(empty=True, name='joints')
         self.joints.setParent(self.root)
         self.name_convention.rename_name_in_format(self._model.joints, name='joints')
-        self.root.visibility >> self._model.joints.visibility
+        self.settings.visibility >> self._model.joints.visibility
         self.joints.setParent(self.root)
 
     def _create_controls(self):

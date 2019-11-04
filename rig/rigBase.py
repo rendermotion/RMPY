@@ -4,8 +4,9 @@ from RMPY.creators import creators
 from RMPY.core import config
 import pymel.core as pm
 from RMPY.core import main as rm
+import inspect
 
-reload(systemStructure)
+
 class BaseModel(object):
     def __init__(self, *args, **kwargs):
         self.joints = []
@@ -27,6 +28,7 @@ class RigBase(object):
     easy to use and standard. 
     
     """
+
     def __init__(self, *args, **kwargs):
         """
         initializes all the variables on the rig
@@ -40,8 +42,29 @@ class RigBase(object):
         self.rm = rm
         self.rig_system = kwargs.pop('rig_system', systemStructure.SystemStructure())
         self.create = creators
+        self._model = None
 
-        self._model = BaseModel()
+    @property
+    def root(self):
+        if self.attach_points['root']:
+            return self.attach_points['root']
+        else:
+            return self.reset_controls[0]
+
+    @root.setter
+    def root(self, value):
+        self.attach_points['root'] = value
+
+    @property
+    def tip(self):
+        if self.attach_points['tip']:
+            return self.attach_points['tip']
+        else:
+            return self.joints[-1]
+
+    @tip.setter
+    def tip(self, value):
+        self.attach_points['tip'] = value
 
     @property
     def joints(self):
@@ -93,7 +116,7 @@ class RigBase(object):
         it creates two arrays one of objects, one of points, and one of rotation vectors
         """
         self.setup_name_convention_node_base(*args, **kwargs)
-        
+
     def node_base(self, *args, **kwargs):
         """
         base function for node creation, it gets as input any kind of nodes and returns them as a 
@@ -131,9 +154,20 @@ class RigBase(object):
         selection = pm.ls(selection=True)
         self.create_point_base(selection, **kwargs)
 
+    def set_parent(self, rig_object):
+        print 'inspect :{}'.format(inspect.getmro(type(rig_object))[-2])
+        print 'class comparision :{}'.format(inspect.getmro(type(self))[-2])
+        print str(inspect.getmro(type(self))[-2]) == str(inspect.getmro(type(rig_object))[-2])
+
+        if str(inspect.getmro(type(self))[-2]) == str(inspect.getmro(type(rig_object))[-2]):
+            self.create.constraint.node_base(rig_object.tip, self.root, mo=True)
+        else:
+            try:
+                self.create.constraint.node_base(rig_object, self.root, mo=True)
+
+            except AttributeError():
+                raise AttributeError('not valid object to parent')
+
 
 if __name__ == '__main__':
     print creators.joint.point_base('L_index04_rig_pnt')
-
-
-
