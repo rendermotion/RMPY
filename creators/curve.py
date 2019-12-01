@@ -2,7 +2,8 @@ import pymel.core as pm
 import maya.cmds as cmds
 from RMPY.core import dataValidators
 from RMPY.creators import creatorsBase
-reload(creatorsBase)
+from RMPY.core import dataManager
+
 
 class Curve(creatorsBase.CreatorsBase):
     def __init__(self, *args, **kwargs):
@@ -121,6 +122,10 @@ class Curve(creatorsBase.CreatorsBase):
             for eachShape in shapesInCurve:
                 pm.parent(eachShape, curveArray[0], shape=True, add=True)
                 pm.delete(eachCurve)
+
+
+
+
 
 if __name__ == '__main__':
     selection = pm.ls('C_plates00_reference_GRP')[0]

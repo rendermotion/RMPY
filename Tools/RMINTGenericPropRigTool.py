@@ -22,8 +22,6 @@ import os
 import RMPY.nameConvention
 from RMPY.snippets import NoisePatternRig
 
-reload(FormGenericPropRig)
-reload(NoisePatternRig)
 
 def getMayaWindow():
     ptr = mui.MQtUtil.mainWindow()

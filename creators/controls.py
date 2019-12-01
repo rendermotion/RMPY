@@ -2,25 +2,23 @@ import pymel.core as pm
 from RMPY import RMRigTools
 import os
 from RMPY.core import config
-from RMPY import nameConvention
 from RMPY.core import transform
 from RMPY.core import dataValidators
 
 from RMPY.creators import creatorsBase
-
-reload(config)
 
 
 class Controls(creatorsBase.CreatorsBase):
     def __init__(self, *args, **kwargs):
         super(Controls, self).__init__(*args, **kwargs)
         self.rigTools = RMRigTools.RMRigTools(NameConv=self.name_convention)
+        self.file_types = ["move", 'v', 'head', 'circleDeform']
 
     def point_base(self, *points, **kwargs):
         super(Controls, self).point_base(*points, **kwargs)
         object_type = kwargs.pop('type', 'box')
         size = kwargs.pop('size', False)
-        controls_list=[]
+        controls_list = []
         if size:
             if object_type == 'box':
                 kwargs['x_ratio'] = size
@@ -36,6 +34,16 @@ class Controls(creatorsBase.CreatorsBase):
         elif object_type == 'circular':
             for each in points:
                 controls_list.append(self.create_circular_control(each, ** kwargs))
+        elif object_type in self.file_types:
+            kwargs['control_type'] = object_type
+            if not size:
+                kwargs['scale'] = 1.0
+            else:
+                kwargs['scale'] = size
+
+            for each in points:
+                controls_list.append(self.file_control(each, ** kwargs))
+
         if len(points) == 1:
             return controls_list[0]
         return controls_list
@@ -154,46 +162,47 @@ class Controls(creatorsBase.CreatorsBase):
 
         return reset_group, control
 
-    def file_control(self, Obj, scale=1, name='', Type="move"):
-        Obj = dataValidators.as_pymel_nodes(Obj)
+    def file_control(self, scene_object, **kwargs):
+        scale = kwargs.pop('scale', 1.0)
+        name = kwargs.pop('name', None)
+        control_type = kwargs.pop('control_type', 'Move')
+
+        scene_object = dataValidators.as_pymel_nodes(scene_object)
         MoversTypeDic = {
             "move": {"filename": "ControlMover.mb", "object": "MoverControl"},
             "v": {"filename": "ControlV.mb", "object": "VControl"},
             "head": {"filename": "ControlHead.mb", "object": "HeadControl"},
             "circleDeform": {"filename": "ControlCircularDeform.mb", "object": "CircularDeform"}
         }
-        print 'inside Iport move control'
         path = os.path.dirname(RMRigTools.__file__)
         RMPYPATH = os.path.split(path)
-        FinalPath = os.path.join(RMPYPATH[0], "RMPY\AutoRig\RigShapes", MoversTypeDic[Type]["filename"])
+        FinalPath = os.path.join(RMPYPATH[0], "RMPY\AutoRig\RigShapes", MoversTypeDic[control_type]["filename"])
         if os.path.isfile(FinalPath):
             pm.importFile(FinalPath, i=True, type="mayaBinary", ignoreVersion=True, mergeNamespacesOnClash=False,
-                    rpr="ControlMover", pr=False)
-            #pm.importFile(FinalPath, i=True, type="mayaBinary", ignoreVersion=True, mergeNamespacesOnClash=False,
-            #          rpr="ControlMover", pr=False)
+                                    rpr="ControlMover", pr=False)
         else:
             print "archivo no encontrado %s , %s, %s "% (path, RMPYPATH, FinalPath)
             return None
 
-        control = pm.ls(MoversTypeDic[Type]["object"])[0]
+        control = pm.ls(MoversTypeDic[control_type]["object"])[0]
 
         if pm.objExists(control):
-            if name != '':
+            if name:
                 control = pm.rename(control, name)
 
             pm.setAttr(control + ".scale", scale, scale, scale)
 
             pm.makeIdentity(control, apply=True, t=1, r=1, s=1)
 
-            if name != '' and self.name_convention.is_name_in_format(Obj):
+            if name != '' and self.name_convention.is_name_in_format(scene_object):
 
-                self.name_convention.rename_based_on_base_name(Obj, control)
+                self.name_convention.rename_based_on_base_name(scene_object, control)
 
             else:
-                self.name_convention.rename_based_on_base_name(Obj, control, name=control)
+                self.name_convention.rename_based_on_base_name(scene_object, control, name=control)
 
             self.name_convention.rename_set_from_name(control, "control", "objectType")
-            transform.align(Obj, control)
+            transform.align(scene_object, control)
 
             reset_group = self.rigTools.RMCreateGroupOnObj(control)
             return reset_group, control
@@ -213,4 +222,5 @@ def combine_shapes(curveArray):
 if __name__ == '__main__':
     joint = pm.ls('L_joint01_rig_jnt')[0]
     shapeControls = Controls()
-    shapeControls.point_base(joint, centered=True)
+    shapeControls.point_base(joint, type='head')
+    # shapeControls.file_control(joint, control_type='head')

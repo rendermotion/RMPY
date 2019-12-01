@@ -7,8 +7,8 @@ BSlist = {'phonetics': {
 					'control':"nurbsCircle1",
 					'original':"CabezaRockaleta"
 					}
-
 	      }
+
 class BSManager(object):
 	def __init__(self, NameConv=None) :
 		if NameConv:
@@ -20,7 +20,7 @@ class BSManager(object):
 	def ApplyBlendShapes(self,BSDefinition):
 		for BSGroups in BSDefinition:
 			BSName = BSGroups + "BS"
-			cmds.duplicate(BSDefinition[BSGroups]['original'], name = BSName + BSGroups)
+			cmds.duplicate(BSDefinition[BSGroups]['original'], name=BSName + BSGroups)
 			blendShapeOriginalGeo = BSName + BSGroups
 			blendShapeOriginalGeo = self.NameConv.rename_name_in_format(blendShapeOriginalGeo, System ="rig")
 			cmds.blendShape(blendShapeOriginalGeo, name = BSName)
@@ -36,7 +36,7 @@ class BSManager(object):
 
 	def AddAttributes (self, Object, AttributesDefinition):
 		for keys in AttributesDefinition:
-			cmds.addAttr(Object,at="float", ln = keys,     hnv = 1, hxv = 1, h = 0, k = 1, smn = 0, smx = 10)
+			cmds.addAttr(Object,at="float", ln=keys,     hnv=1, hxv=1, h = 0, k = 1, smn = 0, smx = 10)
 
 	def ConnectBlendShapesAttr (Object, AttributesDefinition, BSNode):
 		blendShapeTargetDic = RMblendShapesTools.RMblendShapeTargetDic(BSNode)

@@ -2,8 +2,7 @@ import maya.cmds as cmds
 from RMPY.AutoRig import RMSpaceSwitch
 from RMPY import nameConvention
 from RMPY import RMRigTools
-reload(nameConvention)
-reload(RMSpaceSwitch)
+
 
 def clavicleSpaceSwitch():
 	kinematics = cmds.ls("kinematics")[0]

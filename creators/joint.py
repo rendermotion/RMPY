@@ -7,10 +7,6 @@ from RMPY.core import transform
 from RMPY.creators import spaceLocator
 from RMPY.creators import creatorsBase
 from RMPY.core import main as rm
-reload(transform)
-reload(creatorsBase)
-reload(group)
-reload(spaceLocator)
 
 
 class Joint(creatorsBase.CreatorsBase):
@@ -29,6 +25,7 @@ class Joint(creatorsBase.CreatorsBase):
         aim_axis = kwargs.pop('aim_axis', config.axis_order[0])
         up_axis = kwargs.pop('up_axis', config.axis_order[1])
         orient_type = kwargs.pop('orient_type', 'bend_orient')
+        joint_type = kwargs.pop('joint_type', 'joint')
 
         point_array = dataValidators.as_pymel_nodes(point_array)
         joint_array = []
@@ -41,7 +38,7 @@ class Joint(creatorsBase.CreatorsBase):
 
             joint_array.append(new_joint)
 
-            self.name_convention.rename_name_in_format(new_joint, name='joint')
+            self.name_convention.rename_name_in_format(new_joint, name='joint', objectType=joint_type)
 
             if index > 0:
                 new_joint.setParent(joint_array[index-1])
@@ -61,7 +58,8 @@ class Joint(creatorsBase.CreatorsBase):
 
         return reset_joints, joint_array
 
-    def point_based(self, PointArray, ZAxisOrientation = "Y"):
+    def point_based(self, PointArray, ZAxisOrientation = "Y", **kwargs):
+        joint_type = kwargs.pop('joint_type', 'joint')
         ZAxisOrientation = config.axis_order[1]
 
         PointArray = dataValidators.as_pymel_nodes(PointArray)
@@ -88,7 +86,8 @@ class Joint(creatorsBase.CreatorsBase):
             jointArray.append(newJoint)
             self.name_convention.rename_name_in_format(str(newJoint),
                                                  name=self.name_convention.get_a_short_name(str(PointArray[index])),
-                                                 side=self.name_convention.get_from_name(str(PointArray[index]), 'side'))
+                                                 side=self.name_convention.get_from_name(str(PointArray[index]), 'side'),
+                                                 objectType=joint_type)
 
             if index == 0:
                 pm.parent(jointArray[0], ParentJoint)

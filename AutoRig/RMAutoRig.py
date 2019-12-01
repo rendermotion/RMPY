@@ -19,18 +19,6 @@ from RMPY import RMRigTools
 import pymel.core as pm
 
 
-reload(RMFeet)
-reload(RMSpine)
-reload(RMNeckHead)
-reload(RMLimbIKFK)
-reload(RMSpaceSwitch)
-reload(RMGenericHandRig)
-reload(nameConvention)
-reload(RMVisibilitySwitch)
-reload(RMRigShapeControls)
-reload(RMRigTools)
-reload(RMSpine)
-
 class RMBiped(object):
     def __init__(self, NameConv = None):
         if not NameConv:

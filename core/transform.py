@@ -2,7 +2,6 @@ import pymel.core as pm
 from RMPY.core import dataValidators
 from RMPY.core import config
 import maya.api.OpenMaya as om
-reload(dataValidators)
 
 
 def align(*args, **kwargs):

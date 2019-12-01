@@ -1,6 +1,5 @@
 from RMPY import nameConvention
 import pymel.core as pm
-reload (nameConvention)
 
 NameConv = nameConvention.NameConvention()
 NameConv.default_names['system']='reference'

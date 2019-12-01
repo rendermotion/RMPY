@@ -1,6 +1,6 @@
 import pymel.core as pm
 from RMPY import RMRigTools
-reload(RMRigTools)
+
 
 def locator_at_vertex_position(vertex_list):
     locator = pm.spaceLocator()

@@ -22,10 +22,7 @@ from RMPY.AutoRig import RMLaces
 
 from RMPY.snippets import MultiPathObjects
 from RMPY.snippets import sinFunct
-reload(MultiPathObjects)
-reload(sinFunct)
-reload(FormLaces)
-reload(RMLaces)
+
 
 def getMayaWindow():
     ptr = mui.MQtUtil.mainWindow()

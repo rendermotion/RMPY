@@ -1,10 +1,11 @@
 import pymel.core as pm
+
 from RMPY.rig import rigBase
 
 
 class RigFKModel(rigBase.BaseModel):
-    def __init__(self):
-        super(RigFKModel, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super(RigFKModel, self).__init__(*args, **kwargs)
 
 
 class RigFK(rigBase.RigBase):

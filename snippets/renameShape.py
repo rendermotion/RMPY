@@ -2,7 +2,7 @@ import maya.cmds as cmds
 
 
 def RenameHierarchyShapes(SceneObject):
-	shapes =  cmds.listRelatives(SceneObject, path=True, children=True, shapes=True)
+	shapes = cmds.listRelatives(SceneObject, path=True, children=True, shapes=True)
 	print shapes
 	if shapes:
 		cmds.rename(shapes, "%sShape"%SceneObject)

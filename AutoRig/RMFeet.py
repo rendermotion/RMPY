@@ -1,10 +1,7 @@
 import pymel.core as pm
 from RMPY import RMRigTools
 
-reload(RMRigTools)
 from RMPY import nameConvention
-
-reload(nameConvention)
 from RMPY import RMRigShapeControls
 
 

@@ -1,7 +1,6 @@
 import maya.cmds as cmds
 from RMPY import nameConvention
 
-reload(nameConvention)
 NameConv = nameConvention.NameConvention()
 
 

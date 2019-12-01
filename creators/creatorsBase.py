@@ -1,6 +1,5 @@
 from RMPY import nameConvention
 from RMPY.core import config
-reload(nameConvention)
 
 
 class CreatorsBase(object):

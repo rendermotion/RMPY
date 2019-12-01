@@ -3,8 +3,8 @@ from RMPY.AutoRig import RMTwistJoints
 from RMPY.AutoRig import RMRibbon
 from RMPY import nameConvention
 from RMPY import RMUncategorized
-reload (RMUncategorized)
-reload ( RMRibbon )
+
+
 from RMPY import RMRigTools
 
 

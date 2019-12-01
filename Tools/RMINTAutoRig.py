@@ -27,8 +27,7 @@ from RMPY.AutoRig.snippets import RedoClavicleSpaceSwitch
 from RMPY.AutoRig.snippets import SkeletonHands
 from RMPY.AutoRig.snippets import supportScaleOnRig
 from RMPY.snippets import ChangeNameConvention
-reload(FormBipedRig)
-reload(RMAutoRig)
+
 
 from RMPY.AutoRig.snippets import FetTipRotation
 def getMayaWindow():

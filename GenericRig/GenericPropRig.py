@@ -6,10 +6,6 @@ import RMRigShapeControls
 from AutoRig import RMGenericRigStructure
 import pprint
 
-reload(RMRigTools)
-reload(RMRigShapeControls)
-reload(RMGenericRigStructure)
-
 
 def getMeshObjects(Objects):
     MeshObjects = []

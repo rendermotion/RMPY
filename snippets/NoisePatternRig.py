@@ -5,10 +5,7 @@ from RMPY import nameConvention
 from RMPY import RMRigShapeControls
 from RMPY.AutoRig import RMGenericRigStructure
 import pprint
-reload (RMRigTools)
-reload (RMRigShapeControls)
-reload (RMGenericRigStructure )
-reload (nameConvention)
+
 
 def getMeshObjects(Objects):
     MeshObjects = []

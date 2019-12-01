@@ -1,6 +1,5 @@
 from RMPY.rig import rigBase
 import pymel.core as pm
-reload(rigBase)
 
 
 class LineBetweenPointsModel(rigBase.BaseModel):

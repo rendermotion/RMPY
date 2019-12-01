@@ -1,10 +1,8 @@
 from RMPY import RMRigTools
 
-reload(RMRigTools)
 import re
 from RMPY import nameConvention
 
-reload(nameConvention)
 
 import pymel.core as pm
 

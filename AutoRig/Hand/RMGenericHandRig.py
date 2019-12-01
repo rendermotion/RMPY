@@ -1,21 +1,12 @@
 from pprint import pprint as pp
 from RMPY import RMRigTools
 
-reload(RMRigTools)
 
 from RMPY import nameConvention
-
-reload(nameConvention)
-
 from RMPY import RMRigShapeControls
-
-reload(RMRigShapeControls)
 import re
-
 import pymel.core as pm
 from RMPY.AutoRig.Hand import RMGenericHandStructure
-
-reload(RMGenericHandStructure)
 
 
 class RMGenericHandRig(object):

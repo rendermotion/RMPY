@@ -21,10 +21,7 @@ import inspect
 # sys.path.append(os.path.dirname(__file__))
 import json
 
-reload(FormCopyPosition)
 from RMPY import RMUncategorized
-
-reload(RMUncategorized)
 
 '''
 sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed,QSizePolicy.Policy.Fixed)

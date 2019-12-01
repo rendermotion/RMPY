@@ -1,19 +1,19 @@
 from RMPY.rig.byped.parts import arm
 from RMPY.rig.byped.parts import rigSpine
 from RMPY.rig.byped.parts import hand
-from RMPY.rig.byped.parts import leg
+from RMPY.rig.byped.parts.leg import Leg
 from RMPY.rig.byped.parts import neckHead
 from RMPY.rig import rigBase
-
+reload(neckHead)
 
 
 class RigBypedModel(rigBase.BaseModel):
-    def __init__(self):
-        super(RigBypedModel, self).__init__()
+    def __init__(self, **kwargs):
+        super(RigBypedModel, self).__init__(**kwargs)
         self.l_arm = arm.Arm()
         self.r_arm = arm.Arm()
-        self.l_leg = leg.RigIkFk()
-        self.r_leg = leg.RigIkFk()
+        self.l_leg = Leg()
+        self.r_leg = Leg()
         self.l_hand = hand.Hand()
         self.r_hand = hand.Hand()
         self.neck_head = neckHead.NeckHead()
@@ -37,6 +37,7 @@ class RigByped(rigBase.RigBase):
                            u'C_Spine04_reference_pnt', u'C_Spine05_reference_pnt']
 
         self.neck_root = [u'C_neck00_reference_pnt', u'C_head00_reference_pnt', u'C_headTip00_reference_pnt']
+
 
     @property
     def neck_head(self):
@@ -72,15 +73,20 @@ class RigByped(rigBase.RigBase):
 
     def build(self):
         self.spine.create_point_base(*self.spine_root)
-
         self.l_arm.create_point_base(*[each.format('L') for each in self.arm_root])
+        self.l_arm.set_parent(self.spine)
         self.r_arm.create_point_base(*[each.format('R') for each in self.arm_root])
+        self.r_arm.set_parent(self.spine)
 
         self.l_hand.create_point_base(*[each.format('L') for each in self.hand_root])
+        self.l_hand.set_parent(self.l_arm)
         self.r_hand.create_point_base(*[each.format('R') for each in self.hand_root])
+        self.r_hand.set_parent(self.r_arm)
 
         self.l_leg.create_point_base(*[each.format('L') for each in self.leg_root])
         self.l_leg.create_point_base(*[each.format('R') for each in self.leg_root])
+        self.neck_head.create_point_base(*self.neck_root)
+        self.neck_head.set_parent(self.spine)
 
 if __name__ == '__main__':
     rig_byped = RigByped()

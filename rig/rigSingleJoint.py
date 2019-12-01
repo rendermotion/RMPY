@@ -1,10 +1,5 @@
 import pymel.core as pm
-from RMPY import nameConvention
-from RMPY import RMRigTools
 from RMPY.rig import rigBase
-from RMPY.rig import systemStructure
-from RMPY import RMRigShapeControls
-reload(rigBase)
 
 
 class ModelSingleJoint(rigBase.BaseModel):
@@ -16,7 +11,6 @@ class RigSingleJoint(rigBase.RigBase):
     def __init__(self, *args, **kwargs):
         super(RigSingleJoint, self).__init__(*args, ** kwargs)
         self._model = ModelSingleJoint()
-        self.control_shapes = RMRigShapeControls.RMRigShapeControls()
 
     def create_point_base(self, *locator_list, **kwargs):
         super(RigSingleJoint, self).create_point_base(*locator_list, **kwargs)
@@ -25,6 +19,7 @@ class RigSingleJoint(rigBase.RigBase):
 
         for each in locator_list:
             reset_joint = pm.group(empty=True, name='resteJoint')
+            print 'align {} {}'.format(each, reset_joint)
             self.rm.align(each, reset_joint)
             joint = pm.joint(name='joint')
             self.rm.align(joint, reset_joint)
@@ -34,7 +29,7 @@ class RigSingleJoint(rigBase.RigBase):
             self.name_convention.rename_name_in_format(joint)
 
             joint.setParent(reset_joint)
-            reset_control, control = self.control_shapes.RMCreateBoxCtrl(joint, centered=True)
+            reset_control, control = self.create.controls.point_base(joint, **kwargs)
             self.reset_controls.append(reset_control)
             self.controls.append(control)
             reset_control.setParent(self.rig_system.controls)

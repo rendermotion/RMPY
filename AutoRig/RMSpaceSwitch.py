@@ -1,7 +1,7 @@
 import pymel.core as pm
 import maya.api.OpenMaya as om
 from RMPY import nameConvention
-reload(nameConvention)
+
 from RMPY import RMRigTools
 
 
@@ -422,13 +422,13 @@ class RMSpaceSwitch(object):
             pm.connectAttr(Connection, WA[ConstraintIndex])
             index += 1
 
-    def ConstraintVisibility(self, Objects , ControlObject , SpaceSwitchName = 'spaceSwitch', reverse = False ):
+    def ConstraintVisibility(self, Objects , ControlObject , SpaceSwitchName = 'spaceSwitch', reverse=False):
         if (self.AddNumericParameter (ControlObject, Name = SpaceSwitchName)):
             SWMultDiv = pm.shadingNode("multiplyDivide",asUtility = True ,name = SpaceSwitchName + "SWMultDivide" )
             self.NameConv.rename_based_on_base_name(ControlObject, SWMultDiv, name=SWMultDiv)
             pm.connectAttr(ControlObject+"."+SpaceSwitchName ,SWMultDiv+".input1X")
-            pm.setAttr(SWMultDiv+".input2X",10)
-            pm.setAttr(SWMultDiv+".operation",2)
+            pm.setAttr(SWMultDiv+".input2X", 10)
+            pm.setAttr(SWMultDiv+".operation", 2)
         else:
             SWMultDiv = pm.listConnections(ControlObject + "." + SpaceSwitchName, type="multiplyDivide")[0]
 
@@ -437,7 +437,7 @@ class RMSpaceSwitch(object):
             reverseSW = ""
             if ConnectionsList and len(ConnectionsList) >= 1:
                 reverseSW = ConnectionsList[0]
-            else :
+            else:
                 reverseSW = pm.shadingNode('reverse', asUtility=True, name = SpaceSwitchName + "SWReverse")
                 self.NameConv.rename_based_on_base_name(ControlObject, reverseSW, name="SWReverse")
                 pm.connectAttr( SWMultDiv + ".outputX", reverseSW + ".inputX")

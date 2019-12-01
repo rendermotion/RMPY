@@ -21,7 +21,6 @@ import os
 
 from RMPY.FacialRig import GenericFacialRig
 
-reload(GenericFacialRig)
 from RMPY import RMUncategorized
 
 

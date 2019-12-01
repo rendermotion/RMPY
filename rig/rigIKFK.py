@@ -22,6 +22,8 @@ class RigIkFk(rigBase.RigBase):
         self._model = RigIkFkModel()
         self.root = None
         self.tip = None
+        self.joints = []
+        self.reset_joints = []
 
     @property
     def ik_rig(self):
@@ -75,6 +77,10 @@ class RigIkFk(rigBase.RigBase):
         # pm.parentConst'raint(self.fk_limb.controls[0], self.ik_limb.reset_controls['poleVector'], mo=True)
         # pm.parentConstraint(self.fk_limb.controls[0], self.ik_limb.reset_controls['ikHandleSecondary'], mo=True)
         pm.parentConstraint(self.fk_rig.controls[0], self.ik_rig.root_joints, mo=True)
+
+        self.joints = self.switch_control_rig.joints
+        self.reset_joints = self.switch_control_rig.reset_joints
+
 
 
 if __name__ == '__main__':

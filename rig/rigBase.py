@@ -4,11 +4,11 @@ from RMPY.creators import creators
 from RMPY.core import config
 import pymel.core as pm
 from RMPY.core import main as rm
-import inspect
 
 
 class BaseModel(object):
     def __init__(self, *args, **kwargs):
+        super(BaseModel, self).__init__()
         self.joints = []
         self.reset_joints = []
         self.controls = []
@@ -19,14 +19,14 @@ class BaseModel(object):
 
 
 class RigBase(object):
-    """Base rig is the base class to be used on any rig. it contains an instance of the main classes that 
+    """
+    Base rig is the base class to be used on any rig. it contains an instance of the main classes that
     will be used when creating a rig. 
     The members that contains the Base rig are the following.
     name_convention, an instance of the nameConvention class used to rename all elements on the rig.
     rig_system a class that contains the maya hierarchical structure used as base for all the systems
     rig_creators the functions used to create all kind of nodes on maya trough an interface that it is 
     easy to use and standard. 
-    
     """
 
     def __init__(self, *args, **kwargs):
@@ -37,10 +37,12 @@ class RigBase(object):
         :name_convention:
         :rig_system: 
         """
-
+        super(RigBase, self).__init__()
         self.name_convention = kwargs.pop('name_convention', nameConvention.NameConvention())
         self.rm = rm
         self.rig_system = kwargs.pop('rig_system', systemStructure.SystemStructure())
+        self._joint_creation_kwargs = {}
+        self._control_creation_kwargs = {}
         self.create = creators
         self._model = None
 
@@ -116,12 +118,14 @@ class RigBase(object):
         it creates two arrays one of objects, one of points, and one of rotation vectors
         """
         self.setup_name_convention_node_base(*args, **kwargs)
+        assert not hasattr(super(RigBase, self), 'create_point_base')
 
     def node_base(self, *args, **kwargs):
         """
         base function for node creation, it gets as input any kind of nodes and returns them as a 
         """
         self.setup_name_convention_node_base(*args, **kwargs)
+        assert not hasattr(super(RigBase, self), 'node_base')
 
     def create_shape_base(self, *args, **kwargs):
         self.setup_name_convention_node_base(*args, **kwargs)
@@ -144,22 +148,61 @@ class RigBase(object):
 
         self.name_convention.default_names['side'] = self.name_convention.get_from_name(args[0], 'side')
         self.update_name_convention()
+        assert not hasattr(super(RigBase, self), 'setup_name_convention_node_base')
+
+    @property
+    def joint_creation_kwargs(self):
+        return self._joint_creation_kwargs
+
+    @joint_creation_kwargs.setter
+    def joint_creation_kwargs(self, kwargs_dict):
+        self._joint_creation_kwargs = {}
+        orient_type = kwargs_dict.pop('orient_type', None)
+        if orient_type:
+            self._joint_creation_kwargs['orient_type'] = orient_type
+
+        joint_type = kwargs_dict.pop('joint_type', None)
+        if joint_type:
+            self._joint_creation_kwargs['joint_type'] = joint_type
+
+    @property
+    def control_creation_kwargs(self):
+        return self._control_creation_kwargs
+
+    @control_creation_kwargs.setter
+    def control_creation_kwargs(self, kwargs_dict):
+        self._control_creation_kwargs = {}
+        size = kwargs_dict.pop('size', None)
+        if size:
+            self._control_creation_kwargs['size'] = size
+
+        control_type = kwargs_dict.pop('control_type', None)
+
+        if control_type:
+            self._control_creation_kwargs['type'] = control_type
 
     def update_name_convention(self):
         self.rig_system.name_convention = self.name_convention
         for each in self.create.creators_list:
             each.name_convention = self.name_convention
+        assert not hasattr(super(RigBase, self), 'update_name_convention')
 
     def create_selection_base(self, **kwargs):
         selection = pm.ls(selection=True)
         self.create_point_base(selection, **kwargs)
+        assert not hasattr(super(RigBase, self), 'create_selection_base')
 
     def set_parent(self, rig_object):
-        print 'inspect :{}'.format(inspect.getmro(type(rig_object))[-2])
-        print 'class comparision :{}'.format(inspect.getmro(type(self))[-2])
-        print str(inspect.getmro(type(self))[-2]) == str(inspect.getmro(type(rig_object))[-2])
+        """
+        This is the default function to parent modules, when you set parent an object it will look for the
+        root on the dictionary attachments. If this has not being asigned the default value will be the first elementq
+        of the list rig_reset_controls. So you can asign what ever point you want to be the driver of all the rig
+        or let the rig find it by itself.
+        :param rig_object: object or rig that you expect to be the parent of the module.
+        :return:
+        """
 
-        if str(inspect.getmro(type(self))[-2]) == str(inspect.getmro(type(rig_object))[-2]):
+        if RigBase in type(rig_object).__mro__:
             self.create.constraint.node_base(rig_object.tip, self.root, mo=True)
         else:
             try:
@@ -167,7 +210,9 @@ class RigBase(object):
 
             except AttributeError():
                 raise AttributeError('not valid object to parent')
+        assert not hasattr(super(RigBase, self), 'set_parent')
 
 
 if __name__ == '__main__':
-    print creators.joint.point_base('L_index04_rig_pnt')
+    rig_base = RigBase()
+    print type(rig_base)

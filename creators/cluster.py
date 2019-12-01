@@ -1,7 +1,6 @@
 from RMPY.core import dataValidators
 import pymel.core as pm
 from RMPY.creators import creatorsBase
-reload(creatorsBase)
 
 
 class Cluster(creatorsBase.CreatorsBase):

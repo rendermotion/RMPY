@@ -1,13 +1,8 @@
 import pymel.core as pm
 from RMPY import nameConvention
 
-reload(nameConvention)
 from RMPY import RMRigTools
-
-reload(RMRigTools)
 from RMPY import RMRigShapeControls
-
-reload(RMRigShapeControls)
 
 
 class RMNeckHead(object):

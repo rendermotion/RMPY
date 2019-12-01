@@ -1,8 +1,6 @@
 import maya.cmds as cmds
 import RMUncategorized
 
-    
-
 
 def MirrorChildren(Objects):
     for eachObject in Objects: 

@@ -18,14 +18,11 @@ except ImportError:
 import maya.mel as mel
 import os
 from RMPY import RMblendShapesTools
-
-reload (FormFacialRig)
 from RMPY import RMRigTools
 from RMPY.FacialRig import FacialConfigurationNew as FacialConfiguration
 
 from RMPY import RMParametersManager
-reload (FacialConfiguration)
-reload (RMblendShapesTools)
+
 
 Dictionaries = {
                  'lidShapes'        :FacialConfiguration.lidShapes,#0

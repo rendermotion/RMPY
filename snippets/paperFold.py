@@ -2,7 +2,7 @@ import maya.cmds as cmds
 import RMRigTools
 from AutoRig import RMSpaceSwitch
 import RMUserParameters
-reload (RMUserParameters)
+
 '''
 def paperFold(control, objectList):
 	CtrlParameters = RMUserParameters.RMUserParameters(control)

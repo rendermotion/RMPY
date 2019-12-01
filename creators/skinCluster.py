@@ -1,12 +1,7 @@
-import pymel.core as pm
-from RMPY import nameConvention
 import maya.cmds as cmds
 import pymel.core as pm
-from pprint import pprint as pp
 from RMPY.creators import creatorsBase
 from RMPY.core import dataManager
-reload(dataManager)
-reload(creatorsBase)
 
 
 def get_from_node(node):
@@ -162,8 +157,6 @@ class SkinCluster(creatorsBase.CreatorsBase):
 
 if __name__ == '__main__':
     skin_cluster01 = SkinCluster.by_node('skinCluster1')
-    pp(skin_cluster01._dictionary())
-
     #skin_cluster01.save('BackBar')
     # skin_cluster01.load('metal_ring_front')
     # skin_cluster01.apply_weights_dictionary(geometry='metalGrey_C_metalRing_0001_mid_GES')

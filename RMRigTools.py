@@ -3,7 +3,7 @@ import maya.api.OpenMaya as om
 import math
 import pymel.core as pm
 import inspect
-reload(nameConvention)
+
 
 def average(*args):
     average_result = []

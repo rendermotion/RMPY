@@ -1,7 +1,7 @@
 from RMPY import nameConvention
 from RMPY import RMRigTools
 import pymel.core as pm
-reload(nameConvention)
+
 
 def get_key(searc_value, search_dic):
     for key, value in search_dic.iteritems():

@@ -2,7 +2,7 @@ from AutoRig.Hand import RMGenericHandRig
 import maya.cmds as cmds
 import nameConvention
 import RMRigTools
-reload (RMGenericHandRig)
+
 HandRig = RMGenericHandRig.RMGenericHandRig()
 HandRig.CreateHandRig("Character01_LF_palm_pnt_rfr")
 

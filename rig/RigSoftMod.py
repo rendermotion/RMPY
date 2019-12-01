@@ -2,8 +2,6 @@ import pymel.core as pm
 from RMPY.core import dataValidators
 from RMPY.rig import rigSingleJoint
 
-reload(rigSingleJoint)
-
 
 class SoftModRig(rigSingleJoint.SingleJointRig):
     def __init__(self, *args, **kwargs):

@@ -16,7 +16,6 @@ except ImportError:
     from PySide import __version__
     from shiboken import wrapInstance
     from RMPY.Tools.QT4.ui import FormVisibilitySwitch
-reload(FormVisibilitySwitch)
 
 import maya.mel as mel
 import os
@@ -24,7 +23,7 @@ from RMPY import RMUncategorized
 
 from RMPY.AutoRig import RMVisibilitySwitch
 from RMPY import nameConvention
-reload(RMVisibilitySwitch)
+
 
 def getMayaWindow():
     ptr = mui.MQtUtil.mainWindow()

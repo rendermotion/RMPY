@@ -7,9 +7,6 @@ from RMPY.core import dataValidators
 from RMPY.core import transform
 from RMPY.creators import curve
 
-reload(rigBase)
-reload(transform)
-
 
 def RebuildWithNCVs(numberOfCvs, curve):
     curve = dataValidators.as_pymel_nodes(curve)
@@ -26,12 +23,14 @@ def RebuildWithNCVs(numberOfCvs, curve):
         else:
             return None
 
-class LacesModel(object):
+
+class RigLacesModel(rigBase.BaseModel):
     def __init__(self):
+        super(RigLacesModel, self).__init__()
         self.clusters = None
-        self.joints = None
+
         self.upVector = None
-        self.controls = None
+
         self.curve = None
         self.upVectorCurve = None
         self.rig_parent = None
@@ -41,10 +40,10 @@ class LacesModel(object):
         self.clusters_parent = None
 
 
-class Laces(rigBase.BaseRig):
+class RigLaces(rigBase.RigBase):
     def __init__(self, *args, **kwargs):
-        super(Laces, self).__init__(*args, **kwargs)
-        self._model = LacesModel()
+        super(RigLaces, self).__init__(*args, **kwargs)
+        self._model = RigLacesModel()
         self.create_curve = curve.Curve()
 
     @property

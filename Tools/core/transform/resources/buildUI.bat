@@ -1,0 +1,1 @@
+call mayapy2 aim_to_point.ui -o ../QT5/ui/FormAimToPoint.py

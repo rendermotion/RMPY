@@ -4,7 +4,7 @@ import os
 from RMPY.core import config
 from RMPY import nameConvention
 
-reload(nameConvention)
+
 class RMRigShapeControls(object):
     def __init__(self, NameConv=None):
         if NameConv is None:

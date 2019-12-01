@@ -3,7 +3,7 @@ from RMPY.core import config
 import pymel.core as pm
 
 from RMPY.creators import creatorsBase
-from RMPY.creators import nurbsCurve
+from RMPY.creators import curve
 from RMPY.creators import spaceLocator
 
 
@@ -22,7 +22,7 @@ class Creator(creatorsBase.Creator):
         super(Creator, self).point_base(*points, **kwargs)
         radius = kwargs.pop('radius', 1)
         delete_history = kwargs.pop('delete_history', True)
-        curve = nurbsCurve.Creator()
+        curve = curve.Curve()
         locator = spaceLocator.Creator()
 
         self.path = curve.point_base(*points, ep=True)
@@ -53,7 +53,6 @@ class Creator(creatorsBase.Creator):
 
         if delete_history:
             self.delete_history()
-
         return self.skin_surface
 
     def curve_base(self, *path, **kwargs):

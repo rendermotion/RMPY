@@ -27,7 +27,7 @@ from RMPY import RMUncategorized
 
 from RMPY.AutoRig import RMRigFK
 print 'executed'
-reload(RMRigFK)
+
 
 def getMayaWindow():
     ptr = mui.MQtUtil.mainWindow()

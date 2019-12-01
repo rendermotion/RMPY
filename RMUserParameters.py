@@ -10,5 +10,5 @@ class RMUserParameters(object):
             print "the Object Allready has an Attribute with this name, the type is:",cmds.getAttr (self.object + "." + Name,type = True)
             return False
         else :
-            cmds.addAttr(self.object,at = "float", ln = Name,  hnv = 1, hxv = 1, h = 0, k = 1, smn = limits[0], smx = limits[1])
+            cmds.addAttr(self.object,at = "float", ln=Name,  hnv=1, hxv=1, h=0, k=1, smn=limits[0], smx=limits[1])
             return True

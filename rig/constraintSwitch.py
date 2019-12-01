@@ -1,6 +1,5 @@
 import pymel.core as pm
 from RMPY.rig import rigBase
-reload(rigBase)
 
 
 class ConstraintSwitchModel(rigBase.BaseModel):

@@ -2,7 +2,6 @@ from RMPY.creators import creatorsBase
 from RMPY.core import config
 from RMPY.core import dataValidators
 import pymel.core as pm
-reload(creatorsBase)
 
 
 class MotionPath(creatorsBase.CreatorsBase):

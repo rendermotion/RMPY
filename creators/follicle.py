@@ -3,17 +3,15 @@ from RMPY import RMRigTools
 from RMPY.creators import creatorsBase
 from RMPY.creators import motionPath
 
-reload(creatorsBase)
 
-
-class Creator(creatorsBase.Creator):
+class Follicle(creatorsBase.CreatorsBase):
     def __init__(self, *args, **kwargs):
-        super(Creator, self).__init__(*args, **kwargs)
+        super(Follicle, self).__init__(*args, **kwargs)
         self._hair_system = None
         self._node = None
         self.surface = None
         self._output_curve = None
-        self.motion_path = motionPath.Creator(name_conv=self.name_conv)
+        self.motion_path = motionPath.MotionPath(name_conv=self.name_convention)
 
     @property
     def transform(self):
@@ -47,8 +45,8 @@ class Creator(creatorsBase.Creator):
 
     def point_base(self, *points, **kwargs):
         print 'follicle Naming {}'.format(points[0])
-        self.setup_name_conv_node_base(points[0])
-        print '{}'.format(self.name_conv.default_names)
+        self.setup_name_convention_node_base(points[0])
+        print '{}'.format(self.name_convention.default_names)
         self.build()
         return self._node
 
@@ -81,7 +79,7 @@ class Creator(creatorsBase.Creator):
         return self._node, self.output_curve
 
     def surface_base(self, nurbs_surface, **kwargs):
-        self.setup_name_conv_node_base(nurbs_surface)
+        self.setup_name_convention_node_base(nurbs_surface)
         nurbs_surface = RMRigTools.validate_pymel_nodes(nurbs_surface)
         self.surface = nurbs_surface.getShapes()[0]
         u_value = kwargs.pop('u_value', .5)
@@ -101,13 +99,13 @@ class Creator(creatorsBase.Creator):
 
     def create_output_curve(self):
         self._output_curve = pm.createNode('nurbsCurve')
-        self.name_conv.rename_name_in_format(self._output_curve.getParent(), name='dynamicCurve')
+        self.name_convention.rename_name_in_format(self._output_curve.getParent(), name='dynamicCurve')
         self._node.outCurve >> self._output_curve.create
         self._output_curve.getParent().setParent(self.transform)
 
     def build(self):
         self._node = pm.createNode('follicle')
-        self.name_conv.rename_name_in_format(self._node.getParent())
+        self.name_convention.rename_name_in_format(self._node.getParent())
 
     def connect_input_surface(self, surface):
         if surface or self.surface:
@@ -120,10 +118,6 @@ class Creator(creatorsBase.Creator):
         self._node.outTranslate >> transform.translate
         self._node.outRotate >> transform.rotate
 
-
-if __name__ == '__main__':
-    new_fol = Creator()
-    new_fol.surface_base('C_basePlane00_suspension_GRP')
 if __name__ == '__main__':
     new_fol = Follicle()
     new_fol.surface_based('C_basePlane00_suspension_GRP')

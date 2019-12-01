@@ -1,12 +1,12 @@
 import pymel.core as pm
 from RMPY import RMRigTools
 from RMPY.AutoRig import RMSpaceSwitch
-from RMPY.rig import rigBase
+import RMPY.rig.rigBase
 import RMPY.core.main as rm
 from RMPY.rig import rigLineBetweenPoints
 
 
-class IKRigModel(rigBase.BaseModel):
+class IKRigModel(RMPY.rig.rigBase.BaseModel):
     def __init__(self, *args, **kwargs):
         super(IKRigModel, self).__init__(*args, **kwargs)
         self.name = ''
@@ -25,7 +25,7 @@ class IKRigModel(rigBase.BaseModel):
         self.kinematics = []
 
 
-class IKRig(rigBase.RigBase):
+class IKRig(RMPY.rig.rigBase.RigBase):
     def __init__(self, *args, **kwargs):
         super(IKRig, self).__init__(*args, **kwargs)
         self._model = IKRigModel()
@@ -302,8 +302,7 @@ class IKRig(rigBase.RigBase):
 
 if __name__ == '__main__':
 
-    root = pm.ls('L_shoulder01_rig_pnt')[0]
-    root_arm = pm.ls('L_shoulder01_rig_pnt')[0]
+    root_arm = pm.ls('R_shoulder01_reference_pnt')[0]
     arm_points = rm.descendents_list(root_arm)
     ik_rig = IKRig()
     ik_rig.create_point_base(*arm_points[:3])

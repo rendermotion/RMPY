@@ -20,11 +20,7 @@ import maya.mel as mel
 import os
 from RMPY import RMblendShapesTools as RMbst
 
-reload(RMbst)
 # sys.path.append(os.path.dirname(__file__))
-
-
-reload(FormBlendShapeEditor)
 
 
 def getMayaWindow():
