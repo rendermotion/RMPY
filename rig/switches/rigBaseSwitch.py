@@ -3,6 +3,12 @@ import pymel.core as pm
 
 
 class RigBaseSwitchModel(rigBase.BaseModel):
+    """
+    Base class for switches, a switch is a logic rig that outputs 1 or 0 
+    depending on the input.
+    The initialize function initializes the attribute_output_false creating
+    a reverse having as input the attribute_output. 
+    """
     def __init__(self):
         super(RigBaseSwitchModel, self).__init__()
         self.control = None
@@ -22,6 +28,14 @@ class RigBaseSwitch(rigBase.RigBase):
         self.attribute_name = 'switch'
 
     def initialize(self, *args, **kwargs):
+        """
+        Initializes the reverse, the control, and the name of the attribute.
+        **kwargs:
+            control: the name of the object that will be the control.
+            attribute_name:the name of the attribute that will be 
+                added to the control the default name is switch.
+        
+        """
         self.control = kwargs.pop('control', None)
         if self.control:
             self.control = self.rm.as_pymel_nodes(self.control)
@@ -32,6 +46,9 @@ class RigBaseSwitch(rigBase.RigBase):
 
     @property
     def control(self):
+    """
+    the control object for the switch.
+    """
         return self._model.control
 
     @control.setter
@@ -56,6 +73,9 @@ class RigBaseSwitch(rigBase.RigBase):
 
     @property
     def reverse(self):
+    """
+    the reverse node for the output.
+    """
         return self._model.reverse
 
     @reverse.setter
