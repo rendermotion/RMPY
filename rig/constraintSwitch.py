@@ -124,7 +124,8 @@ class ConstraintSwitch(rigBase.RigBase):
     def create_attribute_control(self, control, **kwargs):
         self.controls.append(control)
         attribute_name = kwargs.pop('attribute_name', 'space_switch')
-        pm.addAttr(self.controls[0], ln=attribute_name, hnv=True, hxv=True, min=0, max=10, k=True)
+        if attribute_name not in pm.listAttr(self.controls[0]):
+            pm.addAttr(self.controls[0], ln=attribute_name, hnv=True, hxv=True, min=0, max=10, k=True)
 
         reverse = pm.shadingNode('reverse', asUtility=True, name="reverse")
         multiply = pm.createNode('unitConversion', name="multiplier")

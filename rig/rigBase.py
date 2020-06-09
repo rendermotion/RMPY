@@ -16,6 +16,7 @@ class BaseModel(object):
         self.inputs = []
         self.outputs = []
         self.attach_points = dict(root=None, tip=None)
+        self.creation_points = {'points'}
 
 
 class RigBase(object):
@@ -114,13 +115,13 @@ class RigBase(object):
 
     def create_point_base(self, *args, **kwargs):
         """
-        base function for point creation, it validates the args values and turnthem in to points.
+        base function for point creation, it validates the args values and turn them in to points.
         it creates two arrays one of objects, one of points, and one of rotation vectors
         """
         self.setup_name_convention_node_base(*args, **kwargs)
         assert not hasattr(super(RigBase, self), 'create_point_base')
 
-    def node_base(self, *args, **kwargs):
+    def create_node_base(self, *args, **kwargs):
         """
         base function for node creation, it gets as input any kind of nodes and returns them as a 
         """
@@ -128,6 +129,9 @@ class RigBase(object):
         assert not hasattr(super(RigBase, self), 'node_base')
 
     def create_shape_base(self, *args, **kwargs):
+        self.setup_name_convention_node_base(*args, **kwargs)
+
+    def create_curve_base(self, *args, **kwargs):
         self.setup_name_convention_node_base(*args, **kwargs)
 
     def setup_name_convention_node_base(self, *args, **kwargs):
@@ -211,6 +215,24 @@ class RigBase(object):
             except AttributeError():
                 raise AttributeError('not valid object to parent')
         assert not hasattr(super(RigBase, self), 'set_parent')
+
+    def rename_as_skinned_joints(self, nub=True):
+        if nub:
+            rename_joints = self.joints[:-1]
+        else:
+            rename_joints = self.joints
+        for each_joint in rename_joints:
+            self.name_convention.rename_set_from_name(each_joint, 'skinjoint', 'objectType')
+
+    def custom_world_align(self, *scene_objects):
+        for each in scene_objects:
+            scale_z = 1
+            if self.name_convention.is_name_in_format(each):
+                if self.name_convention.get_from_name(each, 'side') == 'R':
+                    scale_z = -1
+            rm.aim_vector_based(each, pm.datatypes.Vector(0.0, 0.0, 1.0),
+                                pm.datatypes.Vector(0.0, 1.0, 0.0),
+                                scaleZ=scale_z)
 
 
 if __name__ == '__main__':

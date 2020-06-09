@@ -1,6 +1,5 @@
 import pymel.core as pm
 import os
-import sys
 
 axis_order = 'xyz'
 
@@ -22,7 +21,12 @@ def get_file_path():
     else:
         return
 
+
 file_path = get_file_path()
+
+mirror_controls_axis = 'z'
+mirror_controls = True
+
 
 if __name__ == '__main__':
     print get_file_path()

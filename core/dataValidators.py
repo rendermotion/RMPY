@@ -28,7 +28,6 @@ def as_pymel_nodes(nodes):
 
 
 def as_vector_position(input_data):
-
     if input_data.__class__ == pm.general.MeshVertex:
         return pm.datatypes.Vector(input_data.getPosition(space='world'))
 

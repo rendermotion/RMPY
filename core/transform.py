@@ -104,9 +104,12 @@ def average(*args):
 
 def aim_vector_based(*args, **kwargs):
     destination = dataValidators.as_pymel_nodes(args[0])
-
     aim_axis = kwargs.pop('aim_axis', config.axis_order[0])
     up_axis = kwargs.pop('up_axis', config.axis_order[1])
+
+    scale_x = kwargs.pop('scale_x', 1)
+    scale_y = kwargs.pop('scale_y', 1)
+    scale_z = kwargs.pop('scale_z', 1)
 
     position_source01 = dataValidators.as_vector_position(destination)
     destination_position = kwargs.pop('destination_position',
@@ -127,9 +130,8 @@ def aim_vector_based(*args, **kwargs):
     y_dir = z_dir.cross(x_dir)
     orientation = [x_dir, y_dir, z_dir]
 
-    z_mult = 1
-    y_mult = 1
-    x_mult = 1
+
+
     if aim_axis in 'xX':
         x_vector_index = 0
         if up_axis in 'yY':
@@ -138,13 +140,13 @@ def aim_vector_based(*args, **kwargs):
         else:
             y_vector_index = 2
             z_vector_index = 1
-            y_mult = -1
+            scale_y = scale_y * -1
     elif aim_axis in 'yY':
         y_vector_index = 0
         if up_axis in 'xX':
             x_vector_index = 1
             z_vector_index = 2
-            z_mult = -1
+            scale_z = scale_z * -1
         else:
             x_vector_index = 2
             z_vector_index = 1
@@ -156,17 +158,17 @@ def aim_vector_based(*args, **kwargs):
         else:
             x_vector_index = 2
             y_vector_index = 1
-            x_mult = -1
+            scale_x = scale_x * -1
 
-    newMatrix = pm.datatypes.Matrix([[orientation[x_vector_index][0] * x_mult,
-                                      orientation[x_vector_index][1] * x_mult,
-                                      orientation[x_vector_index][2] * x_mult, 0.0],
-                                     [orientation[y_vector_index][0] * y_mult,
-                                      orientation[y_vector_index][1] * y_mult,
-                                      orientation[y_vector_index][2] * y_mult, 0.0],
-                                     [orientation[z_vector_index][0] * z_mult,
-                                      orientation[z_vector_index][1] * z_mult,
-                                      orientation[z_vector_index][2] * z_mult, 0.0],
+    newMatrix = pm.datatypes.Matrix([[orientation[x_vector_index][0] * scale_x,
+                                      orientation[x_vector_index][1] * scale_x,
+                                      orientation[x_vector_index][2] * scale_x, 0.0],
+                                     [orientation[y_vector_index][0] * scale_y,
+                                      orientation[y_vector_index][1] * scale_y,
+                                      orientation[y_vector_index][2] * scale_y, 0.0],
+                                     [orientation[z_vector_index][0] * scale_z,
+                                      orientation[z_vector_index][1] * scale_z,
+                                      orientation[z_vector_index][2] * scale_z, 0.0],
                                      destination_position])
     inverse = destination.parentInverseMatrix.get()
     destination.setMatrix(newMatrix * inverse)

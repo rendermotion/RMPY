@@ -79,9 +79,9 @@ class main(MayaQWidgetDockableMixin, QDialog):
             laces.RebuildWithNCVs(self.NumCvs,self.ui.CurrentShapeLbl.text())
 
         if self.ui.Mode.isChecked() == True:
-            laces.RMlacesSystem( self.ui.NumberOfJoints.value() , curve = self.ui.CurrentShapeLbl.text())    
+            laces.laces_system(self.ui.NumberOfJoints.value(), curve = self.ui.CurrentShapeLbl.text())    
         else:
-            laces.RMlacesSystemMultipleRotationControls(self.ui.NumberOfJoints.value() , curve = self.ui.CurrentShapeLbl.text())
+            laces.laces_system_multiple_rotation_controls(self.ui.NumberOfJoints.value(), curve = self.ui.CurrentShapeLbl.text())
     def SinCntrlCurveBtnPressed(self):
         selection = cmds.ls(selection = True)
         if selection and len(selection)>=1:

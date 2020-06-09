@@ -1,4 +1,3 @@
-from RMPY.core import dataValidators
 import pymel.core as pm
 from RMPY.creators import creatorsBase
 
@@ -12,30 +11,32 @@ class Constraint(creatorsBase.CreatorsBase):
     def node_base(self, *args, **kwargs):
         super(Constraint, self).node_base(*args, **kwargs)
         if len(args) >= 2:
-                self.constraint(*args, **kwargs)
+                return self.constraint(*args, **kwargs)
         else:
             raise AttributeError('you should provide at least 2 attributes')
 
     def node_list_base(self, *args, **kwargs):
+        constraints_created = []
         if len(args) >= 2 and len(args[0]) == len(args[1]):
             for driver, driven in zip(args[0], args[1]):
-                self.constraint(driver, driven, **kwargs)
+                constraints_created.append(self.constraint(driver, driven, **kwargs))
+        return constraints_created
 
     def point(self, *args, **kwargs):
         self.define_constraints(point=True, scale=False, parent=False, orient=False)
-        self.node_base(*args, **kwargs)
+        return self.node_base(*args, **kwargs)
 
     def parent(self, *args, **kwargs):
         self.define_constraints(point=False, scale=False, parent=True, orient=False)
-        self.node_base(*args, **kwargs)
+        return self.node_base(*args, **kwargs)
 
     def scale(self, *args, **kwargs):
         self.define_constraints(point=False, scale=True, parent=False, orient=False)
-        self.node_base(*args, **kwargs)
+        return self.node_base(*args, **kwargs)
 
     def orient(self, *args, **kwargs):
         self.define_constraints(point=False, scale=False, parent=False, orient=True)
-        self.node_base(*args, **kwargs)
+        return self.node_base(*args, **kwargs)
 
     def define_constraints(self, **kwargs):
         parent = kwargs.pop('parent', True)
@@ -54,11 +55,12 @@ class Constraint(creatorsBase.CreatorsBase):
 
     def constraint(self, *args, **kwargs):
         name = kwargs.pop('name', 'constraint')
-        constraints = []
+        constraints_list = []
         for each_constraint in self.constraint_type:
             new_constraint = each_constraint(*args, **kwargs)
-            constraints.append(new_constraint)
+            constraints_list.append(new_constraint)
             self.name_convention.rename_name_in_format(new_constraint, name=name)
+        return constraints_list
 
 
 if __name__ == '__main__':

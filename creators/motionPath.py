@@ -27,8 +27,8 @@ class MotionPath(creatorsBase.CreatorsBase):
 
         name = kwargs.pop('name', 'motionPath')
 
-        followAxis = kwargs.pop('followAxis', config.orient_axis[0])
-        upAxis = kwargs.pop('upAxis', config.orient_axis[1])
+        followAxis = kwargs.pop('followAxis', config.axis_order[0])
+        upAxis = kwargs.pop('upAxis', config.axis_order[1])
 
         kwargs['followAxis'] = followAxis
         kwargs['upAxis'] = upAxis
@@ -84,7 +84,7 @@ class MotionPath(creatorsBase.CreatorsBase):
                     pm.delete(connection)
                 motion_path_node.uValue.set(step * node_count)
                 # pm.setKeyframe(motionPath, v=(step * nodeCount), at="uValue")
-                self.name_conv.rename_name_in_format(str(motion_path_node), name=name)
+                self.name_convention.rename_name_in_format(str(motion_path_node), name=name)
                 node_count += 1
             value = pm.currentTime(q=True)
             pm.currentTime(value + 1, e=True)
@@ -97,6 +97,6 @@ class MotionPath(creatorsBase.CreatorsBase):
 if __name__ == '__main__':
 
     test_root = pm.ls('C_cubeTest00_pathDeform_GRP')[0]
-    motion_path = Creator()
+    motion_path = MotionPath()
     motion_path.node_base(*test_root.getChildren(), curve='C_curveOnSurface00_twistCable_SHP', name='defo',
                           UpVectorType='object', upVectorObject='C_upVector_path_LOC')

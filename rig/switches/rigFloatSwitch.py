@@ -9,10 +9,16 @@ class FloatSwitchModel(rigBaseSwitch.RigBaseSwitchModel):
 
 
 class FloatSwitch(rigBaseSwitch.RigBaseSwitch):
+    """
+    The float Range Switch outputs 0 to one, depending on an input varying from 0 to a max_value,
+    for example, you want a switch to control the visibility of an object, that goes from 0 to 1,
+    but want to control with an float input value, for example 0 to 10, you can doit with this switch.
+    The switch it is accomplished with a multiply node.
+    """
     def __init__(self, *args, **kwargs):
         super(FloatSwitch, self).__init__(*args, **kwargs)
         self._model = FloatSwitchModel()
-        self.initialize(*args, **kwargs)
+        self.initialize(**kwargs)
         self.multiply = pm.createNode('unitConversion')
         self.name_convention.rename_name_in_format(self.multiply, name="multiplier")
         self.multiply.output >> self.reverse.inputX
@@ -23,6 +29,10 @@ class FloatSwitch(rigBaseSwitch.RigBaseSwitch):
 
     @property
     def max_value(self):
+        """
+        the max value that will give an output of 1
+        :return:
+        """
         return self.multiply.conversionFactor.get()
 
     @max_value.setter

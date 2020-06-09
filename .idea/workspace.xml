@@ -2,10 +2,57 @@
 <project version="4">
   <component name="BookmarkManager">
     <bookmark url="file://$PROJECT_DIR$/creators/controls.py" />
-    <bookmark url="file://$PROJECT_DIR$/rig/byped/rigByped.py" line="49" />
+    <bookmark url="file://$PROJECT_DIR$/rig/byped/rigByped.py" line="47" />
+    <bookmark url="file://$PROJECT_DIR$/rig/rigLaces.py" line="212" />
+    <bookmark url="file://$PROJECT_DIR$/rig/byped/parts/reverseFeet.py" line="101" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f07dabbe-3f79-4e38-a667-96983db8abd1" name="Default" comment="" />
+    <list default="true" id="f07dabbe-3f79-4e38-a667-96983db8abd1" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/Core/attributes.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Core/dataRepresentation.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Rig/rigAim.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Rig/rigAttributeSplit.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Rig/rigBiaseControl.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Rig/rigClustersOnCurve.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Rig/rigControlsForPoints.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Rig/rigObjectsOnCurve.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Rig/rigSimpleIk.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Rig/spaceSwitches/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Rig/spaceSwitches/rigFloatSpaceSwitch.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Rig/spaceSwitches/space.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Rig/switches/rigSpaceSwitch_old.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tools/RMINTLaces.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tools/RMINTLaces.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/dataValidators.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/dataValidators.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/hierarchy.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/hierarchy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/transform.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/transform.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/creators/cluster.py" beforeDir="false" afterPath="$PROJECT_DIR$/creators/cluster.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/creators/connect.py" beforeDir="false" afterPath="$PROJECT_DIR$/creators/connect.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/creators/constraint.py" beforeDir="false" afterPath="$PROJECT_DIR$/creators/constraint.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/creators/controls.py" beforeDir="false" afterPath="$PROJECT_DIR$/creators/controls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/creators/creators.py" beforeDir="false" afterPath="$PROJECT_DIR$/creators/creators.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/creators/creatorsBase.py" beforeDir="false" afterPath="$PROJECT_DIR$/creators/creatorsBase.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/creators/curve.py" beforeDir="false" afterPath="$PROJECT_DIR$/creators/curve.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/creators/motionPath.py" beforeDir="false" afterPath="$PROJECT_DIR$/creators/motionPath.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/creators/spaceLocator.py" beforeDir="false" afterPath="$PROJECT_DIR$/creators/spaceLocator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/source/conf.py" beforeDir="false" afterPath="$PROJECT_DIR$/docs/source/conf.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/source/rigs.rst" beforeDir="false" afterPath="$PROJECT_DIR$/docs/source/rigs.rst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rig/byped/rigByped.py" beforeDir="false" afterPath="$PROJECT_DIR$/rig/byped/rigByped.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rig/constraintSwitch.py" beforeDir="false" afterPath="$PROJECT_DIR$/rig/constraintSwitch.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rig/rigBase.py" beforeDir="false" afterPath="$PROJECT_DIR$/rig/rigBase.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rig/rigDynamicHair.py" beforeDir="false" afterPath="$PROJECT_DIR$/rig/rigDynamicHair.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rig/rigIK.py" beforeDir="false" afterPath="$PROJECT_DIR$/rig/rigIK.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rig/rigIKFK.py" beforeDir="false" afterPath="$PROJECT_DIR$/rig/rigIKFK.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rig/rigLaces.py" beforeDir="false" afterPath="$PROJECT_DIR$/rig/rigLaces.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rig/rigSpaceSwitch.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rig/switches/rigBaseSwitch.py" beforeDir="false" afterPath="$PROJECT_DIR$/rig/switches/rigBaseSwitch.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rig/switches/rigFloatRangeSwitch.py" beforeDir="false" afterPath="$PROJECT_DIR$/rig/switches/rigFloatRangeSwitch.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rig/switches/rigFloatSwitch.py" beforeDir="false" afterPath="$PROJECT_DIR$/rig/switches/rigFloatSwitch.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rig/switches/rigSpaceSwitch.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/snippets/simpleRename.py" beforeDir="false" afterPath="$PROJECT_DIR$/snippets/simpleRename.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,22 +65,10 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/rig/rigSpaceSwitch.py">
+        <entry file="file://$PROJECT_DIR$/rig/byped/rigByped.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="408">
-              <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
-              <folding>
-                <element signature="e#0#44#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/creators/constraint.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="456">
-              <caret line="40" column="8" lean-forward="true" selection-start-line="40" selection-start-column="8" selection-end-line="43" selection-end-column="41" />
+            <state relative-caret-position="120">
+              <caret line="104" lean-forward="true" selection-start-line="104" selection-end-line="104" />
               <folding>
                 <element signature="e#0#36#0" expanded="true" />
               </folding>
@@ -42,10 +77,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/rig/constraintSwitch.py">
+        <entry file="file://$PROJECT_DIR$/rig/byped/parts/reverseFeet.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="375">
-              <caret line="21" column="62" lean-forward="true" selection-start-line="18" selection-start-column="8" selection-end-line="21" selection-end-column="62" />
+            <state relative-caret-position="570">
+              <caret line="91" column="44" lean-forward="true" selection-start-line="91" selection-start-column="44" selection-end-line="91" selection-end-column="44" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -54,12 +89,94 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/rig/switches/rigFloatSwitch.py">
+        <entry file="file://$PROJECT_DIR$/rig/rigIK.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-641">
-              <caret line="3" selection-start-line="3" selection-end-line="3" />
+            <state relative-caret-position="284">
+              <caret line="182" column="80" lean-forward="true" selection-start-line="182" selection-start-column="80" selection-end-line="182" selection-end-column="80" />
+              <caret line="183" lean-forward="true" selection-start-line="183" selection-end-line="183" />
               <folding>
-                <element signature="e#0#43#0" expanded="true" />
+                <element signature="e#0#23#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/rig/rigBase.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="513">
+              <caret line="221" column="13" lean-forward="true" selection-start-line="221" selection-start-column="13" selection-end-line="221" selection-end-column="13" />
+              <folding>
+                <element signature="e#0#31#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/rig/byped/parts/leg.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="17">
+              <caret line="1" selection-start-line="1" selection-end-line="1" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/rig/byped/parts/arm.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="136">
+              <caret line="11" column="20" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="20" />
+              <folding>
+                <element signature="e#0#23#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/rig/rigIKFK.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="612">
+              <caret line="42" column="102" lean-forward="true" selection-start-line="42" selection-start-column="102" selection-end-line="42" selection-end-column="102" />
+              <folding>
+                <element signature="e#0#23#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/rig/constraintSwitch.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2074">
+              <caret line="123" column="58" lean-forward="true" selection-start-line="123" selection-start-column="58" selection-end-line="123" selection-end-column="58" />
+              <folding>
+                <element signature="e#0#23#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/creators/controls.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="238">
+              <caret line="21" column="16" lean-forward="true" selection-start-line="21" selection-start-column="16" selection-end-line="21" selection-end-column="16" />
+              <folding>
+                <element signature="e#0#23#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/rig/byped/parts/rigIkFkFeet.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="986">
+              <caret line="61" column="75" lean-forward="true" selection-start-line="61" selection-start-column="75" selection-end-line="61" selection-end-column="75" />
+              <folding>
+                <element signature="e#0#44#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -76,41 +193,38 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>pp</find>
-      <find>dataManager</find>
-      <find>Type</find>
-      <find>scale</find>
-      <find>rename_name_in_format</find>
-      <find>name</find>
-      <find>size</find>
-      <find>RMRigShapeControls</find>
-      <find>SpaceObjects</find>
-      <find>sswtype</find>
-      <find>Name</find>
-      <find>constraintType</find>
-      <find>AfectedObject</find>
-      <find>WA</find>
-      <find>def AddEnum</find>
-      <find>SwitchName</find>
-      <find>ConstraintVisibility</find>
-      <find>addNumeric</find>
-      <find>AddNumericParameter</find>
-      <find>Add</find>
-      <find>add_numeric_attribute</find>
-      <find>kwargs</find>
-      <find>attribute_output_b</find>
-      <find>max</find>
-      <find>self.controls</find>
-      <find>min</find>
-      <find>multiply</find>
-      <find>attribute_output</find>
-      <find>max_value</find>
-      <find>set_control</find>
+      <find>create_control_for_pnts</find>
+      <find>rigControlsForPoints</find>
+      <find>laces_system_based_on_two_curves</find>
+      <find>setup_name_convention_node_base</find>
+      <find>create_point_base</find>
+      <find>rig_outputs</find>
+      <find>laces_system</find>
+      <find>_up_vector</find>
+      <find>self.up_vector</find>
+      <find>rig_objects_on_curve</find>
+      <find>laces_tools</find>
+      <find>input_data</find>
+      <find>create_box_ctrl</find>
+      <find>point_base</find>
+      <find>self.laces_tools</find>
+      <find>self.drivers</find>
+      <find>clusters_parent</find>
+      <find>create_biased_controls</find>
+      <find>create_biased_curve</find>
+      <find>LHType</find>
+      <find>obj_array</find>
+      <find>up_fk_locators</find>
+      <find>L</find>
+      <find>generalAttribute</find>
+      <find>reference_points</find>
+      <find>attribute</find>
+      <find>controls_dict</find>
+      <find>addA</find>
+      <find>ik_handle</find>
+      <find>joints</find>
     </findStrings>
     <replaceStrings>
-      <replace>01_Rig</replace>
-      <replace>nameConvention</replace>
-      <replace>pm</replace>
       <replace>_rig_</replace>
       <replace>rename_set_from_name</replace>
       <replace>validate.as_pymel_node</replace>
@@ -128,7 +242,6 @@
       <replace>self.curve</replace>
       <replace>data_group</replace>
       <replace>rig_system</replace>
-      <replace>name_convention</replace>
       <replace>_reference_</replace>
       <replace>name_convention.</replace>
       <replace>space_objects</replace>
@@ -138,65 +251,70 @@
       <replace>constraint_type</replace>
       <replace>name</replace>
       <replace>attribute_output_false</replace>
+      <replace>create</replace>
+      <replace>name_convention</replace>
+      <replace>up_vector_list</replace>
+      <replace>{</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
+    <option name="ROOT_SYNC" value="DONT_SYNC" />
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/Tools/RMINTFacialRig.py" />
-        <option value="$PROJECT_DIR$/Tools/RMINTcopyPosition.py" />
-        <option value="$PROJECT_DIR$/Tools/RMINTFacialLink.py" />
-        <option value="$PROJECT_DIR$/Tools/RMINTRigTools.py" />
-        <option value="$PROJECT_DIR$/RMRigTools.py" />
-        <option value="$PROJECT_DIR$/RMRigShapeControls.py" />
-        <option value="$PROJECT_DIR$/rig/rigIKFK.py" />
-        <option value="$PROJECT_DIR$/rig/byped/parts/clavicle.py" />
-        <option value="$PROJECT_DIR$/rig/byped/parts/hand.py" />
-        <option value="$PROJECT_DIR$/rig/byped/parts/finger.py" />
-        <option value="$PROJECT_DIR$/rig/byped/parts/arm.py" />
-        <option value="$PROJECT_DIR$/rig/rigMuscleSpline.py" />
-        <option value="$PROJECT_DIR$/creators/flow.py" />
-        <option value="$PROJECT_DIR$/creators/nRigid.py" />
-        <option value="$PROJECT_DIR$/creators/follicle.py" />
-        <option value="$PROJECT_DIR$/creators/loft.py" />
-        <option value="$PROJECT_DIR$/rig/rigLaces.py" />
-        <option value="$PROJECT_DIR$/rig/rigDynamicHair.py" />
-        <option value="$PROJECT_DIR$/creators/hairSystem.py" />
-        <option value="$PROJECT_DIR$/creators/nComponent.py" />
-        <option value="$PROJECT_DIR$/creators/Nucleus.py" />
-        <option value="$PROJECT_DIR$/creators/nucleus.py" />
-        <option value="$PROJECT_DIR$/creators/skinCluster.py" />
-        <option value="$PROJECT_DIR$/creators/curve.py" />
-        <option value="$PROJECT_DIR$/representations/curve.py" />
-        <option value="$PROJECT_DIR$/RMUncategorized.py" />
-        <option value="$PROJECT_DIR$/RMUserParameters.py" />
-        <option value="$PROJECT_DIR$/snippets/renameShape.py" />
-        <option value="$PROJECT_DIR$/snippets/ReverseSideCustomRig.py" />
-        <option value="$PROJECT_DIR$/snippets/RocaletaConfiguration.py" />
-        <option value="$PROJECT_DIR$/snippets/uvTransfer.py" />
-        <option value="$PROJECT_DIR$/rig/byped/parts/rigSpine.py" />
-        <option value="$PROJECT_DIR$/rig/byped/rigByped.py" />
-        <option value="$PROJECT_DIR$/rig/byped/parts/neckHead.py" />
-        <option value="$PROJECT_DIR$/rig/rigFK.py" />
-        <option value="$PROJECT_DIR$/creators/joint.py" />
-        <option value="$PROJECT_DIR$/creators/controls.py" />
-        <option value="$PROJECT_DIR$/rig/rigSingleJoint.py" />
-        <option value="$PROJECT_DIR$/rig/rigProp.py" />
-        <option value="$PROJECT_DIR$/rig/byped/rigSpaceSwitch.py" />
         <option value="$PROJECT_DIR$/AutoRig/RMSpaceSwitch.py" />
         <option value="$PROJECT_DIR$/rig/switches/rigSwitch.py" />
-        <option value="$PROJECT_DIR$/rig/constraintSwitch.py" />
-        <option value="$PROJECT_DIR$/rig/rigBase.py" />
-        <option value="$PROJECT_DIR$/rig/switches/rigBaseSwitch.py" />
-        <option value="$PROJECT_DIR$/rig/switches/rigFloatRangeSwitch.py" />
         <option value="$PROJECT_DIR$/rig/switches/rigBoolSwitch.py" />
-        <option value="$PROJECT_DIR$/rig/switches/rigFloatSwitch.py" />
-        <option value="$PROJECT_DIR$/rig/switches/rigSpaceSwitch.py" />
-        <option value="$PROJECT_DIR$/creators/constraint.py" />
         <option value="$PROJECT_DIR$/rig/rigSpaceSwitch.py" />
+        <option value="$PROJECT_DIR$/rig/switches/rigSpaceSwitch.py" />
+        <option value="$PROJECT_DIR$/docs/source/rigs.rst" />
+        <option value="$PROJECT_DIR$/docs/source/conf.py" />
+        <option value="$PROJECT_DIR$/creators/connect.py" />
+        <option value="$PROJECT_DIR$/rig/switches/rigFloatRangeSwitch.py" />
+        <option value="$PROJECT_DIR$/rig/switches/rigSpaceSwitch_old.py" />
+        <option value="$PROJECT_DIR$/rig/spaceSwitches/space.py" />
+        <option value="$PROJECT_DIR$/rig/switches/rigBaseSwitch.py" />
+        <option value="$PROJECT_DIR$/rig/switches/rigFloatSwitch.py" />
+        <option value="$PROJECT_DIR$/creators/constraint.py" />
+        <option value="$PROJECT_DIR$/rig/spaceSwitches/rigFloatSpaceSwitch.py" />
+        <option value="$PROJECT_DIR$/rig/rigAim.py" />
+        <option value="$PROJECT_DIR$/rig/byped/rigSimpleIk.py" />
+        <option value="$PROJECT_DIR$/rig/byped/parts/ankle.py" />
+        <option value="$PROJECT_DIR$/rig/byped/parts/feet.py" />
+        <option value="$PROJECT_DIR$/rig/rigSimpleIk.py" />
+        <option value="$PROJECT_DIR$/rig/rigClustersOnCurve.py" />
+        <option value="$PROJECT_DIR$/creators/creators.py" />
+        <option value="$PROJECT_DIR$/creators/cluster.py" />
+        <option value="$PROJECT_DIR$/creators/spaceLocator.py" />
+        <option value="$PROJECT_DIR$/creators/motionPath.py" />
+        <option value="$PROJECT_DIR$/snippets/simpleRename.py" />
+        <option value="$PROJECT_DIR$/creators/curve.py" />
+        <option value="$PROJECT_DIR$/rig/rigObjectsOnCurve.py" />
+        <option value="$PROJECT_DIR$/rig/rigLaces.py" />
+        <option value="$PROJECT_DIR$/core/dataValidators.py" />
+        <option value="$PROJECT_DIR$/rig/rigControlsForPoints.py" />
+        <option value="$PROJECT_DIR$/creators/creatorsBase.py" />
+        <option value="$PROJECT_DIR$/rig/rigBiaseControl.py" />
+        <option value="$PROJECT_DIR$/core/hierarchy.py" />
+        <option value="$PROJECT_DIR$/rig/rigAttributeSplit.py" />
+        <option value="$PROJECT_DIR$/core/main.py" />
+        <option value="$PROJECT_DIR$/rig/byped/parts/reverseFeet.py" />
+        <option value="$PROJECT_DIR$/rig/byped/parts/rigIkFKFeet.py" />
+        <option value="$PROJECT_DIR$/rig/rigBase.py" />
+        <option value="$PROJECT_DIR$/core/attributes.py" />
+        <option value="$PROJECT_DIR$/core/data_representation.py" />
+        <option value="$PROJECT_DIR$/core/dataRepresentation.py" />
+        <option value="$PROJECT_DIR$/core/transform.py" />
+        <option value="$PROJECT_DIR$/core/config.py" />
+        <option value="$PROJECT_DIR$/creators/controls.py" />
+        <option value="$PROJECT_DIR$/rig/byped/parts/rigIkFkFeet.py" />
+        <option value="$PROJECT_DIR$/rig/constraintSwitch.py" />
+        <option value="$PROJECT_DIR$/rig/byped/parts/leg.py" />
+        <option value="$PROJECT_DIR$/rig/rigIKFK.py" />
+        <option value="$PROJECT_DIR$/rig/rigIK.py" />
+        <option value="$PROJECT_DIR$/rig/byped/rigByped.py" />
       </list>
     </option>
   </component>
@@ -211,10 +329,10 @@
     <option name="selectedSdk" value="C:\Program Files\Autodesk\Maya2018\bin\mayapy.exe" />
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="2003" />
-    <option name="y" value="75" />
-    <option name="width" value="1936" />
-    <option name="height" value="1013" />
+    <option name="x" value="1901" />
+    <option name="y" value="170" />
+    <option name="width" value="1873" />
+    <option name="height" value="691" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -237,18 +355,6 @@
               <item name="RMPY" type="b2602c69:ProjectViewProjectNode" />
               <item name="maya" type="462c0819:PsiDirectoryNode" />
               <item name="RMPY" type="462c0819:PsiDirectoryNode" />
-              <item name="AutoRig" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="RMPY" type="b2602c69:ProjectViewProjectNode" />
-              <item name="maya" type="462c0819:PsiDirectoryNode" />
-              <item name="RMPY" type="462c0819:PsiDirectoryNode" />
-              <item name="creators" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="RMPY" type="b2602c69:ProjectViewProjectNode" />
-              <item name="maya" type="462c0819:PsiDirectoryNode" />
-              <item name="RMPY" type="462c0819:PsiDirectoryNode" />
               <item name="rig" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -256,7 +362,15 @@
               <item name="maya" type="462c0819:PsiDirectoryNode" />
               <item name="RMPY" type="462c0819:PsiDirectoryNode" />
               <item name="rig" type="462c0819:PsiDirectoryNode" />
-              <item name="switches" type="462c0819:PsiDirectoryNode" />
+              <item name="byped" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="RMPY" type="b2602c69:ProjectViewProjectNode" />
+              <item name="maya" type="462c0819:PsiDirectoryNode" />
+              <item name="RMPY" type="462c0819:PsiDirectoryNode" />
+              <item name="rig" type="462c0819:PsiDirectoryNode" />
+              <item name="byped" type="462c0819:PsiDirectoryNode" />
+              <item name="parts" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -266,25 +380,25 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/.." />
+    <property name="last_opened_file_path" value="$USER_HOME$/AppData/Local/GitHubDesktop/app-2.4.3/resources/app/git/cmd/git.exe" />
     <property name="restartRequiresConfirmation" value="false" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PythonContentEntriesConfigurable" />
+    <property name="settings.editor.selected.configurable" value="vcs.Git" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Development\maya\RMPY\rig" />
+      <recent name="D:\Development\maya\RMPY\rig\spaceSwitches" />
+      <recent name="D:\Development\maya\RMPY\rig\switches" />
+      <recent name="D:\Development\maya\RMPY\Tools\core\transform\QT5" />
+      <recent name="D:\Development\maya\RMPY\Tools\core\transform" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\Development\RMPY\creators" />
       <recent name="D:\Development\RMPY\validation" />
       <recent name="D:\Development\RMPY\Tools\QT4" />
       <recent name="D:\Development\RMPY\Resources" />
       <recent name="D:\Development\RMPY\Tools\QT5" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\Development\maya\RMPY\rig\switches" />
-      <recent name="D:\Development\maya\RMPY\rig" />
-      <recent name="D:\Development\maya\RMPY\Tools\core\transform\QT5" />
-      <recent name="D:\Development\maya\RMPY\Tools\core\transform" />
-      <recent name="D:\Development\maya\RMPY\Tools\QT5" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -379,11 +493,11 @@
   <component name="ToolWindowManager">
     <frame x="1912" y="-8" width="1936" height="1096" extended-state="6" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49535602" visible="true" weight="0.13856691" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49535602" visible="true" weight="0.15964173" />
       <window_info id="Structure" order="1" weight="0.24973656" />
       <window_info id="Favorites" order="2" sideWeight="0.504644" side_tool="true" weight="0.21496312" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49947312" weight="0.32883817" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49947312" weight="0.3281412" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49894625" weight="0.32917964" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3997833" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
@@ -465,12 +579,6 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/creators/curve.py</url>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
           <properties notifyOnTerminate="true" exception="BaseException">
@@ -481,21 +589,44 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/RMUserParameters.py">
+    <entry file="file://$PROJECT_DIR$/rig/switches/rigFloatSwitch.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="13" column="23" lean-forward="true" selection-start-line="13" selection-start-column="23" selection-end-line="13" selection-end-column="23" />
+        <state relative-caret-position="731">
+          <caret line="44" selection-start-line="44" selection-end-line="44" />
+          <folding>
+            <element signature="e#0#43#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/FacialRig/FacialConfigurationNew.py">
+    <entry file="file://$PROJECT_DIR$/rig/switches/rigSpaceSwitch_old.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="488">
-          <caret line="287" column="13" selection-start-line="287" selection-start-column="9" selection-end-line="287" selection-end-column="13" />
+        <state relative-caret-position="833">
+          <caret line="50" column="40" lean-forward="true" selection-start-line="50" selection-start-column="40" selection-end-line="50" selection-end-column="40" />
+          <folding>
+            <element signature="e#0#28#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/snippets/colorizeControls.py">
+    <entry file="file://$PROJECT_DIR$/rig/rigAim.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="15" column="16" selection-start-line="15" selection-start-column="16" selection-end-line="15" selection-end-column="16" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rig/spaceSwitches/space.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="21" column="24" lean-forward="true" selection-start-line="21" selection-start-column="24" selection-end-line="21" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rig/rigDynamicHair.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
           <folding>
@@ -504,187 +635,81 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/snippets/Createjoints.py" />
-    <entry file="file://$PROJECT_DIR$/snippets/CopyPosition.py">
+    <entry file="file://$PROJECT_DIR$/rig/rigLineBetweenPoints.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="11" column="20" lean-forward="true" selection-start-line="11" selection-start-column="20" selection-end-line="11" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/snippets/DetachPropRig.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="675">
-          <caret line="25" column="17" lean-forward="true" selection-start-line="25" selection-start-column="17" selection-end-line="25" selection-end-column="17" />
+        <state relative-caret-position="102">
+          <caret line="6" column="54" lean-forward="true" selection-start-line="6" selection-start-column="54" selection-end-line="6" selection-end-column="54" />
           <folding>
-            <element signature="e#0#24#0" expanded="true" />
+            <element signature="e#0#28#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/snippets/Distribute.py">
+    <entry file="file://$PROJECT_DIR$/rig/rigMuscleSpline.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/snippets/EditShapes.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/snippets/AttributesPapirus.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#0#24#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/snippets/AttributesBooks.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="20" column="26" lean-forward="true" selection-start-line="20" selection-start-column="26" selection-end-line="20" selection-end-column="26" />
-          <folding>
-            <element signature="e#0#24#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/FacialRig/FacialConfiguration.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="196" column="17" lean-forward="true" selection-start-line="196" selection-start-column="17" selection-end-line="196" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/AutoRig/RMFeet.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
+        <state relative-caret-position="-960">
+          <caret line="2" column="34" selection-start-line="2" selection-start-column="21" selection-end-line="2" selection-end-column="34" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GenericRig/GenericPropRig.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/RMUncategorized.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="2" lean-forward="true" selection-start-line="2" selection-end-line="2" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/snippets/RenameRight.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/snippets/renameShape.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="4" column="13" selection-start-line="4" selection-start-column="13" selection-end-line="4" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/snippets/ReverseSideCustomRig.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" column="22" selection-start-line="1" selection-start-column="7" selection-end-line="1" selection-end-column="22" />
-          <folding>
-            <element signature="e#0#24#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/snippets/RocaletaConfiguration.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="22" column="68" selection-start-line="22" selection-start-column="68" selection-end-line="22" selection-end-column="68" />
-          <folding>
-            <element signature="e#0#24#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/snippets/rotate180.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#0#24#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/snippets/selectionAsArray.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/snippets/SetupEyes.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3570">
-          <folding>
-            <element signature="e#0#24#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/snippets/ShowSelectedToogle.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="22" lean-forward="true" selection-start-line="22" selection-end-line="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/snippets/simpleRename.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/snippets/sinFunct.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/rig/byped/rigByped.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="304">
-          <caret line="71" column="33" lean-forward="true" selection-start-line="71" selection-start-column="33" selection-end-line="71" selection-end-column="33" />
-          <folding>
-            <element signature="e#0#36#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/rig/byped/parts/neckHead.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="476">
-          <caret line="29" column="34" selection-start-line="29" selection-start-column="34" selection-end-line="29" selection-end-column="34" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/rig/rigProp.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="440">
-          <caret line="27" column="47" lean-forward="true" selection-start-line="27" selection-start-column="47" selection-end-line="27" selection-end-column="47" />
+        <state relative-caret-position="289">
+          <caret line="17" column="28" lean-forward="true" selection-start-line="17" selection-start-column="28" selection-end-line="17" selection-end-column="28" />
           <folding>
             <element signature="e#0#35#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rig/rigSoftMod.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="660">
+          <caret line="89" selection-start-line="89" selection-end-line="92" selection-end-column="71" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rig/rigSplineIK.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="609">
+          <caret line="73" column="45" lean-forward="true" selection-start-line="73" selection-start-column="45" selection-end-line="73" selection-end-column="45" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rig/byped/parts/hand.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-122">
+          <folding>
+            <element signature="e#0#28#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rig/rigSimpleIk.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="663">
+          <caret line="40" column="13" selection-start-line="40" selection-start-column="13" selection-end-line="40" selection-end-column="13" />
+          <folding>
+            <element signature="e#0#28#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rig/spaceSwitches/rigFloatSpaceSwitch.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="14" column="40" lean-forward="true" selection-start-line="14" selection-start-column="40" selection-end-line="14" selection-end-column="40" />
+          <folding>
+            <element signature="e#0#44#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -699,63 +724,178 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/creators/joint.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="27" column="54" selection-start-line="27" selection-start-column="54" selection-end-line="27" selection-end-column="54" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/2/typing.pyi">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="313">
-          <caret line="267" column="8" selection-start-line="267" selection-start-column="8" selection-end-line="267" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/AutoRig/RMSpaceSwitch.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3944">
-          <caret line="236" selection-start-line="236" selection-end-line="244" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/creators/controls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1258">
-          <caret line="81" column="9" selection-start-line="81" selection-start-column="9" selection-end-line="82" selection-end-column="63" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/AutoRig/RMAutoRig.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/AutoRig/RigStructure.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/AutoRig/RMVisibilitySwitch.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="765">
-          <caret line="47" column="43" selection-start-line="47" selection-start-column="43" selection-end-line="47" selection-end-column="43" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/rig/systemStructure.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="374">
-          <caret line="23" column="28" selection-start-line="23" selection-start-column="28" selection-end-line="23" selection-end-column="28" />
+          <caret line="22" column="27" lean-forward="true" selection-start-line="22" selection-start-column="27" selection-end-line="22" selection-end-column="27" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/representations/curve.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="10" column="33" lean-forward="true" selection-start-line="10" selection-start-column="33" selection-end-line="10" selection-end-column="33" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/creators/flow.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="527">
+          <caret line="31" column="19" lean-forward="true" selection-start-line="31" selection-start-column="19" selection-end-line="31" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/creators/spaceLocator.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2567">
+          <caret line="157" lean-forward="true" selection-start-line="157" selection-end-line="157" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/creators/cluster.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="12" column="22" selection-start-line="12" selection-start-column="22" selection-end-line="12" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rig/rigClustersOnCurve.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="4" column="28" lean-forward="true" selection-start-line="4" selection-start-column="28" selection-end-line="4" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/creators/motionPath.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1535">
+          <caret line="11" column="17" selection-start-line="11" selection-start-column="8" selection-end-line="11" selection-end-column="17" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rig/rigLaces.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="4" selection-start-line="4" selection-end-line="5" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/snippets/simpleRename.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="5" column="40" selection-start-line="5" selection-start-column="40" selection-end-line="5" selection-end-column="40" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/creators/constraint.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="405">
+          <caret line="45" column="33" lean-forward="true" selection-start-line="45" selection-start-column="33" selection-end-line="45" selection-end-column="33" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Program Files/Autodesk/Maya2018/Python/Lib/site-packages/pymel/core/datatypes.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="510">
+          <caret line="40" column="16" selection-start-line="40" selection-start-column="16" selection-end-line="40" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/creators/creators.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="14" column="28" selection-start-line="14" selection-start-column="28" selection-end-line="14" selection-end-column="28" />
+          <folding>
+            <element signature="e#0#47#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/creators/curve.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1088">
+          <caret line="68" column="53" selection-start-line="68" selection-start-column="39" selection-end-line="68" selection-end-column="53" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rig/rigObjectsOnCurve.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="884">
+          <caret line="53" column="59" selection-start-line="53" selection-start-column="59" selection-end-line="53" selection-end-column="59" />
+          <folding>
+            <element signature="e#0#28#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rig/rigBiaseControl.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="18" column="35" lean-forward="true" selection-start-line="18" selection-start-column="35" selection-end-line="18" selection-end-column="35" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rig/rigAttributeSplit.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="748">
+          <caret line="45" column="54" selection-start-line="45" selection-start-column="54" selection-end-line="45" selection-end-column="54" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/RMRigTools.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5644">
+          <caret line="336" column="15" selection-start-line="299" selection-end-line="336" selection-end-column="15" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/hierarchy.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="15" column="42" selection-start-line="15" selection-start-column="42" selection-end-line="15" selection-end-column="42" />
+          <folding>
+            <element signature="e#0#36#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rig/rigControlsForPoints.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="19" column="54" selection-start-line="19" selection-start-column="54" selection-end-line="19" selection-end-column="54" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
@@ -764,137 +904,175 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/creators/creatorsBase.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="16" selection-start-line="16" selection-end-line="16" />
+        <state relative-caret-position="561">
+          <caret line="34" column="65" selection-start-line="34" selection-start-column="65" selection-end-line="34" selection-end-column="65" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/rig/byped/parts/rigSpine.py">
+    <entry file="file://$PROJECT_DIR$/core/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="22" selection-start-line="22" selection-end-line="22" />
+        <state relative-caret-position="85">
+          <caret line="5" column="34" selection-start-line="5" selection-start-column="34" selection-end-line="5" selection-end-column="34" />
+          <folding>
+            <element signature="e#0#30#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/dataValidators.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="595">
+          <caret line="36" column="50" selection-start-line="36" selection-start-column="50" selection-end-line="36" selection-end-column="50" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/snippets/SkinCluster.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/snippets/uvTransfer.py">
+    <entry file="file://$PROJECT_DIR$/rig/byped/parts/feet.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" column="30" selection-start-line="4" selection-start-column="30" selection-end-line="4" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/rig/rigBase.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="11" column="24" lean-forward="true" selection-start-line="11" selection-start-column="24" selection-end-line="11" selection-end-column="24" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/rig/rigFK.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="14" column="24" lean-forward="true" selection-start-line="14" selection-start-column="24" selection-end-line="14" selection-end-column="24" />
+        <state relative-caret-position="544">
+          <caret line="32" selection-start-line="32" selection-end-line="32" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/creators/connect.py">
+    <entry file="file://$PROJECT_DIR$/core/dataRepresentation.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="86" column="20" lean-forward="true" selection-start-line="86" selection-start-column="20" selection-end-line="86" selection-end-column="20" />
+        <state relative-caret-position="544">
+          <caret line="32" column="7" selection-start-line="32" selection-start-column="7" selection-end-line="32" selection-end-column="7" />
           <folding>
-            <element signature="e#0#36#0" expanded="true" />
+            <element signature="e#0#37#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/rig/switches/rigBaseSwitch.py">
+    <entry file="file://$PROJECT_DIR$/core/attributes.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1105">
-          <caret line="66" column="79" selection-start-line="66" selection-start-column="79" selection-end-line="66" selection-end-column="79" />
+        <state relative-caret-position="51">
+          <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" />
           <folding>
-            <element signature="e#0#28#0" expanded="true" />
+            <element signature="e#0#23#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/rig/switches/rigBoolSwitch.py">
+    <entry file="file://$PROJECT_DIR$/core/transform.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1581">
+          <caret line="96" column="19" selection-start-line="96" selection-start-column="19" selection-end-line="96" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="24" column="27" selection-start-line="24" selection-start-column="27" selection-end-line="24" selection-end-column="27" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rig/byped/parts/leg.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="17">
-          <caret line="2" selection-start-line="2" selection-end-line="2" />
-          <folding>
-            <element signature="e#0#43#0" expanded="true" />
-          </folding>
+          <caret line="1" selection-start-line="1" selection-end-line="1" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/rig/switches/rigFloatRangeSwitch.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="881">
-          <caret line="61" column="15" selection-start-line="61" selection-start-column="15" selection-end-line="61" selection-end-column="15" />
-          <folding>
-            <element signature="e#0#43#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/rig/switches/rigSpaceSwitch.py">
+    <entry file="file://$PROJECT_DIR$/rig/byped/parts/arm.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
-          <caret line="8" column="38" lean-forward="true" selection-start-line="8" selection-start-column="38" selection-end-line="8" selection-end-column="38" />
+          <caret line="11" column="20" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="20" />
           <folding>
-            <element signature="e#0#28#0" expanded="true" />
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rig/rigIKFK.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="612">
+          <caret line="42" column="102" lean-forward="true" selection-start-line="42" selection-start-column="102" selection-end-line="42" selection-end-column="102" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/rig/constraintSwitch.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="21" column="62" lean-forward="true" selection-start-line="18" selection-start-column="8" selection-end-line="21" selection-end-column="62" />
+        <state relative-caret-position="2074">
+          <caret line="123" column="58" lean-forward="true" selection-start-line="123" selection-start-column="58" selection-end-line="123" selection-end-column="58" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/rig/switches/rigFloatSwitch.py">
+    <entry file="file://$PROJECT_DIR$/creators/controls.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-641">
-          <caret line="3" selection-start-line="3" selection-end-line="3" />
+        <state relative-caret-position="238">
+          <caret line="21" column="16" lean-forward="true" selection-start-line="21" selection-start-column="16" selection-end-line="21" selection-end-column="16" />
           <folding>
-            <element signature="e#0#43#0" expanded="true" />
+            <element signature="e#0#23#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/creators/constraint.py">
+    <entry file="file://$PROJECT_DIR$/rig/byped/parts/rigIkFkFeet.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="456">
-          <caret line="40" column="8" lean-forward="true" selection-start-line="40" selection-start-column="8" selection-end-line="43" selection-end-column="41" />
-          <folding>
-            <element signature="e#0#36#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/rig/rigSpaceSwitch.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
+        <state relative-caret-position="986">
+          <caret line="61" column="75" lean-forward="true" selection-start-line="61" selection-start-column="75" selection-end-line="61" selection-end-column="75" />
           <folding>
             <element signature="e#0#44#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rig/rigBase.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="513">
+          <caret line="221" column="13" lean-forward="true" selection-start-line="221" selection-start-column="13" selection-end-line="221" selection-end-column="13" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rig/rigIK.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="284">
+          <caret line="182" column="80" lean-forward="true" selection-start-line="182" selection-start-column="80" selection-end-line="182" selection-end-column="80" />
+          <caret line="183" lean-forward="true" selection-start-line="183" selection-end-line="183" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rig/byped/parts/reverseFeet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="570">
+          <caret line="91" column="44" lean-forward="true" selection-start-line="91" selection-start-column="44" selection-end-line="91" selection-end-column="44" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rig/byped/rigByped.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="104" lean-forward="true" selection-start-line="104" selection-end-line="104" />
+          <folding>
+            <element signature="e#0#36#0" expanded="true" />
           </folding>
         </state>
       </provider>

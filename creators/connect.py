@@ -16,6 +16,17 @@ class Connect(creatorsBase.CreatorsBase):
             input_attribute.set(attribute)
 
     def attributes(self, attribute_source, attribute_destination, operation=1):
+        """
+        :param attribute_source: The source attribute will be pluged to the attribute destination if no
+                                 other connection is coming in on the attribute_destination.
+                                 If a connection already exists it will create an plusMinusAverage node,
+                                 and it will plug the original attribute and the attribute_source on the XD inputs of
+                                 the plusMinusAverage.
+        :param attribute_destination: The destination Attribut that will receive the output of the plusMinusAverage node
+        :param operation: the operation of the plusMinusAverage node that will connect the
+                          attribute source with the attribute destination by default is 1 (addition).
+        :return:
+        """
         attribute_source = attribute_source
         attribute_destination = attribute_destination
         value = pm.listConnections(attribute_destination, destination=False, plugs=True, skipConversionNodes=False)

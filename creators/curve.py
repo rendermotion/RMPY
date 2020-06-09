@@ -66,7 +66,7 @@ class Curve(creatorsBase.CreatorsBase):
         return self.point_base(positions)
 
     def point_base(self, *list_of_points, **kwargs):
-        self.setup_name_conv_node_base(*list_of_points, **kwargs)
+        super(Curve, self).point_base(*list_of_points, **kwargs)
         periodic = kwargs.pop('periodic', False)
         degree = kwargs.pop('degree', 3)
         ep = kwargs.pop('ep', False)
@@ -128,7 +128,6 @@ class Curve(creatorsBase.CreatorsBase):
 
 
 if __name__ == '__main__':
-    selection = pm.ls('C_plates00_reference_GRP')[0]
+    selection = pm.ls('C_cuerda00_reference_grp')[0]
     nurbs_curve = Curve()
     nurbs_curve.point_base(*selection.getChildren(), ep=True)
-    nurbs_curve.point_base()

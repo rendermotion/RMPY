@@ -1,16 +1,17 @@
 from RMPY import nameConvention
 import pymel.core as pm
 
-NameConv = nameConvention.NameConvention()
-NameConv.default_names['system']='reference'
-#NameConv.TypeDictionary['joint']='JXX'
-#NameConv.TypeDictionary['control']='CTRL'
+name_conv = nameConvention.NameConvention()
+name_conv.default_names['system']= 'reference'
+#name_conv.TypeDictionary['joint']='JXX'
+#name_conv.TypeDictionary['control']='CTRL'
 
 selection = pm.ls(selection=True)
 #NameConv.RMRenameGuessTypeInName(selection)
-for i in selection:
-	NameConv.rename_set_from_name( i , "reference", "system")
-	#NameConv.rename_set_from_name( i , "statics","system")
-	#NameConv.RMRenameSetFromName( i , "skinjoint","objectType")
+
+for each in selection:
+	name_conv.rename_name_in_format(each, system='reference', name='cuerda')
+
+
 
 

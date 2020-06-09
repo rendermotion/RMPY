@@ -27,14 +27,13 @@ class RigBaseSwitch(rigBase.RigBase):
         self.attribute_output_false = None
         self.attribute_name = 'switch'
 
-    def initialize(self, *args, **kwargs):
+    def initialize(self, **kwargs):
         """
         Initializes the reverse, the control, and the name of the attribute.
         **kwargs:
             control: the name of the object that will be the control.
             attribute_name:the name of the attribute that will be 
                 added to the control the default name is switch.
-        
         """
         self.control = kwargs.pop('control', None)
         if self.control:
@@ -46,9 +45,9 @@ class RigBaseSwitch(rigBase.RigBase):
 
     @property
     def control(self):
-    """
-    the control object for the switch.
-    """
+        """
+        the control object for the switch.
+        """
         return self._model.control
 
     @control.setter
@@ -73,9 +72,9 @@ class RigBaseSwitch(rigBase.RigBase):
 
     @property
     def reverse(self):
-    """
-    the reverse node for the output.
-    """
+        """
+        the reverse node for the output.
+        """
         return self._model.reverse
 
     @reverse.setter

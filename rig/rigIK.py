@@ -21,7 +21,6 @@ class IKRigModel(RMPY.rig.rigBase.BaseModel):
         self.root_kinematics = None
         self.root_joints = None
         self.root_controls = None
-
         self.kinematics = []
 
 
@@ -127,7 +126,7 @@ class IKRig(RMPY.rig.rigBase.RigBase):
     def create_using_known(self, ik_start=0, ik_end=None):
         if not self.joints:
             self.build_joints()
-        self.IKCreate(ik_start=ik_start, ik_end=ik_end)
+        self.ik_create(ik_start=ik_start, ik_end=ik_end)
         self.create_pole_vector()
         self.structure()
 
@@ -151,23 +150,26 @@ class IKRig(RMPY.rig.rigBase.RigBase):
         self.root_controls.setParent(self.rig_system.controls)
         self.root_kinematics.setParent(self.rig_system.kinematics)
 
-    def IKCreate(self, ik_start=0, ik_end=None):
+    def ik_create(self, ik_start=0, ik_end=None):
         if not ik_end:
             ik_end = len(self.joints)-1
 
-        reset_ikHandle, control_ikHandle = self.create.controls.point_base(
+        reset_ik_handle, control_ik_handle = self.create.controls.point_base(
             self.joints[ik_end],
             type='box',
             x_ratio=.3,
             y_ratio=.3,
             z_ratio=.3,
             parent_base_size=True,
+            centered=True,
             name="%sIK" % self.name_convention.get_a_short_name(self.joints[ik_end]))
 
-        self.reset_controls.append(reset_ikHandle)
-        self.controls.append(control_ikHandle)
-        self.reset_controls_dict['ikHandle'] = reset_ikHandle
-        self.controls_dict['ikHandle'] = control_ikHandle
+        self.custom_world_align(reset_ik_handle)
+        self.reset_controls.append(reset_ik_handle)
+        self.controls.append(control_ik_handle)
+        self.reset_controls_dict['ikHandle'] = reset_ik_handle
+        self.controls_dict['ikHandle'] = control_ik_handle
+
         # self.ikControl = self.name_convention.RMRenameBasedOnBaseName(self.joints[len(self.joints)-1], self.ikControl,
         # NewName = self.name_convention.RMGetAShortName(self.joints[len(self.joints)-1]) + "IK")
         RMRigTools.RMLockAndHideAttributes(self.controls_dict['ikHandle'], "111111000h")
@@ -181,9 +183,11 @@ class IKRig(RMPY.rig.rigBase.RigBase):
         pm.orientConstraint(self.controls_dict['ikHandle'], self.joints[ik_end])
 
         point_constraint = pm.pointConstraint(self.controls_dict['ikHandle'], self.ik_handle, name="LimbCntrlHandleConstraint")
+
         self.name_convention.rename_based_on_base_name(self.joints[ik_end], point_constraint)
         self.kinematics.append(self.ik_handle)
         RMRigTools.RMChangeRotateOrder(self.controls_dict['ikHandle'], 'yzx')
+        self.custom_world_align(self.reset_controls_dict['ikHandle'])
 
     def identify_joints(self, ik_handle):
         endEffector = pm.ikHandle(ik_handle, q=True, endEffector=True)

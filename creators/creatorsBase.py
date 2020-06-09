@@ -17,19 +17,22 @@ class CreatorsBase(object):
 
     def setup_name_convention_node_base(self, *args, **kwargs):
         pop_name = kwargs.pop('name', None)
-        system_name = self.name_convention.get_from_name(args[0], 'system')
-        if system_name == config.default_reference_system_name:
-            if pop_name:
-                self.name_convention.default_names['name'] = pop_name
-            self.name_convention.default_names['system'] = self.name_convention.get_a_short_name(args[0])
-        else:
-            if pop_name:
-                self.name_convention.default_names['name'] = pop_name
+        if args[0].__class__ != list:
+            system_name = self.name_convention.get_from_name(args[0], 'system')
+            if system_name == config.default_reference_system_name:
+                if pop_name:
+                    self.name_convention.default_names['name'] = pop_name
+                self.name_convention.default_names['system'] = self.name_convention.get_a_short_name(args[0])
             else:
-                self.name_convention.default_names['name'] = self.name_convention.get_a_short_name(args[0])
-            self.name_convention.default_names['system'] = self.name_convention.get_from_name(args[0], 'system')
+                if pop_name:
+                    self.name_convention.default_names['name'] = pop_name
+                else:
+                    self.name_convention.default_names['name'] = self.name_convention.get_a_short_name(args[0])
+                self.name_convention.default_names['system'] = self.name_convention.get_from_name(args[0], 'system')
 
-        self.name_convention.default_names['side'] = self.name_convention.get_from_name(args[0], 'side')
+            self.name_convention.default_names['side'] = self.name_convention.get_from_name(args[0], 'side')
+        else:
+            self.name_convention.default_names['name'] = pop_name
 
     def _dictionary(self):
         result_dict = dict(type=str(self.__class__.__name__),

@@ -90,7 +90,7 @@ pygments_style = None
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['nstatic']
+html_static_path = []
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
@@ -181,5 +181,5 @@ epub_exclude_files = ['search.html']
 # -- Extension configuration -------------------------------------------------
 # Packages / modules to mock so that build does not fail.
 autodoc_mock_imports = ['pymel', 'pymel.core', 'maya.api', 'maya.api', 'maya',
-                       'maya.cmds', 'maya.OpenMayaUI',
-                       'maya.api.OpenMaya']
+                        'maya.cmds', 'maya.OpenMayaUI', 'RMPY.core',
+                        'maya.api.OpenMaya']

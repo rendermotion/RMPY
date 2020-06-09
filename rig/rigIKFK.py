@@ -82,7 +82,6 @@ class RigIkFk(rigBase.RigBase):
         self.reset_joints = self.switch_control_rig.reset_joints
 
 
-
 if __name__ == '__main__':
     root_arm = pm.ls('R_leg01_reference_pnt')[0]
     arm_root_points = rm.descendents_list(root_arm)[:3]

@@ -166,7 +166,7 @@ class DynamicHair(rigBase.RigBase):
             self._create_joints_on_curve(output_curve, joint_count)
 
     def _create_joints_on_curve(self, curve, joint_count):
-        joints_dict = self.laces_system.joints_on_curve(joint_count, curve=curve, UpVectorType="object")
+        joints_dict = self.laces_system.joints_on_curve(joint_count, curve=curve, up_vector_type="object")
 
         new_parent = pm.group(empty=True, name='curveJoints')
         self.name_conv.rename_name_in_format(new_parent)

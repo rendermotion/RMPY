@@ -23,5 +23,16 @@ def descendents_list(transform_node):
     return result_list
 
 
+def reorder_hierarchy(*objects_list):
+    objects_list = pm.ls(objects_list)
+    if objects_list[0] == objects_list[1].getParent():
+        pm.parent(objects_list[1:], objects_list[0].getParent())
+    else:
+        for index, each_object in enumerate(objects_list[1:]):
+            each_object.setParent(objects_list[index])
+
+
 if __name__ == '__main__':
-    insert_in_hierarchy('R_arm00_reference_GRP', 'null1', insert_type='children')
+    selection = pm.ls(selection=True)
+    reorder_hierarchy(*selection)
+    # insert_in_hierarchy('R_arm00_reference_GRP', 'null1', insert_type='children')

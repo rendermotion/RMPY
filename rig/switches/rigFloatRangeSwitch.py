@@ -24,7 +24,6 @@ class FloatRangeSwitch(rigBaseSwitch.RigBaseSwitch):
         self.attribute_output = None
 
         self.initialize(*args, **kwargs)
-        print 'doing set control {}'.format(self.control)
         if self.control:
             self.set_control(**kwargs)
 

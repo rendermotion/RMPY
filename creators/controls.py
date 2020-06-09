@@ -29,6 +29,7 @@ class Controls(creatorsBase.CreatorsBase):
 
         if object_type == 'box':
             for each in points:
+                print each
                 controls_list.append(self.create_box_ctrl(each, **kwargs))
 
         elif object_type == 'circular':
@@ -46,7 +47,18 @@ class Controls(creatorsBase.CreatorsBase):
 
         if len(points) == 1:
             return controls_list[0]
+
         return controls_list
+
+    def scale_controls(self, control):
+        if self.name_convention.is_name_in_format(control):
+            if self.name_convention.get_from_name(control, 'side') == 'R':
+                if 'x' in config.mirror_controls_axis.lower():
+                    control.scaleX.set(-1)
+                if 'y' in config.mirror_controls_axis.lower():
+                    control.scaleY.set(-1)
+                if 'z' in config.mirror_controls_axis.lower():
+                    control.scaleZ.set(-1)
 
     @staticmethod
     def create_cube_line(height, length, width, centered=False,
@@ -130,6 +142,7 @@ class Controls(creatorsBase.CreatorsBase):
         transform.align(Obj, control)
 
         reset_group = self.rigTools.RMCreateGroupOnObj(control)
+        self.scale_controls(reset_group)
         return reset_group, control
 
     def create_circular_control(self, Obj, **kwargs):
@@ -159,7 +172,7 @@ class Controls(creatorsBase.CreatorsBase):
         transform.align(Obj, control)
 
         reset_group = self.rigTools.RMCreateGroupOnObj(control)
-
+        self.scale_controls(reset_group)
         return reset_group, control
 
     def file_control(self, scene_object, **kwargs):
@@ -205,6 +218,7 @@ class Controls(creatorsBase.CreatorsBase):
             transform.align(scene_object, control)
 
             reset_group = self.rigTools.RMCreateGroupOnObj(control)
+            self.scale_controls(reset_group)
             return reset_group, control
         else:
             print "Error importing Shape File"

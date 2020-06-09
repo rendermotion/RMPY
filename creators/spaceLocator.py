@@ -165,18 +165,28 @@ class SpaceLocator(creatorsBase.CreatorsBase):
         number_of_points = kwargs.pop('number_of_points', 5)
         follow_axis = kwargs.pop('followAxis', 'Y')
         up_axis = kwargs.pop('upAxis', 'X')
+        delete_motion_path = kwargs.pop('delete_motion_path', True)
 
         main_list_of_points = []
         for each_curve in curves:
             point_list = []
+            motion_path_list = []
             for each_point in range(number_of_points):
                 point_list.append(self.point_base(each_curve))
             print point_list
             motion_path_node = motion_path.node_base(*point_list, curve=each_curve,
                                                      followAxis=follow_axis, upAxis=up_axis, **kwargs)
-            pm.delete(motion_path_node)
+            if delete_motion_path:
+                pm.delete(motion_path_node)
+            else:
+                motion_path_list.append(motion_path_node)
+                self.name_convention.rename_name_in_format(motion_path_node)
+
             main_list_of_points.append(point_list)
-        return main_list_of_points
+        if delete_motion_path:
+            return main_list_of_points
+        else:
+            return main_list_of_points, motion_path_list
 
 
 if __name__ == '__main__':

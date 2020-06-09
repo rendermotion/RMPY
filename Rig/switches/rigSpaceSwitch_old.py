@@ -124,4 +124,5 @@ class RigSpaceSwitch(rigBase.RigBase):
 if __name__ == '__main__':
     control_space_switch = pm.ls('C_control_spaceSwitch_shp')[0]
     space_switch_rig = RigSpaceSwitch()
-    space_switch_rig.create_point_base('pCube1', control_object= 'C_control_spaceSwitch_shp',  space_objects = ['pCylinder1', 'pSphere1'], mo=False)
+    space_switch_rig.create_point_base('pCube1', control_object= 'C_control_spaceSwitch_shp',
+                                       space_objects=['pCylinder1', 'pSphere1'], mo=False)
