@@ -17,7 +17,7 @@ class validator(object):
         self.translator = value
         self._validator = []
         for each_value in self._translator:
-            each._validator.append(self._translator[each_value])
+            self._validator.append(self._translator[each_value])
 
     def validate(self, value):
         if value in self._validator:

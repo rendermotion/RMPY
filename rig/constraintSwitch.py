@@ -81,7 +81,6 @@ class ConstraintSwitch(rigBase.RigBase):
         control = kwargs.pop('control', None)
         self.create_list_base(list_a, list_b)
         if control:
-            print 'control found {}, {}'.format(control, kwargs)
             self.create_attribute_control(control, **kwargs)
             self.link_attribute_to_constraints()
             self.controls.append(control)
@@ -108,6 +107,8 @@ class ConstraintSwitch(rigBase.RigBase):
                     else:
                         reset, output = self.create.joint.point_base(constraint_a, name='intermediate')
                         reset.setParent(root_group)
+                        self.reset_joints.append(reset)
+                        self.joints.append(output[0])
                 else:
                     output = destination[index]
 

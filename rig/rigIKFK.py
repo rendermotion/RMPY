@@ -60,7 +60,9 @@ class RigIkFk(rigBase.RigBase):
 
         self.fk_rig.create_point_base(*creation_points, orient_type='point_orient')
 
-        self.switch_control_rig.create_point_base(creation_points[-1], name='switch', type='box')
+        self.switch_control_rig.create_point_base(creation_points[0], name='switch', type='box')
+
+        self.switch_control_rig.custom_world_align(self.switch_control_rig.reset_controls[0])
 
         self.ik_fk_switch.build(self.ik_rig.joints, self.fk_rig.joints, control=self.switch_control_rig.controls[0],
                                 attribute_name='IkFkSwitch')
@@ -78,12 +80,12 @@ class RigIkFk(rigBase.RigBase):
         # pm.parentConstraint(self.fk_limb.controls[0], self.ik_limb.reset_controls['ikHandleSecondary'], mo=True)
         pm.parentConstraint(self.fk_rig.controls[0], self.ik_rig.root_joints, mo=True)
 
-        self.joints = self.switch_control_rig.joints
-        self.reset_joints = self.switch_control_rig.reset_joints
+        self.joints = self.ik_fk_switch.joints
+        self.reset_joints = self.ik_fk_switch.reset_joints
 
 
 if __name__ == '__main__':
-    root_arm = pm.ls('R_leg01_reference_pnt')[0]
+    root_arm = pm.ls('L_shoulder01_reference_pnt')[0]
     arm_root_points = rm.descendents_list(root_arm)[:3]
     print arm_root_points
     arm_rig = RigIkFk()

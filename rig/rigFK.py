@@ -30,10 +30,12 @@ class RigFK(rigBase.RigBase):
                 reset_group.setParent(self.rig_system.controls)
             else:
                 pm.parent(reset_group, self.controls[index-1])
+            self.create.constraint.define_constraints(point=False, scale=True, parent=True, orient=False)
             self.create.constraint.node_base(control, eachJoint, mo=True)
 
 
 if __name__ == '__main__':
     rig_fk = RigFK()
-    rig_fk.create_point_base(u'R_leg01_reference_pnt', u'R_Knee01_reference_pnt', u'R_ankle01_reference_pnt')
+    rig_fk.create_point_base('L_clavicle01_reference_pnt', 'L_shoulder01_reference_pnt','L_elbow01_reference_pnt', 'L_wrist01_reference_pnt',  orient_type='point_orient')
+    # rig_fk.create_point_base(u'R_leg01_reference_pnt', u'R_Knee01_reference_pnt', u'R_ankle01_reference_pnt')
 

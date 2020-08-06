@@ -64,7 +64,7 @@ class Curve(object):
 
     def set_repr_dict(self):
         if 'type' in self.repr_dict.keys():
-            if self.repr_dict['type'] =='curve':
+            if self.repr_dict['type'] == 'curve':
                 if not self.node:
                     self.node = pm.ls(self.repr_dict)
 
@@ -92,3 +92,10 @@ class Curve(object):
                 print 'not valid curve representation dictionary load, check source'
         else:
             print 'not valid curve representation dictionary load, check source'
+
+
+if __name__ == '__main__':
+    control_curve = Curve.by_name('C_joint00_neck_ctr')
+    from pprint import pprint as pp
+
+    pp(control_curve.get_repr_dict())

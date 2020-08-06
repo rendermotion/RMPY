@@ -232,7 +232,7 @@ class RigBase(object):
                     scale_z = -1
             rm.aim_vector_based(each, pm.datatypes.Vector(0.0, 0.0, 1.0),
                                 pm.datatypes.Vector(0.0, 1.0, 0.0),
-                                scaleZ=scale_z)
+                                scale_z=scale_z)
 
 
 if __name__ == '__main__':

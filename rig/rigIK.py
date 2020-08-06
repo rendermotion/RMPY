@@ -111,15 +111,17 @@ class IKRig(RMPY.rig.rigBase.RigBase):
         return new_ik_instance
 
     def build_joints(self):
-        self.root_joints, self.joints = self.create.joint.point_base(self.guides)
+        self.root_joints, self.joints = self.create.joint.point_base(self.guides, orient_type='point_orient')
 
-    def BoneChainLenght(self, BoneChain):
+    @staticmethod
+    def bone_chain_lenght(bone_chain):
         distancia = 0
-        for index in range(1, len(BoneChain)):
-            distancia += RMRigTools.RMPointDistance(BoneChain[index - 1], BoneChain[index])
+        for index in range(1, len(bone_chain)):
+            distancia += RMRigTools.RMPointDistance(bone_chain[index - 1], bone_chain[index])
         return distancia
 
     def create_point_base(self, *args, **kwargs):
+        super(IKRig, self).create_point_base(*args, **kwargs)
         self.guides = args
         self.create_using_known()
 
@@ -133,11 +135,9 @@ class IKRig(RMPY.rig.rigBase.RigBase):
     def structure(self):
         self.root_joints.setParent(self.rig_system.joints)
         self.root_controls = pm.group(empty=True, name='ikControls')
-        print self.root_controls
         self.name_convention.rename_name_in_format(self.root_controls, useName=True)
 
         self.root_kinematics = pm.group(empty=True, name='ikKinematics')
-        print self.root_kinematics
         self.name_convention.rename_name_in_format(self.root_kinematics, useName=True)
 
         # self.ik_handle.setParent(self.root_kinematics)
@@ -180,7 +180,7 @@ class IKRig(RMPY.rig.rigBase.RigBase):
         self.name_convention.rename_based_on_base_name(self.joints[ik_end], self.ik_handle)
         self.name_convention.rename_based_on_base_name(self.joints[ik_end], effector)
 
-        pm.orientConstraint(self.controls_dict['ikHandle'], self.joints[ik_end])
+        # pm.orientConstraint(self.controls_dict['ikHandle'], self.joints[ik_end])
 
         point_constraint = pm.pointConstraint(self.controls_dict['ikHandle'], self.ik_handle, name="LimbCntrlHandleConstraint")
 
@@ -220,6 +220,7 @@ class IKRig(RMPY.rig.rigBase.RigBase):
 
         self.reset_controls_dict['poleVector'] = reset_controls_pole_vector
         self.controls_dict['poleVector'] = controls_pole_vector
+        self.custom_world_align(self.reset_controls_dict['poleVector'])
 
         self.line_between_points_rig = rigLineBetweenPoints.LineBetweenPoints(rig_system=self.rig_system)
         self.line_between_points_rig.create_point_base(self.controls_dict['poleVector'], self.joints[1])
@@ -241,7 +242,7 @@ class IKRig(RMPY.rig.rigBase.RigBase):
         if not self.joints:
             self.joints = self.identify_joints(ik_handle)
 
-        totalDistance = self.BoneChainLenght(self.joints)
+        totalDistance = self.bone_chain_lenght(self.joints)
         transformStartPoint = pm.spaceLocator(name="StretchyIkHandleStartPoint")
         transformStartPoint = self.name_convention.rename_name_in_format(transformStartPoint, useName=True)
         transformEndPoint = pm.spaceLocator(name="StretchyIkHandleEndPoint")
@@ -306,7 +307,7 @@ class IKRig(RMPY.rig.rigBase.RigBase):
 
 if __name__ == '__main__':
 
-    root_arm = pm.ls('R_shoulder01_reference_pnt')[0]
+    root_arm = pm.ls('L_shoulder01_reference_pnt')[0]
     arm_points = rm.descendents_list(root_arm)
     ik_rig = IKRig()
     ik_rig.create_point_base(*arm_points[:3])

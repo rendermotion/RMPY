@@ -8,7 +8,8 @@ class RigSpaceModel(rigBase.BaseModel):
 
 class RigSpace(rigBase.RigBase):
     def __init__(self, reference_object, space_object, **kwargs):
-        r"""It creates two transform nodes, one linked to the
+        """
+        It creates two transform nodes, one linked to the two objects
 
         Parameters
         ----------
