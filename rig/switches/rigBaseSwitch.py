@@ -21,7 +21,7 @@ class RigBaseSwitch(rigBase.RigBase):
     def __init__(self, *args, **kwargs):
         super(RigBaseSwitch, self).__init__(*args, **kwargs)
         self._model = RigBaseSwitchModel()
-        self.control = None
+        self.control = kwargs.pop('control', None)
         self.reverse = None
         self.attribute_output = None
         self.attribute_output_false = None
@@ -35,7 +35,7 @@ class RigBaseSwitch(rigBase.RigBase):
             attribute_name:the name of the attribute that will be 
                 added to the control the default name is switch.
         """
-        self.control = kwargs.pop('control', None)
+        self.control = kwargs.pop('control', self.control)
         if self.control:
             self.control = self.rm.as_pymel_nodes(self.control)
         self.attribute_name = kwargs.pop('attribute_name', 'switch')

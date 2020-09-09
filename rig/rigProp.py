@@ -64,6 +64,6 @@ class RigProp(rigBase.RigBase):
 
 
 if __name__ == '__main__':
-    reference_points = pm.ls('C_feet00_reference_pnt')[0]
+    reference_points = pm.ls('C_box00_reference_pnt')[0]
     rig_prop = RigProp()
-    rig_prop.create_point_base(reference_points, depth=3, type='box', centered=True, align='world')
+    rig_prop.create_point_base(reference_points, depth=2, type='box', centered=True, align='world')

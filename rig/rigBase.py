@@ -45,7 +45,7 @@ class RigBase(object):
         self._joint_creation_kwargs = {}
         self._control_creation_kwargs = {}
         self.create = creators
-        self._model = None
+        self._model = kwargs.pop('model', BaseModel())
 
     @property
     def root(self):

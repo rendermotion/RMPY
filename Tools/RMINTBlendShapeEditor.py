@@ -28,7 +28,7 @@ def getMayaWindow():
     return wrapInstance(long(ptr), QMainWindow)
 
 
-class Main(MayaQWidgetDockableMixin, QDialog):
+class Main(QDialog):
     def __init__(self, parent=None):
         super(Main, self).__init__(parent=getMayaWindow())
         self.ui = FormBlendShapeEditor.Ui_Form()
@@ -124,6 +124,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
                     cmds.connectAttr((Shapes[0] + ".outMesh"), (GroupParts + ".inputGeometry"), f=True)
 
     def RebuildTargetsFromSelectionBtnPressed(self):
+        selection = cmds.ls(selection=True)
         BSNode = self.ui.BlendShapeNodeNamelbl.text()
         if BSNode == "":
             BSNodeArray = mel.eval(
@@ -186,5 +187,5 @@ class Main(MayaQWidgetDockableMixin, QDialog):
 
 
 if __name__ == '__main__':
-    w = main()
-    w.show(dockable=True)
+    w = Main()
+    w.show()

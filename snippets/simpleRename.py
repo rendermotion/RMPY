@@ -10,7 +10,7 @@ selection = pm.ls(selection=True)
 #NameConv.RMRenameGuessTypeInName(selection)
 
 for each in selection:
-	name_conv.rename_name_in_format(each, system='reference', name='feet')
+	name_conv.rename_name_in_format(each, system='reference', name='box')
 
 
 

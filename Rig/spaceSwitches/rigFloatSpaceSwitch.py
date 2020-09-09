@@ -26,13 +26,20 @@ class RigFloatSpaceSwitch(rigFloatSwitch.FloatSwitch):
                                                                         rig_system=self.rig_system))
 
     def add_object(self, scene_transform, **kwargs):
+        """
+        Adds a new object to the constraints. This object will be constrained by the spaces and the switch of the spaces
+        will be connected to the switch.
+        :param scene_transform: The new object that will be constraned
+        :param kwargs: kwargs that will be passed to the constraint like the mo flag.
+        :return : None
+        """
         self.set_spaces(scene_transform)
         for each_space_rig in self.space_rigs_dict[scene_transform]:
             constraints = self.constraint.node_base(each_space_rig.tip, scene_transform, **kwargs)
-        print constraints
         self.connect_constraint(*constraints)
 
     def connect_constraint(self, *constraint_nodes):
+
         for each_constraint_node in constraint_nodes:
             weight_alias = each_constraint_node.getWeightAliasList()
             print weight_alias

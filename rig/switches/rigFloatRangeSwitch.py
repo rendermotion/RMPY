@@ -12,8 +12,8 @@ class FloatRangeSwitch(rigBaseSwitch.RigBaseSwitch):
     def __init__(self, *args, **kwargs):
         super(FloatRangeSwitch, self).__init__(*args, **kwargs)
         self._model = FloatRangeSwitchModel()
-        self.min_value = 0.0
-        self.max_value = 20.0
+        self.min_value = 0
+        self.max_value = 20
 
         self._raise_min = 0.0
         self._raise_max = 9.0
@@ -36,7 +36,6 @@ class FloatRangeSwitch(rigBaseSwitch.RigBaseSwitch):
         self._model.animation_curve = value
 
     def set_control(self, **kwargs):
-
         self.attribute_name = kwargs.pop('attribute_name', 'float_switch')
         self._raise_min = kwargs.pop('raise_min', self._raise_min)
         self._raise_max = kwargs.pop('raise_max', self._raise_max)
@@ -47,7 +46,6 @@ class FloatRangeSwitch(rigBaseSwitch.RigBaseSwitch):
 
         if self.attribute_name not in pm.listAttr(self.control):
             pm.addAttr(self.control, ln=self.attribute_name, at='float', min=self.min_value, max=self.max_value, k=True)
-
         self.set_outputs()
 
     def set_outputs(self):
@@ -60,12 +58,12 @@ class FloatRangeSwitch(rigBaseSwitch.RigBaseSwitch):
                                                                pre_infinity_type='constant',
                                                                post_infinity_type='constant',
                                                                in_tangent_type='linear',
-                                                               out_tangent_type='linear',)[1]
-        print self.animation_curve
+                                                               out_tangent_type='linear', )[1]
         self.attribute_output = self.animation_curve.output
+
+        self.initialize()  # initializes the negate output
 
 
 if __name__ == '__main__':
     switch = FloatRangeSwitch(control='nurbsCircle1')
     switch.attribute_output >> pm.Attribute('pSphere1.translateX')
-
