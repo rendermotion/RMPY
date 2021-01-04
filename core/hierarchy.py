@@ -32,7 +32,7 @@ def find_in_hierarchy(scene_object, grandson):
     return []
 
 
-def descendants_list(transform_node):
+def descendents_list(transform_node):
     result_list = pm.listRelatives(transform_node, type='transform', allDescendents=True)
     result_list = list(reversed(result_list))
     result_list.insert(0, transform_node)
