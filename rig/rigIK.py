@@ -297,8 +297,8 @@ class IKRig(RMPY.rig.rigBase.RigBase):
         IkSwitchblendTwoAttr = self.name_convention.rename_based_on_base_name(self.joints[2], IkSwitchblendTwoAttr,
                                                                               name=IkSwitchblendTwoAttr)
 
-        pm.connectAttr(multiplyDivide + ".outputX", IkSwitchblendTwoAttr + ".input[1]", force=True)
-        pm.setAttr(IkSwitchblendTwoAttr + ".input[0]", 1)
+        pm.connectAttr(multiplyDivide.outputX, IkSwitchblendTwoAttr.input[1], force=True)
+        IkSwitchblendTwoAttr.input[0].set(1)
         pm.connectAttr(IKSwitchDivide + ".outputX", IkSwitchblendTwoAttr + ".attributesBlender", force=True)
 
         for joints in self.joints[:-1]:
@@ -308,7 +308,7 @@ class IKRig(RMPY.rig.rigBase.RigBase):
 if __name__ == '__main__':
 
     root_arm = pm.ls('L_shoulder01_reference_pnt')[0]
-    arm_points = rm.descendents_list(root_arm)
+    arm_points = rm.descendants_list(root_arm)
     ik_rig = IKRig()
     ik_rig.create_point_base(*arm_points[:3])
     print 'done'

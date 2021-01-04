@@ -215,6 +215,6 @@ class Joint(creatorsBase.CreatorsBase):
 if __name__ == '__main__':
     root = pm.ls('L_index01_rig_pnt')[0]
     root_finger = pm.ls('L_index01_rig_pnt')[0]
-    finger_points = rm.descendents_list(root_finger)
+    finger_points = rm.descendants_list(root_finger)
     joints = Joint()
     joints.point_base(*finger_points, orient_type='bend_orient')

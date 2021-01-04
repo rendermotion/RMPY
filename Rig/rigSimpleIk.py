@@ -15,8 +15,9 @@ class SimpleIKModel(rigBase.BaseModel):
 
 class SimpleIK(rigBase.RigBase):
     def __init__(self, *args, **kwargs):
+        if 'model' not in kwargs.keys():
+            kwargs['model'] = SimpleIKModel()
         super(SimpleIK, self).__init__(*args, **kwargs)
-        self._model = SimpleIKModel()
 
     @property
     def ik_handle(self):
@@ -51,11 +52,18 @@ class SimpleIK(rigBase.RigBase):
         super(SimpleIK, self).create_point_base(*joints, **kwargs)
         self._model.start_joint = joints[0]
         self._model.end_joint = joints[1]
-
         self._model.ik_handle, self._model.effector = pm.ikHandle(sj=joints[0], ee=joints[1])
-
         self.name_convention.rename_name_in_format(self.ik_handle, name='ikHandle')
         self.name_convention.rename_name_in_format(self.effector, name='effector')
+        self.ik_handle.setParent(self.rig_system.kinematics)
+
+    def create_point_base(self, *args, **kwargs):
+        super(SimpleIK, self).create_point_base(*args, **kwargs)
+        root_joints, joints = self.create.joint.point_base(*args, orient_type='point_orient')
+        root_joints.setParent(self.rig_system.joints)
+        self.reset_joints.append(root_joints)
+        [self.joints.append(each) for each in joints]
+        self.create_node_base(self.joints[0], self.joints[-1])
 
     def set_as_pole_vector(self, control):
         self._model.pole_vector = control
@@ -63,6 +71,6 @@ class SimpleIK(rigBase.RigBase):
         self.name_convention.rename_name_in_format(self.pole_vector_constraint)
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     simple_ik = SimpleIK()
     simple_ik.create_point_base()

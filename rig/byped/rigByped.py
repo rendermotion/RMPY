@@ -6,8 +6,8 @@ from RMPY.rig import rigFK
 from RMPY.rig.byped.parts import neckHead
 from RMPY.rig.byped.parts import rigIkFkFeet
 from RMPY.rig import rigBase
-from RMPY.rig import rigSingleJoint
 from RMPY.rig import rigProp
+reload(rigProp)
 
 
 class RigBypedModel(rigBase.BaseModel):

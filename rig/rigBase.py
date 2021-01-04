@@ -196,7 +196,7 @@ class RigBase(object):
         self.create_point_base(selection, **kwargs)
         assert not hasattr(super(RigBase, self), 'create_selection_base')
 
-    def set_parent(self, rig_object):
+    def set_parent(self, rig_object, **kwargs):
         """
         This is the default function to parent modules, when you set parent an object it will look for the
         root on the dictionary attachments. If this has not being asigned the default value will be the first elementq
@@ -206,11 +206,15 @@ class RigBase(object):
         :return:
         """
 
+        self.create.constraint.define_constraints(point=False, scale=True, parent=True, orient=False)
+
         if RigBase in type(rig_object).__mro__:
-            self.create.constraint.node_base(rig_object.tip, self.root, mo=True)
+            print '{} in constraining {} {}'.format(self.create.constraint.constraint_type, rig_object.tip, self.root)
+
+            self.create.constraint.node_base(rig_object.tip, self.root, mo=True, **kwargs)
         else:
             try:
-                self.create.constraint.node_base(rig_object, self.root, mo=True)
+                self.create.constraint.node_base(rig_object, self.root, mo=True, **kwargs)
 
             except AttributeError():
                 raise AttributeError('not valid object to parent')

@@ -11,8 +11,9 @@ class RigPropModel(rigBase.BaseModel):
 
 class RigProp(rigBase.RigBase):
     def __init__(self, *args, **kwargs):
+        if 'model' not in kwargs.keys():
+            kwargs['model'] = RigPropModel()
         super(RigProp, self).__init__(*args, **kwargs)
-        self._model = RigPropModel()
 
     @property
     def single_joints(self):
@@ -20,7 +21,6 @@ class RigProp(rigBase.RigBase):
 
     def create_point_base(self, *points, **kwargs):
         """
-
         :param points:
         :param kwargs:
             depth: the number of controls that will be nested inside each reference point default 2
@@ -38,7 +38,6 @@ class RigProp(rigBase.RigBase):
         align = kwargs.pop('align', 'point')
         offset_visibility = kwargs.pop('offset_visibility', False)
 
-
         single_joint = rigSingleJoint.RigSingleJoint()
         self.single_joints.append(single_joint)
         for each_point in points:
@@ -48,14 +47,15 @@ class RigProp(rigBase.RigBase):
                     single_joint.reset_controls[-1].setParent(single_joint.controls[-2])
                     if offset_visibility:
                         single_joint.controls[0].offset_visibility >> single_joint.reset_controls[-1].visibility
-
                 else:
                     if offset_visibility:
                         single_joint.controls[0].addAttr('offset_visibility', at='bool', k=True)
 
                 if align == 'world':
                     self.custom_world_align(single_joint.reset_controls[-1])
-
+            self.joints.extend(single_joint.joints)
+            self.controls.extend(single_joint.controls)
+            self.reset_joints.extend(single_joint.reset_joints)
 
         # self.controls = single_joint.controls
         # self.reset_controls = single_joint.reset_controls
