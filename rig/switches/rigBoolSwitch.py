@@ -9,8 +9,9 @@ class RigBoolSwitchModel(rigBaseSwitch.RigBaseSwitchModel):
 
 class RigBoolSwitch(rigBaseSwitch.RigBaseSwitch):
     def __init__(self, *args, **kwargs):
+        if 'model' not in kwargs.keys():
+            kwargs['model'] = RigBoolSwitchModel()
         super(RigBoolSwitch, self).__init__(*args, **kwargs)
-        self._model = RigBoolSwitchModel()
         self.initialize(*args, **kwargs)
         if self.control:
             self.set_control()

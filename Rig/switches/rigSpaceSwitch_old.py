@@ -12,8 +12,9 @@ class RigSpaceSwitchModel(rigBase.BaseModel):
 
 class RigSpaceSwitch(rigBase.RigBase):
     def __init__(self, *args, **kwargs):
+        if 'model' not in kwargs.keys():
+            kwargs['model'] = RigSpaceSwitchModel()
         super(RigSpaceSwitch, self).__init__(*args, **kwargs)
-        self._model = RigSpaceSwitchModel()
 
     def create_point_base(self, *points, **kwargs):
         space_objects = kwargs.pop('space_objects', None)

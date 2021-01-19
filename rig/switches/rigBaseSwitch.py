@@ -19,8 +19,9 @@ class RigBaseSwitchModel(rigBase.BaseModel):
 
 class RigBaseSwitch(rigBase.RigBase):
     def __init__(self, *args, **kwargs):
+        if 'model' not in kwargs.keys():
+            kwargs['model'] = RigBaseSwitchModel()
         super(RigBaseSwitch, self).__init__(*args, **kwargs)
-        self._model = RigBaseSwitchModel()
         self.control = kwargs.pop('control', None)
         self.reverse = None
         self.attribute_output = None

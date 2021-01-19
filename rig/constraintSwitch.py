@@ -15,8 +15,9 @@ class ConstraintSwitchModel(rigBase.BaseModel):
 
 class ConstraintSwitch(rigBase.RigBase):
     def __init__(self, *args, **kwargs):
+        if 'model' not in kwargs.keys():
+            kwargs['model'] = ConstraintSwitchModel()
         super(ConstraintSwitch, self).__init__(*args, **kwargs)
-        self._model = ConstraintSwitchModel()
         self.constraint_func = {'parent': pm.parentConstraint,
                                 'point': pm.pointConstraint,
                                 'orient': pm.orientConstraint}

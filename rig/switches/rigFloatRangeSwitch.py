@@ -10,8 +10,9 @@ class FloatRangeSwitchModel(rigBaseSwitch.RigBaseSwitchModel):
 
 class FloatRangeSwitch(rigBaseSwitch.RigBaseSwitch):
     def __init__(self, *args, **kwargs):
+        if 'model' not in kwargs.keys():
+            kwargs['model'] = FloatRangeSwitchModel()
         super(FloatRangeSwitch, self).__init__(*args, **kwargs)
-        self._model = FloatRangeSwitchModel()
         self.min_value = 0
         self.max_value = 20
 
