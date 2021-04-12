@@ -24,13 +24,10 @@ class StretchyIK(rigSimpleIk.SimpleIK):
         self._model.rigStretchy = rigStretchyJointChain.StretchyJointChain(self.ik_handle, rig_system=self.rig_system)
         self._model.rigStretchy.ik_handle_based()
 
-    def create_pole_vector(self):
-        pole_vector = self.create.space_locator.pole_vector(*self.joints)
-        self.set_as_pole_vector(pole_vector)
-
 
 if __name__ == '__main__':
     simple_ik = StretchyIK()
     simple_ik.create_point_base(u'L_shoulder01_reference_pnt', u'L_elbow01_reference_pnt', u'L_wrist01_reference_pnt')
     simple_ik.make_stretchy()
     simple_ik.create_pole_vector()
+    simple_ik.create_controls()

@@ -66,11 +66,44 @@ class SimpleIK(rigBase.RigBase):
         self.create_node_base(self.joints[0], self.joints[-1])
 
     def set_as_pole_vector(self, control):
+        """
+        Sets any given transform as a pole vector
+        control (transform): The transform node that will become the pole vector.
+        """
         self._model.pole_vector = control
         self._model.pole_vector_constraint = pm.poleVectorConstraint(self.pole_vector, self.ik_handle, name="poleVector")
         self.name_convention.rename_name_in_format(self.pole_vector_constraint)
 
+    def create_pole_vector(self):
+        """
+        Creates a pole vector control on the correct position respect to the joint orientation.
+        And sets this new control as the pole vector.
+        :return:
+        """
+        pole_vector = self.create.space_locator.pole_vector(*self.joints)
+        pm.parent(pole_vector, self.rig_system.kinematics)
+        self.set_as_pole_vector(pole_vector)
+
+    def create_controls(self):
+        """
+        Creates the Ik standard controls for Ik FK and pole vector if it doesn't exist.
+        :return:
+        """
+        reset_controls,  ik_control = self.create.controls.point_base(self.ik_handle)
+        self.create.constraint.node_base(ik_control, self.ik_handle)
+        if self.pole_vector:
+            reset_pole_vector_controls,  pole_vector_control = self.create.controls.point_base(self.pole_vector)
+        self.create.constraint.node_base(pole_vector_control, self.pole_vector)
+        arm_reset, arm_control = self.create.controls.point_base(self.joints[0])
+        arm_control.rotate >> self.joints[0].rotate
+        forearm_reset, forearm_control = self.create.controls.point_base(self.joints[1])
+        forearm_control.rotate >> self.joints[1].rotate
+        forearm_reset.setParent(arm_control)
+        pm.parent([arm_reset, reset_pole_vector_controls, reset_controls], self.rig_system.controls)
+
 
 if __name__ == '__main__':
     simple_ik = SimpleIK()
-    simple_ik.create_point_base()
+    simple_ik.create_point_base(u'L_shoulder01_reference_pnt', u'L_elbow01_reference_pnt', u'L_wrist01_reference_pnt')
+    simple_ik.create_pole_vector()
+    simple_ik.create_controls()

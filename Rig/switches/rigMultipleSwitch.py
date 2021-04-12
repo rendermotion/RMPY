@@ -1,5 +1,6 @@
 from RMPY.rig import rigBase
 
+
 class RigMultipleSwitchModel(rigBase.BaseModel):
     def __init__(self):
         super(RigMultipleSwitchModel, self).__init__()

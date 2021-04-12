@@ -74,7 +74,6 @@ class RigSplineIK(rigBase.RigBase):
         self.ik.dTwistControlEnable.set(True)
 
 
-
 if __name__ == '__main__':
     rig_spine = RigSplineIK()
     spine_root = pm.ls('C_Spine01_reference_pnt')[0]
