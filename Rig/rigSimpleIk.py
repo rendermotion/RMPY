@@ -101,6 +101,9 @@ class SimpleIK(rigBase.RigBase):
         forearm_reset.setParent(arm_control)
         pm.parent([arm_reset, reset_pole_vector_controls, reset_controls], self.rig_system.controls)
 
+        pm.addAttr(ik_control, longName='ikBlend', proxy=self.ik_handle.ikBlend)
+        pm.addAttr(ik_control, longName='twist', proxy=self.ik_handle.twist)
+
 
 if __name__ == '__main__':
     simple_ik = SimpleIK()

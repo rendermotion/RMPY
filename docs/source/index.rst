@@ -13,13 +13,15 @@ First you should understand how the architecture is structured and the different
 Chapters:
 
 .. toctree::
-    :maxdepth: 1
+    :maxdepth: 2
 
     name_convention
     creators
+    representations
     rigs
     tools
     system structure
+
 
 License
 ~~~~~~~

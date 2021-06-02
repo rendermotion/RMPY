@@ -3,8 +3,7 @@ from RMPY.rig import rigBase
 from RMPY.creators import nucleus
 from RMPY.rig import rig
 from pprint import pprint as pp
-
-
+from RMPY.rig import rigLaces
 
 class DynamicHairModel(object):
     def __init__(self):
@@ -47,7 +46,7 @@ class DynamicHair(rigBase.RigBase):
 
         self.nucleus.hair_systems[self.hair_system_index].transform.setParent(self.dynamics)
 
-        self.laces_system = laces.Laces(rig_system=self.rig_system)
+        self.laces_system = rigLaces.RigLaces(rig_system=self.rig_system)
 
     @property
     def created_output_curves(self):
