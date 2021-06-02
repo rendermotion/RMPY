@@ -1,0 +1,140 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Name Convention &#8212; RMPY 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Creators" href="creators.html" />
+    <link rel="prev" title="what is RMPY" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="name-convention">
+<h1>Name Convention<a class="headerlink" href="#name-convention" title="Permalink to this headline">¶</a></h1>
+<p>The name convention is based on a token structure that is conformed by several tokens.
+Each token can have different types of constraints, for example, lets assume the default example
+if you have a 4 token convention that has the following tokens.</p>
+<blockquote>
+<div>side_name_system_objectType</div></blockquote>
+<p>this is the name convention that I have been using during the last years for all rigs that I create two
+tokens have constraints. side, and objectType.
+side has the the constraints left, right and center since I use it to differentiate the build side of the object.
+and the values that I like to use for each side constraint as are follows.</p>
+<blockquote>
+<div><p>for left I like to use  ‘L’</p>
+<p>for right I like to use  ‘R’</p>
+<p>and finally
+for center I like to use ‘C’</p>
+</div></blockquote>
+<p>in the case of the objectType the constraints on the name are a little bit open to start I am considering
+the type of the object the first thing that matters to me, and the second thing is a custom choise of the token.</p>
+<p>For example a orientConstraint type object has the token ORC or a parentConstraint has the token PRC and in the case
+of joints the token is JNT.
+But there are tokens in this field that can be overwritten, a joint object can also be SKN (in my case I wanted to
+differentiate the joints and the ones with this token are joints made to skining)</p>
+<p>A second example would be the geometry objects that by default get named MSH but I can override this token with
+lets say a BSM to differentiate the meshes from the blendshape Meshes. As I said this token is kind of tricky because
+it is asigned a value by default but this value can be easily overwritten by a value on the valid list.</p>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">RMPY</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Name Convention</a></li>
+<li class="toctree-l1"><a class="reference internal" href="creators.html">Creators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="representations.html">Representations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rigs.html">Rigs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="system structure.html">System structure</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">what is RMPY</a></li>
+      <li>Next: <a href="creators.html" title="next chapter">Creators</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Daniel Ruiz Vargas.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/name_convention.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

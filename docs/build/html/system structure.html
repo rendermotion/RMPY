@@ -1,0 +1,213 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>System structure &#8212; RMPY 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Tools" href="tools.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="system-structure">
+<h1>System structure<a class="headerlink" href="#system-structure" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="RMPY.rig.systemStructure.SystemStructure">
+<em class="property">class </em><code class="descclassname">RMPY.rig.systemStructure.</code><code class="descname">SystemStructure</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#RMPY.rig.systemStructure.SystemStructure" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class is the interface to access the structure model, its an easy way to access it, and invoke his child nodes.
+It creates all the nodes as needed, you just need to access it in order to be created.</p>
+<dl class="method">
+<dt id="RMPY.rig.systemStructure.SystemStructure._create_controls">
+<code class="descname">_create_controls</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#RMPY.rig.systemStructure.SystemStructure._create_controls" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the controls group
+:return:</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="RMPY.rig.systemStructure.SystemStructure._create_display">
+<code class="descname">_create_display</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#RMPY.rig.systemStructure.SystemStructure._create_display" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RMPY.rig.systemStructure.SystemStructure._create_joints">
+<code class="descname">_create_joints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#RMPY.rig.systemStructure.SystemStructure._create_joints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the joints group
+:return:</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="RMPY.rig.systemStructure.SystemStructure._create_kinematics">
+<code class="descname">_create_kinematics</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#RMPY.rig.systemStructure.SystemStructure._create_kinematics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the kinematics group
+:return: none</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="RMPY.rig.systemStructure.SystemStructure._create_root">
+<code class="descname">_create_root</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#RMPY.rig.systemStructure.SystemStructure._create_root" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates the base root node of the system
+:return: None</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="RMPY.rig.systemStructure.SystemStructure.controls">
+<code class="descname">controls</code><a class="headerlink" href="#RMPY.rig.systemStructure.SystemStructure.controls" title="Permalink to this definition">¶</a></dt>
+<dd><p>A property to refer to the controls group as a pymel node</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="RMPY.rig.systemStructure.SystemStructure.create">
+<code class="descname">create</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#RMPY.rig.systemStructure.SystemStructure.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates all the members of the system structure its not necesary to call it unless you want
+to create all members at once, otherwise, they will be created as needed.
+:return:</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="RMPY.rig.systemStructure.SystemStructure.display">
+<code class="descname">display</code><a class="headerlink" href="#RMPY.rig.systemStructure.SystemStructure.display" title="Permalink to this definition">¶</a></dt>
+<dd><p>A property to refer to the kinematics group as a pymel node</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="RMPY.rig.systemStructure.SystemStructure.joints">
+<code class="descname">joints</code><a class="headerlink" href="#RMPY.rig.systemStructure.SystemStructure.joints" title="Permalink to this definition">¶</a></dt>
+<dd><p>A property to refer to the joints group as a pymel node</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="RMPY.rig.systemStructure.SystemStructure.kinematics">
+<code class="descname">kinematics</code><a class="headerlink" href="#RMPY.rig.systemStructure.SystemStructure.kinematics" title="Permalink to this definition">¶</a></dt>
+<dd><p>A property to refer to the kinematics group as a pymel node</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="RMPY.rig.systemStructure.SystemStructure.root">
+<code class="descname">root</code><a class="headerlink" href="#RMPY.rig.systemStructure.SystemStructure.root" title="Permalink to this definition">¶</a></dt>
+<dd><p>A property to refer to the root group of the system as a pymel node</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="RMPY.rig.systemStructure.SystemStructure.settings">
+<code class="descname">settings</code><a class="headerlink" href="#RMPY.rig.systemStructure.SystemStructure.settings" title="Permalink to this definition">¶</a></dt>
+<dd><p>A property to refer to the settings group as a pymel node</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="RMPY.rig.systemStructure.RigStructureModel">
+<em class="property">class </em><code class="descclassname">RMPY.rig.systemStructure.</code><code class="descname">RigStructureModel</code><a class="headerlink" href="#RMPY.rig.systemStructure.RigStructureModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>this class represents the system structure, by default the system structure of any rig system contains
+the following groups that can help you organize your rig.
+the settings group, its the group to control your rig system, it has a scale value that should control your rig.
+kinematics group, any node that performs an operation in the rig would be here.
+joints group,  any joint on the rig would be in this group.
+controls group,  all controls of the rig would be in this group
+display, the display group is intended to be any object that is on the rig that should be visible, but it should
+not be accessible to the animator, an example would be a curve showing the pole vector of an IK.</p>
+<p>By default the display of the kinematics and the joints groups are linked to the visibility of the settings
+group. To simplify the hiding of what the final user of the rig should or should not have accessible.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">RMPY</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="name_convention.html">Name Convention</a></li>
+<li class="toctree-l1"><a class="reference internal" href="creators.html">Creators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="representations.html">Representations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rigs.html">Rigs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">Tools</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">System structure</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="tools.html" title="previous chapter">Tools</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Daniel Ruiz Vargas.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/system structure.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
