@@ -1,10 +1,10 @@
-from RMPY.rig.biped.parts import arm
-from RMPY.rig.biped.parts import rigSpine
-from RMPY.rig.biped.parts import hand
+from RMPY.rig.biped.rig_parts import arm
+from RMPY.rig.biped.rig_parts import rigSpine
+from RMPY.rig.biped.rig_parts import hand
 from RMPY.rig import rigIKFK
 from RMPY.rig import rigFK
-from RMPY.rig.biped.parts import neckHead
-from RMPY.rig.biped.parts import rigIkFkFeet
+from RMPY.rig.biped.rig_parts import neckHead
+from RMPY.rig.biped.rig_parts import rigIkFkFeet
 from RMPY.rig import rigBase
 from RMPY.rig import rigProp
 reload(rigProp)
