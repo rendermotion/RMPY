@@ -11,6 +11,7 @@ class RMRibbon(object):
             self.name_conv = nameConvention.NameConvention()
         else:
             self.name_conv = name_conv
+
         self.rig_controls = RMRigShapeControls.RMRigShapeControls(NameConv=name_conv)
         self.kinematics = []
         self.joints = []
@@ -23,14 +24,15 @@ class RMRibbon(object):
 
     def nurbPlaneBetweenObjects(self, Object01, Object02):
         VP1 = om.MVector(pm.xform(Object01, a=True, ws=True, q=True, rp=True))
+        print VP1
         VP2 = om.MVector(pm.xform(Object02, a=True, ws=True, q=True, rp=True))
+        print VP2
         longitud = VP1 - VP2
         plano = pm.nurbsPlane(ax=[0, 1, 0], p=[(longitud.length()) / 2, 0, 0], w=longitud.length(), lr=.05, d=3, u=8,
-                              v=1, ch=0, name="%sTo%sPlane" % (self.name_conv.get_a_short_name(Object01),
-                                                               self.name_conv.get_a_short_name(Object02)))
-        self.name_conv.set_name_in_format(plano, useName=True)
+                              v=1, ch=0, name="bendyPlane")
+        self.name_conv.rename_name_in_format(plano, useName=True)
 
-        RMRigTools.RMAlign(Object01, plano[0], 3)
+        pm.matchTransform(plano[0], Object01)
         return plano[0]
 
     # nurbPlaneBetweenObjects("joint1","joint2")
@@ -50,10 +52,10 @@ class RMRibbon(object):
 
         MainSkeleton = pm.group(em=True, name="%sTo%sRibbon" % (self.name_conv.get_a_short_name(Object01),
                                                                 self.name_conv.get_a_short_name(Object02)))
-        self.name_conv.rename_name_in_format(MainSkeleton, {}, useName=True)
+        self.name_conv.rename_name_in_format(MainSkeleton, useName=True)
         HairGroup = pm.group(em=True, name="%sTo%sHairSystem" % (self.name_conv.get_a_short_name(Object01),
                                                                   self.name_conv.get_a_short_name(Object02)))
-        self.name_conv.set_name_in_format(HairGroup, useName=True)
+        self.name_conv.rename_name_in_format(HairGroup, useName=True)
 
         nstep = 1.0 / (foliculeNumber - 1.0)
         Hys = pm.language.Mel.eval('createNode hairSystem')
@@ -67,7 +69,7 @@ class RMRibbon(object):
             pm.language.Mel.eval(
                 'createHairCurveNode("%s", "%s" ,%s ,.5 , 1 ,0 ,0 ,0 ,0 ,"" ,1.0 ,{%s} ,"" ,"" ,2 );' % (
                 Hys, planoShape, nstep * n, n))
-            NewFolicule = self.name_conv.rename_name_in_format("follicle1", {})
+            NewFolicule = self.name_conv.rename_name_in_format("follicle1")
             folicules.append(NewFolicule)
             pm.parent(NewFolicule, HairGroup)
         self.folicules = folicules
@@ -79,8 +81,8 @@ class RMRibbon(object):
         for eachFolicule in folicules:
             ArrayJoints.append(pm.joint(name="%sTo%sRibbonJoints" % (self.name_conv.get_a_short_name(Object01),
                                                                      self.name_conv.get_a_short_name(Object02))))
-            self.name_conv.set_name_in_format(ArrayJoints[index], useName=True)
-            RMRigTools.RMAlign(eachFolicule, ArrayJoints[index], 3)
+            self.name_conv.rename_name_in_format(ArrayJoints[index], useName=True)
+            pm.matchTransform( ArrayJoints[index], eachFolicule)
             pm.parentConstraint(eachFolicule, ArrayJoints[index])
             index += 1
         self.jointStructure = ArrayJoints
@@ -95,10 +97,10 @@ class RMRibbon(object):
         GroupControls = pm.group(empty=True, name="%sTo%sControls" % (self.name_conv.get_a_short_name(Object01),
                                                                       self.name_conv.get_a_short_name(Object02)))
 
-        self.name_conv.rename_name_in_format(GroupControls, {}, useName=True)
+        self.name_conv.rename_name_in_format(GroupControls, useName=True)
         GroupJoints = pm.group(empty=True, name="%sTo%sGroupJointsLookAt" % (self.name_conv.get_a_short_name(Object01),
                                                                              self.name_conv.get_a_short_name(Object02)))
-        self.name_conv.rename_name_in_format(GroupJoints, {}, useName=True)
+        self.name_conv.rename_name_in_format(GroupJoints, useName=True)
 
         self.allControls.append(GroupControls)
         self.joints.append(GroupJoints)
@@ -113,34 +115,34 @@ class RMRibbon(object):
 
             locatorControl = pm.spaceLocator(name="%sTo%sLocatorCntrl" % (self.name_conv.get_a_short_name(Object01),
                                                                           self.name_conv.get_a_short_name(Object02)))
-            self.name_conv.rename_name_in_format(locatorControl, {}, useName=True)
-            locatorControlesList.append(locatorControl[0])
-            RMRigTools.RMAlign(Object01, locatorControl[0], 3)
+            self.name_conv.rename_name_in_format(locatorControl, useName=True)
+            locatorControlesList.append(locatorControl)
+            pm.matchTransform(locatorControl, Object01)
 
             locatorLookAt = pm.spaceLocator(name="%sTo%sLocatorLookAt" % (self.name_conv.get_a_short_name(Object01),
                                                                           self.name_conv.get_a_short_name(Object02)))
-            self.name_conv.rename_name_in_format(locatorLookAt, {}, useName=True)
+            self.name_conv.rename_name_in_format(locatorLookAt,useName=True)
 
-            locatorLookAtList.append(locatorLookAt[0])
-            RMRigTools.RMAlign(Object01, locatorLookAt[0], 3)
+            locatorLookAtList.append(locatorLookAt)
+            pm.matchTransform(locatorLookAt, Object01)
 
             pm.select(clear=True)
 
             jointsLookAt = pm.joint(name="%sTo%sJointsLookAt" % (self.name_conv.get_a_short_name(Object01),
                                                                  self.name_conv.get_a_short_name(Object02)))
-            self.name_conv.rename_name_in_format(jointsLookAt, {}, useName=True)
+            self.name_conv.rename_name_in_format(jointsLookAt, useName=True)
             jointsLookAtList.append(jointsLookAt)
-            RMRigTools.RMAlign(Object01, jointsLookAt, 3)
+            pm.matchTransform(jointsLookAt, Object01)
 
             groupLookAt = pm.group(empty=True, name="%sTo%sGroupLookAt" % (self.name_conv.get_a_short_name(Object01),
                                                                            self.name_conv.get_a_short_name(Object02)))
-            self.name_conv.rename_name_in_format(groupLookAt, {}, useName=True)
+            self.name_conv.rename_name_in_format(groupLookAt, useName=True)
 
             self.kinematics.append(groupLookAt)
             groupLookAtList.append(groupLookAt)
-            RMRigTools.RMAlign(Object01, groupLookAt, 3)
-
-            pm.parent(groupLookAtList, MainSkeleton)
+            pm.matchTransform(groupLookAt, Object01)
+            for each in groupLookAtList:
+                pm.parent(each, MainSkeleton)
 
             pm.move(RibbonSize.length() / 2 * iloop, 0, 0, resetControlGroup, r=True, os=True, moveX=True)
             pm.move(RibbonSize.length() / 2 * iloop, 0, 0, locatorControl, r=True, os=True, moveX=True)
@@ -168,14 +170,14 @@ class RMRibbon(object):
 
         pm.parent(GroupJoints, MainSkeleton)
 
-        pm.select(plano, replace=True)
-        print jointsLookAtList
-        for eachJoint in jointsLookAtList:
-            pm.select(eachJoint, add=True)
-        pm.SmoothBindSkin()
+        # pm.select(plano, replace=True)
+        # print jointsLookAtList
+        # for eachJoint in jointsLookAtList:
+        #     pm.select(eachJoint, add=True)
+        pm.skinCluster(jointsLookAtList, plano)
         pm.parent(plano, HairGroup)
 
 
 if __name__ == '__main__':
     Ribbon = RMRibbon()
-    Ribbon.RibbonCreation('joint1', 'joint2', foliculeNumber=4)
+    Ribbon.RibbonCreation("L_intermediate00_shoulder_sknjnt", "L_intermediate01_shoulder_sknjnt", foliculeNumber=4)

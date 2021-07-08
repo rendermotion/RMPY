@@ -168,9 +168,9 @@ class RMTwistJoints(object):
     def deleteList(self, listToDelete):
         for eachObject in listToDelete:
             pm.delete(eachObject)
-
-#TJ = RMTwistJoints()
-#TJ.RMCreateTwistJoints("Character01_LF_shoulder_pnt_rfr","Character01_LF_elbow_pnt_rfr")
+if __name__=='__main__':
+    TJ = RMTwistJoints()
+    TJ.RMCreateTwistJoints("L_intermediate00_shoulder_sknjnt", "L_intermediate01_shoulder_sknjnt")
 
 
 
