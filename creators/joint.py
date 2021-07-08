@@ -22,23 +22,20 @@ class Joint(creatorsBase.CreatorsBase):
             'bend_orient': uses the bend vector of the orient to define joint orientation
             'point_orient': uses the axis of the point based to define orientation
         """
+        custom_name = kwargs.pop('name', 'joint')
         aim_axis = kwargs.pop('aim_axis', config.axis_order[0])
         up_axis = kwargs.pop('up_axis', config.axis_order[1])
         orient_type = kwargs.pop('orient_type', 'bend_orient')
         joint_type = kwargs.pop('joint_type', 'joint')
-
         point_array = dataValidators.as_pymel_nodes(point_array)
         joint_array = []
 
         for index, point in enumerate(point_array):
             pm.select(cl=True)
             new_joint = pm.joint(p=[0, 0, 0], name="joint")
-
             transform.align(point, new_joint)
-
             joint_array.append(new_joint)
-
-            self.name_convention.rename_name_in_format(new_joint, name='joint', objectType=joint_type)
+            self.name_convention.rename_name_in_format(new_joint, name=custom_name, objectType=joint_type)
 
             if index > 0:
                 new_joint.setParent(joint_array[index-1])
@@ -58,15 +55,16 @@ class Joint(creatorsBase.CreatorsBase):
 
         return reset_joints, joint_array
 
-    def point_based(self, PointArray, ZAxisOrientation = "Y", **kwargs):
+    def point_based(self, point_array, z_axis_orientation ="Y", **kwargs):
+        custom_name = kwargs.pop('name', None)
         joint_type = kwargs.pop('joint_type', 'joint')
-        ZAxisOrientation = config.axis_order[1]
+        z_axis_orientation = config.axis_order[1]
 
-        PointArray = dataValidators.as_pymel_nodes(PointArray)
-        jointArray = []
+        point_array = dataValidators.as_pymel_nodes(point_array)
+        joint_array = []
 
-        Obj1Position = pm.xform(PointArray[0], q=True, rp=True, ws=True)
-        Obj2Position = pm.xform(PointArray[1], q=True, rp=True, ws=True)
+        Obj1Position = pm.xform(point_array[0], q=True, rp=True, ws=True)
+        Obj2Position = pm.xform(point_array[1], q=True, rp=True, ws=True)
 
         V1, V2 = om.MVector(Obj1Position), om.MVector(Obj2Position)
 
@@ -76,75 +74,80 @@ class Joint(creatorsBase.CreatorsBase):
 
         Angle = firstJntAngle
 
-        ParentJoint = self.RMCreateGroupOnObj(PointArray[0], Type="world")
+        ParentJoint = self.RMCreateGroupOnObj(point_array[0], Type="world")
 
-        for index in range(0, len(PointArray)):
+        for index in range(0, len(point_array)):
 
             pm.select(cl=True)
 
             newJoint = pm.joint(p=[0, 0, 0], name="joint")
-            jointArray.append(newJoint)
+            joint_array.append(newJoint)
+            if not custom_name:
+                joint_name = self.name_convention.get_a_short_name(str(point_array[index]))
+            else:
+                joint_name = custom_name
             self.name_convention.rename_name_in_format(str(newJoint),
-                                                 name=self.name_convention.get_a_short_name(str(PointArray[index])),
-                                                 side=self.name_convention.get_from_name(str(PointArray[index]), 'side'),
-                                                 objectType=joint_type)
+                                                       name=joint_name,
+                                                       side=self.name_convention.get_from_name(str(point_array[index]), 'side'),
+                                                       objectType=joint_type)
+
 
             if index == 0:
-                pm.parent(jointArray[0], ParentJoint)
+                pm.parent(joint_array[0], ParentJoint)
 
-            transform.align(PointArray[index], jointArray[index])
-            pm.makeIdentity(jointArray[index], apply=True, t=1, r=1, s=0)
+            transform.align(point_array[index], joint_array[index])
+            pm.makeIdentity(joint_array[index], apply=True, t=1, r=1, s=0)
 
-            if (index > 0):
+            if index > 0:
                 if index == 1:
                     AxisOrientJoint = pm.joint()
                     pm.parent(AxisOrientJoint, ParentJoint)
-                    transform.align(PointArray[0], AxisOrientJoint)
+                    transform.align(point_array[0], AxisOrientJoint)
                     pm.makeIdentity(AxisOrientJoint, apply=True, t=1, r=1, s=0)
 
-                    if ZAxisOrientation in "Yy":
+                    if z_axis_orientation in "Yy":
                         pm.xform(AxisOrientJoint, translation=[0, -1, 0], objectSpace=True)
 
-                    elif ZAxisOrientation in "Xx":
+                    elif z_axis_orientation in "Xx":
                         pm.xform(AxisOrientJoint, translation=[-1, 0, 0], objectSpace=True)
 
-                    elif ZAxisOrientation in "Zz":
+                    elif z_axis_orientation in "Zz":
                         pm.xform(AxisOrientJoint, translation=[0, 0, -1], objectSpace=True)
 
-                    pm.parent(jointArray[0], AxisOrientJoint)
-                    pm.parent(jointArray[index], jointArray[index - 1])
-                    pm.joint(jointArray[index - 1], edit=True, orientJoint=config.axis_order)
+                    pm.parent(joint_array[0], AxisOrientJoint)
+                    pm.parent(joint_array[index], joint_array[index - 1])
+                    pm.joint(joint_array[index - 1], edit=True, orientJoint=config.axis_order)
 
-                    pm.parent(jointArray[index - 1], world=True)
+                    pm.parent(joint_array[index - 1], world=True)
                     pm.delete(AxisOrientJoint)
-                    transform.align(jointArray[index - 1], ParentJoint)
-                    pm.parent(jointArray[index - 1], ParentJoint)
+                    transform.align(joint_array[index - 1], ParentJoint)
+                    pm.parent(joint_array[index - 1], ParentJoint)
 
                 else:
-                    pm.parent(jointArray[index], jointArray[index - 1])
-                    pm.joint(jointArray[index - 1], edit=True, orientJoint=config.axis_order)
+                    pm.parent(joint_array[index], joint_array[index - 1])
+                    pm.joint(joint_array[index - 1], edit=True, orientJoint=config.axis_order)
                 # , sao="yup" )
 
                 if index >= 2:
-                    parentOrient = pm.joint(jointArray[index - 1], q=True, orientation=True)
+                    parentOrient = pm.joint(joint_array[index - 1], q=True, orientation=True)
                     # pm.joint(jointArray[index - 1], e=True, orientation=[parentOrient[0], parentOrient[1], parentOrient[2]])
                     if parentOrient[config.orient_index[0]] > 89:
                         parentOrient[config.orient_index[0]] = parentOrient[config.orient_index[0]] - 180
-                        jointArray[index - 1].attr('rotate%s' % config.orient_axis_up[0]).set(180)
+                        joint_array[index - 1].attr('rotate%s' % config.orient_axis_up[0]).set(180)
                         # pm.joint(jointArray[index-1], e=True, orientation=[parentOrient[0], parentOrient[1], parentOrient[2]])
-                        pm.makeIdentity(jointArray[index - 1], r=True, apply=True)
+                        pm.makeIdentity(joint_array[index - 1], r=True, apply=True)
                     else:
                         if parentOrient[config.orient_index[0]] < -89:
                             parentOrient[config.orient_index[0]] = parentOrient[config.orient_index[0]] + 180
-                            jointArray[index - 1].attr('rotate%s' % config.orient_axis_up[0]).set(180)
-                            pm.makeIdentity(jointArray[index - 1], r=True, apply=True)
+                            joint_array[index - 1].attr('rotate%s' % config.orient_axis_up[0]).set(180)
+                            pm.makeIdentity(joint_array[index - 1], r=True, apply=True)
                             # pm.joint(jointArray[index-1], e=True, orientation=[parentOrient[0], parentOrient[1], parentOrient[2]])
 
-            if index == len(PointArray) - 1:
-                transform.align(jointArray[index - 1], jointArray[index], rotate=False)
-                pm.makeIdentity(jointArray[index], apply=True, t=0, r=1, s=0)
-            jointArray[index].rotateOrder.set(config.axis_order)
-        return ParentJoint, jointArray
+            if index == len(point_array) - 1:
+                transform.align(joint_array[index - 1], joint_array[index], rotate=False)
+                pm.makeIdentity(joint_array[index], apply=True, t=0, r=1, s=0)
+            joint_array[index].rotateOrder.set(config.axis_order)
+        return ParentJoint, joint_array
 
     def default_orient(self, *joint_list, **kwargs):
         aim_axis = kwargs.pop('aim_axis', config.axis_order[0])

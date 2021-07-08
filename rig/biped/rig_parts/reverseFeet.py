@@ -36,6 +36,7 @@ class RigReverseFeet(rigBase.RigBase):
         self.root = None
         self.reset_joints = None
         self.joints = []
+        self.attach_points['attachment_ik_leg'] = None
 
     @property
     def control(self):
@@ -49,6 +50,10 @@ class RigReverseFeet(rigBase.RigBase):
     @control.setter
     def control(self, value):
         self._model.control = value
+
+    @property
+    def attachment_ik_leg(self):
+        return self.attach_points['attachment_ik_leg']
 
     @property
     def kinematics_control(self):
@@ -80,13 +85,13 @@ class RigReverseFeet(rigBase.RigBase):
         reset_upstream, up_stream_joints = self.create.joint.point_base(*reversed(self.reference_points[:-1]))
         self.pole_vector = self.create.space_locator.pole_vector(*self.reference_points)
 
-        self.dwn_ik = rigSimpleIk.SimpleIK()
+        self.dwn_ik = rigSimpleIk.SimpleIK(rig_system=self.rig_system)
         self.dwn_ik.create_node_base(*down_stream_joints)
         self.dwn_ik.set_as_pole_vector(self.pole_vector)
         self.dwn_ik.joints = down_stream_joints
         self.dwn_ik.reset_joints = reset_downstream
 
-        self.up_ik = rigSimpleIk.SimpleIK()
+        self.up_ik = rigSimpleIk.SimpleIK(rig_system=self.rig_system)
         self.up_ik.create_node_base(*up_stream_joints)
         self.up_ik.set_as_pole_vector(self.pole_vector)
         self.up_ik.joints = up_stream_joints
@@ -165,11 +170,17 @@ class RigReverseFeet(rigBase.RigBase):
         split_in_out.output_attribute_b >> self.out_pnt.rotateX
 
     def setup_outputs(self):
-        reset_joints, self.joints = self.create.joint.point_base(self.reference_points)
-        self.reset_joints = reset_joints
+        reset_joints, joints = self.create.joint.point_base(self.reference_points, name='ikInPlace')
+        output_reset_joints, output_joints = self.create.joint.point_base(self.reference_points, name='IKOutput')
+        self.reset_joints = output_reset_joints
+        self.joints = output_joints
+        self.attach_points['attachment_ik_leg'] = self.reset_joints
+        reset_joints.setParent(self.rig_system.joints)
         self.reset_joints.setParent(self.rig_system.joints)
-        for each_joint, each_driver in zip(self.joints, [self.up_ik.joints[1]] + self.dwn_ik.joints):
+        for each_joint, each_driver, output_joint in zip(joints, [self.up_ik.joints[1]] + self.dwn_ik.joints, self.joints):
             pm.parentConstraint(each_driver, each_joint, mo=True)
+            pm.orientConstraint(each_joint, output_joint, mo=True)
+
         self.control.addAttr('toe_break', proxy=str(self.kinematics_control.toe_break))
         self.control.addAttr('tip', proxy=str(self.kinematics_control.tip))
         self.control.addAttr('tap', proxy=str(self.kinematics_control.tap))

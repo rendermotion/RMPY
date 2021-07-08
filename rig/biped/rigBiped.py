@@ -1,13 +1,11 @@
 from RMPY.rig.biped.rig_parts import arm
 from RMPY.rig.biped.rig_parts import rigSpine
 from RMPY.rig.biped.rig_parts import hand
-from RMPY.rig import rigIKFK
 from RMPY.rig import rigFK
 from RMPY.rig.biped.rig_parts import neckHead
-from RMPY.rig.biped.rig_parts import rigIkFkFeet
+from RMPY.rig.biped.rig_parts import rigIKFKLegFeet
 from RMPY.rig import rigBase
 from RMPY.rig import rigProp
-reload(rigProp)
 
 
 class RigBypedModel(rigBase.BaseModel):
@@ -15,16 +13,14 @@ class RigBypedModel(rigBase.BaseModel):
         super(RigBypedModel, self).__init__(**kwargs)
         self.l_arm = arm.Arm()
         self.r_arm = arm.Arm()
-        self.l_leg = rigIKFK.RigIkFk()
-        self.r_leg = rigIKFK.RigIkFk()
+        self.l_leg = rigIKFKLegFeet.RigIKKFLegFeet()
+        self.r_leg = rigIKFKLegFeet.RigIKKFLegFeet()
         self.l_hand = hand.Hand()
         self.r_hand = hand.Hand()
         self.neck_head = neckHead.NeckHead()
         self.spine = rigSpine.RigSpine()
         self.hip = rigFK.RigFK()
         self.cog = rigProp.RigProp()
-        self.l_feet = rigIkFkFeet.IkFkFeet()
-        self.r_feet = rigIkFkFeet.IkFkFeet()
 
 
 class RigByped(rigBase.RigBase):
@@ -34,9 +30,9 @@ class RigByped(rigBase.RigBase):
 
         self.arm_root = [u'{}_clavicle01_reference_pnt', u'{}_shoulder01_reference_pnt', u'{}_elbow01_reference_pnt',
                          u'{}_wrist01_reference_pnt']
-        
+
         self.leg_root = [u'{}_leg01_reference_pnt', u'{}_Knee01_reference_pnt', u'{}_ankle01_reference_pnt']
-                         # u'{}_ankleFeet01_reference_pnt'
+
         self.feet_root = [u'{}_ankleFeet01_reference_pnt', u'{}_ball01_reference_pnt', u'{}_toe01_reference_pnt',
                           u'{}_footLimitBack01_reference_pnt', u'{}_footLimitOuter01_reference_pnt',
                           u'{}_footLimitInner01_reference_pnt']
@@ -84,14 +80,6 @@ class RigByped(rigBase.RigBase):
         return self._model.r_hand
 
     @property
-    def l_feet(self):
-        return self._model.l_feet
-
-    @property
-    def r_feet(self):
-        return self._model.r_feet
-
-    @property
     def hip(self):
         return self._model.hip
 
@@ -114,8 +102,13 @@ class RigByped(rigBase.RigBase):
         self.r_hand.create_point_base(*[each.format('R') for each in self.hand_root])
         self.r_hand.set_parent(self.r_arm)
 
-        self.l_leg.create_point_base(*[each.format('L') for each in self.leg_root])
-        self.r_leg.create_point_base(*[each.format('R') for each in self.leg_root])
+        l_root_points = [each.format('L') for each in self.leg_root]
+        l_root_points.extend([each.format('L') for each in self.feet_root])
+        self.l_leg.create_point_base(*l_root_points)
+
+        r_root_points = [each.format('R') for each in self.leg_root]
+        r_root_points.extend([each.format('R') for each in self.feet_root])
+        self.r_leg.create_point_base(*r_root_points)
 
         self.neck_head.create_point_base(*self.neck_root)
 
@@ -127,24 +120,6 @@ class RigByped(rigBase.RigBase):
 
         self.l_leg.set_parent(self.hip)
         self.r_leg.set_parent(self.hip)
-
-        self.l_feet.create_point_base(*[each.format('L') for each in self.feet_root],
-                                      control=self.l_leg.switch_control_rig.controls[0])
-        l_point_constraint = self.create.constraint.point(self.l_feet.ik_feet.up_ik.joints[-1],
-                                                          self.l_leg.ik_rig.ik_handle, mo=True)
-        l_point_constraint[0].getWeightAliasList()[0].set(0)
-
-        self.l_feet.ik_feet.set_parent(self.l_leg.ik_rig.controls[0])
-        self.l_feet.fk_feet.set_parent(self.l_leg.fk_rig)
-
-        self.r_feet.create_point_base(*[each.format('R') for each in self.feet_root],
-                                      control=self.r_leg.switch_control_rig.controls[0])
-        r_point_constraint = self.create.constraint.point(self.r_feet.ik_feet.up_ik.joints[-1],
-                                                          self.r_leg.ik_rig.ik_handle, mo=True)
-        r_point_constraint[0].getWeightAliasList()[0].set(0)
-
-        self.r_feet.ik_feet.set_parent(self.r_leg.ik_rig.controls[0])
-        self.r_feet.fk_feet.set_parent(self.r_leg.fk_rig)
 
         # setup as skinned joints
 
@@ -160,8 +135,6 @@ class RigByped(rigBase.RigBase):
         self.spine.rename_as_skinned_joints()
         self.l_leg.rename_as_skinned_joints()
         self.r_leg.rename_as_skinned_joints()
-        self.l_feet.rename_as_skinned_joints()
-        self.r_feet.rename_as_skinned_joints()
 
 
 if __name__ == '__main__':
