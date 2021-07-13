@@ -1,5 +1,7 @@
 import pymel.core as pm
 from RMPY.rig import rigBase
+from RMPY.core import config
+reload(config)
 
 
 class RigSplineIKModel(rigBase.BaseModel):
@@ -12,13 +14,8 @@ class RigSplineIKModel(rigBase.BaseModel):
 
 class RigSplineIK(rigBase.RigBase):
     def __init__(self, *args, **kwargs):
+        kwargs['model'] = kwargs.pop('model', RigSplineIKModel())
         super(RigSplineIK, self).__init__(*args, **kwargs)
-        self._model = RigSplineIKModel()
-        self.reset_joints = None
-        self.joints = []
-        self.ik = None
-        self.effector = None
-        self.curve = None
 
     @property
     def ik(self):
@@ -45,11 +42,13 @@ class RigSplineIK(rigBase.RigBase):
         self._model.curve = value
 
     def create_point_base(self, *args, **kwargs):
-        self.reset_joints, self.joints = self.create.joint.point_base(*args, orient_type='point')
-        self.ik, self.effector, self.curve = pm.ikHandle(startJoint=self.joints[0],
-                                                         endEffector=self.joints[-1],
-                                                         createCurve=True, numSpans=len(self.joints),
-                                                         solver="ikSplineSolver", name="splineIK")
+        self._model.reset_joints, self._model.joints = self.create.joint.point_base(*args, orient_type='point')
+        self._model.ik, self._model.effector, self._model.curve = pm.ikHandle(startJoint=self.joints[0],
+                                                                              endEffector=self.joints[-1],
+                                                                              createCurve=True,
+                                                                              numSpans=len(self.joints),
+                                                                              solver="ikSplineSolver",
+                                                                              name="splineIK")
         self.name_convention.rename_name_in_format([self.ik, self.effector, self.curve])
         self.reset_joints.setParent(self.rig_system.joints)
         self.curve.setParent(self.rig_system.kinematics)
@@ -70,9 +69,13 @@ class RigSplineIK(rigBase.RigBase):
             #            at='double', k=True)
             # self.rig_system.settings.attr('jointScale{}'.format(chr(start_char + index))).set()
 
-    def setup_twist(self, start_orient, ):
+    def setup_twist(self, start_orient_object, end_orient_object):
         self.ik.dTwistControlEnable.set(True)
-
+        self.ik.dWorldUpType.set(4)
+        self.ik.dForwardAxis.set(int(config.axis_order_index[0] * 2))
+        self.ik.dWorldUpAxis.set('Positive {}'.format(config.axis_order[1].upper()))
+        start_orient_object.worldMatrix[0] >> self.ik.dWorldUpMatrix
+        end_orient_object.worldMatrix[0] >> self.ik.dWorldUpMatrixEnd
 
 if __name__ == '__main__':
     rig_spine = RigSplineIK()

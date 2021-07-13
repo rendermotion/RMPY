@@ -8,7 +8,7 @@ from RMPY import RMUncategorized
 from RMPY import RMRigTools
 
 
-def AddRibbon (SknJointStructure, SknParentGroup, currentTwists,ToDeleteNodes,LookAtAxis = "Y"):
+def AddRibbon (SknJointStructure, SknParentGroup, currentTwists, ToDeleteNodes, LookAtAxis = "Y"):
     NameConv = nameConvention.NameConvention()
     ObjectTransformDiclist = RMUncategorized.ObjectTransformDic(currentTwists)
     for i in ToDeleteNodes:
@@ -17,7 +17,7 @@ def AddRibbon (SknJointStructure, SknParentGroup, currentTwists,ToDeleteNodes,Lo
     RMUncategorized.SetObjectTransformDic(ObjectTransformDiclist)
 
     TJArm = RMTwistJoints.RMTwistJoints()
-    TJArm.RMCreateTwistJoints(SknJointStructure[0], SknJointStructure[1], NumberOfTB = 2, LookAtAxis = LookAtAxis)
+    TJArm.RMCreateTwistJoints(SknJointStructure[0], SknJointStructure[1], NumberOfTB=2, LookAtAxis = LookAtAxis)
 
     constraintTJArm = cmds.parentConstraint(SknParentGroup, TJArm.TwistControlResetPoint, mo=True)[0]
     constraintTJArm = NameConv.rename_based_on_base_name(SknJointStructure[1], constraintTJArm, {})
@@ -26,14 +26,14 @@ def AddRibbon (SknJointStructure, SknParentGroup, currentTwists,ToDeleteNodes,Lo
     Ribbon.RibbonCreation(SknJointStructure[0], SknJointStructure[1], foliculeNumber = 4)
 
     for index in range(len(currentTwists)):
-        cmds.parentConstraint ( Ribbon.jointStructure[index] , currentTwists[index], mo = True)
+        cmds.parentConstraint ( Ribbon.jointStructure[index], currentTwists[index], mo=True)
     for index in range(len(Ribbon.resetControls)):
-        cmds.parentConstraint (TJArm.TwistJoints[index]  ,Ribbon.resetControls[index], mo = True)
+        cmds.parentConstraint (TJArm.TwistJoints[index], Ribbon.resetControls[index], mo = True)
 
-    cmds.addAttr(Ribbon.controls[0], at="float", ln = "Volume",     hnv = 1, hxv = 1, h = 0, k = 1, smn = -10, smx = 10)
-    cmds.addAttr(Ribbon.controls[1], at="float", ln = "VolumeUp",     hnv = 1, hxv = 1, h = 0, k = 1, smn = -10, smx = 10)
-    cmds.addAttr(Ribbon.controls[1], at="float", ln = "VolumeLow",     hnv = 1, hxv = 1, h = 0, k = 1, smn = -10, smx = 10)
-    cmds.addAttr(Ribbon.controls[2], at="float", ln = "Volume",     hnv = 1, hxv = 1, h = 0, k = 1, smn = -10, smx = 10)
+    cmds.addAttr(Ribbon.controls[0], at="float", ln="Volume",     hnv = 1, hxv = 1, h = 0, k = 1, smn = -10, smx = 10)
+    cmds.addAttr(Ribbon.controls[1], at="float", ln="VolumeUp",     hnv = 1, hxv = 1, h = 0, k = 1, smn = -10, smx = 10)
+    cmds.addAttr(Ribbon.controls[1], at="float", ln="VolumeLow",     hnv = 1, hxv = 1, h = 0, k = 1, smn = -10, smx = 10)
+    cmds.addAttr(Ribbon.controls[2], at="float", ln="Volume",     hnv = 1, hxv = 1, h = 0, k = 1, smn = -10, smx = 10)
 
     RMRigTools.RMConnectWithLimits('%s.Volume'%Ribbon.controls[0],'%s.scaleY'%currentTwists[0],[[-10,0],[0,1],[10,4]])
     RMRigTools.RMConnectWithLimits('%s.Volume'%Ribbon.controls[0],'%s.scaleZ'%currentTwists[0],[[-10,0],[0,1],[10,4]])

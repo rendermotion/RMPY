@@ -19,7 +19,7 @@ class RMTwistJoints(object):
         self.TwistOrigin = None
         self.TwistEnd = None
 
-    def RMCreateTwistJoints(self, TwistJoint, LookAtObject, NumberOfTB = 3, LookAtAxis = "Y"):
+    def RMCreateTwistJoints(self, TwistJoint, LookAtObject, NumberOfTB = 2, LookAtAxis = "Y"):
 
         self.RMCreateTwist( TwistJoint, LookAtObject, NumberOfTB = NumberOfTB, LookAtAxis = LookAtAxis)
         self.TwistOrigin =  TwistJoint
@@ -168,7 +168,9 @@ class RMTwistJoints(object):
     def deleteList(self, listToDelete):
         for eachObject in listToDelete:
             pm.delete(eachObject)
-if __name__=='__main__':
+
+
+if __name__ == '__main__':
     TJ = RMTwistJoints()
     TJ.RMCreateTwistJoints("L_intermediate00_shoulder_sknjnt", "L_intermediate01_shoulder_sknjnt")
 

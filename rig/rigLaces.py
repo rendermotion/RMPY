@@ -31,8 +31,8 @@ class RigLacesModel(rigBase.BaseModel):
 
 class RigLaces(rigBase.RigBase):
     def __init__(self, *args, **kwargs):
+        kwargs['model']=kwargs.pop('model', RigLacesModel())
         super(RigLaces, self).__init__(*args, **kwargs)
-        self._model = RigLacesModel()
         self.clusters = []
         self.rig_outputs = None
         self.rig_up_vectors = None
@@ -172,11 +172,11 @@ class RigLaces(rigBase.RigBase):
         pm.parent(self.clusters_parent, self.rig_system.kinematics)
         pm.parent(self.clusters, self.clusters_parent)
 
-        controls_group = pm.group(empty=True)
-        self.name_convention.rename_name_in_format(controls_group, name='laceControls')
+        controls_group = pm.group(empty=True, name='laceControls')
+        # self.name_convention.rename_name_in_format(controls_group, name='laceControls')
 
         create_controls = rigControlsForPoints.RigControlsForPoints()
-        create_controls.create_point_base(*self.clusters, name="controls", **kwargs)
+        create_controls.create_point_base(*self.clusters, name="control", **kwargs)
 
         controls_group.setParent(self.rig_system.controls)
         self.name_convention.rename_name_in_format([str(controls_group), str(self.clusters_parent)], useName=True)
@@ -206,8 +206,8 @@ class RigLaces(rigBase.RigBase):
 
 
 if __name__ == '__main__':
-    rope_root = pm.ls('C_cuerda00_reference_grp')[0]
+    rope_root = pm.ls('C_rope00_reference_grp')[0]
     laces_rig = RigLaces()
     laces_rig.create_point_base(*rope_root.getChildren(),
-                                single_orient_object=True,
+                                single_orient_object=False,
                                 offset_axis='y', centered=True, world_align=True)

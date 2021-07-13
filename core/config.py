@@ -1,9 +1,9 @@
-import pymel.core as pm
-import os
 from RMPY.core import file_os
 
 
 axis_order = 'xyz'
+
+axis_order_index = ['xyz'.index(each) for each in axis_order]
 
 default_reference_system_name = 'reference'
 

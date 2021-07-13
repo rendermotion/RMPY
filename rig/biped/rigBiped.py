@@ -4,6 +4,7 @@ from RMPY.rig.biped.rig_parts import hand
 from RMPY.rig import rigFK
 from RMPY.rig.biped.rig_parts import neckHead
 from RMPY.rig.biped.rig_parts import rigIKFKLegFeet
+from RMPY.rig.biped.rig_parts import rigRibonTwistJoint
 from RMPY.rig import rigBase
 from RMPY.rig import rigProp
 
@@ -21,6 +22,14 @@ class RigBypedModel(rigBase.BaseModel):
         self.spine = rigSpine.RigSpine()
         self.hip = rigFK.RigFK()
         self.cog = rigProp.RigProp()
+        self.l_twist_arm = rigRibonTwistJoint.RibbonTwistJoint()
+        self.l_twist_forearm = rigRibonTwistJoint.RibbonTwistJoint()
+        self.l_twist_leg = rigRibonTwistJoint.RibbonTwistJoint()
+        self.l_twist_foreleg = rigRibonTwistJoint.RibbonTwistJoint()
+        self.r_twist_arm = rigRibonTwistJoint.RibbonTwistJoint()
+        self.r_twist_forearm = rigRibonTwistJoint.RibbonTwistJoint()
+        self.r_twist_leg = rigRibonTwistJoint.RibbonTwistJoint()
+        self.r_twist_foreleg = rigRibonTwistJoint.RibbonTwistJoint()
 
 
 class RigByped(rigBase.RigBase):
@@ -87,6 +96,41 @@ class RigByped(rigBase.RigBase):
     def cog(self):
         return self._model.cog
 
+    @property
+    def l_twist_arm(self):
+        return self._model.l_twist_arm
+
+    @property
+    def l_twist_forearm(self):
+        return self._model.l_twist_forearm
+
+    @property
+    def l_twist_leg(self):
+        return self._model.l_twist_leg
+
+    @property
+    def l_twist_foreleg(self):
+        return self._model.l_twist_foreleg
+    @property
+    def r_twist_arm(self):
+        return self._model.r_twist_arm
+
+    @property
+    def r_twist_forearm(self):
+        return self._model.r_twist_forearm
+
+    @property
+    def r_twist_leg(self):
+        return self._model.r_twist_leg
+
+    @property
+    def r_twist_foreleg(self):
+        return self._model.r_twist_foreleg
+
+
+
+
+
     def build(self):
         self.spine.create_point_base(*self.spine_root)
         self.hip.create_point_base(*self.hip_root, name='hip')
@@ -121,20 +165,39 @@ class RigByped(rigBase.RigBase):
         self.l_leg.set_parent(self.hip)
         self.r_leg.set_parent(self.hip)
 
-        # setup as skinned joints
+        self.l_twist_arm.create_point_base(self.l_arm.joints[2], self.l_arm.joints[3], folicule_number=5)
+        self.l_twist_forearm.create_point_base(self.l_arm.joints[3], self.l_arm.joints[4], folicule_number=5)
+        self.l_twist_leg.create_point_base(self.l_leg.joints[0], self.l_leg.joints[1], folicule_number=5)
+        self.l_twist_foreleg.create_point_base(self.l_leg.joints[1], self.l_leg.joints[2], folicule_number=5)
+        self.r_twist_arm.create_point_base(self.r_arm.joints[2], self.r_arm.joints[3], folicule_number=5)
+        self.r_twist_forearm.create_point_base(self.r_arm.joints[3], self.r_arm.joints[4], folicule_number=5)
+        self.r_twist_leg.create_point_base(self.r_leg.joints[0], self.r_leg.joints[1], folicule_number=5)
+        self.r_twist_foreleg.create_point_base(self.r_leg.joints[1], self.r_leg.joints[2], folicule_number=5)
 
+        # setup as skinned joints
         self.spine.rename_as_skinned_joints()
         self.hip.rename_as_skinned_joints()
-        self.l_arm.rename_as_skinned_joints()
-        self.r_arm.rename_as_skinned_joints()
+        # self.l_arm.rename_as_skinned_joints()
+        # self.r_arm.rename_as_skinned_joints()
+        self.l_twist_arm.rename_as_skinned_joints()
+        self.l_twist_forearm.rename_as_skinned_joints()
+        self.r_twist_arm.rename_as_skinned_joints()
+        self.r_twist_forearm.rename_as_skinned_joints()
+
         self.l_hand.rename_as_skinned_joints()
         self.r_hand.rename_as_skinned_joints()
-        self.l_leg.rename_as_skinned_joints()
-        self.r_leg.rename_as_skinned_joints()
+        # self.l_leg.rename_as_skinned_joints()
+        # self.r_leg.rename_as_skinned_joints()
+        self.l_twist_leg.rename_as_skinned_joints()
+        self.l_twist_foreleg.rename_as_skinned_joints()
+        self.r_twist_leg.rename_as_skinned_joints()
+        self.r_twist_foreleg.rename_as_skinned_joints()
         self.neck_head.rename_as_skinned_joints()
         self.spine.rename_as_skinned_joints()
         self.l_leg.rename_as_skinned_joints()
         self.r_leg.rename_as_skinned_joints()
+
+
 
 
 if __name__ == '__main__':

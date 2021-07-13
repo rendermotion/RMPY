@@ -225,8 +225,14 @@ class RigBase(object):
             rename_joints = self.joints[:-1]
         else:
             rename_joints = self.joints
+
         for each_joint in rename_joints:
             self.name_convention.rename_set_from_name(each_joint, 'skinjoint', 'objectType')
+            side = self.name_convention.get_from_name(each_joint, 'side')
+            each_joint.side.set(['C', 'L', 'R'].index(side))
+            pm.setAttr('{}.type'.format(each_joint), 18)
+            each_joint.otherType.set('{}{}'.format(self.name_convention.get_from_name(each_joint, 'name'),
+                                                   self.name_convention.get_from_name(each_joint, 'system')))
 
     def custom_world_align(self, *scene_objects):
         for each in scene_objects:

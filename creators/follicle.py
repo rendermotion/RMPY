@@ -92,8 +92,8 @@ class Follicle(creatorsBase.CreatorsBase):
         follicle_transform = self._node.getParent()
         self.connect_output_transform(follicle_transform)
 
-        self._node.outTranslate >> self.transform.translate
-        self._node.outRotate >> self.transform.rotate
+        # self._node.outTranslate >> self.transform.translate
+        # self._node.outRotate >> self.transform.rotate
 
         return self._node
 
@@ -118,6 +118,9 @@ class Follicle(creatorsBase.CreatorsBase):
         self._node.outTranslate >> transform.translate
         self._node.outRotate >> transform.rotate
 
+
 if __name__ == '__main__':
     new_fol = Follicle()
-    new_fol.surface_based('C_basePlane00_suspension_GRP')
+    for each in range(10):
+        print 1.0 / 9.0 * each
+        new_fol.surface_base('C_basePlane00_suspension_GRP', v_value=1.0 / 10.0 * each)
