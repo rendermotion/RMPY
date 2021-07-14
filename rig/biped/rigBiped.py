@@ -22,14 +22,14 @@ class RigBypedModel(rigBase.BaseModel):
         self.spine = rigSpine.RigSpine()
         self.hip = rigFK.RigFK()
         self.cog = rigProp.RigProp()
-        self.l_twist_arm = rigRibonTwistJoint.RibbonTwistJoint()
-        self.l_twist_forearm = rigRibonTwistJoint.RibbonTwistJoint()
-        self.l_twist_leg = rigRibonTwistJoint.RibbonTwistJoint()
-        self.l_twist_foreleg = rigRibonTwistJoint.RibbonTwistJoint()
-        self.r_twist_arm = rigRibonTwistJoint.RibbonTwistJoint()
-        self.r_twist_forearm = rigRibonTwistJoint.RibbonTwistJoint()
-        self.r_twist_leg = rigRibonTwistJoint.RibbonTwistJoint()
-        self.r_twist_foreleg = rigRibonTwistJoint.RibbonTwistJoint()
+        self.l_twist_arm = rigRibonTwistJoint.RibbonTwistJoint(rig_system=self.l_arm.rig_system)
+        self.l_twist_forearm = rigRibonTwistJoint.RibbonTwistJoint(rig_system=self.l_arm.rig_system)
+        self.l_twist_leg = rigRibonTwistJoint.RibbonTwistJoint(rig_system=self.l_leg.rig_system)
+        self.l_twist_foreleg = rigRibonTwistJoint.RibbonTwistJoint(rig_system=self.l_leg.rig_system)
+        self.r_twist_arm = rigRibonTwistJoint.RibbonTwistJoint(rig_system=self.r_arm.rig_system)
+        self.r_twist_forearm = rigRibonTwistJoint.RibbonTwistJoint(rig_system=self.r_arm.rig_system)
+        self.r_twist_leg = rigRibonTwistJoint.RibbonTwistJoint(rig_system=self.r_leg.rig_system)
+        self.r_twist_foreleg = rigRibonTwistJoint.RibbonTwistJoint(rig_system=self.r_leg.rig_system)
 
 
 class RigByped(rigBase.RigBase):
