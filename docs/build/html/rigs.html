@@ -41,6 +41,18 @@
 <dt id="RMPY.creators.skinCluster.SkinCluster">
 <em class="property">class </em><code class="descclassname">RMPY.creators.skinCluster.</code><code class="descname">SkinCluster</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#RMPY.creators.skinCluster.SkinCluster" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
+<dt id="RMPY.creators.skinCluster.SkinCluster.copy_by_definition">
+<code class="descname">copy_by_definition</code><span class="sig-paren">(</span><em>relation_dictionary</em>, <em>order_list=None</em><span class="sig-paren">)</span><a class="headerlink" href="#RMPY.creators.skinCluster.SkinCluster.copy_by_definition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copies the skinning from joint to joint as described on the parameter relation dictionary.
+:param relation_dictionary: a dictionary of objects relations of which weights will be copyed where.
+And since the keys on the dictionary cant be repeated, the keys are the destination of the weights,
+and the value of the key is the joint from where the weights will be added.
+:param order_list: the order in which the copy should be done, since the dictionary doesnt have an order,
+this list should have the keys of the relation_dictionary.
+:return:</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="RMPY.creators.skinCluster.SkinCluster.copy_skin">
 <code class="descname">copy_skin</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#RMPY.creators.skinCluster.SkinCluster.copy_skin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Copy’s the skinning between different meshes
@@ -48,6 +60,15 @@ only by providing the meshes.</p>
 <p>:args[0] the source mehs, this geo</p>
 <p>:args[1:] the destination  mehs where the skin will be copied</p>
 <p>:return a list with all the skin clusters that where created during execution</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="RMPY.creators.skinCluster.SkinCluster.switch_skin">
+<code class="descname">switch_skin</code><span class="sig-paren">(</span><em>geometry</em>, <em>joint_switch_dictionary</em><span class="sig-paren">)</span><a class="headerlink" href="#RMPY.creators.skinCluster.SkinCluster.switch_skin" title="Permalink to this definition">¶</a></dt>
+<dd><p>switches the joints in skinning
+:param joint_switch_dictionary:
+:param geometry: geometry where the skin wants to be changed.
+:return:</p>
 </dd></dl>
 
 </dd></dl>
