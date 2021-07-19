@@ -17,11 +17,11 @@ import sys
 print ('This is the path***********************')
 print os.path.abspath('.')
 current_path = os.path.abspath('.')
-os.listdir(current_path)
+print os.listdir(current_path)
 path_tokens = os.path.abspath('.').split('/')
-
 print os.listdir('/'.join(path_tokens[:-2]))
-sys.path.insert(0, '/'.join(path_tokens[:-2]))
+
+sys.path.append('/'.join(path_tokens[:-2]))
 
 for each in sys.path:
     print each
