@@ -16,11 +16,12 @@ import os
 import sys
 print ('This is the path***********************')
 print os.path.abspath('.')
-path_tokens = os.path.abspath('.').split('\\')
-print '\\'.join(path_tokens[:-3])
-sys.path.insert(0, '\\'.join(path_tokens[:-3]))
+path_tokens = os.path.abspath('.').split('/')
+print '/'.join(path_tokens[:-3])
+sys.path.insert(0, '/'.join(path_tokens[:-2]))
 
-
+for each in sys.path:
+    print each
 
 # -- Project information -----------------------------------------------------
 
