@@ -13,5 +13,10 @@ The curve class is used to represent the data of nurbsCurves.
 
 .. note::
     This is a notes in curves
+
 .. tip::
     This is a tip
+
+.. warning::
+    Check this
+
