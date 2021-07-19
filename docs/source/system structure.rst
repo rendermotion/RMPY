@@ -1,6 +1,6 @@
 System structure
 ================
-.. currentmodule:: rig.systemStructure
+.. currentmodule:: rig.SystemStructure
 
 .. autoclass:: SystemStructure
     :members:
