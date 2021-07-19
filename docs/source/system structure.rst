@@ -1,6 +1,6 @@
 System structure
 ================
-.. currentmodule:: rig.systemStructure
+.. currentmodule:: RMPY.rig.systemStructure
 
 .. autoclass:: SystemStructure
     :members:

@@ -14,8 +14,11 @@
 #
 import os
 import sys
-
-sys.path.insert(0, os.path.abspath('D://Development/maya'))
+print ('This is the path***********************')
+print os.path.abspath('.')
+path_tokens = os.path.abspath('.').split('\\')
+print '\\'.join(path_tokens[:-3])
+sys.path.insert(0, '\\'.join(path_tokens[:-3]))
 
 
 
