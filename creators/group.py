@@ -12,8 +12,16 @@ class Group(creatorsBase.CreatorsBase):
 
     def point_base(self, *scene_nodes, **kwargs):
         super(Group, self).point_base(*scene_nodes, **kwargs)
-        """
-            type of group can be: "world","child","parent","inserted","sibling"
+        r"""
+            :param scene_nodes:
+                uno o mas nodos de la escena
+                 
+            :type scene_nodes: ``str``
+            :param￼ \**kwargs:
+                See below
+            :Keword Arguments: 
+                * *type* (``str``)--
+                A parameter to define how the new group is going to be in the hierarcht, valid values are "world","child","parent","inserted","sibling".
         """
         group_type = kwargs.pop('type', "inserted")
         name = kwargs.pop('name', None)

@@ -10,4 +10,7 @@ group
 =====
 The group creator allow you to create empty transform nodes.
 The only way to create it is using the point_base function.
+.. currentmodule:: creators.group
+.. autoclass:: Group
+    :members:
 
