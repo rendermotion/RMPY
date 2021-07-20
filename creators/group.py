@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- 
 import pymel.core as pm
 from RMPY.core import dataValidators
 from RMPY.core import config
@@ -21,7 +23,9 @@ class Group(creatorsBase.CreatorsBase):
                 See below
             :Keword Arguments: 
                 * *type* (``str``)--
-                A parameter to define how the new group is going to be in the hierarcht, valid values are "world","child","parent","inserted","sibling".
+                A parameter to define how the new group is going to be 
+                in the hierarcht, valid values are                  
+                "world","child","parent","inserted","sibling".
         """
         group_type = kwargs.pop('type', "inserted")
         name = kwargs.pop('name', None)
