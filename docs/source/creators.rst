@@ -14,6 +14,7 @@ The only way to create it is using the point_base function.
 .. currentmodule:: creators.group
 
 .. autoclass:: Group
-
     :members:
+    :undoc-members:
+
 
