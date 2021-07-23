@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'UI_SpaceSwitch.ui'
 #
-# Created: Wed Mar 21 21:43:34 2018
+# Created: Fri Jul 23 00:15:20 2021
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!

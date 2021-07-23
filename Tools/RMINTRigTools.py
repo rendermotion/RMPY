@@ -1,20 +1,14 @@
-import sys
 import maya.cmds as cmds
 import maya.OpenMayaUI as mui
 from maya.app.general.mayaMixin import MayaQWidgetDockableMixin
-try:
-    from PySide2.QtCore import *
-    from PySide2.QtGui import *
-    from PySide2.QtWidgets import *
-    from PySide2 import __version__
-    from shiboken2 import wrapInstance
-    from RMPY.Tools.QT5.ui  import FormRigTools
-except ImportError:
-    from PySide.QtCore import *
-    from PySide.QtGui import *
-    from PySide import __version__
-    from shiboken import wrapInstance
-    from RMPY.Tools.QT4.ui import FormRigTools
+import pymel.core as pm
+from PySide2.QtCore import *
+from PySide2.QtGui import *
+from PySide2.QtWidgets import *
+from PySide2 import __version__
+from shiboken2 import wrapInstance
+from RMPY.Tools.QT5.ui import FormRigTools
+
 import maya.mel as mel
 import os
 from RMPY import RMRigTools
@@ -24,8 +18,10 @@ from RMPY.GenericRig import RMUnfoldRig
 # sys.path.append(os.path.dirname(__file__))
 
 from RMPY import RMUncategorized
+from RMPY import nameConvention
 
 from RMPY.AutoRig import RMRigFK
+
 print 'executed'
 
 
@@ -46,25 +42,28 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.ui.FKOnSelection.clicked.connect(self.FKOnSelectionBtnPressed)
         self.ui.CreateChildGroup.clicked.connect(self.CreateChildGroupBtnPressed)
         self.ui.CreateParentGroup.clicked.connect(self.CreateParentBtnPressed)
-        self.ui.JointsOnPoints.clicked.connect(self.JointsOnPointsBtnPressed)
+        # self.ui.JointsOnPoints.clicked.connect(self.JointsOnPointsBtnPressed)
         self.ui.AlignRotation.clicked.connect(self.AlignRotationBtnPressed)
         self.ui.AlignPosition.clicked.connect(self.AlignPositionBtnPressed)
         self.ui.AlignAll.clicked.connect(self.AlignAllBtnPressed)
         self.ui.ListConnectedJoints.clicked.connect(self.ListConnectedJointsBtnPressed)
         self.ui.SelectJoints.clicked.connect(self.SelectJointsBtnPressed)
         self.ui.SCCombineButton.clicked.connect(self.SCCombineButtonPressed)
-        self.ui.AttributeTransferBtn.clicked.connect(self.AttributeTransferBtnPressed)
-        self.ui.ExtractGeoBtn.clicked.connect(self.ExtractGeoFunct)
+        self.ui.AttributeTransferBtn.clicked.connect(self.transfer_attributes)
+        self.ui.ExtractGeoBtn.clicked.connect(self.extract_geometry)
         self.ui.GenericJointChainRigBtn.clicked.connect(self.GenericJointChainRigBtnPressed)
-        self.ui.OrientNubButton.clicked.connect(self.OrientNubButtonPressed)
-        self.ui.unfoldRigBtn.clicked.connect(self.unfoldRigBtnPressed)
+        self.ui.mirror_selection_btn.clicked.connect(self.mirror_selection)
 
-        self.ui.ProgressiveConstraintButton.clicked.connect(self.ProgressiveConstraintButtonPressed)
+        # self.ui.OrientNubButton.clicked.connect(self.OrientNubButtonPressed)
+        # self.ui.unfoldRigBtn.clicked.connect(self.unfoldRigBtnPressed)
+
+        # self.ui.ProgressiveConstraintButton.clicked.connect(self.ProgressiveConstraintButtonPressed)
 
         # self.ui.ConstShapeLblBtn.clicked.connect(self.AttributeTransferBtnPressed)
 
         # support Multiple selections on qwidgets
         self.ui.listWidget.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.name_convention = nameConvention.NameConvention()
 
     def unfoldRigBtnPressed(self):
         selection = cmds.ls(selection=True)
@@ -177,20 +176,46 @@ class Main(MayaQWidgetDockableMixin, QDialog):
             print g.text()
             cmds.select(g.text(), add=True)
 
+    @staticmethod
     def SCCombineButtonPressed(self):
-        mel.eval('''source RMRigShapeControls.mel;
-		string $temp[]=`ls -sl`;
-		turn_to_one $temp;''')
+        mel_script = 'source RMRigShapeControls.mel;\n'
+        mel_script += 'string $temp[]=`ls -sl`;\n'
+        mel_script += 'turn_to_one $temp;\n'
+        mel.eval(mel_script)
 
-    def AttributeTransferBtnPressed(self):
-        mel.eval('''source RMAttributes.mel;
-		string $temp[]=`ls -sl`;
-		TransferAllAttr $temp[0] $temp[1];''')
+    @staticmethod
+    def transfer_attributes(self):
+        mel_script = 'source RMAttributes.mel;\n'
+        mel_script += 'string $temp[] = `ls - sl`;\n'
+        mel_script += ' TransferAllAttr $temp[0] $temp[1];\n'
+        mel.eval(mel_script)
 
-    def ExtractGeoFunct(self):
+    def extract_geometry(self):
         RMUncategorized.ExtractGeometry()
-print 'executed'
+
+    def mirror_selection(self):
+        scene_transforms_list = pm.ls(selection=True)
+        for eachObject in scene_transforms_list:
+            object_transform_dic = RMUncategorized.ObjectTransformDic([eachObject])
+            side = self.name_convention.get_from_name(eachObject, "side")
+            if side == "R":
+                oposit_object = self.name_convention.set_from_name(str(eachObject), "L", "side")
+                if cmds.objExists(oposit_object):
+                    RMUncategorized.SetObjectTransformDic({oposit_object: object_transform_dic[str(eachObject)]},
+                                                          MirrorTranslateX=1, MirrorTranslateY=1, MirrorTranslateZ=-1,
+                                                          MirrorRotateX=-1, MirrorRotateY=-1, MirrorRotateZ=1)
+                else:
+                    print 'object not found %s' % oposit_object
+            else:
+                oposit_object = self.name_convention.set_from_name(str(eachObject), "R", "side")
+                if cmds.objExists(oposit_object):
+                    RMUncategorized.SetObjectTransformDic({oposit_object: object_transform_dic[str(eachObject)]},
+                                                          MirrorTranslateX=1, MirrorTranslateY=1, MirrorTranslateZ=-1,
+                                                          MirrorRotateX=-1, MirrorRotateY=-1, MirrorRotateZ=1)
+                else:
+                    print 'object not found %s' % oposit_object
+
 
 if __name__ == '__main__':
-    w = main()
+    w = Main()
     w.show()
