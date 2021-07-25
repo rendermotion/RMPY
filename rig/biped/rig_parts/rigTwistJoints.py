@@ -99,6 +99,7 @@ class TwistJoints(rigBase.RigBase):
         self.reset_controls.append(reset_point)
         pm.parent(self.reset_controls, self.rig_system.controls)
         self.controls.append(control)
+        self.create.constraint.node_base(twist_joint, self.reset_controls[0], mo=True)
 
     def distance_between_points_measure(self, Point01, Point02):
         transform_start_point = "startPoint"
@@ -172,7 +173,7 @@ class TwistJoints(rigBase.RigBase):
 
 if __name__ == '__main__':
     TJ = TwistJoints()
-    TJ.create_point_base("L_intermediate00_shoulder_sknjnt", "L_intermediate01_shoulder_sknjnt")
+    TJ.create_point_base("R_intermediate01_shoulder_jnt", "R_intermediate02_shoulder_jnt")
 
 
 

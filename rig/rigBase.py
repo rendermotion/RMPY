@@ -54,6 +54,7 @@ class RigBase(object):
         else:
             return self.reset_controls[0]
 
+
     @root.setter
     def root(self, value):
         self.attach_points['root'] = value

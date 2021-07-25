@@ -28,7 +28,7 @@ def save_curve(*args):
 
 def load_curves(*args):
     """
-        :param args: the scene objects that will be loaded if nothing is provide it it will try to save the selection.
+        :param args: the scene objects that will be loaded if nothing is provide it it will try to load the selection.
         :return:
         """
     if args:
@@ -84,4 +84,4 @@ def load_skin_cluster(*args):
 
 
 if __name__ == '__main__':
-    pass
+    load_skin_cluster()

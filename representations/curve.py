@@ -6,6 +6,7 @@ class Curve(object):
     def __init__(self):
         self.node = None
         self.repr_dict = {}
+        self.extra_path = '/nurbsCurves'
 
     @classmethod
     def by_name(cls, curve_node):
@@ -23,8 +24,9 @@ class Curve(object):
             file_name = args[0]
         else:
             file_name = '%s' % self.node
-            data_manager = dataManager.DataManager()
-            data_manager.save(file_name, self.get_repr_dict(), **kwargs)
+        data_manager = dataManager.DataManager()
+        data_manager.file_path = '{}{}'.format(data_manager.file_path, self.extra_path)
+        data_manager.save(file_name, self.get_repr_dict(), **kwargs)
 
     def load(self, *args, **kwargs):
         try:
@@ -32,8 +34,9 @@ class Curve(object):
                 file_name = args[0]
             else:
                 file_name = '%s' % self.node
-                data_manager = dataManager.DataManager()
-                self.repr_dict = data_manager.load(file_name, **kwargs)
+            data_manager = dataManager.DataManager()
+            data_manager.file_path = '{}{}'.format(data_manager.file_path, self.extra_path)
+            self.repr_dict = data_manager.load(file_name, **kwargs)
             return self.repr_dict
 
         except IOError:
@@ -63,11 +66,11 @@ class Curve(object):
         return self.repr_dict
 
     def set_repr_dict(self):
-        if 'type' in self.repr_dict.keys():
-            if self.repr_dict['type'] == 'curve':
-                if not self.node:
-                    self.node = pm.ls(self.repr_dict)
-
+        if self.repr_dict:
+            if 'type' in self.repr_dict.keys():
+                if self.repr_dict['type'] == 'curve':
+                    # if not self.node:
+                    #     self.node = pm.ls(self.repr_dict)
                     for each_shape_name, shape_node in zip(self.repr_dict['data']['shapes'], self.node.getShapes()):
                         if str(shape_node) in self.repr_dict['data']['shapes'].keys():
                             current_key = str(shape_node)
@@ -88,14 +91,19 @@ class Curve(object):
                                    len(self.repr_dict['data']['shapes'][current_key]['cps']),
                                    *self.repr_dict['data']['shapes'][current_key]['cps'], type='nurbsCurve')
 
+                else:
+                    print 'not valid curve type found in representation dictionary load, check source {}'.format(
+                        self.repr_dict)
             else:
-                print 'not valid curve representation dictionary load, check source'
+                print 'not valid type key on curve representation dictionary load, check source {}'.format(self.repr_dict)
         else:
-            print 'not valid curve representation dictionary load, check source'
+            print 'no representation dictionary for {}'.format(self.node)
 
 
 if __name__ == '__main__':
-    control_curve = Curve.by_name('C_joint00_neck_ctr')
+    control_curve = Curve.by_name('C_cog00_Hip_ctr')
     from pprint import pprint as pp
-
-    pp(control_curve.get_repr_dict())
+    control_curve.load()
+    # pp(control_curve.repr_dict)
+    control_curve.set_repr_dict()
+    # pp(control_curve.get_repr_dict())

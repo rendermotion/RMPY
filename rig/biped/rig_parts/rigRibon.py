@@ -70,24 +70,22 @@ class Ribon(rigBase.RigBase):
         self.name_convention.rename_name_in_format(skin_joints, useName=True)
         skin_joints.setParent(self.rig_system.joints)
 
-        array_joints = []
         for each_follicle in self.follicules:
-            array_joints.append(pm.joint(name="ribbonJoints"))
-            self.name_convention.rename_name_in_format(array_joints[-1], useName=True)
-            pm.matchTransform(array_joints[-1], each_follicle)
-            pm.parentConstraint(each_follicle, array_joints[-1])
+            self.joints.append(pm.joint(name="ribbonJoints"))
 
-        self.joint_structure = array_joints
+            self.name_convention.rename_name_in_format(self.joints[-1], useName=True)
+            pm.matchTransform(self.joints[-1], each_follicle)
+            pm.parentConstraint(each_follicle, self.joints[-1])
 
         locator_controls_list = []
         locator_look_at_list = []
         joints_look_at_list = []
         group_look_at_list = []
 
-        GroupJoints = pm.group(empty=True, name="groupJointsLookAt")
-        self.name_convention.rename_name_in_format(GroupJoints, useName=True)
+        group_joints = pm.group(empty=True, name="groupJointsLookAt")
+        self.name_convention.rename_name_in_format(group_joints, useName=True)
 
-        self.joints.append(GroupJoints)
+        # self.joints.append(group_joints)
 
         for iloop in range(3):
             reset_control_group, control = self.create.controls.point_base(object_a, type='circular',
@@ -132,7 +130,7 @@ class Ribon(rigBase.RigBase):
             pm.parent(reset_control_group, self.rig_system.controls)
             pm.parent(locator_control, group_look_at)
             pm.parent(locator_look_at, group_look_at)
-            pm.parent(joints_look_at, GroupJoints)
+            pm.parent(joints_look_at, group_joints)
 
             pm.makeIdentity(control, apply=True, t=1, r=0, s=1, n=0)
             pm.makeIdentity(joints_look_at, apply=True, t=1, r=0, s=1, n=0)
@@ -145,9 +143,9 @@ class Ribon(rigBase.RigBase):
         pm.aimConstraint(self.controls[1], locator_controls_list[2], aim=[1, 0, 0], upVector=[0, 0, 1], wut='object',
                          worldUpObject=locator_look_at_list[2])
 
-        pm.parent(GroupJoints, main_skeleton)
-        pm.skinCluster(joints_look_at_list, plane)
+        pm.parent(group_joints, main_skeleton)
         pm.parent(plane, hair_group)
+        pm.skinCluster(joints_look_at_list, plane)
 
     def set_parent(self, *args, **kwargs):
         """
@@ -163,6 +161,6 @@ class Ribon(rigBase.RigBase):
 
 if __name__ == '__main__':
     rig_ribbon = Ribon()
-    rig_ribbon.create_point_base("L_intermediate00_shoulder_sknjnt",
-                                 "L_intermediate01_shoulder_sknjnt", folicule_number=5)
+    rig_ribbon.create_point_base("R_intermediate01_shoulder_jnt",
+                                 "R_intermediate02_shoulder_jnt", folicule_number=5)
     # rig_ribon.set_parent("L_intermediate00_shoulder_sknjnt", "L_intermediate01_shoulder_sknjnt")

@@ -11,8 +11,7 @@ class RigPropModel(rigBase.BaseModel):
 
 class RigProp(rigBase.RigBase):
     def __init__(self, *args, **kwargs):
-        if 'model' not in kwargs.keys():
-            kwargs['model'] = RigPropModel()
+        kwargs['model'] = kwargs.pop('model', RigPropModel())
         super(RigProp, self).__init__(*args, **kwargs)
 
     @property
@@ -38,7 +37,7 @@ class RigProp(rigBase.RigBase):
         align = kwargs.pop('align', 'point')
         offset_visibility = kwargs.pop('offset_visibility', False)
 
-        single_joint = rigSingleJoint.RigSingleJoint()
+        single_joint = rigSingleJoint.RigSingleJoint(rig_system=self.rig_system)
         self.single_joints.append(single_joint)
         for each_point in points:
             for index in range(depth):
@@ -55,6 +54,7 @@ class RigProp(rigBase.RigBase):
                     self.custom_world_align(single_joint.reset_controls[-1])
             self.joints.extend(single_joint.joints)
             self.controls.extend(single_joint.controls)
+            self.reset_controls.extend(single_joint.reset_controls)
             self.reset_joints.extend(single_joint.reset_joints)
 
         # self.controls = single_joint.controls

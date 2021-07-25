@@ -18,14 +18,14 @@ class RigSingleJoint(rigBase.RigBase):
         scaleXZ = kwargs.pop('scaleXZ', False)
 
         for each in locator_list:
-            reset_joint = pm.group(empty=True, name='resteJoint')
+            reset_joint = pm.group(empty=True, name='resetJoint')
             print 'align {} {}'.format(each, reset_joint)
             self.rm.align(each, reset_joint)
             joint = pm.joint(name='joint')
             self.rm.align(joint, reset_joint)
 
             self.joints.append(joint)
-            self.name_convention.rename_name_in_format(reset_joint)
+            self.name_convention.rename_name_in_format(reset_joint, useName=True)
             self.name_convention.rename_name_in_format(joint)
 
             joint.setParent(reset_joint)

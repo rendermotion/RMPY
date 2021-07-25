@@ -2,6 +2,7 @@ from RMPY.rig.biped.rig_parts import arm
 from RMPY.rig.biped.rig_parts import rigSpine
 from RMPY.rig.biped.rig_parts import hand
 from RMPY.rig import rigFK
+from RMPY.rig import rigWorld
 from RMPY.rig.biped.rig_parts import neckHead
 from RMPY.rig.biped.rig_parts import rigIKFKLegFeet
 from RMPY.rig.biped.rig_parts import rigRibonTwistJoint
@@ -30,6 +31,7 @@ class RigBypedModel(rigBase.BaseModel):
         self.r_twist_forearm = rigRibonTwistJoint.RibbonTwistJoint(rig_system=self.r_arm.rig_system)
         self.r_twist_leg = rigRibonTwistJoint.RibbonTwistJoint(rig_system=self.r_leg.rig_system)
         self.r_twist_foreleg = rigRibonTwistJoint.RibbonTwistJoint(rig_system=self.r_leg.rig_system)
+        self.rig_world = rigWorld.RigWorld()
 
 
 class RigByped(rigBase.RigBase):
@@ -127,9 +129,9 @@ class RigByped(rigBase.RigBase):
     def r_twist_foreleg(self):
         return self._model.r_twist_foreleg
 
-
-
-
+    @property
+    def rig_world(self):
+        return self._model.rig_world
 
     def build(self):
         self.spine.create_point_base(*self.spine_root)
@@ -158,6 +160,7 @@ class RigByped(rigBase.RigBase):
 
         self.neck_head.set_parent(self.spine)
 
+        self.cog.set_parent(self.rig_world)
         self.spine.set_parent(self.cog)
 
         self.hip.set_parent(self.cog)
@@ -179,6 +182,7 @@ class RigByped(rigBase.RigBase):
         self.hip.rename_as_skinned_joints()
         # self.l_arm.rename_as_skinned_joints()
         # self.r_arm.rename_as_skinned_joints()
+
         self.l_twist_arm.rename_as_skinned_joints()
         self.l_twist_forearm.rename_as_skinned_joints()
         self.r_twist_arm.rename_as_skinned_joints()
@@ -188,16 +192,16 @@ class RigByped(rigBase.RigBase):
         self.r_hand.rename_as_skinned_joints()
         # self.l_leg.rename_as_skinned_joints()
         # self.r_leg.rename_as_skinned_joints()
+
         self.l_twist_leg.rename_as_skinned_joints()
         self.l_twist_foreleg.rename_as_skinned_joints()
         self.r_twist_leg.rename_as_skinned_joints()
         self.r_twist_foreleg.rename_as_skinned_joints()
+
         self.neck_head.rename_as_skinned_joints()
         self.spine.rename_as_skinned_joints()
         self.l_leg.rename_as_skinned_joints()
         self.r_leg.rename_as_skinned_joints()
-
-
 
 
 if __name__ == '__main__':

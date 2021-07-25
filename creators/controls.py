@@ -105,7 +105,6 @@ class Controls(creatorsBase.CreatorsBase):
         name = kwargs.pop('name', '')
         centered = kwargs.pop('centered', False)
 
-
         Obj = dataValidators.as_pymel_nodes(Obj)
         if name == "":
             default_name = "BoxControl"
@@ -234,7 +233,7 @@ def combine_shapes(curveArray):
 
 
 if __name__ == '__main__':
-    joint = pm.ls('L_joint01_rig_jnt')[0]
+    joint = pm.ls('C_hello00_reference_grp')[0]
     shapeControls = Controls()
-    shapeControls.point_base(joint, type='head')
+    shapeControls.point_base(joint)
     # shapeControls.file_control(joint, control_type='head')

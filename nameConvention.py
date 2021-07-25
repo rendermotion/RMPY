@@ -277,15 +277,15 @@ class NameConvention(object):
         ReturnNameInFormat = "_".join(returnName)
         return self.unique_name(ReturnNameInFormat)
 
-    def rename_name_in_format(self, Name, **wantedNameDic):
+    def rename_name_in_format(self, current_name, **wantedNameDic):
         useName = wantedNameDic.pop('useName', False)
-        Name = validate_input_nodes(Name)
+        current_name = validate_input_nodes(current_name)
         NewNameArray = ()
         NameList = []
-        if type(Name) == list:
-            NameList = Name
-        elif type(Name) in [str, unicode]:
-            NameList = [Name]
+        if type(current_name) == list:
+            NameList = current_name
+        elif type(current_name) in [str, unicode]:
+            NameList = [current_name]
         else:
             print 'Error no Valid type on RMRenameNameInFromat should be string or list'
 
@@ -347,32 +347,33 @@ class NameConvention(object):
         return ObjType
 
     def rename_guess_type_in_name(self, current_name):
-        ''' this functions renames a name in format and adds the correct objectType described on the type dictionary
+        """
+            This functions renames a name in format and adds the correct objectType described on the type dictionary
             to acomplish this, will look the objectType maya command and will match the type on the dictionary,
             this token will be placed on the objectType token place, and the object will be renamed to the new name.
-        '''
+        """
         current_name = validate_input_nodes(current_name)
 
-        NewNameArray = []
-        NameList = []
+        new_name_array = []
+        name_list = []
         if type(current_name) == list:
-            NameList = current_name
+            name_list = current_name
         elif type(current_name) in [str, unicode]:
-            NameList = [current_name]
-        for current_name in NameList:
-            NewName = current_name
-            if cmds.objExists(NewName):
-                if self.is_name_in_format(NewName):
-                    Type = self.guess_object_type(current_name)
-                    NewName = self.set_from_name(NewName, Type, "objectType")
-            NewName = self.unique_name(NewName)
-            cmds.rename(current_name, NewName)
-            NewNameArray.append(NewName)
+            name_list = [current_name]
+        for current_name in name_list:
+            new_name = current_name
+            if cmds.objExists(new_name):
+                if self.is_name_in_format(new_name):
+                    object_type = self.guess_object_type(current_name)
+                    new_name = self.set_from_name(new_name, object_type, "objectType")
+            new_name = self.unique_name(new_name)
+            cmds.rename(current_name, new_name)
+            new_name_array.append(new_name)
 
-        if len(NewNameArray) == 1:
-            return NewNameArray[0]
+        if len(new_name_array) == 1:
+            return new_name_array[0]
         else:
-            return NewNameArray
+            return new_name_array
 
     def rename_based_on_base_name(self, base_name, obj_to_rename, **wantedNameDic):
 
@@ -432,5 +433,6 @@ class NameConvention(object):
 
 
 if __name__ == '__main__':
-    name_conv = NameConvention()
-    name_conv.set_defaults_from_name('L_main_now_msh', side=True, name=True, system=True, objectType=True)
+    name_convention = NameConvention()
+    name_convention.rename_name_in_format('C_hola00_rig_grp', name='hello')
+    # name_convention.set_defaults_from_name('L_main_now_msh', side=True, name=True, system=True, objectType=True)
