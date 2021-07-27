@@ -1,7 +1,6 @@
 import pymel.core as pm
 from RMPY.rig import rigBase
 from RMPY.core import config
-reload(config)
 
 
 class RigSplineIKModel(rigBase.BaseModel):
@@ -62,9 +61,14 @@ class RigSplineIK(rigBase.RigBase):
         # start_char = ord('A')
         for index, each_joint in enumerate(self.joints[1:]):
             unit_conversion = pm.createNode('unitConversion')
+            scale_multiply = pm.createNode('multiplyDivide')
             unit_conversion.conversionFactor.set(each_joint.translateX.get()/start_length)
             new_curve_info.arcLength >> unit_conversion.input
-            unit_conversion.output >> each_joint.translateX
+            unit_conversion.output >> scale_multiply.input1X
+            scale_multiply.outputX >> each_joint.translateX
+            self.reset_joints.scaleX >> scale_multiply.input2X
+            scale_multiply.operation.set(2)
+
             # pm.addAttr(self.rig_system.settings, ln='jointScale{}'.format(chr(start_char + index)),
             #            at='double', k=True)
             # self.rig_system.settings.attr('jointScale{}'.format(chr(start_char + index))).set()
@@ -76,6 +80,7 @@ class RigSplineIK(rigBase.RigBase):
         self.ik.dWorldUpAxis.set('Positive {}'.format(config.axis_order[1].upper()))
         start_orient_object.worldMatrix[0] >> self.ik.dWorldUpMatrix
         end_orient_object.worldMatrix[0] >> self.ik.dWorldUpMatrixEnd
+
 
 if __name__ == '__main__':
     rig_spine = RigSplineIK()

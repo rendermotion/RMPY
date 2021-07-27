@@ -8,7 +8,7 @@ from RMPY.rig.biped.rig_parts import rigIKFKLegFeet
 from RMPY.rig.biped.rig_parts import rigRibonTwistJoint
 from RMPY.rig import rigBase
 from RMPY.rig import rigProp
-
+reload(rigSpine)
 
 class RigBypedModel(rigBase.BaseModel):
     def __init__(self, **kwargs):

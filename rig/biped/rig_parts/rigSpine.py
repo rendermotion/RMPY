@@ -2,7 +2,7 @@ import pymel.core as pm
 from RMPY.rig import rigBase
 from RMPY.rig import rigSplineIK
 from RMPY.rig import rigFK
-reload(rigSplineIK)
+
 
 class SpineModel(rigBase.BaseModel):
     def __init__(self, *args, **kwargs):
@@ -58,6 +58,7 @@ class RigSpine(rigBase.RigBase):
         self._model.joints = self.rig_spline_ik.joints
         self._model.reset_joints = self.rig_spline_ik.reset_joints
         self._model.reset_controls = self.reset_controls
+        self.create.constraint.scale(self.reset_controls, self.reset_joints)
         self._model.controls = self.controls
         self.rig_spline_ik.setup_twist(self.controls[0], self.controls[-1])
 

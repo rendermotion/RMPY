@@ -51,7 +51,7 @@ class RigIkFk(rigBase.RigBase):
 
     def create_point_base(self, *creation_points, **kwargs):
         super(RigIkFk, self).create_point_base(*creation_points, **kwargs)
-        self.root = pm.group(empty=True)
+        self.root = self.create.group.point_base(creation_points[0], type='world')
         self.root.setParent(self.rig_system.kinematics)
 
         self.name_convention.rename_name_in_format(self.root, name='mainMover')

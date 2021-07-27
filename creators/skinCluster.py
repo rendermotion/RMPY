@@ -26,6 +26,7 @@ class SkinCluster(creatorsBase.CreatorsBase):
             print "WARNING: skinCluster object created, node doesn't exists"
             return new_class_object
         return None
+
     @classmethod
     def by_node(cls, node_name):
         if node_name.__class__ == pm.nodetypes.SkinCluster:
@@ -266,10 +267,10 @@ class SkinCluster(creatorsBase.CreatorsBase):
 
 if __name__ == '__main__':
     skin_cluster01 = SkinCluster()
-    skin_cluster01.load('body')
-    skin_cluster01.apply_weights_dictionary(geometry='venom_body_geo')
-    # skin_cluster01 = SkinCluster.by_node('skinCluster9')
-    # skin_cluster01.save('body')
+    # skin_cluster01.load('body')
+    # skin_cluster01.apply_weights_dictionary(geometry='venom_body_geo')
+    skin_cluster01 = SkinCluster.by_node('venom_body_geo')
+    skin_cluster01.save()
 
     # skin_cluster01.load('metal_ring_front')
     # skin_cluster01.apply_weights_dictionary(geometry='metalGrey_C_metalRing_0001_mid_GES')

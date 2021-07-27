@@ -38,7 +38,7 @@ class RigSingleJoint(rigBase.RigBase):
                 control.translate >> joint.translate
                 control.rotate >> joint.rotate
             else:
-                pm.parentConstraint(control, joint)
+                self.create.constraint.node_base(control, joint)
 
             if scaleXZ:
                 pm.addAttr(control, longName='scaleXZ', at=float, k=True)
@@ -52,7 +52,7 @@ class RigSingleJoint(rigBase.RigBase):
 if __name__ == '__main__':
     selection = pm.ls(selection=True)
     rig_joint = RigSingleJoint()
-    rig_joint.create_point_base(*selection, static=True, scaleXZ=True)
+    rig_joint.create_point_base(*selection)
 
 
 
