@@ -1,6 +1,8 @@
 from RMPY.representations import curve
 from RMPY.creators import skinCluster
 import pymel.core as pm
+from RMPY.core import config
+import os
 
 
 def save_curve(*args):
@@ -83,5 +85,30 @@ def load_skin_cluster(*args):
             pass
 
 
+def export_maya_file(**kwargs):
+    file_name = kwargs.pop('file_name', 'reference_points')
+    full_path = '{}/mayaFiles'.format(config.file_path)
+    pm.exportSelected('{}/{}.ma'.format(full_path, file_name))
+
+
+def import_maya_file(file_name):
+    full_path = '{}/mayaFiles'.format(config.file_path)
+    pm.importFile('{}/{}.ma'.format(full_path, file_name))
+
+
+def import_all_available_maya_files():
+    for each in available_maya_files():
+        import_maya_file(each)
+
+
+def available_maya_files():
+    full_path = '{}/mayaFiles'.format(config.file_path)
+    available_files = []
+    for each in os.listdir(full_path):
+        if '.ma' in each:
+            available_files.append(each)
+    return each
+
+
 if __name__ == '__main__':
-    load_skin_cluster()
+    load_curves()

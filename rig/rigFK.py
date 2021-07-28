@@ -30,6 +30,7 @@ class RigFK(rigBase.RigBase):
                 reset_group.setParent(self.rig_system.controls)
             else:
                 pm.parent(reset_group, self.controls[index-1])
+
             self.create.constraint.define_constraints(point=False, scale=True, parent=True, orient=False)
             self.create.constraint.node_base(control, eachJoint, mo=True)
 

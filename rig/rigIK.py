@@ -136,7 +136,9 @@ class IKRig(RMPY.rig.rigBase.RigBase):
         self.root_joints.setParent(self.rig_system.joints)
         self.root_controls = pm.group(empty=True, name='ikControls')
         self.name_convention.rename_name_in_format(self.root_controls, useName=True)
-
+        self.rm.align(self.joints[0], self.root_controls)
+        self.create.constraint.define_constraints(scale=True, parent=True)
+        self.create.constraint.node_base(self.root_controls, self.root_joints, mo=True)
         self.root_kinematics = pm.group(empty=True, name='ikKinematics')
         self.name_convention.rename_name_in_format(self.root_kinematics, useName=True)
 
@@ -242,11 +244,11 @@ class IKRig(RMPY.rig.rigBase.RigBase):
         if not self.joints:
             self.joints = self.identify_joints(ik_handle)
 
-        totalDistance = self.bone_chain_lenght(self.joints)
+        total_distance = self.bone_chain_lenght(self.joints)
         transformStartPoint = pm.spaceLocator(name="StretchyIkHandleStartPoint")
-        transformStartPoint = self.name_convention.rename_name_in_format(transformStartPoint, useName=True)
+        self.name_convention.rename_name_in_format(transformStartPoint, useName=True)
         transformEndPoint = pm.spaceLocator(name="StretchyIkHandleEndPoint")
-        transformEndPoint = self.name_convention.rename_name_in_format(transformEndPoint, useName=True)
+        self.name_convention.rename_name_in_format(transformEndPoint, useName=True)
 
         if self.root_joints:
             pm.parent(transformStartPoint, self.root_joints)
@@ -255,38 +257,43 @@ class IKRig(RMPY.rig.rigBase.RigBase):
         StartPointConstraint = pm.pointConstraint(self.joints[0], transformStartPoint)
         EndPointConstraint = pm.pointConstraint(ik_handle, transformEndPoint)
 
-        distanceNode = pm.shadingNode("distanceBetween", asUtility=True,
-                                      name="IKBaseDistanceNode" + self.name_convention.get_a_short_name(self.joints[2]))
-        distanceNode = self.name_convention.rename_based_on_base_name(self.joints[2], distanceNode, name=distanceNode)
+        distance_node = pm.shadingNode("distanceBetween", asUtility=True,
+                                       name="IKBaseDistanceNode" + self.name_convention.get_a_short_name(self.joints[2]))
+        self.name_convention.rename_name_in_format(distance_node, name='DistanceNode')
 
-        pm.connectAttr(transformStartPoint + ".worldPosition[0]", distanceNode + ".point1", f=True)
-        pm.connectAttr(transformEndPoint + ".worldPosition[0]", distanceNode + ".point2", f=True)
+        pm.connectAttr(transformStartPoint + ".worldPosition[0]", distance_node + ".point1", f=True)
+        pm.connectAttr(transformEndPoint + ".worldPosition[0]", distance_node + ".point2", f=True)
 
         conditionNode = pm.shadingNode("condition", asUtility=True,
                                        name="IkCondition" + self.name_convention.get_a_short_name(self.joints[2]))
-        conditionNode = self.name_convention.rename_based_on_base_name(self.joints[2], conditionNode,
-                                                                 name= conditionNode)
-        pm.connectAttr(distanceNode + ".distance", conditionNode + ".colorIfFalseR", f=True)
-        pm.connectAttr(distanceNode + ".distance", conditionNode + ".secondTerm", f=True)
+        self.name_convention.rename_name_in_format(conditionNode, name= 'conditionNode')
+        pm.connectAttr(distance_node + ".distance", conditionNode + ".colorIfFalseR", f=True)
+        pm.connectAttr(distance_node + ".distance", conditionNode + ".secondTerm", f=True)
         pm.setAttr(conditionNode + ".operation", 3)
-        pm.setAttr(conditionNode + ".firstTerm", totalDistance)
-        pm.setAttr(conditionNode + ".colorIfTrueR", totalDistance)
+
         multiplyDivide = pm.shadingNode("multiplyDivide", asUtility=True,
                                         name="IKStretchMultiply" + self.name_convention.get_a_short_name(
+                                        self.joints[2]))
+
+        scale_factor = pm.shadingNode("multiplyDivide", asUtility=True,
+                                       name="scaleFactor" + self.name_convention.get_a_short_name(
                                             self.joints[2]))
-        multiplyDivide = self.name_convention.rename_based_on_base_name(self.joints[2], multiplyDivide,
-                                                                        name=multiplyDivide)
+
+        scale_factor.input1X.set(total_distance)
+        self.reset_controls[0].scaleX >> scale_factor.input2X
+        pm.connectAttr(scale_factor.outputX, conditionNode.firstTerm)
+        pm.connectAttr(scale_factor.outputX, conditionNode.colorIfTrueR)
+        self.name_convention.rename_name_in_format(multiplyDivide, name='stretchy')
 
         pm.connectAttr(conditionNode + ".outColorR", multiplyDivide + ".input1X", f=True)
-        pm.setAttr(multiplyDivide + ".input2X", totalDistance)
+        pm.connectAttr(scale_factor.outputX, multiplyDivide.input2X)
         pm.setAttr(multiplyDivide + ".operation", 2)
 
         # self.SPSW.AddEnumParameters(["off","on"], self.ikControl, Name = "StretchyIK")
         self.rig_space_switch.AddNumericParameter(self.controls_dict['ikHandle'], Name="StretchyIK")
         IKSwitchDivide = pm.shadingNode("multiplyDivide", asUtility=True,
                                         name="IkSwitchDivide" + self.name_convention.get_a_short_name(self.joints[2]))
-        IKSwitchDivide = self.name_convention.rename_based_on_base_name(self.joints[2], IKSwitchDivide,
-                                                                  name=IKSwitchDivide)
+        self.name_convention.rename_name_in_format(IKSwitchDivide, name='IKSwitchDivide')
         pm.connectAttr("%s.StretchyIK" % self.controls_dict['ikHandle'], IKSwitchDivide + ".input1X")
         pm.setAttr(IKSwitchDivide + ".input2X", 10)
         pm.setAttr(IKSwitchDivide + ".operation", 2)
@@ -294,8 +301,7 @@ class IKRig(RMPY.rig.rigBase.RigBase):
         IkSwitchblendTwoAttr = pm.shadingNode("blendTwoAttr", asUtility=True,
                                               name="IkSwitchBlendTwoAttr" + self.name_convention.get_a_short_name(
                                                   self.joints[2]))
-        IkSwitchblendTwoAttr = self.name_convention.rename_based_on_base_name(self.joints[2], IkSwitchblendTwoAttr,
-                                                                              name=IkSwitchblendTwoAttr)
+        self.name_convention.rename_name_in_format(IkSwitchblendTwoAttr, name='IkSwitchblendTwoAttr')
 
         pm.connectAttr(multiplyDivide.outputX, IkSwitchblendTwoAttr.input[1], force=True)
         IkSwitchblendTwoAttr.input[0].set(1)
@@ -306,10 +312,10 @@ class IKRig(RMPY.rig.rigBase.RigBase):
 
 
 if __name__ == '__main__':
-
     root_arm = pm.ls('L_shoulder01_reference_pnt')[0]
-    arm_points = rm.descendants_list(root_arm)
+    arm_points = rm.descendents_list(root_arm)
     ik_rig = IKRig()
     ik_rig.create_point_base(*arm_points[:3])
+    ik_rig.make_stretchy()
     print 'done'
 
