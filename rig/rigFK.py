@@ -34,6 +34,8 @@ class RigFK(rigBase.RigBase):
             self.create.constraint.define_constraints(point=False, scale=True, parent=True, orient=False)
             self.create.constraint.node_base(control, eachJoint, mo=True)
 
+        pm.disconnectAttr(self.joints[-1].inverseScale)
+
 
 if __name__ == '__main__':
     rig_fk = RigFK()

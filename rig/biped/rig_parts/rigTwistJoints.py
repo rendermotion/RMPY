@@ -50,7 +50,8 @@ class TwistJoints(rigBase.RigBase):
 
         Distance = RMRigTools.RMPointDistance(twist_joint, look_at_object)
 
-        pm.parentConstraint(twist_joint, self.reset_joints)
+        # pm.parentConstraint(twist_joint, self.reset_joints)
+        self.create.constraint.node_base(twist_joint, self.reset_joints)
 
         # reset_point, control = RMRigShapeControls.RMCreateBoxCtrl(self.joints[0], Xratio=.1, Yratio=.1, Zratio=.1, customSize=Distance / 5, name="TwistOrigin")
         reset_point, control = self.create.controls.point_base(self.joints[0], centered=True,
@@ -133,15 +134,22 @@ class TwistJoints(rigBase.RigBase):
 
         twist_joint_divide = pm.shadingNode("multiplyDivide", asUtility=True,
                                             name="StretchyTwistJoint")
+        scale_compensation = pm.shadingNode("multiplyDivide", asUtility=True,
+                                            name="StretchScaleCompensation")
         # self.name_convention.RMRenameNameInFormat(TwistJointDivide,{})
         self.name_convention.rename_based_on_base_name(self.twist_origin, twist_joint_divide, name=twist_joint_divide)
 
-        pm.connectAttr("%s.distance" % distance_node, "%s.input1X" % twist_joint_divide)
+        pm.connectAttr("%s.distance" % distance_node, "{}.input1X".format(twist_joint_divide))
         pm.setAttr("%s.input2X" % twist_joint_divide, (len(self.joints) - 1))
-        pm.setAttr("%s.operation" % twist_joint_divide, 2)
+
+        pm.connectAttr("{}.outputX".format(twist_joint_divide), "{}.input1X".format(scale_compensation))
+        pm.connectAttr("{}.scaleX".format(self.twist_origin), "{}.input2X".format(scale_compensation))
+
+        pm.setAttr("{}.operation".format(twist_joint_divide), 2)
+        pm.setAttr("{}.operation".format(scale_compensation), 2)
 
         for eachJoint in self.joints[1:]:
-            pm.connectAttr("%s.outputX" % twist_joint_divide, "%s.translateX" % eachJoint)
+            pm.connectAttr("{}.outputX".format(scale_compensation), "{}.translateX".format(eachJoint))
         # self.kinematics.append(stretchyRefGroup)
 
     def create_bones_between_points(self, initial_point, final_point, number_of_bones, align_object=None):
@@ -173,7 +181,7 @@ class TwistJoints(rigBase.RigBase):
 
 if __name__ == '__main__':
     TJ = TwistJoints()
-    TJ.create_point_base("R_intermediate01_shoulder_jnt", "R_intermediate02_shoulder_jnt")
+    TJ.create_point_base("L_intermediate01_shoulder_jnt", "L_intermediate02_shoulder_jnt")
 
 
 

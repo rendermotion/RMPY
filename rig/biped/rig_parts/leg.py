@@ -40,7 +40,7 @@ class Leg(rigBase.RigBase):
 
 if __name__ == '__main__':
     root_arm = pm.ls('L_leg01_reference_pnt')[0]
-    leg_points = rm.descendants_list(root_arm)[:4]
+    leg_points = rm.descendents_list(root_arm)[:4]
 
     arm_rig = Leg()
     arm_rig.create_point_base(*leg_points)

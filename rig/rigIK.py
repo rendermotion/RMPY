@@ -150,6 +150,7 @@ class IKRig(RMPY.rig.rigBase.RigBase):
         for each_control in self.reset_controls_dict:
             self.reset_controls_dict[each_control].setParent(self.root_controls)
         self.root_controls.setParent(self.rig_system.controls)
+        self.attach_points['root'] = self.root_controls
         self.root_kinematics.setParent(self.rig_system.kinematics)
 
     def ik_create(self, ik_start=0, ik_end=None):
@@ -255,7 +256,7 @@ class IKRig(RMPY.rig.rigBase.RigBase):
             pm.parent(transformEndPoint, self.root_joints)
 
         StartPointConstraint = pm.pointConstraint(self.joints[0], transformStartPoint)
-        EndPointConstraint = pm.pointConstraint(ik_handle, transformEndPoint)
+        EndPointConstraint = pm.pointConstraint(self.controls[0], transformEndPoint)
 
         distance_node = pm.shadingNode("distanceBetween", asUtility=True,
                                        name="IKBaseDistanceNode" + self.name_convention.get_a_short_name(self.joints[2]))
@@ -280,7 +281,7 @@ class IKRig(RMPY.rig.rigBase.RigBase):
                                             self.joints[2]))
 
         scale_factor.input1X.set(total_distance)
-        self.reset_controls[0].scaleX >> scale_factor.input2X
+        self.root.scaleX >> scale_factor.input2X
         pm.connectAttr(scale_factor.outputX, conditionNode.firstTerm)
         pm.connectAttr(scale_factor.outputX, conditionNode.colorIfTrueR)
         self.name_convention.rename_name_in_format(multiplyDivide, name='stretchy')

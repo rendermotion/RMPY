@@ -111,4 +111,4 @@ def available_maya_files():
 
 
 if __name__ == '__main__':
-    load_curves()
+    save_curve()

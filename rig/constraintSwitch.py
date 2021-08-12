@@ -89,6 +89,11 @@ class ConstraintSwitch(rigBase.RigBase):
     def create_list_base(self, list_a, list_b, **kwargs):
         destination = kwargs.pop('destination', None)
         constraint_type = kwargs.pop('constraint_type', 'parent')
+        parent = kwargs.pop('parent', True)
+        scale = kwargs.pop('scale', True)
+        point = kwargs.pop('point', False)
+        orient = kwargs.pop('orient', False)
+
         output_type = kwargs.pop('output_type', 'joint')
         root_group = pm.group(empty=True)
         self.name_convention.rename_name_in_format(root_group, name='intermediate')
@@ -114,11 +119,13 @@ class ConstraintSwitch(rigBase.RigBase):
                     output = destination[index]
 
                 self.outputs.append(output)
-
-                constraint = self.constraint_func[constraint_type](constraint_a, output)
-                constraint.interpType.set(2)
-                self.constraint_func[constraint_type](constraint_b, output)
-                self.constraints.append(constraint)
+                self.create.constraint.define_constraints(parent=parent, scale=scale, point=point, orient=orient)
+                constraints = self.create.constraint.node_base(constraint_a, output)
+                # constraint = self.constraint_func[constraint_type](constraint_a, output)
+                # constraint.interpType.set(2)
+                constraints = self.create.constraint.node_base(constraint_b, output)
+                # self.constraint_func[constraint_type](constraint_b, output)
+                self.constraints.extend(constraints)
 
         else:
             print 'list_a and list_b should be the same size'

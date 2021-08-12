@@ -267,10 +267,10 @@ class SkinCluster(creatorsBase.CreatorsBase):
 
 if __name__ == '__main__':
     skin_cluster01 = SkinCluster()
-    # skin_cluster01.load('body')
-    # skin_cluster01.apply_weights_dictionary(geometry='venom_body_geo')
-    skin_cluster01 = SkinCluster.by_node('venom_body_geo')
-    skin_cluster01.save()
+    skin_cluster01.load('body')
+    skin_cluster01.apply_weights_dictionary(geometry='venom_body_geo')
+    # skin_cluster01 = SkinCluster.by_node('venom_body_geo')
+    # skin_cluster01.save()
 
     # skin_cluster01.load('metal_ring_front')
     # skin_cluster01.apply_weights_dictionary(geometry='metalGrey_C_metalRing_0001_mid_GES')
