@@ -2,6 +2,7 @@ from RMPY.rig.biped.rig_parts import rigRibon
 from RMPY.rig.biped.rig_parts import rigTwistJoints
 reload(rigTwistJoints)
 
+
 class RibbonTwistJointModel(rigRibon.RibonModel):
     def __init__(self):
         super(RibbonTwistJointModel, self).__init__()
@@ -21,7 +22,7 @@ class RibbonTwistJoint(rigRibon.Ribon):
         
     def create_point_base(self, *args, **kwargs):
         self.rig_twist_joints.create_point_base(*args, **kwargs)
-        super(RibbonTwistJoint, self).create_point_base(*args, **kwargs)
+        super(RibbonTwistJoint, self).create_point_base(*args[1:], **kwargs)
         self.create.constraint.node_list_base(self.rig_twist_joints.joints, self.reset_controls, mo=True)
 
 

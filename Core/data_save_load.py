@@ -80,7 +80,7 @@ def load_skin_cluster(*args):
         try:
             skin_cluster01 = skinCluster.SkinCluster()
             skin_cluster01.load('{}'.format(each_node))
-            skin_cluster01.apply_weights_dictionary(geometry=each_node)
+            skin_cluster01.apply_weights_dictionary(geometry=pm.ls(each_node)[0])
         except RuntimeWarning('{} not loaded'.format(each_node)):
             pass
 
@@ -111,4 +111,4 @@ def available_maya_files():
 
 
 if __name__ == '__main__':
-    save_curve()
+    load_skin_cluster()

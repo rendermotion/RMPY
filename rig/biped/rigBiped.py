@@ -168,14 +168,21 @@ class RigByped(rigBase.RigBase):
         self.l_leg.set_parent(self.hip)
         self.r_leg.set_parent(self.hip)
 
-        self.l_twist_arm.create_point_base(self.l_arm.joints[2], self.l_arm.joints[3], folicule_number=5)
-        self.l_twist_forearm.create_point_base(self.l_arm.joints[3], self.l_arm.joints[4], folicule_number=5)
-        self.l_twist_leg.create_point_base(self.l_leg.joints[0], self.l_leg.joints[1], folicule_number=5)
-        self.l_twist_foreleg.create_point_base(self.l_leg.joints[1], self.l_leg.joints[2], folicule_number=5)
-        self.r_twist_arm.create_point_base(self.r_arm.joints[2], self.r_arm.joints[3], folicule_number=5)
-        self.r_twist_forearm.create_point_base(self.r_arm.joints[3], self.r_arm.joints[4], folicule_number=5)
-        self.r_twist_leg.create_point_base(self.r_leg.joints[0], self.r_leg.joints[1], folicule_number=5)
-        self.r_twist_foreleg.create_point_base(self.r_leg.joints[1], self.r_leg.joints[2], folicule_number=5)
+        self.l_twist_arm.create_point_base(self.l_arm.joints[1],
+                                           self.l_arm.joints[2], self.l_arm.joints[3], folicule_number=5)
+        self.l_twist_forearm.create_point_base(self.l_arm.joints[2],
+                                               self.l_arm.joints[3], self.l_arm.joints[4], folicule_number=5)
+        self.l_twist_leg.create_point_base(self.l_leg.root, self.l_leg.joints[0], self.l_leg.joints[1], folicule_number=5)
+        self.l_twist_foreleg.create_point_base(self.l_leg.joints[0],
+                                               self.l_leg.joints[1], self.l_leg.joints[2], folicule_number=5)
+        self.r_twist_arm.create_point_base(self.r_arm.joints[1],
+                                           self.r_arm.joints[2], self.r_arm.joints[3], folicule_number=5)
+        self.r_twist_forearm.create_point_base(self.r_arm.joints[2],
+                                               self.r_arm.joints[3], self.r_arm.joints[4], folicule_number=5)
+        self.r_twist_leg.create_point_base(self.r_leg.root,
+                                           self.r_leg.joints[0], self.r_leg.joints[1], folicule_number=5)
+        self.r_twist_foreleg.create_point_base(self.r_leg.joints[0],
+                                               self.r_leg.joints[1], self.r_leg.joints[2], folicule_number=5)
 
         # setup as skinned joints
         self.spine.rename_as_skinned_joints()

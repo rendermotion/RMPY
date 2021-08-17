@@ -12,8 +12,8 @@ def progressiveConstraint( startObject, endObject, objectList,constraintType = "
 		print "ConstValue = %s"%constraintValue 
 
 		if constraintType   == 'parent':
-			cmds.parentConstraint( startObject, eachObject, w = 1.0- constraintValue, mo = mo )
-			cmds.parentConstraint( endObject  , eachObject, w = constraintValue, mo = mo )
+			cmds.parentConstraint( startObject, eachObject, w=1.0 - constraintValue, mo=mo)
+			cmds.parentConstraint( endObject, eachObject, w=constraintValue, mo=mo)
 		
 		elif constraintType == 'orient' :
 			cmds.orientConstraint( startObject, eachObject, w = 1.0 - constraintValue, mo = mo )
@@ -23,6 +23,7 @@ def progressiveConstraint( startObject, endObject, objectList,constraintType = "
 			cmds.pointConstraint( startObject, eachObject, w = float(1) - constraintValue, mo = mo )
 			cmds.pointConstraint( endObject  , eachObject, w = constraintValue, mo = mo )
 
+
 def deepthProgressiveconstraint(depth,objectList,constraintType="orient"):
 	childGroup=[]
 	if depth >=1:
@@ -31,7 +32,7 @@ def deepthProgressiveconstraint(depth,objectList,constraintType="orient"):
 			childGroup.append(eachChild[0])
 		deepthProgressiveconstraint(depth-1 , childGroup)
 
-	progressiveConstraint(objectList[0],objectList[len(objectList)-1], objectList[1:-1],constraintType = constraintType,mo = True)
+	progressiveConstraint(objectList[0],objectList[len(objectList)-1], objectList[1:-1], constraintType=constraintType, mo=True)
 
 if __name__=='__main__':
 	selection = cmds.ls( selection=True)

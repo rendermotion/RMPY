@@ -10,6 +10,7 @@ class TwistJointsModel(rigBase.BaseModel):
         super(TwistJointsModel, self).__init__()
         self.twist_origin = None
         self.twist_end = None
+        self.control_parent = None
 
 
 class TwistJoints(rigBase.RigBase):
@@ -19,15 +20,20 @@ class TwistJoints(rigBase.RigBase):
 
     def create_point_base(self, *args, **kwargs):
         super(TwistJoints, self).create_point_base(*args, **kwargs)
-        self._model.twist_origin = pm.ls(args[0])[0]
-        self._model.twist_end = pm.ls(args[1])[0]
+        self._model.control_parent = pm.ls(args[0])[0]
+        self._model.twist_origin = pm.ls(args[1])[0]
+        self._model.twist_end = pm.ls(args[2])[0]
         number_of_joints = kwargs.pop('number_of_joints', 2)
         look_at_axis = kwargs.pop('look_at_axis', "Y")
-        self.create_twist(self.twist_origin, self.twist_end,
+        self.create_twist(self.control_parent, self.twist_origin, self.twist_end,
                           number_of_twist_bones=number_of_joints,
                           look_at_axis=look_at_axis)
 
         self.stretchy_twist_joints()
+
+    @property
+    def control_parent(self):
+        return self._model.control_parent
 
     @property
     def twist_origin(self):
@@ -37,7 +43,7 @@ class TwistJoints(rigBase.RigBase):
     def twist_end(self):
         return self._model.twist_end
 
-    def create_twist(self, twist_joint, look_at_object, number_of_twist_bones=3, look_at_axis="Y"):
+    def create_twist(self, control_parent, twist_joint, look_at_object, number_of_twist_bones=3, look_at_axis="Y"):
         # LookAtObject = pm.listRelatives( TwistJoint,type = "transform",children=True)[]
 
         position_a = pm.xform(twist_joint, q=True, ws=True, rp=True)
@@ -51,6 +57,8 @@ class TwistJoints(rigBase.RigBase):
         Distance = RMRigTools.RMPointDistance(twist_joint, look_at_object)
 
         # pm.parentConstraint(twist_joint, self.reset_joints)
+        print 'doing constraints \n'
+        print self.create.constraint.constraint_type
         self.create.constraint.node_base(twist_joint, self.reset_joints)
 
         # reset_point, control = RMRigShapeControls.RMCreateBoxCtrl(self.joints[0], Xratio=.1, Yratio=.1, Zratio=.1, customSize=Distance / 5, name="TwistOrigin")
@@ -100,7 +108,7 @@ class TwistJoints(rigBase.RigBase):
         self.reset_controls.append(reset_point)
         pm.parent(self.reset_controls, self.rig_system.controls)
         self.controls.append(control)
-        self.create.constraint.node_base(twist_joint, self.reset_controls[0], mo=True)
+        self.create.constraint.node_base(control_parent, self.reset_controls[0], mo=True)
 
     def distance_between_points_measure(self, Point01, Point02):
         transform_start_point = "startPoint"

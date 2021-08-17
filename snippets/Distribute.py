@@ -7,6 +7,6 @@ selection = cmds.ls(selection = True)
 
 index=0
 for eachObject in selection:
-	cmds.xform(eachObject, ws=True, translation = [ startPosition[0], startPosition[1], startPosition[2] + (index * offset)])
+	cmds.xform(eachObject, ws=True, translation=[startPosition[0], startPosition[1], startPosition[2] + (index * offset)])
 	index += 1
 

@@ -72,10 +72,8 @@ class Ribon(rigBase.RigBase):
 
         for each_follicle in self.follicules:
             self.joints.append(pm.joint(name="ribbonJoints"))
-
             self.name_convention.rename_name_in_format(self.joints[-1], useName=True)
-            pm.matchTransform(self.joints[-1], each_follicle)
-            pm.parentConstraint(each_follicle, self.joints[-1])
+            self.create.constraint.node_base(each_follicle, self.joints[-1])
 
         locator_controls_list = []
         locator_look_at_list = []
@@ -135,14 +133,18 @@ class Ribon(rigBase.RigBase):
             pm.makeIdentity(control, apply=True, t=1, r=0, s=1, n=0)
             pm.makeIdentity(joints_look_at, apply=True, t=1, r=0, s=1, n=0)
 
-            pm.parentConstraint(locator_control, joints_look_at)
-            pm.parentConstraint(control, group_look_at)
+            self.create.constraint.node_base(locator_control, joints_look_at)
+            self.create.constraint.node_base(control, group_look_at)
 
         pm.aimConstraint(self.controls[1], locator_controls_list[0], aim=[1, 0, 0], upVector=[0, 0, 1], wut='object',
                          worldUpObject=locator_look_at_list[0])
+
         pm.aimConstraint(self.controls[1], locator_controls_list[2], aim=[1, 0, 0], upVector=[0, 0, 1], wut='object',
                          worldUpObject=locator_look_at_list[2])
 
+        self.create.constraint.define_constraints(parent=False, scale=True)
+        self.create.constraint.node_list_base(self.controls, self.follicules, mo=False)
+        self.create.constraint.define_constraints(parent=True, scale=True)
         pm.parent(group_joints, main_skeleton)
         pm.parent(plane, hair_group)
         pm.skinCluster(joints_look_at_list, plane)
