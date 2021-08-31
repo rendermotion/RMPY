@@ -25,7 +25,6 @@ class NeckHead(rigFK.RigFK):
         orient_type = kwargs.pop('orient_type', 'point_orient')
         kwargs['orient_type'] = orient_type
         super(NeckHead, self).create_point_base(*args[:-1], **kwargs)
-
         self.head.create_point_base(*args[-2:], type='head', **kwargs)
         self.head.set_parent(self)
 

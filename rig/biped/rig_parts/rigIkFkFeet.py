@@ -12,35 +12,25 @@ class IkFkFeetModel(constraintSwitch.ConstraintSwitchModel):
 
 
 class IkFkFeet(constraintSwitch.ConstraintSwitch):
-    def __init__(self):
-        super(IkFkFeet, self).__init__()
-        self._model = IkFkFeetModel()
-        self.ik_feet = None
-        self.fk_feet = None
+    def __init__(self, *args, **kwargs):
+        kwargs['model'] = kwargs.pop('model', IkFkFeetModel())
+        super(IkFkFeet, self).__init__(*args, **kwargs)
 
     @property
     def ik_feet(self):
         return self._model.ik_feet
 
-    @ik_feet.setter
-    def ik_feet(self, value):
-        self._model.ik_feet = value
-
     @property
     def fk_feet(self):
         return self._model.fk_feet
 
-    @fk_feet.setter
-    def fk_feet(self, value):
-        self._model.fk_feet = value
-
     def create_point_base(self, *points, **kwargs):
         control = kwargs.pop('control', None)
         if control:
-            self.ik_feet = reverseFeet.RigReverseFeet(rig_system=self.rig_system)
+            self._model.ik_feet = reverseFeet.RigReverseFeet(rig_system=self.rig_system)
             self.ik_feet.create_point_base(*points)
-            self.fk_feet = rigFK.RigFK(rig_system=self.rig_system)
-            self.fk_feet.create_point_base(*points[:3])
+            self._model.fk_feet = rigFK.RigFK(rig_system=self.rig_system)
+            self.fk_feet.create_point_base(*points[:3], orient_type='point_orient')
             self.build(self.ik_feet.joints, self.fk_feet.joints, control=control, attribute_name='IkFkSwitch')
 
             for each_control in self.ik_feet.controls:

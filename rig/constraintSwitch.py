@@ -80,7 +80,7 @@ class ConstraintSwitch(rigBase.RigBase):
 
     def build(self, list_a, list_b, **kwargs):
         control = kwargs.pop('control', None)
-        self.create_list_base(list_a, list_b)
+        self.create_list_base(list_a, list_b, **kwargs)
         if control:
             self.create_attribute_control(control, **kwargs)
             self.link_attribute_to_constraints()
@@ -88,7 +88,6 @@ class ConstraintSwitch(rigBase.RigBase):
 
     def create_list_base(self, list_a, list_b, **kwargs):
         destination = kwargs.pop('destination', None)
-        constraint_type = kwargs.pop('constraint_type', 'parent')
         parent = kwargs.pop('parent', True)
         scale = kwargs.pop('scale', True)
         point = kwargs.pop('point', False)
@@ -111,18 +110,24 @@ class ConstraintSwitch(rigBase.RigBase):
                         output = self.create.space_locator.point_base(constraint_a, name='intermediate')
                         output.setParent(root_group)
                     else:
-                        reset, output = self.create.joint.point_base(constraint_a, name='intermediate')
-                        reset.setParent(root_group)
-                        self.reset_joints.append(reset)
-                        self.joints.append(output[0])
+                        if not self.joints:
+                            reset, output = self.create.joint.point_base(constraint_a, name='intermediate')
+                            reset.setParent(root_group)
+                            self.reset_joints.append(reset)
+                            self.joints.append(output[0])
+                        else:
+                            reset, output = self.create.joint.point_base(constraint_a, name='intermediate')
+                            output[0].setParent(self.joints[-1])
+                            self.joints.append(output[0])
+                            pm.delete(reset)
+                        self.joints[-1].segmentScaleCompensate.set(0)
                 else:
                     output = destination[index]
 
                 self.outputs.append(output)
+                print 'constraints defined = parent {} , scale {}, point{}, orient {},'.format(parent, scale, point, orient)
                 self.create.constraint.define_constraints(parent=parent, scale=scale, point=point, orient=orient)
-                constraints = self.create.constraint.node_base(constraint_a, output)
-                # constraint = self.constraint_func[constraint_type](constraint_a, output)
-                # constraint.interpType.set(2)
+                self.create.constraint.node_base(constraint_a, output)
                 constraints = self.create.constraint.node_base(constraint_b, output)
                 # self.constraint_func[constraint_type](constraint_b, output)
                 self.constraints.extend(constraints)

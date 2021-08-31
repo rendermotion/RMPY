@@ -1,6 +1,7 @@
 from RMPY.rig import rigIKFK
 from RMPY.rig.biped.rig_parts import rigIkFkFeet
 from RMPY.rig import rigBase
+from RMPY.rig.biped.rig_parts import rigRibonTwistJoint
 
 
 class RigIKKFLegFeetModel(rigBase.BaseModel):
@@ -23,14 +24,24 @@ class RigIKKFLegFeet(rigBase.RigBase):
     def feet(self):
         return self._model.feet
 
+    @property
+    def twist_leg(self):
+        return self._model.twist_leg
+
+    @property
+    def twist_foreleg(self):
+        return self._model.twist_foreleg
+
     def create_point_base(self, *points, **kwargs):
         """
         :param points: the points to create the leg, should be 5 points
         :param kwargs: no kwargs expected
         :return:
         """
-        self._model.leg = rigIKFK.RigIkFk()
-        self._model.feet = rigIkFkFeet.IkFkFeet()
+        self._model.leg = rigIKFK.RigIkFk(rig_system=self.rig_system)
+        self._model.feet = rigIkFkFeet.IkFkFeet(rig_system=self.rig_system)
+        self._model.twist_leg = rigRibonTwistJoint.RibbonTwistJoint(rig_system=self.rig_system)
+        self._model.twist_foreleg = rigRibonTwistJoint.RibbonTwistJoint(rig_system=self.rig_system)
 
         self.leg.create_point_base(*points[:3])
         self.feet.create_point_base(*points[3:], control=self.leg.switch_control_rig.controls[0])
@@ -44,9 +55,18 @@ class RigIKKFLegFeet(rigBase.RigBase):
         self.create.constraint.node_base(self.leg.ik_rig.tip, self.feet.ik_feet.attachment_ik_leg, mo=True)
         self.attach_points['root'] = self.leg.root
         self.attach_points['tip'] = self.feet.tip
-        self.joints.extend(self.leg.joints)
-        self.joints.extend(self.feet.joints)
 
+        self.create.constraint.orient(self.feet.joints[0], self.leg.joints[-1], mo=True)
+        self.create.constraint.define_constraints(point=False, scale=True, parent=True, orient=False)
+
+        self.twist_leg.create_point_base(self.root, self.leg.joints[0], self.leg.joints[1],
+                                         folicule_number=5)
+        self.twist_foreleg.create_point_base(self.leg.joints[1], self.leg.joints[1], self.leg.joints[2],
+                                             folicule_number=5)
+        # self.joints.extend(self.leg.joints)
+        self.joints.extend(self.twist_leg.joints)
+        self.joints.extend(self.twist_foreleg.joints)
+        self.joints.extend(self.feet.joints)
 
 
 if __name__ == '__main__':

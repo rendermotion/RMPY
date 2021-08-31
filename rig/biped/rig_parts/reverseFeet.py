@@ -81,8 +81,10 @@ class RigReverseFeet(rigBase.RigBase):
         self.reference_in = points[4]
         self.reference_out = points[5]
 
-        reset_downstream, down_stream_joints = self.create.joint.point_base(*self.reference_points[1:])
-        reset_upstream, up_stream_joints = self.create.joint.point_base(*reversed(self.reference_points[:-1]))
+        reset_downstream, down_stream_joints = self.create.joint.point_base(*self.reference_points[1:],
+                                                                            orient_type='point_orient')
+        reset_upstream, up_stream_joints = self.create.joint.point_base(*reversed(self.reference_points[:-1]),
+                                                                        orient_type='point_orient')
         self.pole_vector = self.create.space_locator.pole_vector(*self.reference_points)
 
         self.dwn_ik = rigSimpleIk.SimpleIK(rig_system=self.rig_system)
@@ -170,8 +172,10 @@ class RigReverseFeet(rigBase.RigBase):
         split_in_out.output_attribute_b >> self.out_pnt.rotateX
 
     def setup_outputs(self):
-        reset_joints, joints = self.create.joint.point_base(self.reference_points, name='ikInPlace')
-        output_reset_joints, output_joints = self.create.joint.point_base(self.reference_points, name='IKOutput')
+        reset_joints, joints = self.create.joint.point_base(self.reference_points, name='ikInPlace',
+                                                            orient_type='point_orient')
+        output_reset_joints, output_joints = self.create.joint.point_base(self.reference_points, name='IKOutput',
+                                                                          orient_type='point_orient')
         self.reset_joints = output_reset_joints
         self.joints = output_joints
         self.attach_points['attachment_ik_leg'] = self.reset_joints

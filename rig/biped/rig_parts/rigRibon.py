@@ -74,6 +74,7 @@ class Ribon(rigBase.RigBase):
             self.joints.append(pm.joint(name="ribbonJoints"))
             self.name_convention.rename_name_in_format(self.joints[-1], useName=True)
             self.create.constraint.node_base(each_follicle, self.joints[-1])
+            self.joints[-1].segmentScaleCompensate.set(0)
 
         locator_controls_list = []
         locator_look_at_list = []

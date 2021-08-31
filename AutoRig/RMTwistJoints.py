@@ -59,7 +59,7 @@ class RMTwistJoints(object):
             MoveList = [0,0, MoveDistance * sign]
             WUV = [0,0,sign]
         elif "Y" in LookAtAxis or "y" in LookAtAxis:
-            MoveList = [0,MoveDistance * sign,0 ]
+            MoveList = [0,MoveDistance * sign, 0]
             WUV = [0,sign,0]
 
         pm.xform( resetPoint, os = True, relative=True,  t = MoveList)
@@ -70,23 +70,22 @@ class RMTwistJoints(object):
                                           name="TwistJoint%s" % self.NameConv.get_a_short_name(TwistJoint).title())
         self.NameConv.rename_based_on_base_name(TwistJoint, TwistJointDivide,
                                                 name=self.NameConv.get_a_short_name(TwistJointDivide))
+        # TwistAddition = pm.shadingNode( "plusMinusAverage", asUtility = True, name = "TwistJointAdd" +
+        # self.NameConv.get_a_short_name(TwistJoint).title())
+        # self.NameConv.rename_based_on_base_name(TwistJoint, TwistAddition,
+        # name=self.NameConv.get_a_short_name(TwistAddition))
+        # NegativeLookAtRotation = pm.shadingNode("multiplyDivide", asUtility=True,
+        # name="NegativeLookAtRotation%s" % self.NameConv.get_a_short_name(TwistJoint).title())
+        # self.NameConv.rename_based_on_base_name(TwistJoint, NegativeLookAtRotation,
+        # name=self.NameConv.get_a_short_name(NegativeLookAtRotation))
+        # pm.connectAttr(LookAtObject + ".rotateX", NegativeLookAtRotation + ".input1X")
+        # pm.setAttr("%s.input2X" % NegativeLookAtRotation, -1)
+        # pm.setAttr("%s.operation" % NegativeLookAtRotation, 1)
+        # pm.connectAttr("%s.rotateX" % self.TwistJoints[0], "%s.input1D[0]" % TwistAddition)
+        # pm.connectAttr("%s.outputX" % NegativeLookAtRotation, "%s.input1D[1]" % TwistAddition)
+        # pm.connectAttr("%s.output1D" % TwistAddition, "%s.input1X" % TwistJointDivide)
 
-
-        TwistAddition = pm.shadingNode( "plusMinusAverage", asUtility = True, name = "TwistJointAdd" + self.NameConv.get_a_short_name(TwistJoint).title())
-        self.NameConv.rename_based_on_base_name(TwistJoint, TwistAddition,
-                                                name=self.NameConv.get_a_short_name(TwistAddition))
-        NegativeLookAtRotation = pm.shadingNode("multiplyDivide", asUtility=True,
-                                                name="NegativeLookAtRotation%s" %
-                                                     self.NameConv.get_a_short_name(TwistJoint).title())
-        self.NameConv.rename_based_on_base_name(TwistJoint, NegativeLookAtRotation,
-                                                name=self.NameConv.get_a_short_name(NegativeLookAtRotation))
-        pm.connectAttr( LookAtObject + ".rotateX", NegativeLookAtRotation + ".input1X")
-        pm.setAttr("%s.input2X" % NegativeLookAtRotation, -1)
-        pm.setAttr("%s.operation" % NegativeLookAtRotation, 1)
-        pm.connectAttr("%s.rotateX" % self.TwistJoints[0], "%s.input1D[0]" % TwistAddition)
-        pm.connectAttr("%s.outputX" % NegativeLookAtRotation, "%s.input1D[1]" % TwistAddition)
-        pm.connectAttr("%s.output1D" % TwistAddition, "%s.input1X" % TwistJointDivide)
-
+        pm.connectAttr("%s.rotateX" % self.TwistJoints[0], "%s.input1X" % TwistJointDivide)
 
         #pm.connectAttr(self.TwistJoints[0]+".rotateX", TwistJointDivide + ".input1X") in this case the rotation of the lookatNode was not affecting
         pm.setAttr("%s.input2X" % TwistJointDivide, -(len(self.TwistJoints) - 1))
@@ -94,7 +93,6 @@ class RMTwistJoints(object):
 
         for eachJoint in self.TwistJoints[1:]:
             pm.connectAttr("%s.outputX" % TwistJointDivide, "%s.rotateX" % eachJoint)
-
 
         self.TwistControlResetPoint = resetPoint
         self.TwistControl = control

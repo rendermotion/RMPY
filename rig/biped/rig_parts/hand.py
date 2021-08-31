@@ -2,7 +2,7 @@ from RMPY.rig import rigBase
 from RMPY.rig.biped.rig_parts import finger
 from RMPY.rig import rigSingleJoint
 import pymel.core as pm
-
+from RMPY.rig.biped.rig_parts import arm
 
 class HandModel(rigBase.BaseModel):
     def __init__(self):
@@ -38,7 +38,6 @@ class Hand(rigBase.RigBase):
         self.palm.create_point_base(args[0])
         for each in args[0].getChildren(type='transform'):
             new_finger = finger.Finger()
-            print self.rm.descendents_list(each)
             new_finger.create_point_base(*self.rm.descendents_list(each))
             self.create.constraint.node_base(self.palm.joints[-1], new_finger.reset_controls[0], mo=True)
             self.fingers.append(new_finger)
@@ -53,6 +52,30 @@ class Hand(rigBase.RigBase):
         for each_rig in self.fingers:
             each_rig.rename_as_skinned_joints(nub=nub)
         self.palm.rename_as_skinned_joints(nub=False)
+
+    def set_parent(self, rig_object, **kwargs):
+        """
+        This is the default function to parent modules, when you set parent an object it will look for the
+        root on the dictionary attachments. If this has not being asigned the default value will be the first elementq
+        of the list rig_reset_controls. So you can asign what ever point you want to be the driver of all the rig
+        or let the rig find it by itself.
+        :param rig_object: object or rig that you expect to be the parent of the module.
+        :return:
+        """
+        self.create.constraint.define_constraints(point=True, scale=True, parent=False, orient=False)
+        print type(rig_object).__mro__
+        if arm.Arm in type(rig_object).__mro__:
+            print '{} in constraining {} {}'.format(self.create.constraint.constraint_type, rig_object.tip, self.root)
+            self.create.constraint.node_base(rig_object.tip, self.root, mo=True, **kwargs)
+            self.create.constraint.define_constraints(point=False, scale=False, parent=False, orient=True)
+
+            self.create.constraint.node_base(self.tip, rig_object.tip, mo=True, **kwargs)
+
+        else:
+            try:
+                self.create.constraint.node_base(rig_object, self.root, mo=True, **kwargs)
+            except AttributeError():
+                raise AttributeError('not valid object to parent')
 
 
 if __name__ == '__main__':

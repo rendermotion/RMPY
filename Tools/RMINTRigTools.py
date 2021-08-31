@@ -19,6 +19,7 @@ from RMPY.GenericRig import RMUnfoldRig
 
 from RMPY import RMUncategorized
 from RMPY import nameConvention
+from RMPY.rig import rigBase
 
 from RMPY.AutoRig import RMRigFK
 
@@ -54,6 +55,10 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.ui.GenericJointChainRigBtn.clicked.connect(self.GenericJointChainRigBtnPressed)
         self.ui.mirror_selection_btn.clicked.connect(self.mirror_selection)
 
+        self.ui.locator_at_average_btn.clicked.connect(self.locator_at_average)
+        self.ui.create_locators_at_nodes_btn.clicked.connect(self.create_locators_at_nodes)
+
+
         # self.ui.OrientNubButton.clicked.connect(self.OrientNubButtonPressed)
         # self.ui.unfoldRigBtn.clicked.connect(self.unfoldRigBtnPressed)
 
@@ -64,6 +69,15 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         # support Multiple selections on qwidgets
         self.ui.listWidget.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.name_convention = nameConvention.NameConvention()
+        self.rig_base = rigBase.RigBase()
+
+    def locator_at_average(self):
+        selection = pm.ls(selection=True)
+        self.rig_base.create.space_locator.point_base(*selection)
+
+    def create_locators_at_nodes(self):
+        selection = pm.ls(selection=True)
+        self.rig_base.create.space_locator.node_base(*selection)
 
     def unfoldRigBtnPressed(self):
         selection = cmds.ls(selection=True)

@@ -64,9 +64,11 @@ class RigIkFk(rigBase.RigBase):
 
         self.switch_control_rig.custom_world_align(self.switch_control_rig.reset_controls[0])
 
-        self.ik_fk_switch.build(self.ik_rig.joints, self.fk_rig.joints, control=self.switch_control_rig.controls[0],
-                                attribute_name='IkFkSwitch')
+        self.ik_fk_switch.build(self.ik_rig.joints[:-1], self.fk_rig.joints[:-1])
 
+        self.ik_fk_switch.build(self.ik_rig.joints[-1:], self.fk_rig.joints[-1:], point=True, parent=False, control=self.switch_control_rig.controls[0],
+                                attribute_name='IkFkSwitch')
+        # pm.listConnections(self.ik_fk_switch.outputs[-1])
         self.fk_rig.set_parent(self.switch_control_rig)
         self.ik_rig.set_parent(self.switch_control_rig)
 

@@ -16,7 +16,6 @@ class RigFK(rigBase.RigBase):
 
     def create_point_base(self, *args, **kwargs):
         super(RigFK, self).create_point_base(*args, **kwargs)
-
         reset_joints, joint_list = self.create.joint.point_base(*args, **kwargs)
         self.reset_joints.append(reset_joints)
         self.reset_joints[0].setParent(self.rig_system.joints)
@@ -33,8 +32,9 @@ class RigFK(rigBase.RigBase):
 
             self.create.constraint.define_constraints(point=False, scale=True, parent=True, orient=False)
             self.create.constraint.node_base(control, eachJoint, mo=True)
-
-        pm.disconnectAttr(self.joints[-1].inverseScale)
+            eachJoint.segmentScaleCompensate.set(0)
+            pm.disconnectAttr(eachJoint.inverseScale)
+        joint_list[-1].segmentScaleCompensate.set(0)
 
 
 if __name__ == '__main__':

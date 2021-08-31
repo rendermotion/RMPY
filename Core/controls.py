@@ -102,7 +102,7 @@ def mirror_controls(*controls):
             oposite_side = pm.ls(oposite_side)[0]
             destination_shape = pm.ls(oposite_side)[0].getShape()
             transfer_curve(source_shape, destination_shape, world_space=False)
-            mirror_shape(destination_shape, scale_vector=[1, 1, -1])
+            mirror_shape(destination_shape, scale_vector=[1, 1, 1])
         else:
             print 'coulnt find oposite curve for {}'.format(each)
 
@@ -123,6 +123,7 @@ def mirror_selection():
 if __name__ == '__main__':
     selection = pm.ls(selection=True)
     color_now_all_ctrls()
+    # mirror_controls(*selection)
     # transfer_curve(*selection, world_space=False)
     # transfer_curve_by_selection()
     # mirror_selection()

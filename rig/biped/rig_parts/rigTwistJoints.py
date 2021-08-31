@@ -2,7 +2,6 @@ import pymel.core as pm
 import maya.api.OpenMaya as om
 from RMPY.rig import rigBase
 from RMPY import RMRigTools
-from RMPY import RMRigShapeControls
 
 
 class TwistJointsModel(rigBase.BaseModel):
@@ -59,7 +58,7 @@ class TwistJoints(rigBase.RigBase):
         # pm.parentConstraint(twist_joint, self.reset_joints)
         print 'doing constraints \n'
         print self.create.constraint.constraint_type
-        self.create.constraint.node_base(twist_joint, self.reset_joints)
+        self.create.constraint.node_base(twist_joint, self.reset_joints, mo=True)
 
         # reset_point, control = RMRigShapeControls.RMCreateBoxCtrl(self.joints[0], Xratio=.1, Yratio=.1, Zratio=.1, customSize=Distance / 5, name="TwistOrigin")
         reset_point, control = self.create.controls.point_base(self.joints[0], centered=True,
@@ -80,17 +79,14 @@ class TwistJoints(rigBase.RigBase):
         pm.aimConstraint(look_at_object, self.joints[0], aim=[1, 0, 0], worldUpVector=[0, 0, 1],
                          worldUpType="object", worldUpObject=control)
 
-        twist_joint_divide = pm.shadingNode("multiplyDivide", asUtility=True,
-                                            name="TwistJoint")
-        self.name_convention.rename_based_on_base_name(twist_joint, twist_joint_divide,
-                                                       name=self.name_convention.get_a_short_name(twist_joint_divide))
-        twist_addition = pm.shadingNode("plusMinusAverage", asUtility=True,
-                                        name="TwistJointAdd")
-        self.name_convention.rename_based_on_base_name(twist_joint, twist_addition,
-                                                       name=self.name_convention.get_a_short_name(twist_addition))
+        twist_joint_divide = pm.shadingNode("multiplyDivide", asUtility=True)
+        self.name_convention.rename_name_in_format(twist_joint_divide, name="TwistJoint")
+
+        twist_addition = pm.shadingNode("plusMinusAverage", asUtility=True)
+        self.name_convention.rename_name_in_format(twist_addition,name="TwistJointAdd")
         negative_look_at_rotation = pm.shadingNode("multiplyDivide", asUtility=True)
-        self.name_convention.rename_based_on_base_name(twist_joint, negative_look_at_rotation,
-                                                       name="negativeLookAtRotation")
+        self.name_convention.rename_name_in_format(negative_look_at_rotation, name="negativeLookAtRotation")
+
         pm.connectAttr(look_at_object + ".rotateX", negative_look_at_rotation + ".input1X")
         pm.setAttr("%s.input2X" % negative_look_at_rotation, -1)
         pm.setAttr("%s.operation" % negative_look_at_rotation, 1)
@@ -98,7 +94,10 @@ class TwistJoints(rigBase.RigBase):
         pm.connectAttr("%s.outputX" % negative_look_at_rotation, "%s.input1D[1]" % twist_addition)
         pm.connectAttr("%s.output1D" % twist_addition, "%s.input1X" % twist_joint_divide)
 
-        # pm.connectAttr(self.joints[0]+".rotateX", TwistJointDivide + ".input1X") in this case the rotation of the lookatNode was not affecting
+        # pm.connectAttr("%s.rotateX" % self.joints[0], "%s.input1X" % twist_joint_divide)
+        # pm.connectAttr(self.joints[0]+".rotateX", TwistJointDivide + ".input1X")
+
+        # in this case the rotation of the lookatNode was not affecting
         pm.setAttr("%s.input2X" % twist_joint_divide, -(len(self.joints) - 1))
         pm.setAttr("%s.operation" % twist_joint_divide, 2)
 
@@ -110,7 +109,7 @@ class TwistJoints(rigBase.RigBase):
         self.controls.append(control)
         self.create.constraint.node_base(control_parent, self.reset_controls[0], mo=True)
 
-    def distance_between_points_measure(self, Point01, Point02):
+    def distance_between_points_measure(self, point_01, point_02):
         transform_start_point = "startPoint"
         transform_end_point = "endPoint"
 
@@ -119,11 +118,11 @@ class TwistJoints(rigBase.RigBase):
         transform_end_point = pm.spaceLocator(name=transform_end_point)
         self.name_convention.rename_name_in_format(transform_end_point, useName=True)
 
-        start_point_constraint = pm.pointConstraint(Point01, transform_start_point)
-        end_point_constraint = pm.pointConstraint(Point02, transform_end_point)
+        start_point_constraint = pm.pointConstraint(point_01, transform_start_point)
+        end_point_constraint = pm.pointConstraint(point_02, transform_end_point)
 
         distance_node = pm.shadingNode("distanceBetween", asUtility=True, name="DistanceNode")
-        self.name_convention.rename_based_on_base_name(Point01, distance_node, name=distance_node)
+        self.name_convention.rename_based_on_base_name(point_01, distance_node, name=distance_node)
 
         pm.connectAttr("%s.worldPosition[0]" % transform_start_point, "%s.point1" % distance_node, f=True)
         pm.connectAttr("%s.worldPosition[0]" % transform_end_point, "%s.point2" % distance_node, f=True)
@@ -137,28 +136,24 @@ class TwistJoints(rigBase.RigBase):
                                                        stretchy_reference_group,
                                                        name="stretchyReferencePoints")
         stretchy_reference_group.setParent(self.rig_system.kinematics)
-        # RMRigTools.RMParentArray(stretchy_reference_group, locators)
         pm.parent(locators, stretchy_reference_group)
 
-        twist_joint_divide = pm.shadingNode("multiplyDivide", asUtility=True,
-                                            name="StretchyTwistJoint")
+        twist_joint_divide = pm.shadingNode("multiplyDivide", asUtility=True)
         scale_compensation = pm.shadingNode("multiplyDivide", asUtility=True,
                                             name="StretchScaleCompensation")
-        # self.name_convention.RMRenameNameInFormat(TwistJointDivide,{})
-        self.name_convention.rename_based_on_base_name(self.twist_origin, twist_joint_divide, name=twist_joint_divide)
+        self.name_convention.rename_name_in_format(twist_joint_divide, name="StretchyTwistJoint")
 
         pm.connectAttr("%s.distance" % distance_node, "{}.input1X".format(twist_joint_divide))
         pm.setAttr("%s.input2X" % twist_joint_divide, (len(self.joints) - 1))
 
         pm.connectAttr("{}.outputX".format(twist_joint_divide), "{}.input1X".format(scale_compensation))
-        pm.connectAttr("{}.scaleX".format(self.twist_origin), "{}.input2X".format(scale_compensation))
-
+        pm.connectAttr("{}.scaleX".format(self.reset_joints[0]), "{}.input2X".format(scale_compensation))
+        #                                 twist_origin
         pm.setAttr("{}.operation".format(twist_joint_divide), 2)
         pm.setAttr("{}.operation".format(scale_compensation), 2)
 
-        for eachJoint in self.joints[1:]:
-            pm.connectAttr("{}.outputX".format(scale_compensation), "{}.translateX".format(eachJoint))
-        # self.kinematics.append(stretchyRefGroup)
+        # for eachJoint in self.joints[1:]:
+        #     pm.connectAttr("{}.outputX".format(scale_compensation), "{}.translateX".format(eachJoint))
 
     def create_bones_between_points(self, initial_point, final_point, number_of_bones, align_object=None):
         direction_vector = final_point - initial_point
@@ -175,10 +170,8 @@ class TwistJoints(rigBase.RigBase):
                                                                    name='TwistJoint')
             locators_list.append(Locator)
             pm.xform(Locator, translation=list(initial_point + (step_vector * count)), worldSpace=True)
-            # RMRigTools.RMAlign(align_object, Locator, 2)
             pm.matchTransform(Locator, align_object, position=False, rotation=True, scale=False)
 
-        # reset_joints, joints = RMRigTools.RMCreateBonesAtPoints(locators_list)
         reset_joints, joints = self.create.joint.point_base(*locators_list, name='twist')
         self.reset_joints.append(reset_joints)
         self.reset_joints[-1].setParent(self.rig_system.joints)

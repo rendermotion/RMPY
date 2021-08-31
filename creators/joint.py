@@ -33,6 +33,7 @@ class Joint(creatorsBase.CreatorsBase):
         for index, point in enumerate(point_array):
             pm.select(cl=True)
             new_joint = pm.joint(p=[0, 0, 0], name="joint")
+            new_joint.segmentScaleCompensate.set(0)
             transform.align(point, new_joint)
             joint_array.append(new_joint)
             self.name_convention.rename_name_in_format(new_joint, name=custom_name, objectType=joint_type)
@@ -80,17 +81,17 @@ class Joint(creatorsBase.CreatorsBase):
 
             pm.select(cl=True)
 
-            newJoint = pm.joint(p=[0, 0, 0], name="joint")
-            joint_array.append(newJoint)
+            new_joint = pm.joint(p=[0, 0, 0], name="joint")
+            new_joint.segmentScaleCompensate.set(0)
+            joint_array.append(new_joint)
             if not custom_name:
                 joint_name = self.name_convention.get_a_short_name(str(point_array[index]))
             else:
                 joint_name = custom_name
-            self.name_convention.rename_name_in_format(str(newJoint),
+            self.name_convention.rename_name_in_format(str(new_joint),
                                                        name=joint_name,
                                                        side=self.name_convention.get_from_name(str(point_array[index]), 'side'),
                                                        objectType=joint_type)
-
 
             if index == 0:
                 pm.parent(joint_array[0], ParentJoint)
