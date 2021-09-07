@@ -1,5 +1,6 @@
 import pymel.core as pm
 from RMPY import nameConvention
+from RMPY.rig import rigHierarchy
 
 
 class RigStructureModel(object):
@@ -23,6 +24,7 @@ class RigStructureModel(object):
         self.display = None
         self.settings = None
         self.root = None
+        self.rig_hierarchy = rigHierarchy.RigHierarchy()
 
 
 class SystemStructure(object):
@@ -36,6 +38,15 @@ class SystemStructure(object):
         if args:
             self.name_convention.default_names['system'] = self.name_convention.get_a_short_name(args[0])
             self.name_convention.default_names['side'] = self.name_convention.get_from_name(args[0], 'side')
+
+    @property
+    def rig_hierarchy(self):
+        """
+        The main hierarchy of the rig. It is an object of type rigHierarchy it will be used to define the parent
+        of the system structure.
+        :return: an RigHierarchy object that represents the main hierarchy of the rig.
+        """
+        return self._model.rig_hierarchy
 
     def create(self):
         """
@@ -95,7 +106,7 @@ class SystemStructure(object):
         """
         self._model.root = pm.group(empty=True, name='system')
         self.name_convention.rename_name_in_format(self._model.root, useName=True)
-
+        self._model.root.setParent(self.rig_hierarchy.systems)
         self._model.settings = pm.spaceLocator(name='settings')
         self.name_convention.rename_name_in_format(self._model.settings, useName=True)
         self._model.settings.setParent(self._model.root)

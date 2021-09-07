@@ -24,6 +24,7 @@ class RigBypedModel(rigBase.BaseModel):
         self.spine = rigSpine.RigSpine()
         self.hip = rigFK.RigFK()
         self.cog = rigProp.RigProp()
+        self.jaw = rigFK.RigFK()
         self.rig_world = rigWorld.RigWorld()
         self.l_arm_space_switch = armSpaceSwitch.ArmSpaceSwitch()
         self.r_arm_space_switch = armSpaceSwitch.ArmSpaceSwitch()
@@ -49,6 +50,7 @@ class RigByped(rigBase.RigBase):
                         u'{}_ankleFeet01_reference_pnt']
         self.hand_root = [u'{}_palm01_reference_pnt']
         self.hip_root = [u'C_Hip00_reference_pnt', u'C_Hip01_reference_pnt']
+        self.jaw_root = [u'C_jaw01_reference_pnt', u'C_jawTip01_reference_pnt']
 
         self.spine_root = [u'C_Spine01_reference_pnt', u'C_Spine02_reference_pnt', u'C_Spine03_reference_pnt',
                            u'C_Spine04_reference_pnt', u'C_Spine05_reference_pnt']
@@ -114,6 +116,10 @@ class RigByped(rigBase.RigBase):
     def r_leg_space_switch(self):
         return self._model.r_leg_space_switch
 
+    @property
+    def jaw(self):
+        return self._model.jaw
+
     def build(self):
         self.spine.create_point_base(*self.spine_root)
         self.hip.create_point_base(*self.hip_root, name='hip')
@@ -144,9 +150,10 @@ class RigByped(rigBase.RigBase):
         self.r_leg_space_switch.build(self.r_leg, self.rig_world)
 
         self.neck_head.create_point_base(*self.neck_root)
+        self.jaw.create_point_base(*self.jaw_root)
 
         self.neck_head.set_parent(self.spine)
-
+        self.jaw.set_parent(self.neck_head)
         self.cog.set_parent(self.rig_world)
         self.spine.set_parent(self.cog)
 

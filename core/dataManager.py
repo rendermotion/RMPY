@@ -14,7 +14,7 @@ class DataManager(object):
     dictionary in json format
     """
     def __init__(self):
-        self._file_path = config.file_path
+        self._file_path = config.output.file_path
 
     @property
     def file_path(self):

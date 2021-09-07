@@ -45,7 +45,7 @@ class SkinCluster(creatorsBase.CreatorsBase):
         if len(args) >= 1:
             file_name = args[0]
         else:
-            file_name = '%s' % self.node
+            file_name = '{}'.format(self.node)
         data_manager = dataManager.DataManager()
         data_manager.file_path = '{}{}'.format(data_manager.file_path, self.extra_path)
         data_manager.save(file_name, self.get_weights_dictionary(), **kwargs)
@@ -54,10 +54,10 @@ class SkinCluster(creatorsBase.CreatorsBase):
         if len(args) >= 1:
             file_name = args[0]
         else:
-            file_name = '%s' % self.node
+            file_name = '{}'.format(self.node)
         data_manager = dataManager.DataManager()
         data_manager.file_path = '{}{}'.format(data_manager.file_path, self.extra_path)
-
+        print 'path to search = {}'.format(data_manager.file_path)
         self.weights_dict = data_manager.load(file_name, **kwargs)
         return self.weights_dict
 
@@ -267,10 +267,5 @@ class SkinCluster(creatorsBase.CreatorsBase):
 
 if __name__ == '__main__':
     skin_cluster01 = SkinCluster()
-    skin_cluster01.load('body')
+    skin_cluster01.load('venom_body_geo')
     skin_cluster01.apply_weights_dictionary(geometry='venom_body_geo')
-    # skin_cluster01 = SkinCluster.by_node('venom_body_geo')
-    # skin_cluster01.save()
-
-    # skin_cluster01.load('metal_ring_front')
-    # skin_cluster01.apply_weights_dictionary(geometry='metalGrey_C_metalRing_0001_mid_GES')

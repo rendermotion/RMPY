@@ -111,5 +111,5 @@ def available_maya_files():
 
 
 if __name__ == '__main__':
-    load_skin_cluster()
+    save_skin_cluster()
 

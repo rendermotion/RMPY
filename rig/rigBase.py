@@ -1,5 +1,5 @@
 from RMPY import nameConvention
-from RMPY.rig import systemStructure
+from RMPY.rig import SystemStructure
 from RMPY.creators import creators
 from RMPY.core import config
 import pymel.core as pm
@@ -41,7 +41,7 @@ class RigBase(object):
         super(RigBase, self).__init__()
         self.name_convention = kwargs.pop('name_convention', nameConvention.NameConvention())
         self.rm = rm
-        self.rig_system = kwargs.pop('rig_system', systemStructure.SystemStructure())
+        self.rig_system = kwargs.pop('rig_system', SystemStructure.SystemStructure())
         self._joint_creation_kwargs = {}
         self._control_creation_kwargs = {}
         self.create = creators
