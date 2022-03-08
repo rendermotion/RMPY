@@ -1,5 +1,5 @@
 import pymel.core as pm
-from RMPY.rig.biped.rig_parts import clavicle
+from RMPY.rig.biped.rig import clavicle
 
 
 neck_points = pm.ls(u'R_clavicle01_reference_pnt', u'R_shoulder01_reference_pnt')

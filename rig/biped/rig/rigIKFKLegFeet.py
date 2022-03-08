@@ -1,7 +1,7 @@
 from RMPY.rig import rigIKFK
-from RMPY.rig.biped.rig_parts import rigIkFkFeet
+from RMPY.rig.biped.rig import rigIkFkFeet
 from RMPY.rig import rigBase
-from RMPY.rig.biped.rig_parts import rigRibonTwistJoint
+from RMPY.rig.biped.rig import rigRibonTwistJoint
 
 
 class RigIKKFLegFeetModel(rigBase.BaseModel):

@@ -10,14 +10,16 @@ from RMPY.rig import rigProp
 from RMPY.rig.biped.rig import armSpaceSwitch
 from RMPY.rig.biped.rig import legSpaceSwitch
 
+from RMPY.rig.quadruped.rigs import rigIKQuadLegFeet
+
 
 class RigBypedModel(rigBase.BaseModel):
     def __init__(self, **kwargs):
         super(RigBypedModel, self).__init__(**kwargs)
         self.l_arm = arm.Arm()
         self.r_arm = arm.Arm()
-        self.l_leg = rigIKFKLegFeet.RigIKKFLegFeet()
-        self.r_leg = rigIKFKLegFeet.RigIKKFLegFeet()
+        self.l_leg = rigIKQuadLegFeet.RigIKQuadLegFeet()
+        self.r_leg = rigIKQuadLegFeet.RigIKQuadLegFeet()
         self.l_hand = hand.Hand()
         self.r_hand = hand.Hand()
         self.neck_head = neckHead.NeckHead()
@@ -40,11 +42,12 @@ class RigByped(rigBase.RigBase):
         self.arm_root = [u'{}_clavicle01_reference_pnt', u'{}_shoulder01_reference_pnt', u'{}_elbow01_reference_pnt',
                          u'{}_wrist01_reference_pnt']
 
-        self.leg_root = [u'{}_leg01_reference_pnt', u'{}_Knee01_reference_pnt', u'{}_ankle01_reference_pnt']
+        self.leg_root = [u'{}_backLeg00_reference_pnt', u'{}_backLeg01_reference_pnt',
+                         u'{}_backLeg02_reference_pnt', u'{}_paw00_reference_pnt']
 
-        self.feet_root = [u'{}_ankleFeet01_reference_pnt', u'{}_ball01_reference_pnt', u'{}_toe01_reference_pnt',
-                          u'{}_footLimitBack01_reference_pnt', u'{}_footLimitOuter01_reference_pnt',
-                          u'{}_footLimitInner01_reference_pnt']
+        self.feet_root = [u'{}_pawRoll00_reference_pnt', u'{}_pawToe00_reference_pnt',
+                          u'{}_footLimitBack00_reference_pnt', u'{}_footLimitOuter00_reference_pnt',
+                          u'{}_footLimitInner00_reference_pnt']
 
         self.fingers = [u'{}_leg01_reference_pnt', u'{}_Knee01_reference_pnt', u'{}_ankle01_reference_pnt',
                         u'{}_ankleFeet01_reference_pnt']
@@ -54,7 +57,7 @@ class RigByped(rigBase.RigBase):
 
         self.spine_root = [u'C_Spine01_reference_pnt', u'C_Spine02_reference_pnt', u'C_Spine03_reference_pnt',
                            u'C_Spine04_reference_pnt', u'C_Spine05_reference_pnt']
-
+        self.COG_root = u'C_COG_reference_pnt'
         self.neck_root = [u'C_neck00_reference_pnt', u'C_head00_reference_pnt', u'C_headTip00_reference_pnt']
 
     @property
@@ -123,7 +126,7 @@ class RigByped(rigBase.RigBase):
     def build(self):
         self.spine.create_point_base(*self.spine_root)
         self.hip.create_point_base(*self.hip_root, name='hip')
-        self.cog.create_point_base(self.hip_root[0], name='cog')
+        self.cog.create_point_base(self.COG_root, name='cog')
 
         self.l_arm.create_point_base(*[each.format('L') for each in self.arm_root])
         self.l_arm.set_parent(self.spine)
@@ -140,6 +143,7 @@ class RigByped(rigBase.RigBase):
 
         l_root_points = [each.format('L') for each in self.leg_root]
         l_root_points.extend([each.format('L') for each in self.feet_root])
+
         self.l_leg.create_point_base(*l_root_points)
         self.l_leg_space_switch.build(self.l_leg, self.rig_world)
 

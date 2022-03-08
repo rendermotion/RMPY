@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'UI_RigTools.ui'
 #
-# Created: Fri Jul 23 00:15:20 2021
+# Created: Thu Sep  9 23:13:52 2021
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(703, 419)
+        Form.resize(577, 419)
         self.horizontalLayout_9 = QtWidgets.QHBoxLayout(Form)
         self.horizontalLayout_9.setObjectName("horizontalLayout_9")
         self.tabWidget = QtWidgets.QTabWidget(Form)
@@ -150,9 +150,9 @@ class Ui_Form(object):
         self.orient_parents_btn = QtWidgets.QPushButton(self.tab)
         self.orient_parents_btn.setObjectName("orient_parents_btn")
         self.verticalLayout_5.addWidget(self.orient_parents_btn)
-        self.pushButton_4 = QtWidgets.QPushButton(self.tab)
-        self.pushButton_4.setObjectName("pushButton_4")
-        self.verticalLayout_5.addWidget(self.pushButton_4)
+        self.hierarchy_switch_btn = QtWidgets.QPushButton(self.tab)
+        self.hierarchy_switch_btn.setObjectName("hierarchy_switch_btn")
+        self.verticalLayout_5.addWidget(self.hierarchy_switch_btn)
         self.verticalLayout_6.addLayout(self.verticalLayout_5)
         self.horizontalLayout.addLayout(self.verticalLayout_6)
         self.verticalLayout_13.addLayout(self.horizontalLayout)
@@ -161,22 +161,9 @@ class Ui_Form(object):
         self.tab_2.setObjectName("tab_2")
         self.horizontalLayout_10 = QtWidgets.QHBoxLayout(self.tab_2)
         self.horizontalLayout_10.setObjectName("horizontalLayout_10")
-        self.RigGroupBox = QtWidgets.QGroupBox(self.tab_2)
-        self.RigGroupBox.setObjectName("RigGroupBox")
-        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.RigGroupBox)
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.FKOnSelection = QtWidgets.QPushButton(self.RigGroupBox)
-        self.FKOnSelection.setObjectName("FKOnSelection")
-        self.verticalLayout_2.addWidget(self.FKOnSelection)
-        self.IKOnSelection = QtWidgets.QPushButton(self.RigGroupBox)
-        self.IKOnSelection.setObjectName("IKOnSelection")
-        self.verticalLayout_2.addWidget(self.IKOnSelection)
-        self.GenericJointChainRigBtn = QtWidgets.QPushButton(self.RigGroupBox)
-        self.GenericJointChainRigBtn.setObjectName("GenericJointChainRigBtn")
-        self.verticalLayout_2.addWidget(self.GenericJointChainRigBtn)
-        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout_2.addItem(spacerItem)
-        self.horizontalLayout_10.addWidget(self.RigGroupBox)
+        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        self.horizontalLayout_10.addLayout(self.horizontalLayout_3)
         self.verticalLayout_3 = QtWidgets.QVBoxLayout()
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.line_2 = QtWidgets.QFrame(self.tab_2)
@@ -201,8 +188,8 @@ class Ui_Form(object):
         self.SelectJoints = QtWidgets.QPushButton(self.tab_2)
         self.SelectJoints.setObjectName("SelectJoints")
         self.verticalLayout_3.addWidget(self.SelectJoints)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout_3.addItem(spacerItem1)
+        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout_3.addItem(spacerItem)
         self.horizontalLayout_10.addLayout(self.verticalLayout_3)
         self.tabWidget.addTab(self.tab_2, "")
         self.horizontalLayout_9.addWidget(self.tabWidget)
@@ -246,16 +233,10 @@ class Ui_Form(object):
         self.CreateParentGroup.setText(QtWidgets.QApplication.translate("Form", "Create Parent Group", None, -1))
         self.mirror_selection_btn.setText(QtWidgets.QApplication.translate("Form", "Mirror selection", None, -1))
         self.orient_parents_btn.setText(QtWidgets.QApplication.translate("Form", "Orient Parents", None, -1))
-        self.pushButton_4.setText(QtWidgets.QApplication.translate("Form", "hierarchyse", None, -1))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QtWidgets.QApplication.translate("Form", "Tab 1", None, -1))
-        self.RigGroupBox.setTitle(QtWidgets.QApplication.translate("Form", "Rig", None, -1))
-        self.FKOnSelection.setToolTip(QtWidgets.QApplication.translate("Form", "Select some locators in order to create an FK Control", None, -1))
-        self.FKOnSelection.setText(QtWidgets.QApplication.translate("Form", "FK on selection", None, -1))
-        self.IKOnSelection.setToolTip(QtWidgets.QApplication.translate("Form", "Select some locators in order to create an FK Control", None, -1))
-        self.IKOnSelection.setText(QtWidgets.QApplication.translate("Form", "IK on selection", None, -1))
-        self.GenericJointChainRigBtn.setText(QtWidgets.QApplication.translate("Form", "Generic Joint Chain Rig", None, -1))
+        self.hierarchy_switch_btn.setText(QtWidgets.QApplication.translate("Form", "hierarchy switch", None, -1))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QtWidgets.QApplication.translate("Form", "Points Setup", None, -1))
         self.SkiningToolslabel.setText(QtWidgets.QApplication.translate("Form", "SkiningTools", None, -1))
         self.ListConnectedJoints.setText(QtWidgets.QApplication.translate("Form", "List Skined Joints", None, -1))
         self.SelectJoints.setText(QtWidgets.QApplication.translate("Form", "Select Joints", None, -1))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QtWidgets.QApplication.translate("Form", "Tab 2", None, -1))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QtWidgets.QApplication.translate("Form", "Skinning ", None, -1))
 

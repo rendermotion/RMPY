@@ -131,12 +131,13 @@ class Controls(creatorsBase.CreatorsBase):
                                             name=default_name,
                                             centered=centered)
 
-        if name == '' and self.name_convention.is_name_in_format(Obj):
-            self.name_convention.rename_based_on_base_name(Obj, control)
-        else:
-            self.name_convention.rename_based_on_base_name(Obj, control, name=control)
+        # if name == '' and self.name_convention.is_name_in_format(Obj):
+        #    self.name_convention.rename_based_on_base_name(Obj, control)
+        # else:
+        #    self.name_convention.rename_based_on_base_name(Obj, control, name=control)
 
-        self.name_convention.rename_set_from_name(control, "control", "objectType")
+        self.name_convention.rename_name_in_format(control, objectType = control)
+        # self.name_convention.rename_set_from_name(control, "control", "objectType")
 
         transform.align(Obj, control)
 
@@ -206,14 +207,8 @@ class Controls(creatorsBase.CreatorsBase):
 
             pm.makeIdentity(control, apply=True, t=1, r=1, s=1)
 
-            if name != '' and self.name_convention.is_name_in_format(scene_object):
+            self.name_convention.rename_name_in_format(control, objectType='control')
 
-                self.name_convention.rename_based_on_base_name(scene_object, control)
-
-            else:
-                self.name_convention.rename_based_on_base_name(scene_object, control, name=control)
-
-            self.name_convention.rename_set_from_name(control, "control", "objectType")
             transform.align(scene_object, control)
 
             reset_group = self.rigTools.RMCreateGroupOnObj(control)

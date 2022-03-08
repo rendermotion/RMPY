@@ -11,6 +11,8 @@ class SimpleIKModel(rigBase.BaseModel):
         self.end_joint = None
         self.pole_vector_constraint = None
         self.pole_vector = None
+        self.controls_dict = {'poleVector': None, 'ikHandle': None}
+        self.reset_controls_dict = {'poleVector': None, 'ikHandle': None}
 
 
 class SimpleIK(rigBase.RigBase):
@@ -18,6 +20,14 @@ class SimpleIK(rigBase.RigBase):
         if 'model' not in kwargs.keys():
             kwargs['model'] = SimpleIKModel()
         super(SimpleIK, self).__init__(*args, **kwargs)
+
+    @property
+    def controls_dict(self):
+        return self._model.controls_dict
+
+    @property
+    def reset_controls_dict(self):
+        return self._model.reset_controls_dict
 
     @property
     def ik_handle(self):
@@ -81,6 +91,7 @@ class SimpleIK(rigBase.RigBase):
         :return:
         """
         pole_vector = self.create.space_locator.pole_vector(*self.joints)
+        self.custom_world_align(pole_vector)
         pm.parent(pole_vector, self.rig_system.kinematics)
         self.set_as_pole_vector(pole_vector)
 
@@ -89,20 +100,45 @@ class SimpleIK(rigBase.RigBase):
         Creates the Ik standard controls for Ik FK and pole vector if it doesn't exist.
         :return:
         """
-        reset_controls,  ik_control = self.create.controls.point_base(self.ik_handle)
-        self.create.constraint.node_base(ik_control, self.ik_handle)
+        self.create_control_pole_vector()
+        self.create_control_ik()
+        self.create_fk_controls()
+
+    def create_control_pole_vector(self):
         if self.pole_vector:
             reset_pole_vector_controls,  pole_vector_control = self.create.controls.point_base(self.pole_vector)
         self.create.constraint.node_base(pole_vector_control, self.pole_vector)
+        pm.parent(reset_pole_vector_controls, self.rig_system.controls)
+
+        self.reset_controls.append(reset_pole_vector_controls)
+        self.controls.append(pole_vector_control)
+        self.controls_dict['poleVector'] = pole_vector_control
+        self.reset_controls_dict['poleVector'] = reset_pole_vector_controls
+
+    def create_fk_controls(self):
         arm_reset, arm_control = self.create.controls.point_base(self.joints[0])
         arm_control.rotate >> self.joints[0].rotate
         forearm_reset, forearm_control = self.create.controls.point_base(self.joints[1])
         forearm_control.rotate >> self.joints[1].rotate
         forearm_reset.setParent(arm_control)
-        pm.parent([arm_reset, reset_pole_vector_controls, reset_controls], self.rig_system.controls)
+        pm.parent(arm_reset, self.rig_system.controls)
 
+    def create_control_ik(self):
+        reset_controls, ik_control = self.create.controls.point_base(self.ik_handle)
+        self.create.constraint.node_base(ik_control, self.ik_handle)
+        pm.parent(reset_controls, self.rig_system.controls)
+        self.add_fk_attributes_to_control(ik_control)
+
+        self.reset_controls.append(reset_controls)
+        self.controls.append(ik_control)
+
+        self.controls_dict['ikHandle'] = ik_control
+        self.reset_controls_dict['ikHandle'] = reset_controls
+
+    def add_fk_attributes_to_control(self, ik_control):
         pm.addAttr(ik_control, longName='ikBlend', proxy=self.ik_handle.ikBlend)
         pm.addAttr(ik_control, longName='twist', proxy=self.ik_handle.twist)
+
 
 
 if __name__ == '__main__':

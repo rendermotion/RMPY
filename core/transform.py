@@ -2,7 +2,7 @@ import pymel.core as pm
 from RMPY.core import dataValidators
 from RMPY.core import config
 import maya.api.OpenMaya as om
-
+from RMPY import nameConvention
 
 def align(*args, **kwargs):
     """
@@ -259,9 +259,26 @@ class Transform(object):
     def __init__(self, *args):
         self.node = pm.ls(args[0])[0]
         self._axis = Axis(*args)
+
     @property
     def axis(self):
         return self._axis
+
+
+def reorient_to_world(root_node):
+    child_list = root_node.getChildren()
+    pm.parent(child_list, None)
+    custom_world_align(root_node)
+    pm.parent(child_list, root_node)
+    for each_node in root_node.getChildren(type='transform'):
+        if not each_node.getShapes():
+            print 'doing {}'.format(each_node)
+            reorient_to_world(each_node)
+
+
+def custom_world_align(*scene_objects):
+    for each in scene_objects:
+        aim_vector_based(each, pm.datatypes.Vector(0.0, 0.0, 1.0), pm.datatypes.Vector(0.0, 1.0, 0.0))
 
 
 if __name__ == '__main__':

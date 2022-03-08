@@ -8,7 +8,7 @@ from PySide2.QtWidgets import *
 from PySide2 import __version__
 from shiboken2 import wrapInstance
 from RMPY.Tools.QT5.ui import FormRigTools
-
+reload(FormRigTools)
 import maya.mel as mel
 import os
 from RMPY import RMRigTools
@@ -22,6 +22,8 @@ from RMPY import nameConvention
 from RMPY.rig import rigBase
 
 from RMPY.AutoRig import RMRigFK
+from RMPY.core import transform
+from RMPY.core import hierarchy
 
 print 'executed'
 
@@ -39,8 +41,8 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.ui.setupUi(self)
         self.setWindowTitle('RM Maya Rig Tools')
         self.ui.RenameTool.clicked.connect(self.RenameToolBtnPressed)
-        self.ui.IKOnSelection.clicked.connect(self.IKOnSelectionBtnPressed)
-        self.ui.FKOnSelection.clicked.connect(self.FKOnSelectionBtnPressed)
+        # self.ui.IKOnSelection.clicked.connect(self.IKOnSelectionBtnPressed)
+        # self.ui.FKOnSelection.clicked.connect(self.FKOnSelectionBtnPressed)
         self.ui.CreateChildGroup.clicked.connect(self.CreateChildGroupBtnPressed)
         self.ui.CreateParentGroup.clicked.connect(self.CreateParentBtnPressed)
         # self.ui.JointsOnPoints.clicked.connect(self.JointsOnPointsBtnPressed)
@@ -52,12 +54,13 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.ui.SCCombineButton.clicked.connect(self.SCCombineButtonPressed)
         self.ui.AttributeTransferBtn.clicked.connect(self.transfer_attributes)
         self.ui.ExtractGeoBtn.clicked.connect(self.extract_geometry)
-        self.ui.GenericJointChainRigBtn.clicked.connect(self.GenericJointChainRigBtnPressed)
+        # self.ui.GenericJointChainRigBtn.clicked.connect(self.GenericJointChainRigBtnPressed)
         self.ui.mirror_selection_btn.clicked.connect(self.mirror_selection)
-
+        self.ui.orient_parents_btn.clicked.connect(self.orient_parents)
         self.ui.locator_at_average_btn.clicked.connect(self.locator_at_average)
         self.ui.create_locators_at_nodes_btn.clicked.connect(self.create_locators_at_nodes)
-
+        self.ui.aim_button_btn.clicked.connect(self.aim_align)
+        self.ui.hierarchy_switch_btn.clicked.connect(self.hierarchise)
 
         # self.ui.OrientNubButton.clicked.connect(self.OrientNubButtonPressed)
         # self.ui.unfoldRigBtn.clicked.connect(self.unfoldRigBtnPressed)
@@ -70,6 +73,22 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.ui.listWidget.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.name_convention = nameConvention.NameConvention()
         self.rig_base = rigBase.RigBase()
+
+    def hierarchise(self):
+        selection = pm.ls(selection=True)
+        hierarchy.reorder_hierarchy(*selection)
+
+    def aim_align(self):
+        selection = pm.ls(selection=True)
+        selection.insert(0, selection[0])
+        transform.aim_point_based(*selection)
+
+    def orient_parents(self):
+        selection = pm.ls(selection=True)
+        if selection:
+            transform.reorient_to_world(selection[0])
+        else:
+            print 'select the root node to orient the transforms'
 
     def locator_at_average(self):
         selection = pm.ls(selection=True)

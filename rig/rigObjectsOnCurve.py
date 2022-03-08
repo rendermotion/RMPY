@@ -13,8 +13,8 @@ class RigObjectsOnCurveModel(rigBase.BaseModel):
 
 class RigObjectsOnCurve(rigBase.RigBase):
     def __init__(self, *args, **kwargs):
+        kwargs['model'] = kwargs.pop('model', RigObjectsOnCurveModel())
         super(RigObjectsOnCurve, self).__init__(*args, **kwargs)
-        self._model = RigObjectsOnCurveModel()
         if args:
             self.create_curve_base(*args, **kwargs)
 

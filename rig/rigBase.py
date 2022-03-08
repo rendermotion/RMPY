@@ -1,6 +1,7 @@
 from RMPY import nameConvention
 from RMPY.rig import SystemStructure
 from RMPY.creators import creators
+from RMPY.core import transform
 from RMPY.core import config
 import pymel.core as pm
 from RMPY.core import main as rm
@@ -17,6 +18,7 @@ class BaseModel(object):
         self.outputs = []
         self.attach_points = dict(root=None, tip=None)
         self.creation_points = {'points'}
+        self.zero_joint = None
 
 
 class RigBase(object):
@@ -40,12 +42,27 @@ class RigBase(object):
         """
         super(RigBase, self).__init__()
         self.name_convention = kwargs.pop('name_convention', nameConvention.NameConvention())
+        if 'rig_system' in kwargs.keys():
+            self.rig_system = kwargs.pop('rig_system', SystemStructure.SystemStructure())
+            self.name_convention = self.rig_system.name_convention
+        else:
+            self.rig_system = SystemStructure.SystemStructure()
+
         self.rm = rm
-        self.rig_system = kwargs.pop('rig_system', SystemStructure.SystemStructure())
         self._joint_creation_kwargs = {}
         self._control_creation_kwargs = {}
         self.create = creators
+        self.transform = transform
         self._model = kwargs.pop('model', BaseModel())
+
+    @property
+    def zero_joint(self):
+        if not self._model.zero_joint:
+            reset_joint, joint_list = self.create.joint.point_base(self.rig_system.joints)
+            self._model.zero_joint = joint_list[0]
+            self.name_convention.rename_name_in_format(self._model.zero_joint, name='zeroJoint', objectType='sknjnt')
+            pm.parent(reset_joint, self.rig_system.joints)
+        return self._model.zero_joint
 
     @property
     def root(self):
@@ -53,7 +70,6 @@ class RigBase(object):
             return self.attach_points['root']
         else:
             return self.reset_controls[0]
-
 
     @root.setter
     def root(self, value):

@@ -1,5 +1,5 @@
-from RMPY.rig.biped.rig_parts import rigRibon
-from RMPY.rig.biped.rig_parts import rigTwistJoints
+from RMPY.rig.biped.rig import rigRibon
+from RMPY.rig.biped.rig import rigTwistJoints
 reload(rigTwistJoints)
 
 

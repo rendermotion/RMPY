@@ -298,7 +298,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_4">
+              <widget class="QPushButton" name="hierarchy_switch_btn">
                <property name="text">
                 <string>hierarchy switch</string>
                </property>

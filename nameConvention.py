@@ -79,15 +79,17 @@ class NameConvention(object):
                            'objectType': ['jnt', 'sknjnt', 'nub', 'skn', 'UDF', 'shp', 'msh', 'rmsh', 'grp', 'pnc',
                                           'orc', 'prc', 'scc', 'pvc', 'ctr', 'pnt', 'ikh', 'ikf', 'rvs', 'mult', 'cnd',
                                           'blt', 'cui', 'dbtw', 'cls', 'clsh', 'pma', 'b2a', 'mph', 'ffd', 'bs', 'aim',
-                                          'cfme', 'lft', 'psfi', 'guide', 'unc', 'skn']}
+                                          'cfme', 'lft', 'psfi', 'guide', 'unc', 'skn', 'dmx', 'mmx']}
         self.translator = {'objectType': {
             "joint": "jnt",
             "skinjoint": "sknjnt",
             "guide": 'guide',
             "nub": "nub",
             "skin": "skn",
+            'decomposeMatrix': 'dmx',
             "undefined": "UDF",
             "nurbsCurve": "shp",
+            'multMatrix': 'mmx',
             "mesh": "msh",
             "renderMesh": "rmsh",
             "transform": "grp",

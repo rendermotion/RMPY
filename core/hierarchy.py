@@ -9,6 +9,8 @@ def insert_in_hierarchy(base_object, insert_object, insert_type="parent"):
         parent = base_object.getParent()
         if parent:
             pm.parent(insert_object, parent)
+            # fix scale in case the parent is scaled we want it affected by the scale
+            insert_object.scale.set(1, 1, 1)
         pm.parent(base_object, insert_object)
     else:
         children = base_object.getChildren()
@@ -73,7 +75,6 @@ def custom_pick_walk(transform_node, depth, maya_node_type='joint', direction="d
                 if pm.nodeType(eachChildren) == maya_node_type:
                     return_value.extend(custom_pick_walk(eachChildren,depth - 1,  maya_node_type=maya_node_type, direction=direction))
     return return_value
-
 
 
 if __name__ == '__main__':

@@ -10,8 +10,8 @@ class RigFKModel(rigBase.BaseModel):
 
 class RigFK(rigBase.RigBase):
     def __init__(self, *args, **kwargs):
+        kwargs['model'] = kwargs.pop('model', RigFKModel())
         super(RigFK, self).__init__(*args, **kwargs)
-        self._model = RigFKModel()
         self.joints = []
 
     def create_point_base(self, *args, **kwargs):

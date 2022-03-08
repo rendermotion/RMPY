@@ -3,6 +3,8 @@ from RMPY.rig import rigHierarchy
 from RMPY.core import controls
 from RMPY.core import data_save_load
 import pymel.core as pm
+from RMPY.rig.customRig import tongue
+reload(tongue)
 
 
 def build():
@@ -15,8 +17,8 @@ def build():
 def build_rig():
     rig_biped = rigBiped.RigByped()
     rig_biped.build()
-
     controls.color_now_all_ctrls()
+    tongue.build()
 
 
 def hierarchy():

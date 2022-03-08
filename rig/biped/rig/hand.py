@@ -1,8 +1,8 @@
 from RMPY.rig import rigBase
-from RMPY.rig.biped.rig_parts import finger
+from RMPY.rig.biped.rig import finger
 from RMPY.rig import rigSingleJoint
 import pymel.core as pm
-from RMPY.rig.biped.rig_parts import arm
+from RMPY.rig.biped.rig import arm
 
 class HandModel(rigBase.BaseModel):
     def __init__(self):

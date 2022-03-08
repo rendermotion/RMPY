@@ -29,5 +29,6 @@ class RigBoolSwitch(rigBaseSwitch.RigBaseSwitch):
 
 if __name__ == '__main__':
     space_switch = RigBoolSwitch(control='nurbsCircle1')
-    space_switch.attribute_output_false >> pm.Attribute('pSphere1.visibility')
+    # space_switch.attribute_output_false >> pm.Attribute('pSphere1.visibility')
+    space_switch.attribute_output >> pm.Attribute('pSphere1.visibility')
 

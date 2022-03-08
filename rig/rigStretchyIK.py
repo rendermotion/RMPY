@@ -11,8 +11,7 @@ class StretchyIKModel(rigSimpleIk.SimpleIKModel):
 
 class StretchyIK(rigSimpleIk.SimpleIK):
     def __init__(self, *args, **kwargs):
-        if 'model' not in kwargs.keys():
-            kwargs['model'] = StretchyIKModel()
+        kwargs['model'] = kwargs.pop('model', StretchyIKModel())
         super(StretchyIK, self).__init__(*args, **kwargs)
 
     def create_point_base(self, *args, **kwargs):

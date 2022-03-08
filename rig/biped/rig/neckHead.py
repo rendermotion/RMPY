@@ -4,21 +4,19 @@ import pymel.core as pm
 
 class NeckHeadModel(rigFK.RigFKModel):
     def __init__(self, **kwargs):
-        rig_system = kwargs.pop('rig_system', None)
         super(NeckHeadModel, self).__init__(**kwargs)
-        if rig_system:
-            self.head = rigFK.RigFK(rig_system=self.rig_system)
-        else:
-            self.head = rigFK.RigFK()
+        self.head = None
 
 
 class NeckHead(rigFK.RigFK):
     def __init__(self, *args, **kwargs):
+        kwargs['model'] = kwargs.pop('model', NeckHeadModel())
         super(NeckHead, self).__init__(*args, **kwargs)
-        self._model = NeckHeadModel()
 
     @property
     def head(self):
+        if not self._model.head:
+            self._model.head = rigFK.RigFK(rig_system=self.rig_system)
         return self._model.head
 
     def create_point_base(self, *args, **kwargs):
@@ -27,10 +25,10 @@ class NeckHead(rigFK.RigFK):
         super(NeckHead, self).create_point_base(*args[:-1], **kwargs)
         self.head.create_point_base(*args[-2:], type='head', **kwargs)
         self.head.set_parent(self)
-
-    def rename_as_skinned_joints(self, nub=True):
-        super(NeckHead, self).rename_as_skinned_joints(nub=nub)
-        self.head.rename_as_skinned_joints(nub=nub)
+        self.reset_controls.extend(self.head.reset_controls)
+        self.controls.extend(self.head.controls)
+        self.joints.extend(self.head.joints)
+        self.reset_controls.extend(self.head.reset_controls)
 
 
 if __name__ == '__main__':

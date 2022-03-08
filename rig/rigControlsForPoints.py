@@ -8,12 +8,13 @@ class RigControlsForPoints(rigBase.RigBase):
        constraints the controls to move the input points
     """
     def __init__(self, *args, **kwargs):
+        kwargs['model'] = kwargs.pop('model',  rigBase.BaseModel())
         super(RigControlsForPoints, self).__init__(*args, **kwargs)
-        self._model = rigBase.BaseModel()
 
     def create_point_base(self, *points, **kwargs):
         super(RigControlsForPoints, self).create_point_base(*points, **kwargs)
         world_align = kwargs.pop('world_align', False)
+        link_type = kwargs.pop('link_type', 'standard')
 
         for each_point in points:
             reset_controls, controls = self.create.controls.point_base(each_point, **kwargs)
@@ -21,7 +22,16 @@ class RigControlsForPoints(rigBase.RigBase):
             self.controls.append(controls)
             if world_align:
                 reset_controls.rotate.set([0, 0, 0])
-        self.create.constraint.node_list_base(self.controls, points, mo=True)
+
+        if link_type == 'standard':
+            self.create.constraint.node_list_base(self.controls, points, mo=True)
+        elif link_type == 'static':
+            for each_control, point in zip(self.controls, points):
+                each_control.translate >> point.translate
+                each_control.rotate >> point.rotate
+                each_control.scale >> point.scale
+        else:
+            print 'unknown link type {}'.format(link_type)
 
 
 if __name__ == '__main__':

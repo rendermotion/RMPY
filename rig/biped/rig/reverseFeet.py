@@ -64,10 +64,6 @@ class RigReverseFeet(rigBase.RigBase):
             self._model.kinematics_control.setParent(self.rig_system.kinematics)
         return self._model.kinematics_control
 
-    @kinematics_control.setter
-    def kinematics_control(self, value):
-        self._model.kinematics_control = value
-
     def create_point_base(self, *points, **kwargs):
         super(RigReverseFeet, self).create_point_base(*points)
         self.create_hierarchy(*points)
@@ -134,42 +130,47 @@ class RigReverseFeet(rigBase.RigBase):
         pm.parent(self.pole_vector, self.dwn_fk_locators[0])
 
     def set_up_tip_tap_control(self):
-        pm.addAttr(self.kinematics_control, ln='toe_break', at='double', k=True)
-        self.kinematics_control.toe_break.set(25)
-        pm.addAttr(self.kinematics_control, ln='tap_break', at='double', k=True)
-        self.kinematics_control.tap_break.set(0)
-        pm.addAttr(self.kinematics_control, ln='ball', at='double', k=True)
-        pm.addAttr(self.kinematics_control, ln='tap', at='double', k=True)
-        pm.addAttr(self.kinematics_control, ln='tip', at='double', k=True)
+        pm.addAttr(self.rig_system.settings, ln='toe_break', at='double', k=True)
+        self.rig_system.settings.toe_break.set(25)
+        pm.addAttr(self.rig_system.settings, ln='tap_break', at='double', k=True)
+        self.rig_system.settings.tap_break.set(0)
+        pm.addAttr(self.rig_system.settings, ln='ball', at='double', k=True)
+        pm.addAttr(self.rig_system.settings, ln='tap', at='double', k=True)
+        pm.addAttr(self.rig_system.settings, ln='tip', at='double', k=True)
 
         split_ball = rigAttributeSplit.AttributeSplit(rig_system=self.rig_system)
-        split_ball.create_attributes_based(self.kinematics_control.ball, self.kinematics_control.toe_break)
+        split_ball.create_attributes_based(self.rig_system.settings.ball, self.rig_system.settings.toe_break)
         # split_ball.output_attribute_a >> self.ball_rotation.rotateZ
         split_ball.output_attribute_b >> self.tip_rotation.rotateZ
         unit_conversion_tip = pm.listConnections(self.tip_rotation.rotateZ)[0]
-        self.create.connect.attributes(self.kinematics_control.tip, unit_conversion_tip.input)
+        self.create.connect.attributes(self.rig_system.settings.tip, unit_conversion_tip.input)
         unit_conversion_tip.conversionFactor.set(unit_conversion_tip.conversionFactor.get()*-1)
 
         split_tap = rigAttributeSplit.AttributeSplit(rig_system=self.rig_system)
-        split_tap.create_attributes_based(split_ball.output_attribute_a, self.kinematics_control.tap_break)
+        split_tap.create_attributes_based(split_ball.output_attribute_a, self.rig_system.settings.tap_break)
         split_tap.output_attribute_a >> self.tap_rotation.rotateZ
         tap_conversion = pm.listConnections(self.tap_rotation.rotateZ)[0]
         tap_conversion.conversionFactor.set(tap_conversion.conversionFactor.get() * -1)
-        addition_node = pm.ls(self.create.connect.attributes(self.kinematics_control.tap, tap_conversion.input))[0]
+        addition_node = pm.ls(self.create.connect.attributes(self.rig_system.settings.tap, tap_conversion.input))[0]
         addition_node.operation.set(2)
         split_tap.output_attribute_b >> self.ball_rotation.rotateZ
         ball_conversion = pm.listConnections(self.ball_rotation.rotateZ)[0]
         ball_conversion.conversionFactor.set(ball_conversion.conversionFactor.get()*-1)
 
     def set_up_roll_in_out_control(self):
-        pm.addAttr(self.kinematics_control, ln='in_out_break', at='double', k=True)
-        self.kinematics_control.in_out_break.set(0)
-        pm.addAttr(self.kinematics_control, ln='in_out', at='double', k=True)
+        pm.addAttr(self.rig_system.settings, ln='in_out_break', at='double', k=True)
+        self.rig_system.settings.in_out_break.set(0)
+        pm.addAttr(self.rig_system.settings, ln='in_out', at='double', k=True)
 
         split_in_out = rigAttributeSplit.AttributeSplit(rig_system=self.rig_system)
-        split_in_out.create_attributes_based(self.kinematics_control.in_out, self.kinematics_control.in_out_break)
-        split_in_out.output_attribute_a >> self.in_pnt.rotateX
-        split_in_out.output_attribute_b >> self.out_pnt.rotateX
+        split_in_out.create_attributes_based(self.rig_system.settings.in_out, self.rig_system.settings.in_out_break)
+
+        if self.name_convention.get_from_name(self.rig_system.settings, 'side') == 'R':
+            self.create.connect.times_factor(split_in_out.output_attribute_a, self.in_pnt.rotateX, -0.01745329)
+            self.create.connect.times_factor(split_in_out.output_attribute_b, self.out_pnt.rotateX, -0.01745329)
+        else:
+            split_in_out.output_attribute_a >> self.in_pnt.rotateX
+            split_in_out.output_attribute_b >> self.out_pnt.rotateX
 
     def setup_outputs(self):
         reset_joints, joints = self.create.joint.point_base(self.reference_points, name='ikInPlace',
@@ -185,21 +186,28 @@ class RigReverseFeet(rigBase.RigBase):
             pm.parentConstraint(each_driver, each_joint, mo=True)
             pm.orientConstraint(each_joint, output_joint, mo=True)
 
-        self.control.addAttr('toe_break', proxy=str(self.kinematics_control.toe_break))
-        self.control.addAttr('tip', proxy=str(self.kinematics_control.tip))
-        self.control.addAttr('tap', proxy=str(self.kinematics_control.tap))
+        self.control.addAttr('toe_break', proxy=str(self.rig_system.settings.toe_break))
+        self.control.addAttr('tip', proxy=str(self.rig_system.settings.tip))
+        self.control.addAttr('tap', proxy=str(self.rig_system.settings.tap))
         self.rm.lock_and_hide_attributes(self.control, bit_string='000101000h')
-        self.control.rotateX >> self.kinematics_control.in_out
-        self.create.connect.times_factor(self.control.rotateZ, self.kinematics_control.ball, -57.296)
+
+        self.control.rotateX >> self.rig_system.settings.in_out
+        self.create.connect.times_factor(self.control.rotateZ, self.rig_system.settings.ball, -57.296)
 
 
 if __name__ == '__main__':
     reference_root = pm.ls(u'L_ankleFeet01_reference_pnt', u'L_ball01_reference_pnt', u'L_toe01_reference_pnt',
                            u'L_footLimitBack01_reference_pnt', u'L_footLimitOuter01_reference_pnt',
                            u'L_footLimitInner01_reference_pnt')
+    quad_points = [u'{}_frontPaw00_reference_pnt', u'{}_frontPawRoll00_reference_pnt',
+                   u'{}_frontPawToe00_reference_pnt', u'{}_frontFootLimitBack00_reference_pnt',
+                   u'{}_frontFootLimitOuter00_reference_pnt',
+                   u'{}_frontFootLimitInner00_reference_pnt']
+
+    reference_points_quadruped = pm.ls([each.format('L') for each in quad_points])
 
     reverse_feet = RigReverseFeet()
-    reverse_feet.create_point_base(*reference_root)
+    reverse_feet.create_point_base(*reference_points_quadruped)
     '''
     split = AttributeSplit()
     test_node = pm.ls('L_tap00_reference_CTRL')[0]

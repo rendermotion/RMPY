@@ -41,13 +41,21 @@ class RigSplineIK(rigBase.RigBase):
         self._model.curve = value
 
     def create_point_base(self, *args, **kwargs):
-        self._model.reset_joints, self._model.joints = self.create.joint.point_base(*args, orient_type='point')
-        self._model.ik, self._model.effector, self._model.curve = pm.ikHandle(startJoint=self.joints[0],
-                                                                              endEffector=self.joints[-1],
-                                                                              createCurve=True,
-                                                                              numSpans=len(self.joints),
-                                                                              solver="ikSplineSolver",
-                                                                              name="splineIK")
+        super(RigSplineIK, self).create_point_base(*args, **kwargs)
+        self._model.reset_joints, self._model.joints = self.create.joint.point_base(*args, orient_type='point_orient')
+        self._model.curve = kwargs.pop('curve', None)
+
+        if not self.curve:
+            self.curve = self.create.curve.point_base(*pm.ls(args), ep=True)
+
+        self._model.ik, self._model.effector,  = pm.ikHandle(startJoint=self.joints[0],
+                                                             endEffector=self.joints[-1],
+                                                             createCurve=False,
+                                                             curve=self.curve,
+                                                             numSpans=len(self.joints),
+                                                             solver="ikSplineSolver",
+                                                             name="splineIK")
+
         self.name_convention.rename_name_in_format([self.ik, self.effector, self.curve])
         self.reset_joints.setParent(self.rig_system.joints)
         self.curve.setParent(self.rig_system.kinematics)
@@ -84,9 +92,10 @@ class RigSplineIK(rigBase.RigBase):
 
 if __name__ == '__main__':
     rig_spine = RigSplineIK()
-    spine_root = pm.ls('C_Spine01_reference_pnt')[0]
-    spine_points = [u'C_Spine01_reference_pnt', u'C_Spine02_reference_pnt', u'C_Spine03_reference_pnt',
-                    u'C_Spine04_reference_pnt', u'C_Spine05_reference_pnt']
+    # spine_root = pm.ls('C_Spine01_reference_pnt')[0]
+    spine_points = [u'C_spine00_reference_pnt', u'C_spine01_reference_pnt', u'C_spine02_reference_pnt',
+                    u'C_spine03_reference_pnt', u'C_spine04_reference_pnt', u'C_spine05_reference_pnt']
+
     rig_spine.create_point_base(*spine_points)
     rig_spine.stretchy_ik()
 

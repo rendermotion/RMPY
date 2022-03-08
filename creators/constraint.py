@@ -11,7 +11,7 @@ class Constraint(creatorsBase.CreatorsBase):
     def node_base(self, *args, **kwargs):
         super(Constraint, self).node_base(*args, **kwargs)
         if len(args) >= 2:
-                return self.constraint(*args, **kwargs)
+                return self._constraint(*args, **kwargs)
         else:
             raise AttributeError('you should provide at least 2 attributes')
 
@@ -19,26 +19,38 @@ class Constraint(creatorsBase.CreatorsBase):
         constraints_created = []
         if len(args) >= 2 and len(args[0]) == len(args[1]):
             for driver, driven in zip(args[0], args[1]):
-                constraints_created.append(self.constraint(driver, driven, **kwargs))
+                constraints_created.append(self._constraint(driver, driven, **kwargs))
         else:
-            self.constraint_different_len_lists(*args, **kwargs)
+            self._constraint_different_len_lists(*args, **kwargs)
 
         return constraints_created
 
     def point(self, *args, **kwargs):
-        self.define_constraints(point=True, scale=False, parent=False, orient=False)
+        kwargs['point'] = True
+        kwargs['scale'] = False
+        kwargs['parent'] = False
+        kwargs['orient'] = False
         return self.node_base(*args, **kwargs)
 
     def parent(self, *args, **kwargs):
-        self.define_constraints(point=False, scale=False, parent=True, orient=False)
+        kwargs['point'] = False
+        kwargs['scale'] = False
+        kwargs['parent'] = True
+        kwargs['orient'] = False
         return self.node_base(*args, **kwargs)
 
     def scale(self, *args, **kwargs):
-        self.define_constraints(point=False, scale=True, parent=False, orient=False)
+        kwargs['point'] = False
+        kwargs['scale'] = True
+        kwargs['parent'] = False
+        kwargs['orient'] = False
         return self.node_base(*args, **kwargs)
 
     def orient(self, *args, **kwargs):
-        self.define_constraints(point=False, scale=False, parent=False, orient=True)
+        kwargs['point'] = False
+        kwargs['scale'] = False
+        kwargs['parent'] = False
+        kwargs['orient'] = True
         return self.node_base(*args, **kwargs)
 
     def define_constraints(self, **kwargs):
@@ -56,8 +68,13 @@ class Constraint(creatorsBase.CreatorsBase):
         if scale:
             self.constraint_type.append(pm.scaleConstraint)
 
-    def constraint(self, *args, **kwargs):
-        print args[0]
+    def _constraint(self, *args, **kwargs):
+        point = kwargs.pop('point', False)
+        scale = kwargs.pop('scale', True)
+        parent = kwargs.pop('parent', True)
+        orient = kwargs.pop('orient', False)
+        self.define_constraints(point=point, scale=scale, parent=parent, orient=orient)
+
         if args[0].__class__ is list:
             name = kwargs.pop('name', self.name_convention.get_a_short_name(args[0][0]))
         else:
@@ -69,20 +86,20 @@ class Constraint(creatorsBase.CreatorsBase):
             self.name_convention.rename_name_in_format(new_constraint, name=name)
         return constraints_list
 
-    def constraint_different_len_lists(self, drivers, driven, **kwargs):
+    def _constraint_different_len_lists(self, drivers, driven, **kwargs):
         step_constraint = (float(len(drivers)) - 1.0) / (len(driven) - 1)
         for index, each in enumerate(driven):
             constraint_weight_value = step_constraint * index
             if int(constraint_weight_value) and constraint_weight_value % int(constraint_weight_value) == 0:
-                self.constraint(drivers[int(constraint_weight_value)], each, w=1.0, **kwargs)
+                self._constraint(drivers[int(constraint_weight_value)], each, w=1.0, **kwargs)
             else:
                 if constraint_weight_value >= 1:
                     print constraint_weight_value
                     constraint_value = constraint_weight_value % int(constraint_weight_value)
                 else:
                     constraint_value = constraint_weight_value
-                self.constraint(drivers[int(constraint_weight_value)], each, w=1.0 - constraint_value, **kwargs)
-                self.constraint(drivers[int(constraint_weight_value) + 1], each, w=constraint_value, **kwargs)
+                self._constraint(drivers[int(constraint_weight_value)], each, w=1.0 - constraint_value, **kwargs)
+                self._constraint(drivers[int(constraint_weight_value) + 1], each, w=constraint_value, **kwargs)
 
 
 if __name__ == '__main__':

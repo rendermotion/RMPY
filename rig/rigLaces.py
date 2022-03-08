@@ -4,16 +4,13 @@ from RMPY.rig import rigBase
 
 from RMPY.rig import rigObjectsOnCurve
 from RMPY.rig import rigControlsForPoints
-reload(rigObjectsOnCurve)
-reload(rigControlsForPoints)
 
 
 class RigLacesModel(rigBase.BaseModel):
     def __init__(self):
         super(RigLacesModel, self).__init__()
         self.clusters = None
-        self.up_vector = rigControlsForPoints.RigControlsForPoints()
-        self.rig_main_controls = rigControlsForPoints.RigControlsForPoints()
+        self.up_vector = None
 
         self.curve = None
         self.up_vector_curve = None
@@ -31,7 +28,7 @@ class RigLacesModel(rigBase.BaseModel):
 
 class RigLaces(rigBase.RigBase):
     def __init__(self, *args, **kwargs):
-        kwargs['model']=kwargs.pop('model', RigLacesModel())
+        kwargs['model'] = kwargs.pop('model', RigLacesModel())
         super(RigLaces, self).__init__(*args, **kwargs)
         self.clusters = []
         self.rig_outputs = None
@@ -63,6 +60,8 @@ class RigLaces(rigBase.RigBase):
 
     @property
     def up_vector(self):
+        if not self._model.up_vector:
+            self._model.up_vector = rigControlsForPoints.RigControlsForPoints(rig_system=self.rig_system)
         return self._model.up_vector
 
     @property
@@ -118,7 +117,7 @@ class RigLaces(rigBase.RigBase):
         cluster_nodes, self.clusters = self.create.cluster.curve_base(self.curve)
         rig_objects_on_curve = rigObjectsOnCurve.RigObjectsOnCurve(self.curve,
                                                                    number_of_nodes=joint_number,
-                                                                   up_vector_type="object")
+                                                                   up_vector_type="object", rig_system=self.rig_system)
         joints_group = pm.group(empty=True, name="skinJoints")
         clusters_group = pm.group(empty=True, name='clusters')
 
@@ -127,6 +126,7 @@ class RigLaces(rigBase.RigBase):
         pm.parent(joints_group, self.rig_system.joints)
         for eachJoint in rig_objects_on_curve.joints:
             pm.parent(eachJoint, joints_group)
+            self.joints.append(eachJoint)
             self.rig_system.settings.worldScale >> eachJoint.scaleX
             self.rig_system.settings.worldScale >> eachJoint.scaleY
             self.rig_system.settings.worldScale >> eachJoint.scaleZ
@@ -137,7 +137,8 @@ class RigLaces(rigBase.RigBase):
         create_controls = rigControlsForPoints.RigControlsForPoints()
         create_controls.create_point_base(*self.clusters, name='controls', **kwargs)
 
-        self.controls = create_controls.controls
+        self._model.controls = create_controls.controls
+        self._model.reset_controls = create_controls.reset_controls
 
         self.up_vector.create_point_base(rig_objects_on_curve.up_vector,
                                          name="upVector", **kwargs)
@@ -175,11 +176,13 @@ class RigLaces(rigBase.RigBase):
         controls_group = pm.group(empty=True, name='laceControls')
         # self.name_convention.rename_name_in_format(controls_group, name='laceControls')
 
-        create_controls = rigControlsForPoints.RigControlsForPoints()
+        create_controls = rigControlsForPoints.RigControlsForPoints(rig_system=self.rig_system)
         create_controls.create_point_base(*self.clusters, name="control", **kwargs)
 
         controls_group.setParent(self.rig_system.controls)
         self.name_convention.rename_name_in_format([str(controls_group), str(self.clusters_parent)], useName=True)
+        self._model.reset_controls = create_controls.reset_controls
+        self._model.controls = create_controls.controls
         for index, eachControl in enumerate(create_controls.reset_controls):
             if not fk_controls:
                 pm.parent(eachControl, controls_group)

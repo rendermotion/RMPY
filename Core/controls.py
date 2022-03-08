@@ -122,9 +122,9 @@ def mirror_selection():
 
 if __name__ == '__main__':
     selection = pm.ls(selection=True)
-    color_now_all_ctrls()
+    # color_now_all_ctrls(*selection)
     # mirror_controls(*selection)
-    # transfer_curve(*selection, world_space=False)
+    transfer_curve(*selection, world_space=False)
     # transfer_curve_by_selection()
     # mirror_selection()
-    # mirror_shape(*selection, scale_vector=[1, -1, 1])
+    # mirror_shape(*selection, scale_vector=[-1, 1, 1])

@@ -65,6 +65,6 @@ class RigSpine(rigBase.RigBase):
 
 if __name__ == '__main__':
     rig_spine = RigSpine()
-    spine_points = [u'C_Spine01_reference_pnt', u'C_Spine02_reference_pnt', u'C_Spine03_reference_pnt',
-                    u'C_Spine04_reference_pnt', u'C_Spine05_reference_pnt']
+    spine_points = [u'C_spine01_reference_pnt', u'C_spine02_reference_pnt', u'C_spine03_reference_pnt',
+                    u'C_spine04_reference_pnt', u'C_spine05_reference_pnt']
     rig_spine.create_point_base(*spine_points)

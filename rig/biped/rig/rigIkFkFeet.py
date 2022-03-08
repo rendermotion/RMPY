@@ -1,4 +1,4 @@
-from RMPY.rig.biped.rig_parts import reverseFeet
+from RMPY.rig.biped.rig import reverseFeet
 import pymel.core as pm
 from RMPY.rig import rigFK
 from RMPY.rig import constraintSwitch
@@ -45,8 +45,13 @@ class IkFkFeet(constraintSwitch.ConstraintSwitch):
 
 
 if __name__ == '__main__':
-    reference_root = pm.ls(u'L_ankleFeet01_reference_pnt', u'L_ball01_reference_pnt', u'L_toe01_reference_pnt',
-                           u'L_footLimitBack01_reference_pnt', u'L_footLimitOuter01_reference_pnt',
-                           u'L_footLimitInner01_reference_pnt')
+    reference_points_quadruped = pm.ls(u'L_paw00_reference_pnt', u'L_pawRoll00_reference_pnt',
+                                       u'L_pawToe00_reference_pnt',
+                                       u'L_footLimitBack00_reference_pnt', u'L_footLimitOuter00_reference_pnt',
+                                       u'L_footLimitInner00_reference_pnt')
+
+    reference_root = pm.ls(u'L_ankleFeet01_reference_pnt', u'L_ball01_reference_pnt',
+                                       u'L_toe01_reference_pnt', u'L_footLimitBack01_reference_pnt',
+                                       u'L_footLimitOuter01_reference_pnt', u'L_footLimitInner01_reference_pnt')
     reverse_feet = IkFkFeet()
-    reverse_feet.create_point_base(*reference_root, control='nurbsCircle1')
+    reverse_feet.create_point_base(*reference_points_quadruped, control='nurbsCircle1')
