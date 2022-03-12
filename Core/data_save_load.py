@@ -87,29 +87,32 @@ def load_skin_cluster(*args):
 
 def export_maya_file(**kwargs):
     file_name = kwargs.pop('file_name', 'reference_points')
-    full_path = '{}/mayaFiles'.format(config.file_path)
+    full_path = '{}/mayaFiles'.format(config.output.file_path)
     pm.exportSelected('{}/{}.ma'.format(full_path, file_name))
 
 
 def import_maya_file(file_name):
-    full_path = '{}/mayaFiles'.format(config.file_path)
-    pm.importFile('{}/{}.ma'.format(full_path, file_name))
+    full_path = '{}/mayaFiles'.format(config.output.file_path)
+    print full_path
+    print '{}/{}.ma'.format(full_path, file_name)
+    pm.importFile('{}/{}'.format(full_path, file_name))
 
 
 def import_all_available_maya_files():
     for each in available_maya_files():
+        print each
         import_maya_file(each)
 
 
 def available_maya_files():
-    full_path = '{}/mayaFiles'.format(config.file_path)
+    full_path = '{}/mayaFiles'.format(config.output.file_path)
     available_files = []
     for each in os.listdir(full_path):
-        if '.ma' in each:
+        if '.ma' in each or '.mb' in each:
             available_files.append(each)
-    return each
+    return available_files
 
 
 if __name__ == '__main__':
-    load_skin_cluster()
+    print import_all_available_maya_files()
 

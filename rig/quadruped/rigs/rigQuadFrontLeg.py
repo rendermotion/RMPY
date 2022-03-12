@@ -2,7 +2,6 @@ from RMPY.rig.quadruped.rigs import rigIKQuadLegFeet
 from RMPY.rig import rigSingleJoint
 from RMPY.rig import rigBase
 
-
 class QuadFrontLegModel(rigBase.BaseModel):
     def __init__(self):
         super(QuadFrontLegModel, self).__init__()
@@ -16,6 +15,7 @@ class RigQuadFrontLeg(rigBase.RigBase):
         super(RigQuadFrontLeg, self).__init__(*args, **kwargs)
         self._model.shoulder = rigSingleJoint.RigSingleJoint()
         self._model.leg = rigIKQuadLegFeet.RigIKQuadLegFeet()
+        self.root = None
 
     @property
     def shoulder(self):
@@ -30,6 +30,9 @@ class RigQuadFrontLeg(rigBase.RigBase):
         self.shoulder.create_point_base(args[0])
         self.leg.create_point_base(*args[1:])
         self.leg.set_parent(self.shoulder)
+        self.root = self.shoulder.reset_controls[0]
+        self.joints.extend(self.shoulder.joints)
+        self.joints.extend(self.leg.joints)
 
 
 if __name__ == '__main__':

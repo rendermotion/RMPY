@@ -210,14 +210,14 @@ class Main(MayaQWidgetDockableMixin, QDialog):
             cmds.select(g.text(), add=True)
 
     @staticmethod
-    def SCCombineButtonPressed(self):
+    def SCCombineButtonPressed():
         mel_script = 'source RMRigShapeControls.mel;\n'
         mel_script += 'string $temp[]=`ls -sl`;\n'
         mel_script += 'turn_to_one $temp;\n'
         mel.eval(mel_script)
 
     @staticmethod
-    def transfer_attributes(self):
+    def transfer_attributes():
         mel_script = 'source RMAttributes.mel;\n'
         mel_script += 'string $temp[] = `ls - sl`;\n'
         mel_script += ' TransferAllAttr $temp[0] $temp[1];\n'

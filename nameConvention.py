@@ -60,7 +60,7 @@ class validator(object):
 
 
 def validate_input_nodes(nodes):
-    if type(nodes) == list:
+    if type(nodes) == list or type(nodes) == tuple:
         return [str(str_node) for str_node in nodes]
     return str(nodes)
 
@@ -79,7 +79,7 @@ class NameConvention(object):
                            'objectType': ['jnt', 'sknjnt', 'nub', 'skn', 'UDF', 'shp', 'msh', 'rmsh', 'grp', 'pnc',
                                           'orc', 'prc', 'scc', 'pvc', 'ctr', 'pnt', 'ikh', 'ikf', 'rvs', 'mult', 'cnd',
                                           'blt', 'cui', 'dbtw', 'cls', 'clsh', 'pma', 'b2a', 'mph', 'ffd', 'bs', 'aim',
-                                          'cfme', 'lft', 'psfi', 'guide', 'unc', 'skn', 'dmx', 'mmx']}
+                                          'cfme', 'lft', 'psfi', 'guide', 'unc', 'skn', 'dmx', 'mmx', 'nrb', 'ffm','vcp']}
         self.translator = {'objectType': {
             "joint": "jnt",
             "skinjoint": "sknjnt",
@@ -120,7 +120,10 @@ class NameConvention(object):
             "curveFromMeshEdge": "cfme",
             "loft": "lft",
             "pointOnSurfaceInfo": "psfi",
-            "skinCluster": 'skn'
+            "skinCluster": 'skn',
+            'fourByFourMatrix': 'ffm',
+            'vectorProduct': 'vcp',
+            'NurbsSurface': 'nrb'
         },
             'side': {'left': 'L', 'right': 'R', 'center': 'C'}
         }
@@ -130,7 +133,8 @@ class NameConvention(object):
             "mesh": "msh",
             'clusterHandle': 'clsh',
             "baseLattice": "blt",
-            "locator": "loc"
+            "locator": "loc",
+            'NurbsSurface': 'nrb'
         }
         self.default_names = {}
         for eachName in self.name_convention.keys():
@@ -273,42 +277,36 @@ class NameConvention(object):
         for eachToken in self.name_convention:
             nameDic[eachToken] = self.token_validation(nameDic[eachToken], eachToken)
 
-        returnName = []
+        return_name = []
         for keys in sorted(self.name_convention, key=self.name_convention.get):
-            returnName.append(nameDic[keys])
-        ReturnNameInFormat = "_".join(returnName)
-        return self.unique_name(ReturnNameInFormat)
+            return_name.append(nameDic[keys])
+        return_name_in_format = "_".join(return_name)
+        return self.unique_name(return_name_in_format)
 
-    def rename_name_in_format(self, current_name, **wantedNameDic):
-        useName = wantedNameDic.pop('useName', False)
-        current_name = validate_input_nodes(current_name)
-        NewNameArray = ()
-        NameList = []
-        if type(current_name) == list:
-            NameList = current_name
-        elif type(current_name) in [str, unicode]:
-            NameList = [current_name]
-        else:
-            print 'Error no Valid type on RMRenameNameInFromat should be string or list'
-
-        for Names in NameList:
-            NameTokens = Names.split("_")
-            NewName = ""
-            for eachToken in NameTokens:
-                NewName += eachToken
+    def rename_name_in_format(self, *current_name, **wanted_name_dictionary):
+        useName = wanted_name_dictionary.pop('useName', False)
+        string_name_list = validate_input_nodes(current_name)
+        new_name_array = ()
+        for each_object in string_name_list:
+            name_tokens = each_object.split("_")
+            new_name = ""
+            for eachToken in name_tokens:
+                new_name += eachToken
             if useName:
-                wantedNameDic['name'] = self.remove_namespace(NewName)
-            NewName = self.set_name_in_format(**wantedNameDic)
-            Names = cmds.rename(Names, NewName)
-            if 'objectType' not in wantedNameDic:
-                NewNameArray += tuple([self.rename_guess_type_in_name(Names)])
-            else:
-                Token = self.token_validation(wantedNameDic['objectType'], 'objectType')
-                NewNameArray += tuple([self.rename_set_from_name(Names, Token, 'objectType')])
+                wanted_name_dictionary['name'] = self.remove_namespace(new_name)
 
-        if len(NewNameArray) == 1:
-            return NewNameArray[0]
-        return NewNameArray
+            if 'objectType' not in wanted_name_dictionary:
+                wanted_name_dictionary['objectType'] = self.guess_object_type(each_object)
+
+            wanted_name_dictionary['objectType'] = self.token_validation(wanted_name_dictionary['objectType'], 'objectType')
+
+            new_name = self.set_name_in_format(**wanted_name_dictionary)
+            cmds.rename(each_object, new_name)
+            new_name_array += tuple([new_name])
+
+        if len(new_name_array) == 1:
+            return new_name_array[0]
+        return new_name_array
 
     def is_name_in_format(self, obj_name):
         obj_name = validate_input_nodes(obj_name)
@@ -435,6 +433,8 @@ class NameConvention(object):
 
 
 if __name__ == '__main__':
+    import pymel.core as pm
+    locator = pm.ls('locator1')[0]
     name_convention = NameConvention()
-    name_convention.rename_name_in_format('C_hola00_rig_grp', name='hello')
+    name_convention.rename_name_in_format(locator)
     # name_convention.set_defaults_from_name('L_main_now_msh', side=True, name=True, system=True, objectType=True)

@@ -23,13 +23,18 @@ class RigEnumSpaceSwitch(rigEnumSwitch.RigEnumSwitch):
             kwargs['model'] = RigEnumSpaceSwitchModel()
         super(RigEnumSpaceSwitch, self).__init__(*spaces, **kwargs)
 
-        self.constraints = dict(parent=kwargs.pop('parent', True),
-                                point=kwargs.pop('point', False),
-                                orient=kwargs.pop('orient', False),
-                                scale=kwargs.pop('scale', False))
+        if self.create.constraint._user_request_redefine_constraints(**kwargs):
+            self.constraints = dict(parent=kwargs.pop('parent', False),
+                                    point=kwargs.pop('point', False),
+                                    orient=kwargs.pop('orient', False),
+                                    scale=kwargs.pop('scale', False))
+            self.create.constraint.default_constraints = self.constraints
+        else:
+            self.create.constraint.default_constraints = {'parent': True, 'scale': True}
+
         self._model.spaces = spaces
         self._model.alias_list = kwargs.pop('alias_list', [])
-        self.constraint = constraint.Constraint(**self.constraints)
+        # self.constraint = constraint.Constraint(**self.constraints)
 
     @property
     def space_rigs_dict(self):
@@ -69,10 +74,11 @@ class RigEnumSpaceSwitch(rigEnumSwitch.RigEnumSwitch):
         :return:
         """
         self.set_spaces(scene_transform)
+        offset = self.create.group.point_base(scene_transform, name='spaceSwitchOffset')
         if not self.switch:
             self.set_switches()
         for each_space_rig in self.space_rigs_dict[scene_transform]:
-            constraints = self.constraint.node_base(each_space_rig.tip, scene_transform, **kwargs)
+            constraints = self.create.constraint.node_base(each_space_rig.tip, offset, **kwargs)
         self.connect_constraint(*constraints)
 
     def connect_constraint(self, *constraint_nodes):

@@ -9,7 +9,6 @@ class IKQuadLegModel(rigBase.BaseModel):
     def __init__(self):
         super(IKQuadLegModel, self).__init__()
         self.rig_ik_leg = None
-        self.rig_fk_palm = None
         self.rig_leg_palm = None
         self.root_controls = None
 
@@ -117,6 +116,7 @@ if __name__ == '__main__':
     leg_root_points = pm.ls([each.format('R') for each in leg_root_points])
     quad_leg = IKQuadLeg()
     quad_leg.create_point_base(*leg_root_points)
+    quad_leg.rename_as_skinned_joints()
 
 
 

@@ -28,7 +28,7 @@ class RigClustersOnCurve(rigBase.RigBase):
             for i in range(0, (degree + spans)):
                 cluster_node, cluster_transform = pm.cluster(master_curve + ".cv[" + str(i) + "]",
                                                              name='ClusterOnCurve')
-                self.name_convention.rename_name_in_format([str(cluster_node), str(cluster_transform)], useName=True)
+                self.name_convention.rename_name_in_format(cluster_node, cluster_transform, useName=True)
                 if mode == "multi":
                     self.add_to_cluster(i, curve[1:], cluster_node)
                 cluster_list.append(cluster_transform)

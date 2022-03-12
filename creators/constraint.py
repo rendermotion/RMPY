@@ -6,7 +6,12 @@ class Constraint(creatorsBase.CreatorsBase):
     def __init__(self, *args, **kwargs):
         super(Constraint, self).__init__(*args, **kwargs)
         self.constraint_type = []
-        self.define_constraints(**kwargs)
+        if self._user_request_redefine_constraints():
+            self.default_constraints = kwargs
+            self.define_constraints(**self.default_constraints)
+        else:
+            self.default_constraints = {'parent': True, 'scale': True}
+            self.define_constraints(**self.default_constraints)
 
     def node_base(self, *args, **kwargs):
         super(Constraint, self).node_base(*args, **kwargs)
@@ -54,10 +59,10 @@ class Constraint(creatorsBase.CreatorsBase):
         return self.node_base(*args, **kwargs)
 
     def define_constraints(self, **kwargs):
-        parent = kwargs.pop('parent', True)
+        parent = kwargs.pop('parent', False)
         point = kwargs.pop('point', False)
         orient = kwargs.pop('orient', False)
-        scale = kwargs.pop('scale', True)
+        scale = kwargs.pop('scale', False)
         self.constraint_type = []
         if parent:
             self.constraint_type.append(pm.parentConstraint)
@@ -68,13 +73,21 @@ class Constraint(creatorsBase.CreatorsBase):
         if scale:
             self.constraint_type.append(pm.scaleConstraint)
 
-    def _constraint(self, *args, **kwargs):
-        point = kwargs.pop('point', False)
-        scale = kwargs.pop('scale', True)
-        parent = kwargs.pop('parent', True)
-        orient = kwargs.pop('orient', False)
-        self.define_constraints(point=point, scale=scale, parent=parent, orient=orient)
+    @staticmethod
+    def _user_request_redefine_constraints(**kwargs):
+        if 'point' in kwargs.keys() or 'scale'in kwargs.keys() or 'parent' in kwargs.keys() or 'orient' in kwargs.keys():
+            return True
+        return False
 
+    def _constraint(self, *args, **kwargs):
+        if self._user_request_redefine_constraints(**kwargs):
+            point = kwargs.pop('point', False)
+            scale = kwargs.pop('scale', False)
+            parent = kwargs.pop('parent', False)
+            orient = kwargs.pop('orient', False)
+            self.define_constraints(point=point, scale=scale, parent=parent, orient=orient)
+        else:
+            self.define_constraints(**self.default_constraints)
         if args[0].__class__ is list:
             name = kwargs.pop('name', self.name_convention.get_a_short_name(args[0][0]))
         else:
@@ -94,7 +107,6 @@ class Constraint(creatorsBase.CreatorsBase):
                 self._constraint(drivers[int(constraint_weight_value)], each, w=1.0, **kwargs)
             else:
                 if constraint_weight_value >= 1:
-                    print constraint_weight_value
                     constraint_value = constraint_weight_value % int(constraint_weight_value)
                 else:
                     constraint_value = constraint_weight_value

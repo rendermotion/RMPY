@@ -12,6 +12,7 @@ def build():
                                                    attribute_name='secondary_controls')
     for each in pm.ls(bendis):
         rig_boool_switch.attribute_output >> each.visibility
+
 def pole_vectors_visibility():
     pole_vector = [u'L_twistOrigin00_clavicle_grp', u'L_twistOrigin00_leg_grp', u'L_twistOrigin00_shoulder_grp',
      u'L_twistOrigin01_leg_grp', u'R_twistOrigin00_clavicle_grp', u'R_twistOrigin00_leg_grp',

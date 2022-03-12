@@ -7,32 +7,6 @@ import maya.api.OpenMaya as om
 import math
 
 
-''' class SpaceLocator(creatorsBase.CreatorsBase):
-    def __init__(self, *args):
-        super(SpaceLocator, self).__init__(*args)
-        self.name_conventionention.default_names['system'] = 'reference'
-
-    def create_vertex_base(self, *vertex_list):
-        position = []
-        for each in vertex_list:
-            if each.__class__ == pm.general.MeshVertex:
-                for each_vtx in each:
-                    position.append(each_vtx.getPosition(space='world'))
-            else:
-                print each.__class__
-        new_space_locator = pm.spaceLocator()
-        self.name_conventionention.rename_name_in_format(new_space_locator)
-        new_space_locator.translate.set(RMRigTools.average(*position))
-
-    def point_base(self, *point_list):
-        for each in point_list:
-            position = dataValidators.as_vector(each)
-            new_locator = pm.spaceLocator()
-            self.name_conventionention.rename_name_in_format(new_locator)
-            new_locator.translate.set([position[0], position[1], position[2]])
-'''
-
-
 class SpaceLocator(creatorsBase.CreatorsBase):
     def __init__(self, *args, **kwargs):
         super(SpaceLocator, self).__init__(*args, **kwargs)
@@ -191,9 +165,9 @@ class SpaceLocator(creatorsBase.CreatorsBase):
 
 if __name__ == '__main__':
     # selection = pm.ls('C_line_arm_SHP')
-    root = pm.ls(selection=True)
+    # root = pm.ls(selection=True)
     space_locator = SpaceLocator()
-    space_locator.in_between_points(root[0], root[1], 10)
+    space_locator.point_base(*pm.ls('C_clusterOnCurve06_spine_grp'))
     # selection = pm.ls(selection=True)
     # space_locator.curve_base(*selection, name='arm')
 

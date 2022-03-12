@@ -29,7 +29,6 @@ class Controls(creatorsBase.CreatorsBase):
 
         if object_type == 'box':
             for each in points:
-                print each
                 controls_list.append(self.create_box_ctrl(each, **kwargs))
 
         elif object_type == 'circular':
@@ -136,7 +135,7 @@ class Controls(creatorsBase.CreatorsBase):
         # else:
         #    self.name_convention.rename_based_on_base_name(Obj, control, name=control)
 
-        self.name_convention.rename_name_in_format(control, objectType = control)
+        self.name_convention.rename_name_in_format(control, objectType='control')
         # self.name_convention.rename_set_from_name(control, "control", "objectType")
 
         transform.align(Obj, control)

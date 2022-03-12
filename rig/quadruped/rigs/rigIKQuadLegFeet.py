@@ -1,9 +1,6 @@
-from RMPY.rig import rigIKFK
-from RMPY.rig.biped.rig import rigIkFkFeet
 from RMPY.rig import rigBase
 from RMPY.rig.biped.rig import reverseFeet
 from RMPY.rig.quadruped.rigs import rigIKQuadLeg
-reload(rigIKQuadLeg)
 
 
 class RigIKQuadLegFeetModel(rigBase.BaseModel):
@@ -40,8 +37,7 @@ class RigIKQuadLegFeet(rigBase.RigBase):
         :param kwargs: no kwargs expected
         :return:
         """
-        print points[:4]
-        print points[3:]
+
         self._model.leg = rigIKQuadLeg.IKQuadLeg(rig_system=self.rig_system)
         self._model.feet = reverseFeet.RigReverseFeet(rig_system=self.rig_system)
 
@@ -57,12 +53,14 @@ class RigIKQuadLegFeet(rigBase.RigBase):
 
         self.create.constraint.node_base(self.leg.tip, self.feet.attachment_ik_leg, mo=True)
 
+        self.create.constraint.node_base(self.leg.controls_dict['ikHandle'], self.feet.reset_controls[0], mo=True)
+
         self.attach_points['root'] = self.leg.root
         self.attach_points['tip'] = self.feet.tip
 
         # self.create.constraint.orient(self.feet.joints[0], self.leg.joints[-1], mo=True)
         # self.create.constraint.define_constraints(point=False, scale=True, parent=True, orient=False)
-
+        self.joints.extend(self.leg.joints[:-1])
         self.joints.extend(self.feet.joints)
 
 
@@ -79,4 +77,5 @@ if __name__ == '__main__':
 
     rig_leg_ik_fk = RigIKQuadLegFeet()
     rig_leg_ik_fk.create_point_base(*root_points)
+    rig_leg_ik_fk.rename_as_skinned_joints()
 

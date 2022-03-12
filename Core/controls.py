@@ -54,21 +54,47 @@ def transfer_curve(source, destination, world_space=True):
     by connecting the worldspace from the source to the create input of the destination.
     And then the cvs are placed on the right position in worldspace
     '''
-    source.worldSpace[0] >> destination.create
-    source.worldSpace[0] // destination.create
 
-    if world_space:
-        for source_cv, destination_cv in zip(source.cv, destination.cv):
-            destination_cv.setPosition(source_cv.getPosition(space='world'), space='world')
-    else:
-        for source_cv, destination_cv in zip(source.cv, destination.cv):
-            destination_cv.setPosition(source_cv.getPosition(space='object'), space='object')
+    match_number_of_shapes(source, destination)
+
+    for shape_source, shape_destination in zip(object_valid_shapes(source), object_valid_shapes(destination)):
+
+        shape_source.worldSpace[0] >> shape_destination .create
+        shape_source.updateCurve()
+
+        if world_space:
+            for source_cv, destination_cv in zip(shape_source.cv, shape_destination.cv):
+                destination_cv.setPosition(source_cv.getPosition(space='world'), space='world')
+        else:
+            for source_cv, destination_cv in zip(shape_source.cv, shape_destination.cv):
+                destination_cv.setPosition(source_cv.getPosition(space='object'), space='object')
+
+        shape_source.worldSpace[0] // shape_destination.create
 
 
 def transfer_curve_by_selection():
     selection = pm.ls(selection=True)
-    for each in selection[1:]:
-        transfer_curve(selection[0], each, world_space=False)
+    for each_object in selection[1:]:
+        transfer_curve(selection[0], each_object, world_space=False)
+
+
+def object_valid_shapes(scene_object):
+    object_shapes = []
+    for each_shape in scene_object.getShapes():
+        if not each_shape.intermediateObject.get():
+            object_shapes.append(each_shape)
+
+    return object_shapes
+
+
+def match_number_of_shapes(source, destination):
+    number_of_shapes = len(object_valid_shapes(source)) - len(object_valid_shapes(destination))
+    if number_of_shapes > 0:
+        for each in range(number_of_shapes):
+            pm.createNode('nurbsCurve', parent=destination)
+
+    if number_of_shapes < 0:
+        pm.delete(object_valid_shapes(destination)[number_of_shapes:])
 
 
 def mirror_shape(*shapes, **kwargs):
@@ -120,11 +146,20 @@ def mirror_selection():
     mirror_controls(*selection)
 
 
+def add_nurbs_curve_shape(scene_object):
+    pm.createNode()
+    scene_object
+
+
 if __name__ == '__main__':
     selection = pm.ls(selection=True)
     # color_now_all_ctrls(*selection)
     # mirror_controls(*selection)
-    transfer_curve(*selection, world_space=False)
+    # get_same_number_of_shapes(*selection)
+    # print selection[0].getShapes()
+    # shapes = object_valid_shapes(selection[0])
+    # match_number_of_shapes(selection[0], selection[1])
+    transfer_curve_by_selection()
     # transfer_curve_by_selection()
     # mirror_selection()
     # mirror_shape(*selection, scale_vector=[-1, 1, 1])

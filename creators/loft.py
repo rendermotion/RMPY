@@ -6,9 +6,9 @@ from RMPY.creators import curve
 from RMPY.creators import spaceLocator
 
 
-class Creator(creatorsBase.CreatorsBase):
+class Loft(creatorsBase.CreatorsBase):
     def __init__(self, *args, **kwargs):
-        super(Creator, self).__init__(*args, **kwargs)
+        super(Loft, self).__init__(*args, **kwargs)
         self.path = None
         self.skin_surface = None
         self.surface_radius = None
@@ -17,11 +17,10 @@ class Creator(creatorsBase.CreatorsBase):
         self.locator_creator = spaceLocator.SpaceLocator()
 
     def point_base(self, *points, **kwargs):
-        super(Creator, self).point_base(*points, **kwargs)
-        radius = kwargs.pop('radius', 1)
+        super(Loft, self).point_base(*points, **kwargs)
         delete_history = kwargs.pop('delete_history', True)
+        self.path = self.curve_creator.point_base(*pm.ls(points), ep=True)
 
-        self.path = self.curve_creator.point_base(*points, ep=True)
         self._create_profile(**kwargs)
 
         original_surf = pm.extrude(self.profile, self.path, fixedPath=True,
@@ -51,7 +50,6 @@ class Creator(creatorsBase.CreatorsBase):
 
     def curve_base(self, *path, **kwargs):
         swap_uv = kwargs.pop('swap_uv', True)
-        radius = kwargs.pop('radius', 1)
         delete_history = kwargs.pop('delete_history', False)
         self.path = path[0]
         self._create_profile(**kwargs)
@@ -76,7 +74,7 @@ class Creator(creatorsBase.CreatorsBase):
     def delete_history(self):
         pm.delete(self.skin_surface, constructionHistory=True)
         pm.delete(self.path)
-        pm.delete(self.circle)
+        pm.delete(self.profile)
 
     def uniform_rebuild(self, number_of_points):
         rebuild_surf = pm.rebuildSurface(self.skin_surface, rebuildType=0,
@@ -100,7 +98,7 @@ class Creator(creatorsBase.CreatorsBase):
 
 if __name__ == '__main__':
     selection = pm.ls(selection=True)
-    nurbs_surface = Creator()
+    nurbs_surface = Loft()
     nurbs_surface.curve_base(selection, type='line')
     #nurbs_surface.point_base(*selection, ep=True, delete_history=False)
     #nurbs_surface.uniform_rebuild(10)'''

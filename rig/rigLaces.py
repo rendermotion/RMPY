@@ -82,12 +82,11 @@ class RigLaces(rigBase.RigBase):
 
     def create_point_base(self, *points, **kwargs):
         super(RigLaces, self).create_point_base(*points)
-
+        points = self.rm.dataValidators.as_pymel_nodes(points)
         controls_number = kwargs.pop('controls_number', len(points))
         joint_number = kwargs.pop('joint_number', controls_number*2)
         periodic = kwargs.pop('periodic', False)
         single_orient_object = kwargs.pop('single_orient_object', False)
-
         curve = self.create.curve.point_base(*points, periodic=periodic, ep=True)
 
         self.name_convention.set_from_name(curve, 'laceCurve', 'name')
@@ -121,7 +120,7 @@ class RigLaces(rigBase.RigBase):
         joints_group = pm.group(empty=True, name="skinJoints")
         clusters_group = pm.group(empty=True, name='clusters')
 
-        self.name_convention.rename_name_in_format([str(joints_group), str(clusters_group)], useName=True)
+        self.name_convention.rename_name_in_format(joints_group, clusters_group, useName=True)
         pm.parent(clusters_group, self.rig_system.kinematics)
         pm.parent(joints_group, self.rig_system.joints)
         for eachJoint in rig_objects_on_curve.joints:
@@ -180,7 +179,7 @@ class RigLaces(rigBase.RigBase):
         create_controls.create_point_base(*self.clusters, name="control", **kwargs)
 
         controls_group.setParent(self.rig_system.controls)
-        self.name_convention.rename_name_in_format([str(controls_group), str(self.clusters_parent)], useName=True)
+        self.name_convention.rename_name_in_format(controls_group, self.clusters_parent, useName=True)
         self._model.reset_controls = create_controls.reset_controls
         self._model.controls = create_controls.controls
         for index, eachControl in enumerate(create_controls.reset_controls):
@@ -209,8 +208,10 @@ class RigLaces(rigBase.RigBase):
 
 
 if __name__ == '__main__':
-    rope_root = pm.ls('C_rope00_reference_grp')[0]
+    rope_root = pm.ls(u'C_tail00_reference_pnt', u'C_tail01_reference_pnt', u'C_tail02_reference_pnt',
+                      u'C_tail03_reference_pnt', u'C_tail04_reference_pnt', u'C_tail05_reference_pnt')
     laces_rig = RigLaces()
-    laces_rig.create_point_base(*rope_root.getChildren(),
+    laces_rig.create_point_base(u'C_tail00_reference_pnt', u'C_tail01_reference_pnt', u'C_tail02_reference_pnt',
+                                u'C_tail03_reference_pnt', u'C_tail04_reference_pnt', u'C_tail05_reference_pnt',
                                 single_orient_object=False,
                                 offset_axis='y', centered=True, world_align=True)

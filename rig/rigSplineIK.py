@@ -44,10 +44,9 @@ class RigSplineIK(rigBase.RigBase):
         super(RigSplineIK, self).create_point_base(*args, **kwargs)
         self._model.reset_joints, self._model.joints = self.create.joint.point_base(*args, orient_type='point_orient')
         self._model.curve = kwargs.pop('curve', None)
-
+        stretchy_ik = kwargs.pop('stretchy_ik', True)
         if not self.curve:
             self.curve = self.create.curve.point_base(*pm.ls(args), ep=True)
-
         self._model.ik, self._model.effector,  = pm.ikHandle(startJoint=self.joints[0],
                                                              endEffector=self.joints[-1],
                                                              createCurve=False,
@@ -56,10 +55,12 @@ class RigSplineIK(rigBase.RigBase):
                                                              solver="ikSplineSolver",
                                                              name="splineIK")
 
-        self.name_convention.rename_name_in_format([self.ik, self.effector, self.curve])
+        self.name_convention.rename_name_in_format(self.ik, self.effector, self.curve)
         self.reset_joints.setParent(self.rig_system.joints)
         self.curve.setParent(self.rig_system.kinematics)
         self.ik.setParent(self.rig_system.kinematics)
+        if stretchy_ik:
+            self.stretchy_ik()
 
     def stretchy_ik(self):
         new_curve_info = pm.createNode('curveInfo')
