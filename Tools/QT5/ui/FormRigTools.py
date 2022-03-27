@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'UI_RigTools.ui'
 #
-# Created: Thu Sep  9 23:13:52 2021
+# Created: Tue Mar 15 20:23:49 2022
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -51,9 +51,9 @@ class Ui_Form(object):
         self.locator_at_average_btn = QtWidgets.QPushButton(self.groupBox_4)
         self.locator_at_average_btn.setObjectName("locator_at_average_btn")
         self.verticalLayout_14.addWidget(self.locator_at_average_btn)
-        self.pushButton = QtWidgets.QPushButton(self.groupBox_4)
-        self.pushButton.setObjectName("pushButton")
-        self.verticalLayout_14.addWidget(self.pushButton)
+        self.selection_at_average_btn = QtWidgets.QPushButton(self.groupBox_4)
+        self.selection_at_average_btn.setObjectName("selection_at_average_btn")
+        self.verticalLayout_14.addWidget(self.selection_at_average_btn)
         self.create_locators_at_nodes_btn = QtWidgets.QPushButton(self.groupBox_4)
         self.create_locators_at_nodes_btn.setObjectName("create_locators_at_nodes_btn")
         self.verticalLayout_14.addWidget(self.create_locators_at_nodes_btn)
@@ -208,7 +208,7 @@ class Ui_Form(object):
         self.groupBox_4.setTitle(QtWidgets.QApplication.translate("Form", "Create Locators", None, -1))
         self.locator_at_average_btn.setToolTip(QtWidgets.QApplication.translate("Form", "select some vertex or objects and a locator will be created at the average position", None, -1))
         self.locator_at_average_btn.setText(QtWidgets.QApplication.translate("Form", "Locator at average vtx", None, -1))
-        self.pushButton.setText(QtWidgets.QApplication.translate("Form", "Selection at average vtx", None, -1))
+        self.selection_at_average_btn.setText(QtWidgets.QApplication.translate("Form", "Selection at average vtx", None, -1))
         self.create_locators_at_nodes_btn.setText(QtWidgets.QApplication.translate("Form", "Locator at selection", None, -1))
         self.three_points_locators_btn.setToolTip(QtWidgets.QApplication.translate("Form", "select tree points or vertices a locator will be created over the first element, aiming to the second one, and using the third as up vector.", None, -1))
         self.three_points_locators_btn.setText(QtWidgets.QApplication.translate("Form", "Three point aim locator", None, -1))

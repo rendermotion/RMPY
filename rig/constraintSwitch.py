@@ -125,10 +125,11 @@ class ConstraintSwitch(rigBase.RigBase):
                     output = destination[index]
 
                 self.outputs.append(output)
-                print 'constraints defined = parent {} , scale {}, point{}, orient {},'.format(parent, scale, point, orient)
-                self.create.constraint.define_constraints(parent=parent, scale=scale, point=point, orient=orient)
-                self.create.constraint.node_base(constraint_a, output)
-                constraints = self.create.constraint.node_base(constraint_b, output)
+                # self.create.constraint.define_constraints(parent=parent, scale=scale, point=point, orient=orient)
+                self.create.constraint.node_base(constraint_a, output, parent=parent, scale=scale,
+                                                 point=point, orient=orient)
+                constraints = self.create.constraint.node_base(constraint_b, output, parent=parent, scale=scale,
+                                                               point=point, orient=orient)
                 # self.constraint_func[constraint_type](constraint_b, output)
                 self.constraints.extend(constraints)
 

@@ -6,7 +6,7 @@ class Constraint(creatorsBase.CreatorsBase):
     def __init__(self, *args, **kwargs):
         super(Constraint, self).__init__(*args, **kwargs)
         self.constraint_type = []
-        if self._user_request_redefine_constraints():
+        if self._user_request_redefine_constraints(**kwargs):
             self.default_constraints = kwargs
             self.define_constraints(**self.default_constraints)
         else:

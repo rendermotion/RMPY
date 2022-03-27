@@ -153,11 +153,13 @@ def copy_skin_binding(source_object, destination_object):
 
 
 def change_skinning_method(object_list):
-    skin = get_skinCluster(object_list)[0]
-    set_value = not skin.skinningMethod.get()
+    # for each_object in object_list:
+    #     skin = get_skinCluster(each_object)[0]
+        # set_value = not skin.skinningMethod.get()
     for each in object_list:
         skin = get_skinCluster(each)
-        skin.skinningMethod.set(set_value)
+        # skin.skinningMethod.set(set_value)
+        skin.weightDistribution.set(1)
 
 
 def copy_skinning(*scene_objects):
@@ -167,7 +169,8 @@ def copy_skinning(*scene_objects):
 
 if __name__ == '__main__':
  selection = pm.ls(selection=True)
- copy_skinning(*selection)
+ # copy_skinning(*selection)
+ change_skinning_method(selection)
  # print oposite(selection[0])
  # change_skining_method(selection)
  # mirror_skinBinding(selection)

@@ -19,6 +19,7 @@ class QuadSpineModel(rigBase.BaseModel):
         self.center = None
         self.chest = None
 
+
 class RigQuadSpine(rigBase.RigBase):
     def __init__(self, *args, **kwargs):
         kwargs['model'] = kwargs.pop('model', QuadSpineModel())

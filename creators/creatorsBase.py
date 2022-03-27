@@ -32,7 +32,9 @@ class CreatorsBase(object):
 
             self.name_convention.default_names['side'] = self.name_convention.get_from_name(args[0], 'side')
         else:
-            self.name_convention.default_names['name'] = pop_name
+            if pop_name:
+                self.name_convention.default_names['name'] = pop_name
+            print 'a list was provided {}'.format(args[0])
 
     def _dictionary(self):
         result_dict = dict(type=str(self.__class__.__name__),

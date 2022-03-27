@@ -147,7 +147,6 @@ class SpaceLocator(creatorsBase.CreatorsBase):
             motion_path_list = []
             for each_point in range(number_of_points):
                 point_list.append(self.point_base(each_curve))
-            print point_list
             motion_path_node = motion_path.node_base(*point_list, curve=each_curve,
                                                      followAxis=follow_axis, upAxis=up_axis, **kwargs)
             if delete_motion_path:

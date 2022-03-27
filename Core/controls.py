@@ -122,11 +122,11 @@ def mirror_shape(*shapes, **kwargs):
 
 def mirror_controls(*controls):
     for each in controls:
-        source_shape = pm.ls(each)[0].getShape()
+        source_shape = pm.ls(each)[0]
         oposite_side = get_oposite_side(each)
         if oposite_side:
             oposite_side = pm.ls(oposite_side)[0]
-            destination_shape = pm.ls(oposite_side)[0].getShape()
+            destination_shape = pm.ls(oposite_side)[0]
             transfer_curve(source_shape, destination_shape, world_space=False)
             mirror_shape(destination_shape, scale_vector=[1, 1, 1])
         else:
@@ -153,13 +153,15 @@ def add_nurbs_curve_shape(scene_object):
 
 if __name__ == '__main__':
     selection = pm.ls(selection=True)
+
+    mirror_selection()
     # color_now_all_ctrls(*selection)
     # mirror_controls(*selection)
     # get_same_number_of_shapes(*selection)
     # print selection[0].getShapes()
     # shapes = object_valid_shapes(selection[0])
     # match_number_of_shapes(selection[0], selection[1])
-    transfer_curve_by_selection()
     # transfer_curve_by_selection()
+
     # mirror_selection()
     # mirror_shape(*selection, scale_vector=[-1, 1, 1])

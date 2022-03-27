@@ -28,7 +28,7 @@ class Ribon(rigBase.RigBase):
         length = vector_a - vector_b
         plano = pm.nurbsPlane(ax=[0, 1, 0], p=[(length.length()) / 2, 0, 0], w=length.length(), lr=.05, d=3, u=8,
                               v=1, ch=0, name="bendyPlane")
-        self.name_convention.rename_name_in_format(plano, useName=True)
+        self.name_convention.rename_name_in_format(plano[0], useName=True)
 
         pm.matchTransform(plano[0], object_a)
         return plano[0]

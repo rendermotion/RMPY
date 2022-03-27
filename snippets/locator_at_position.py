@@ -7,6 +7,7 @@ def locator_at_vertex_position(vertex_list):
     pm.xform(locator, translation=average_vertex_position(vertex_list), worldSpace=True)
     return locator
 
+
 def average_vertex_position(vertex_list):
     position_list = []
     for each in vertex_list:

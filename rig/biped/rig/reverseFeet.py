@@ -137,11 +137,16 @@ class RigReverseFeet(rigBase.RigBase):
         pm.addAttr(self.rig_system.settings, ln='ball', at='double', k=True)
         pm.addAttr(self.rig_system.settings, ln='tap', at='double', k=True)
         pm.addAttr(self.rig_system.settings, ln='tip', at='double', k=True)
+        pm.addAttr(self.rig_system.settings, ln='tipRotation', at='double', k=True)
 
         split_ball = rigAttributeSplit.AttributeSplit(rig_system=self.rig_system)
         split_ball.create_attributes_based(self.rig_system.settings.ball, self.rig_system.settings.toe_break)
         # split_ball.output_attribute_a >> self.ball_rotation.rotateZ
+        self.tip_rotation.rotateOrder.set(3)  # xzy
         split_ball.output_attribute_b >> self.tip_rotation.rotateZ
+
+        self.rig_system.settings.tipRotation >> self.tip_rotation.rotateY
+
         unit_conversion_tip = pm.listConnections(self.tip_rotation.rotateZ)[0]
         self.create.connect.attributes(self.rig_system.settings.tip, unit_conversion_tip.input)
         unit_conversion_tip.conversionFactor.set(unit_conversion_tip.conversionFactor.get()*-1)
@@ -188,11 +193,13 @@ class RigReverseFeet(rigBase.RigBase):
 
         self.control.addAttr('toe_break', proxy=str(self.rig_system.settings.toe_break))
         self.control.addAttr('tip', proxy=str(self.rig_system.settings.tip))
+        self.control.addAttr('tipRotation', proxy=str(self.rig_system.settings.tipRotation))
         self.control.addAttr('tap', proxy=str(self.rig_system.settings.tap))
-        self.rm.lock_and_hide_attributes(self.control, bit_string='000101000h')
+        self.rm.lock_and_hide_attributes(self.control, bit_string='000111000h')
 
         self.control.rotateX >> self.rig_system.settings.in_out
         self.create.connect.times_factor(self.control.rotateZ, self.rig_system.settings.ball, -57.296)
+        self.control.rotateY >> self.rig_system.settings.tipRotation
 
 
 if __name__ == '__main__':

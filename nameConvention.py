@@ -266,7 +266,8 @@ class NameConvention(object):
             return self.translator['objectType']['undefined']
 
     def set_name_in_format(self, **wantedNameDic):
-        '''the wanted Name Dic should be on the form {tokenName: wantedToken} where all the tokenName keys are part of the NameConvention Dictionary'''
+        ''' the wanted Name Dic should be on the form {tokenName: wantedToken}
+        where all the tokenName keys are part of the NameConvention Dictionary'''
         nameDic = {}
         for eachKey in self.name_convention:
             if eachKey in wantedNameDic:
@@ -286,19 +287,26 @@ class NameConvention(object):
     def rename_name_in_format(self, *current_name, **wanted_name_dictionary):
         useName = wanted_name_dictionary.pop('useName', False)
         string_name_list = validate_input_nodes(current_name)
+        print 'useName ={}'.format(useName)
+        print 'changing name to : {}'.format(string_name_list)
+
         new_name_array = ()
         for each_object in string_name_list:
-            name_tokens = each_object.split("_")
-            new_name = ""
-            for eachToken in name_tokens:
-                new_name += eachToken
+            # name_tokens = each_object.split("_")
+            # new_name = ""
+            # for eachToken in name_tokens:
+            #     new_name += eachToken
             if useName:
-                wanted_name_dictionary['name'] = self.remove_namespace(new_name)
+                print ' ****** remove ns Use name'
+                print self.remove_namespace(each_object)
+                print self.get_a_short_name(self.remove_namespace(each_object))
+                wanted_name_dictionary['name'] = self.get_a_short_name(self.remove_namespace(each_object))
 
             if 'objectType' not in wanted_name_dictionary:
                 wanted_name_dictionary['objectType'] = self.guess_object_type(each_object)
 
-            wanted_name_dictionary['objectType'] = self.token_validation(wanted_name_dictionary['objectType'], 'objectType')
+            wanted_name_dictionary['objectType'] = self.token_validation(wanted_name_dictionary['objectType'],
+                                                                         'objectType')
 
             new_name = self.set_name_in_format(**wanted_name_dictionary)
             cmds.rename(each_object, new_name)
@@ -309,6 +317,7 @@ class NameConvention(object):
         return new_name_array
 
     def is_name_in_format(self, obj_name):
+        print obj_name
         obj_name = validate_input_nodes(obj_name)
         string_in_name = str(obj_name)
         splitString = string_in_name.split("_")
@@ -324,7 +333,7 @@ class NameConvention(object):
                         valid = False
             return valid
         else:
-            print 'Not same token number'
+            print 'Not same token number in name {} '.format(obj_name)
             return False
 
     def guess_object_type(self, scene_object):
@@ -434,7 +443,7 @@ class NameConvention(object):
 
 if __name__ == '__main__':
     import pymel.core as pm
-    locator = pm.ls('locator1')[0]
+    # locator = pm.ls('locator1')[0]
     name_convention = NameConvention()
-    name_convention.rename_name_in_format(locator)
+    print name_convention.remove_namespace('C_joint00_tail_jnt')
     # name_convention.set_defaults_from_name('L_main_now_msh', side=True, name=True, system=True, objectType=True)

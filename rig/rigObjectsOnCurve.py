@@ -15,6 +15,7 @@ class RigObjectsOnCurve(rigBase.RigBase):
     def __init__(self, *args, **kwargs):
         kwargs['model'] = kwargs.pop('model', RigObjectsOnCurveModel())
         super(RigObjectsOnCurve, self).__init__(*args, **kwargs)
+
         if args:
             self.create_curve_base(*args, **kwargs)
 
@@ -35,7 +36,9 @@ class RigObjectsOnCurve(rigBase.RigBase):
         return self._model.up_vector_array
 
     def create_curve_base(self, *args, **kwargs):
+        super(RigObjectsOnCurve, self).create_curve_base(*args, **kwargs)
         self._model.curve = args[0]
+
         """
         creates a series of objects and then attaches them to a motion path using the Nodes on curve function,
         the objects it creates can be from joints, groups, or locators this is defined in objectType keyword Arg.
@@ -54,6 +57,7 @@ class RigObjectsOnCurve(rigBase.RigBase):
         number_of_nodes = kwargs.pop('number_of_nodes', 10)
         object_type = kwargs.pop('object_type', 'spaceLocator')
         up_vector_array = kwargs.pop('up_vector_array', None)
+
         self._model.up_vector_array = up_vector_array
 
         if up_vector_type == "object":
@@ -80,7 +84,8 @@ class RigObjectsOnCurve(rigBase.RigBase):
                 new_joint = self.create.space_locator.point_base(self.curve)
                 new_joint.setParent(self.rig_system.kinematics)
                 self.outputs.append(new_joint)
-            self.name_convention.rename_name_in_format(new_joint, useName=True)
+
+            # self.name_convention.rename_name_in_format(new_joint, useName=True)
 
             self.rig_system.settings.worldScale >> new_joint.scaleX
             self.rig_system.settings.worldScale >> new_joint.scaleY
@@ -93,8 +98,9 @@ class RigObjectsOnCurve(rigBase.RigBase):
 
 
 if __name__ == '__main__':
-    aim_vector = RigObjectsOnCurve('C_mainCurve00_spine_shp', up_vector_type='world')
-    up_vector = RigObjectsOnCurve('C_mainCurve01_spine_shp', up_vector_type='array', up_vector_array=aim_vector.outputs)
+    aim_vector = RigObjectsOnCurve('C_upVectorCurve00_tail_shp', up_vector_type='world')
+    up_vector = RigObjectsOnCurve('C_upVectorCurve00_tail_shp', object_type='joint',  up_vector_type='array',
+                                  up_vector_array=aim_vector.outputs)
 
 
 

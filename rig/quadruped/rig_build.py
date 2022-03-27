@@ -3,14 +3,15 @@ from RMPY.rig import rigHierarchy
 from RMPY.core import controls
 from RMPY.core import data_save_load
 import pymel.core as pm
+from RMPY.rig.switches import rigBoolSwitch
 
 
 def build():
     load_sources()
     build_rig()
-    # hierarchy()
+    hierarchy()
     load_data()
-    # finalize()
+    finalize()
 
 
 def load_sources():
@@ -23,41 +24,47 @@ def build_rig():
     controls.color_now_all_ctrls()
 
 
+def hide_rigs():
+    settings_rig_sistems = pm.ls('*_settings*_pnt')
+    for each in settings_rig_sistems:
+        each.visibility.set(False)
+
+
+def visibility_switch():
+    bool_switch = rigBoolSwitch.RigBoolSwitch(control='C_settings00_world_ctr', attribute_name='low_high_rez')
+    bool_switch.attribute_output >> pm.ls('C_dog00_highRez_grp')[0].visibility
+    bool_switch.attribute_output_false >> pm.ls('C_dog00_lowRez_grp')[0].visibility
+
+
 def hierarchy():
     rig_hierarchy = rigHierarchy.RigHierarchy()
-    pm.parent('geo_grp', rig_hierarchy.geometry)
+    pm.parent('geo', rig_hierarchy.geometry)
 
 
 def load_data():
     controls_list = pm.ls('*ctr')
     data_save_load.load_curves(*controls_list)
 
-    # geometry = pm.ls('')
-    # data_save_load.load_skin_cluster(*geometry)
+    geometry = pm.ls(u'R_metalFeet00_backLeg_msh', u'L_metalFeet00_backLeg_msh',
+                     u'R_metalFeet00_frontLeg_msh', u'L_metalFeet00_frontLeg_msh',
+                     u'C_dog_lowRez_lowmsh', u'L_metalFeet00_frontLeg_lowmsh', u'R_metalFeet00_frontLeg_lowmsh',
+                     u'R_metalFeet00_backLeg_lowmsh', u'L_metalFeet00_backLeg_lowmsh')
+
+    data_save_load.load_skin_cluster(*geometry)
 
 
 def finalize():
+    hide_rigs()
     pm.delete('C_reference_points_pnt')
     pm.delete('measures_ref_grp')
 
 
 if __name__ == '__main__':
-    # selection = pm.ls(selection=True)
-    # data_save_load.save_curve(*selection)
-    build()
+    selection = pm.ls(selection=True)
+    # data_save_load.load_skin_cluster(*selection)
+    # build()
+    # visibility_switch()
     # load_data()
-    '''low_rez_geo = [u'dog_model_V03:group401', u'dog_model_V03:polySurface809', u'dog_model_V03:polySurface304',
-                   u'dog_model_V03:polySurface302', u'dog_model_V03:group409', u'dog_model_V03:polySurface834',
-                   u'dog_model_V03:group5__body2_pasted__polySurface1', u'dog_model_V03:polySurface835',
-                   u'dog_model_V03:group31_group27__heart__body_pasted__polySurface1', u'dog_model_V03:polySurface271',
-                   u'dog_model_V03:group176', u'dog_model_V03:group564|dog_model_V03:pasted__Hard_Surface_Mesh_1986',
-                   u'dog_model_V03:group563|dog_model_V03:pasted__Hard_Surface_Mesh_1986',
-                   u'dog_model_V03:group563|dog_model_V03:pasted__Hard_Surface_Mesh_2070',
-                   u'dog_model_V03:group564|dog_model_V03:pasted__Hard_Surface_Mesh_2070',
-                   u'dog_model_V03:C_mainChest00_innerBody_msh', u'dog_model_V03:pasted__polySurface5',
-                   u'dog_model_V03:pasted__pCube3', u'dog_model_V03:pasted__polySurface30',
-                   u'dog_model_V03:pasted__pCube7',
-                   u'dog_model_V03:group35_group3_group_pasted__heart_pasted__body_pasted__polySurface1',
-                   u'dog_model_V03:C_main00_backLegs_msh', u'dog_model_V03:C_main00_frontLegs_msh',
-                   u'dog_model_V03:polySurface124',
-                   u'dog_model_V03:polySurface94']'''
+    # hide_rigs()
+    # controls.color_now_all_ctrls()
+    # data_save_load.save_skin_cluster()

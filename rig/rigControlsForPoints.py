@@ -17,14 +17,14 @@ class RigControlsForPoints(rigBase.RigBase):
         link_type = kwargs.pop('link_type', 'standard')
 
         for each_point in points:
-            reset_controls, controls = self.create.controls.point_base(each_point, **kwargs)
-            self.reset_controls.append(reset_controls)
-            self.controls.append(controls)
+            reset_control, control = self.create.controls.point_base(each_point, **kwargs)
+            self.reset_controls.append(reset_control)
+            self.controls.append(control)
             if world_align:
-                reset_controls.rotate.set([0, 0, 0])
+                reset_control.rotate.set([0, 0, 0])
 
         if link_type == 'standard':
-            self.create.constraint.node_list_base(self.controls, points, mo=True)
+            self.create.constraint.node_list_base(self.controls, points, parent=True, mo=True)
         elif link_type == 'static':
             for each_control, point in zip(self.controls, points):
                 each_control.translate >> point.translate

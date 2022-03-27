@@ -88,7 +88,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton">
+               <widget class="QPushButton" name="selection_at_average_btn">
                 <property name="text">
                  <string>Selection at average vtx</string>
                 </property>

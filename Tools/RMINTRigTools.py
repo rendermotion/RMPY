@@ -20,12 +20,12 @@ from RMPY.GenericRig import RMUnfoldRig
 from RMPY import RMUncategorized
 from RMPY import nameConvention
 from RMPY.rig import rigBase
-
+from RMPY.snippets import locator_at_average
 from RMPY.AutoRig import RMRigFK
 from RMPY.core import transform
 from RMPY.core import hierarchy
 
-print 'executed'
+reload(locator_at_average)
 
 
 def getMayaWindow():
@@ -50,7 +50,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.ui.AlignPosition.clicked.connect(self.AlignPositionBtnPressed)
         self.ui.AlignAll.clicked.connect(self.AlignAllBtnPressed)
         self.ui.ListConnectedJoints.clicked.connect(self.ListConnectedJointsBtnPressed)
-        self.ui.SelectJoints.clicked.connect(self.SelectJointsBtnPressed)
+        self.ui.SelectJoints.clicked.connect(self.select_joints_btn_pressed)
         self.ui.SCCombineButton.clicked.connect(self.SCCombineButtonPressed)
         self.ui.AttributeTransferBtn.clicked.connect(self.transfer_attributes)
         self.ui.ExtractGeoBtn.clicked.connect(self.extract_geometry)
@@ -61,6 +61,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.ui.create_locators_at_nodes_btn.clicked.connect(self.create_locators_at_nodes)
         self.ui.aim_button_btn.clicked.connect(self.aim_align)
         self.ui.hierarchy_switch_btn.clicked.connect(self.hierarchise)
+        self.ui.selection_at_average_btn.clicked.connect(self.selection_at_average)
 
         # self.ui.OrientNubButton.clicked.connect(self.OrientNubButtonPressed)
         # self.ui.unfoldRigBtn.clicked.connect(self.unfoldRigBtnPressed)
@@ -202,7 +203,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
             for i in returned:
                 self.ui.listWidget.addItem(i)
 
-    def SelectJointsBtnPressed(self):
+    def select_joints_btn_pressed(self):
         Array = self.ui.listWidget.selectedItems()
         cmds.select(clear=True)
         for g in (Array):
@@ -247,6 +248,12 @@ class Main(MayaQWidgetDockableMixin, QDialog):
                                                           MirrorRotateX=-1, MirrorRotateY=-1, MirrorRotateZ=1)
                 else:
                     print 'object not found %s' % oposit_object
+
+    @staticmethod
+    def selection_at_average():
+        selection = pm.ls(selection=True)
+        locator_at_average.move_to_average_vertices(selection)
+
 
 
 if __name__ == '__main__':

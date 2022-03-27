@@ -91,7 +91,7 @@ if __name__ == '__main__':
     # scene_objects = type_in_hierarchy(volunteer, object_type='mesh')
     # print scene_objects
     # select_by_function(shape_type_in_hierarchy, object_type='nurbsCurve')
-    select_by_function(shape_type_in_hierarchy,mesh_list=None, object_type='mesh')
+    # select_by_function(shape_type_in_hierarchy,mesh_list=None, object_type='mesh')
     # shape_type_in_hierarchy(scene_object)
-    # select_by_function(none_skinned_mesh_in_hierarchy)
+    select_by_function(none_skinned_mesh_in_hierarchy)
     # print none_skinned_mesh_in_hierarchy(pm.ls('C_frontRopes_0001_GRP')[0])

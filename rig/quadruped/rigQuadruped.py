@@ -10,11 +10,10 @@ from RMPY.rig.quadruped.rigs import frontLegSpaceSwitch
 from RMPY.rig.quadruped.rigs import rigIKQuadLegFeet
 from RMPY.rig.quadruped.rigs import rigQuadFrontLeg
 from RMPY.rig.quadruped.rigs import rigQuadSpine
-from RMPY.rig.quadruped.rigs import rigTail
+from RMPY.rig.quadruped.rigs import rigTailLace
 from RMPY.rig.quadruped.rigs import rigNeckSpaceSwitch
 from RMPY.rig.quadruped.rigs import rigHipSpaceSwitch
-reload(rigNeckSpaceSwitch)
-reload(rigHipSpaceSwitch)
+
 
 
 class QuadrupedModel(rigBase.BaseModel):
@@ -26,7 +25,7 @@ class QuadrupedModel(rigBase.BaseModel):
         self.r_leg = rigIKQuadLegFeet.RigIKQuadLegFeet()
         self.l_hand = hand.Hand()
         self.r_hand = hand.Hand()
-        self.tail = rigTail.RigTail()
+        self.tail = rigTailLace.RigTail()
         self.neck_head = neckHead.NeckHead()
         self.spine = rigQuadSpine.RigQuadSpine()
         self.hip = rigFK.RigFK()
@@ -73,7 +72,9 @@ class RigQuadruped(rigBase.RigBase):
         self.neck_root = [u'C_neck00_reference_pnt', u'C_neck01_reference_pnt',
                           u'C_head00_reference_pnt', u'C_headTip00_reference_pnt']
         self.tail_root = [u'C_tail00_reference_pnt', u'C_tail01_reference_pnt', u'C_tail02_reference_pnt',
-                          u'C_tail03_reference_pnt', u'C_tail04_reference_pnt', u'C_tail05_reference_pnt']
+                          u'C_tail03_reference_pnt', u'C_tail04_reference_pnt', u'C_tail05_reference_pnt',
+                          u'C_tail06_reference_pnt', u'C_tail07_reference_pnt', u'C_tail08_reference_pnt',
+                          u'C_tail09_reference_pnt', u'C_tail10_reference_pnt', u'C_tail11_reference_pnt']
 
     @property
     def hip_space_switch(self):
@@ -210,6 +211,8 @@ class RigQuadruped(rigBase.RigBase):
         self.l_leg.rename_as_skinned_joints()
         self.r_leg.rename_as_skinned_joints()
         self.tail.rename_as_skinned_joints()
+
+        self.rig_world.settings_height = 115
 
 
 if __name__ == '__main__':

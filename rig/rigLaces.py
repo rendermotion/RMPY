@@ -97,7 +97,6 @@ class RigLaces(rigBase.RigBase):
             self._model.curve = curve
 
         if not single_orient_object:
-
             self.laces_system_multiple_rotation_controls(joint_number, **kwargs)
         else:
             self.laces_system(joint_number)
@@ -114,16 +113,20 @@ class RigLaces(rigBase.RigBase):
 
     def laces_system(self, joint_number, **kwargs):
         cluster_nodes, self.clusters = self.create.cluster.curve_base(self.curve)
+
         rig_objects_on_curve = rigObjectsOnCurve.RigObjectsOnCurve(self.curve,
                                                                    number_of_nodes=joint_number,
                                                                    up_vector_type="object", rig_system=self.rig_system)
+
         joints_group = pm.group(empty=True, name="skinJoints")
         clusters_group = pm.group(empty=True, name='clusters')
 
         self.name_convention.rename_name_in_format(joints_group, clusters_group, useName=True)
+
         pm.parent(clusters_group, self.rig_system.kinematics)
         pm.parent(joints_group, self.rig_system.joints)
         for eachJoint in rig_objects_on_curve.joints:
+            print eachJoint
             pm.parent(eachJoint, joints_group)
             self.joints.append(eachJoint)
             self.rig_system.settings.worldScale >> eachJoint.scaleX

@@ -93,14 +93,11 @@ def export_maya_file(**kwargs):
 
 def import_maya_file(file_name):
     full_path = '{}/mayaFiles'.format(config.output.file_path)
-    print full_path
-    print '{}/{}.ma'.format(full_path, file_name)
     pm.importFile('{}/{}'.format(full_path, file_name))
 
 
 def import_all_available_maya_files():
     for each in available_maya_files():
-        print each
         import_maya_file(each)
 
 
@@ -114,5 +111,6 @@ def available_maya_files():
 
 
 if __name__ == '__main__':
-    print import_all_available_maya_files()
+
+    print save_curve()
 

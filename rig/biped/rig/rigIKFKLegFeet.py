@@ -50,14 +50,19 @@ class RigIKKFLegFeet(rigBase.RigBase):
                                                           self.leg.ik_rig.ik_handle, mo=True)
 
         l_point_constraint[0].getWeightAliasList()[0].set(0)
+
         self.feet.ik_feet.set_parent(self.leg.ik_rig.controls[0])
         self.feet.fk_feet.set_parent(self.leg.fk_rig)
         self.create.constraint.node_base(self.leg.ik_rig.tip, self.feet.ik_feet.attachment_ik_leg, mo=True)
+        self.create.constraint.node_base(self.leg.ik_rig.controls_dict['ikHandle'],
+                                         self.feet.ik_feet.reset_controls[0], mo=True)
+
         self.attach_points['root'] = self.leg.root
         self.attach_points['tip'] = self.feet.tip
 
         self.create.constraint.orient(self.feet.joints[0], self.leg.joints[-1], mo=True)
-        self.create.constraint.define_constraints(point=False, scale=True, parent=True, orient=False)
+
+        # self.create.constraint.define_constraints(point=False, scale=True, parent=True, orient=False)
 
         self.twist_leg.create_point_base(self.root, self.leg.joints[0], self.leg.joints[1],
                                          folicule_number=5)

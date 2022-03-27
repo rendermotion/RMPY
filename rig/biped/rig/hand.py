@@ -4,6 +4,7 @@ from RMPY.rig import rigSingleJoint
 import pymel.core as pm
 from RMPY.rig.biped.rig import arm
 
+
 class HandModel(rigBase.BaseModel):
     def __init__(self):
         super(HandModel, self).__init__()
@@ -62,15 +63,13 @@ class Hand(rigBase.RigBase):
         :param rig_object: object or rig that you expect to be the parent of the module.
         :return:
         """
-        self.create.constraint.define_constraints(point=True, scale=True, parent=False, orient=False)
-        print type(rig_object).__mro__
+        # self.create.constraint.define_constraints(point=True, scale=True, parent=False, orient=False)
+        # print type(rig_object).__mro__
         if arm.Arm in type(rig_object).__mro__:
-            print '{} in constraining {} {}'.format(self.create.constraint.constraint_type, rig_object.tip, self.root)
-            self.create.constraint.node_base(rig_object.tip, self.root, mo=True, **kwargs)
-            self.create.constraint.define_constraints(point=False, scale=False, parent=False, orient=True)
-
-            self.create.constraint.node_base(self.tip, rig_object.tip, mo=True, **kwargs)
-
+            # print '{} in constraining {} {}'.format(self.create.constraint.constraint_type, rig_object.tip, self.root)
+            self.create.constraint.point(rig_object.tip, self.root, mo=True, **kwargs)
+            # self.create.constraint.define_constraints(point=False, scale=False, parent=False, orient=True)
+            self.create.constraint.orient(self.tip, rig_object.tip, mo=True, **kwargs)
         else:
             try:
                 self.create.constraint.node_base(rig_object, self.root, mo=True, **kwargs)

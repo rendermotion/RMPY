@@ -124,6 +124,7 @@ class RigByped(rigBase.RigBase):
         self.spine.create_point_base(*self.spine_root)
         self.hip.create_point_base(*self.hip_root, name='hip')
         self.cog.create_point_base(self.hip_root[0], name='cog')
+        self.cog.custom_world_align(self.cog.reset_controls[0])
 
         self.l_arm.create_point_base(*[each.format('L') for each in self.arm_root])
         self.l_arm.set_parent(self.spine)
@@ -132,6 +133,7 @@ class RigByped(rigBase.RigBase):
 
         self.l_hand.create_point_base(*[each.format('L') for each in self.hand_root])
         self.l_hand.set_parent(self.l_arm)
+
         self.l_arm_space_switch.build(self.l_arm, self.rig_world)
 
         self.r_hand.create_point_base(*[each.format('R') for each in self.hand_root])
