@@ -57,7 +57,6 @@ class RigTail(rigBase.RigBase):
             print self.create.constraint.constraint_type
             self.create.constraint.node_base(self.points_on_surface[-1].tip, each, mo=True)
 
-
         self.fk_tail.create_point_base(*args, orient_type='point_orient')
         pm.skinCluster(self.fk_tail.joints, self.surface)
         self.joints.extend(self.ik_tail.joints)

@@ -137,7 +137,7 @@ class IKRig(RMPY.rig.rigBase.RigBase):
         self.root_controls = pm.group(empty=True, name='ikControls')
         self.name_convention.rename_name_in_format(self.root_controls, useName=True)
         self.rm.align(self.joints[0], self.root_controls)
-        self.create.constraint.define_constraints(scale=True, parent=True)
+        # self.create.constraint.define_constraints(scale=True, parent=True)
         self.create.constraint.node_base(self.root_controls, self.root_joints, mo=True)
         self.root_kinematics = pm.group(empty=True, name='ikKinematics')
         self.name_convention.rename_name_in_format(self.root_kinematics, useName=True)

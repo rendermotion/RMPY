@@ -169,8 +169,8 @@ def copy_skinning(*scene_objects):
 
 if __name__ == '__main__':
  selection = pm.ls(selection=True)
- # copy_skinning(*selection)
- change_skinning_method(selection)
+ copy_skinning(*selection)
+ # change_skinning_method(selection)
  # print oposite(selection[0])
  # change_skining_method(selection)
  # mirror_skinBinding(selection)

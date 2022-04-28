@@ -16,7 +16,6 @@ class Curve(creatorsBase.CreatorsBase):
         keep_range = kwargs.pop('keepRange', 2)
         curve = dataValidators.as_pymel_nodes(curve)
 
-
         if curve.form() == 'periodic':
             if spans >= 3:
                 curve = pm.rebuildCurve(curve, rebuildType=rebuild_type, spans=spans, keepRange=keep_range,

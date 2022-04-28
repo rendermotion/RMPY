@@ -111,6 +111,7 @@ def available_maya_files():
 
 
 if __name__ == '__main__':
-
-    print save_curve()
+    load_skin_cluster()
+    # save_skin_cluster()
+    # save_curve()
 

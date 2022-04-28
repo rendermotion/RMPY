@@ -28,9 +28,10 @@ class RigEnumSpaceSwitch(rigEnumSwitch.RigEnumSwitch):
                                     point=kwargs.pop('point', False),
                                     orient=kwargs.pop('orient', False),
                                     scale=kwargs.pop('scale', False))
-            self.create.constraint.default_constraints = self.constraints
+            # self.create.constraint.default_constraints = self.constraints
         else:
-            self.create.constraint.default_constraints = {'parent': True, 'scale': True}
+            self.constraints = {'parent': True, 'scale': True}
+            # self.create.constraint.default_constraints = {'parent': True, 'scale': True}
 
         self._model.spaces = spaces
         self._model.alias_list = kwargs.pop('alias_list', [])
@@ -73,6 +74,7 @@ class RigEnumSpaceSwitch(rigEnumSwitch.RigEnumSwitch):
         :param kwargs:
         :return:
         """
+        kwargs.update(self.constraints)
         self.set_spaces(scene_transform)
         offset = self.create.group.point_base(scene_transform, name='spaceSwitchOffset')
         if not self.switch:

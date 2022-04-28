@@ -48,7 +48,7 @@ def load_data():
 
 
 def visibility_switch():
-    bool_switch = rigBoolSwitch.RigBoolSwitch(control='C_settings00_world_ctr', attribute_name='secondaryControls')
+    secondary_controls_visibility = rigBoolSwitch.RigBoolSwitch(control='C_settings00_world_ctr', attribute_name='secondaryControls')
     for each in {u'L_bendy00_shoulder_grp', u'L_bendy01_shoulder_grp', u'L_bendy02_shoulder_grp',
                  u'L_bendy03_shoulder_grp', u'L_bendy04_shoulder_grp', u'L_bendy05_shoulder_grp',
                  u'R_bendy00_shoulder_grp', u'R_bendy01_shoulder_grp', u'R_bendy02_shoulder_grp',
@@ -59,7 +59,11 @@ def visibility_switch():
                  u'R_twistOrigin01_leg_grp', u'R_bendy03_leg_grp', u'R_bendy04_leg_grp', u'R_bendy05_leg_grp',
                  u'R_twistOrigin00_clavicle_grp', u'R_twistOrigin00_shoulder_grp', u'L_twistOrigin00_clavicle_grp',
                  u'L_twistOrigin00_shoulder_grp'}:
-        bool_switch.attribute_output >> pm.ls(each)[0].visibility
+        secondary_controls_visibility.attribute_output >> pm.ls(each)[0].visibility
+
+    geo_rez_switch = rigBoolSwitch.RigBoolSwitch(control='C_settings00_world_ctr', attribute_name='high_rez')
+    geo_rez_switch.attribute_output >> pm.ls('C_rider00_high_grp')[0].visibility
+    geo_rez_switch.attribute_output_false >> pm.ls('C_rider00_low_grp')[0].visibility
 
 
 def finalize():

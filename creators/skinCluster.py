@@ -2,7 +2,8 @@ import maya.cmds as cmds
 import pymel.core as pm
 from RMPY.creators import creatorsBase
 from RMPY.core import dataManager
-
+from RMPY.core import polygon_tools
+reload(polygon_tools)
 
 class SkinCluster(creatorsBase.CreatorsBase):
     def __init__(self, *args, **kwargs):
@@ -264,8 +265,28 @@ class SkinCluster(creatorsBase.CreatorsBase):
     def _representation(self):
         return self.get_weights_dictionary()
 
+    def shell_skin(self, geometry):
+        shells_list = polygon_tools.shells(geometry)
+        weights_dictionary = self.get_weights_dictionary()
+        for each_shell in shells_list:
+            average_influence_list = []
+            average_weight_list = []
+            for each_vertex in list(each_shell):
+                vertex_influence_list = weights_dictionary['weights'][each_vertex][0]
+                weight_list = weights_dictionary['weights'][each_vertex][1]
+                for index, each_influence in enumerate(vertex_influence_list):
+                    if each_influence not in average_influence_list:
+                        average_influence_list.append(each_influence)
+                        average_weight_list.append(0.0)
+                    average_weight_list[average_influence_list.index(each_influence)] += weight_list[index]
+
+            average_weight_list = [each/float(len(average_influence_list)) for each in average_weight_list]
+            for each_vertex in each_shell:
+                weights_dictionary['weights'][each_vertex] = [average_influence_list, average_weight_list]
+        self.apply_weights_dictionary(weights_dictionary)
+        pm.skinPercent(self.node, normalize=True)
+
 
 if __name__ == '__main__':
-    skin_cluster01 = SkinCluster()
-    skin_cluster01.load('venom_body_geo')
-    skin_cluster01.apply_weights_dictionary(geometry='venom_body_geo')
+    skin_cluster01 = SkinCluster.by_node('C_rootBonesA00_tail_msh')
+    skin_cluster01.shell_skin('C_rootBonesA00_tail_msh')

@@ -19,7 +19,6 @@ class RigSingleJoint(rigBase.RigBase):
 
         for each in locator_list:
             reset_joint = pm.group(empty=True, name='resetJoint')
-            print 'align {} {}'.format(each, reset_joint)
             self.rm.align(each, reset_joint)
             joint = pm.joint(name='joint')
             self.rm.align(joint, reset_joint)

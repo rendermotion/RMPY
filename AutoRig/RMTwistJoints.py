@@ -30,8 +30,8 @@ class RMTwistJoints(object):
     def RMCreateTwist(self, TwistJoint, LookAtObject,  NumberOfTB = 3, LookAtAxis = "Y"):
         #LookAtObject = pm.listRelatives( TwistJoint,type = "transform",children=True)[]
     
-        positionA = pm.xform(TwistJoint ,q=True,ws=True,rp=True)
-        positionB = pm.xform(LookAtObject ,q=True,ws=True,rp=True)
+        positionA = pm.xform(TwistJoint, q=True,ws=True,rp=True)
+        positionB = pm.xform(LookAtObject, q=True,ws=True,rp=True)
 
         vectorA = om.MVector(positionA)
         vectorB = om.MVector(positionB)

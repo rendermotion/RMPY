@@ -15,7 +15,6 @@ from RMPY.rig.quadruped.rigs import rigNeckSpaceSwitch
 from RMPY.rig.quadruped.rigs import rigHipSpaceSwitch
 
 
-
 class QuadrupedModel(rigBase.BaseModel):
     def __init__(self, **kwargs):
         super(QuadrupedModel, self).__init__(**kwargs)
