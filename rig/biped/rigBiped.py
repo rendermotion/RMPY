@@ -9,7 +9,8 @@ from RMPY.rig import rigBase
 from RMPY.rig import rigProp
 from RMPY.rig.biped.rig import armSpaceSwitch
 from RMPY.rig.biped.rig import legSpaceSwitch
-
+reload(armSpaceSwitch)
+reload(legSpaceSwitch)
 
 class RigBypedModel(rigBase.BaseModel):
     def __init__(self, **kwargs):
@@ -170,14 +171,9 @@ class RigByped(rigBase.RigBase):
         self.hip.rename_as_skinned_joints()
         self.l_arm.rename_as_skinned_joints()
         self.r_arm.rename_as_skinned_joints()
-
         self.l_hand.rename_as_skinned_joints()
         self.r_hand.rename_as_skinned_joints()
-        self.l_leg.rename_as_skinned_joints()
-        self.r_leg.rename_as_skinned_joints()
-
         self.neck_head.rename_as_skinned_joints()
-        self.spine.rename_as_skinned_joints()
         self.l_leg.rename_as_skinned_joints()
         self.r_leg.rename_as_skinned_joints()
 

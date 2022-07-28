@@ -5,6 +5,7 @@ from RMPY.core import dataManager
 from RMPY.core import polygon_tools
 reload(polygon_tools)
 
+
 class SkinCluster(creatorsBase.CreatorsBase):
     def __init__(self, *args, **kwargs):
         super(SkinCluster, self).__init__(*args, **kwargs)
@@ -288,5 +289,7 @@ class SkinCluster(creatorsBase.CreatorsBase):
 
 
 if __name__ == '__main__':
-    skin_cluster01 = SkinCluster.by_node('C_rootBonesA00_tail_msh')
-    skin_cluster01.shell_skin('C_rootBonesA00_tail_msh')
+    selection = pm.ls(selection=True)
+    for each in selection:
+        skin_cluster01 = SkinCluster.by_node(each)
+        skin_cluster01.shell_skin(each)

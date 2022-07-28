@@ -33,15 +33,14 @@ class DataManager(object):
 
     def load(self, file_name):
         full_path_file_name = '{}/{}.json'.format(self.file_path, file_name)
-
-        try:
-            with open(full_path_file_name) as data_file:
-                data_loaded = json.load(data_file)
-            data_file.close()
-            return data_loaded
-
-        except IOError:
-            print 'error trying to open file: \n {}'.format(full_path_file_name)
+        if os.path.exists(full_path_file_name):
+            try:
+                with open(full_path_file_name) as data_file:
+                    data_loaded = json.load(data_file)
+                data_file.close()
+                return data_loaded
+            except IOError:
+                print 'error trying to open file: \n {}'.format(full_path_file_name)
         return None
 
     def search(self, search_string):

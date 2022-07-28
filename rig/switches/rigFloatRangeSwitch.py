@@ -10,8 +10,7 @@ class FloatRangeSwitchModel(rigBaseSwitch.RigBaseSwitchModel):
 
 class FloatRangeSwitch(rigBaseSwitch.RigBaseSwitch):
     def __init__(self, *args, **kwargs):
-        if 'model' not in kwargs.keys():
-            kwargs['model'] = FloatRangeSwitchModel()
+        kwargs['model'] = kwargs.pop('model', FloatRangeSwitchModel())
         super(FloatRangeSwitch, self).__init__(*args, **kwargs)
         self.min_value = 0
         self.max_value = 20
@@ -37,7 +36,8 @@ class FloatRangeSwitch(rigBaseSwitch.RigBaseSwitch):
         self._model.animation_curve = value
 
     def set_control(self, **kwargs):
-        self.attribute_name = kwargs.pop('attribute_name', 'float_switch')
+        super(FloatRangeSwitch, self).set_control()
+        # self.attribute_name = kwargs.pop('attribute_name', 'float_switch')
         self._raise_min = kwargs.pop('raise_min', self._raise_min)
         self._raise_max = kwargs.pop('raise_max', self._raise_max)
         self._decay_min = kwargs.pop('decay_min', self._decay_min)
@@ -61,7 +61,6 @@ class FloatRangeSwitch(rigBaseSwitch.RigBaseSwitch):
                                                                in_tangent_type='linear',
                                                                out_tangent_type='linear', )[1]
         self.attribute_output = self.animation_curve.output
-
         self.initialize()  # initializes the negate output
 
 

@@ -3,9 +3,10 @@ from RMPY.creators import constraint
 from RMPY.rig.switches import rigEnumSwitch
 
 
+
 class RigEnumSpaceSwitchModel(rigEnumSwitch.RigEnumSwitchModel):
     def __init__(self):
-        super(RigEnumSpaceSwitchModel, self).__init__(RigEnumSpaceSwitchModel)
+        super(RigEnumSpaceSwitchModel, self).__init__()
         self.space_switch = None
         self.alias_list = []
         self.space_rigs_dict = {}
@@ -19,8 +20,7 @@ class RigEnumSpaceSwitch(rigEnumSwitch.RigEnumSwitch):
         Nothing will be done with this information untill you call the add_object function.
         :param kwargs:
         """
-        if 'model' not in kwargs.keys():
-            kwargs['model'] = RigEnumSpaceSwitchModel()
+        kwargs['model'] = kwargs.pop('model', RigEnumSpaceSwitchModel())
         super(RigEnumSpaceSwitch, self).__init__(*spaces, **kwargs)
 
         if self.create.constraint._user_request_redefine_constraints(**kwargs):

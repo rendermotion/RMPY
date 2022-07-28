@@ -12,7 +12,7 @@ class Controls(creatorsBase.CreatorsBase):
     def __init__(self, *args, **kwargs):
         super(Controls, self).__init__(*args, **kwargs)
         self.rigTools = RMRigTools.RMRigTools(NameConv=self.name_convention)
-        self.file_types = ["move", 'v', 'head', 'circleDeform']
+        self.file_types = ["move", 'v', 'head', 'circleDeform', 'b']
 
     def point_base(self, *points, **kwargs):
         super(Controls, self).point_base(*points, **kwargs)
@@ -45,6 +45,7 @@ class Controls(creatorsBase.CreatorsBase):
                 controls_list.append(self.file_control(each, ** kwargs))
 
         if len(points) == 1:
+
             return controls_list[0]
 
         return controls_list
@@ -184,7 +185,8 @@ class Controls(creatorsBase.CreatorsBase):
             "move": {"filename": "ControlMover.mb", "object": "MoverControl"},
             "v": {"filename": "ControlV.mb", "object": "VControl"},
             "head": {"filename": "ControlHead.mb", "object": "HeadControl"},
-            "circleDeform": {"filename": "ControlCircularDeform.mb", "object": "CircularDeform"}
+            "circleDeform": {"filename": "ControlCircularDeform.mb", "object": "CircularDeform"},
+            'b':{"filename": "ControlB.mb", "object": "BControl"}
         }
         path = os.path.dirname(RMRigTools.__file__)
         RMPYPATH = os.path.split(path)

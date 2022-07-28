@@ -105,13 +105,15 @@ def available_maya_files():
     full_path = '{}/mayaFiles'.format(config.output.file_path)
     available_files = []
     for each in os.listdir(full_path):
-        if '.ma' in each or '.mb' in each:
+        if each.split('.')[-1] == 'ma' or each.split('.')[-1] == 'mb':
             available_files.append(each)
     return available_files
 
 
 if __name__ == '__main__':
-    load_skin_cluster()
+    # load_skin_cluster()
     # save_skin_cluster()
-    # save_curve()
+    # load_curves()
 
+    # save_curve()
+    print available_maya_files()

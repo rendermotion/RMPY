@@ -3,19 +3,21 @@ import pprint as pp
 from RMPY import nameConvention
 from RMPY import RMRigTools
 import maya.mel as mel
+import pymel.core as pm
 
 
-def RMblendShapeTargetDic (BSNode):
+def RMblendShapeTargetDic(BSNode):
     #AliasNames=cmds.listAttr((BSNode +".weight"),m=True);
     InputTargetGroup=cmds.getAttr ((BSNode+".inputTarget[0].inputTargetGroup"),mi=True);
     BlendShapeDic = {}
     for eachTarget in InputTargetGroup:
-        AliasName = cmds.listAttr((BSNode +".weight["+str(eachTarget)+"]"),m=True);
-        BlendShapeDic[str(AliasName[0])]={}
+        AliasName = cmds.listAttr((BSNode +".weight["+str(eachTarget)+"]"), m=True);
+        BlendShapeDic[str(AliasName[0])] = {}
         BlendShapeDic[str(AliasName[0])]["TargetGroup"] = eachTarget
-        Items = cmds.getAttr ((BSNode+".inputTarget[0].inputTargetGroup["+str(eachTarget)+"].inputTargetItem"), mi=True);
+        Items = cmds.getAttr((BSNode+".inputTarget[0].inputTargetGroup["+str(eachTarget)+"].inputTargetItem"), mi=True);
         BlendShapeDic[str(AliasName[0])]["Items"] = Items
     return BlendShapeDic
+
 '''
 def invertCurrentPaintTargetWeights(ObjectName,index):
     #cmds.setAttr("%s.inputTarget[0].inputTargetGroup[%s]paintTargetIndex"%ObjectName)
@@ -41,6 +43,7 @@ def invertCurrentPaintTargetWeights(ObjectName,index):
 pp.pprint (RMblendShapeTargetDic('blendShape20'))
 invertCurrentPaintTargetWeights('blendShape20',3)
 '''
+
 def invertCurrentPaintTargetWeights(ObjectName, index):
 
     if index != -1:
@@ -85,7 +88,45 @@ def copyCurrentPaintTargetWeights(ObjectName, index_source, index_destination):
             set_value = 1.0
         cmds.setAttr("%s.inputTarget[0].%s[%s]" % (ObjectName, weight_map_destination, vertex_index), set_value)
 
+def copy_paint_to_dictionary(ObjectName, indexSource):
+    if indexSource != -1:
+        source_weights_token = 'inputTargetGroup[{}].targetWeights'.format(indexSource)
+    else:
+        source_weights_token = 'baseWeights'
 
+    weights = cmds.getAttr("{}.inputTarget[0].{}[*]".format(ObjectName, source_weights_token))
+    weights_list = cmds.getAttr("{}.inputTarget[0].{}".format(ObjectName, source_weights_token),
+                                multiIndices=True)
+    return {'weights': weights, 'weights_list': weights_list}
+
+
+def paste_paint_from_dictionary(ObjectName, indexDestination, weights_dictionary):
+    weights_list = weights_dictionary['weights_list']
+    weights = weights_dictionary['weights']
+    if indexDestination != -1:
+        destination_weights_token = 'inputTargetGroup[%s].targetWeights' % indexDestination
+    else:
+        destination_weights_token = 'baseWeights'
+
+    current_weight_list = cmds.getAttr("%s.inputTarget[0].%s" %
+                                       (ObjectName, destination_weights_token), multiIndices=True)
+    if current_weight_list:
+        total_weight_list = set(weights_list + current_weight_list)
+    else:
+        total_weight_list = weights_list
+    for each_index in total_weight_list:
+        if each_index in weights_list:
+            value = weights[weights_list.index(each_index)]
+        else:
+            value = 1
+        cmds.setAttr("%s.inputTarget[0].%s[%s]" % (ObjectName, destination_weights_token, each_index), value)
+
+
+def get_blend_shape(geometry):
+    for each in pm.listHistory(geometry, interestLevel=2, pruneDagObjects=True):
+        if pm.objectType(each) == 'blendShape':
+            return each
+    return None
 class BSManager(object):
     def __init__(self, NameConv=None) :
         if NameConv:
@@ -316,7 +357,8 @@ class BSManager(object):
                         print "Joint object doesnt exists:%s"%JointName
         else:
             print "Control object doesnt exists:%s"%control
-            control = self.NameConv.set_from_name(jointLinkDefinition['control'], Side, Token ='Side')
+            control = self.NameConv.set_from_name(jointLinkDefinition['control'], Side, Token='Side')
+
 #if __name__=="__main__":
 #    Manager = BSManager()
 #    Manager.AppyBlendShapeDefinition( SkinedJoints)

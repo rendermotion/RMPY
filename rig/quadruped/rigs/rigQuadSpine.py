@@ -1,6 +1,5 @@
 from RMPY.rig.quadruped.rigs import rigIKQuadSpine
 from RMPY.rig import rigPointOnSurface
-from RMPY.rig import rigFK
 from RMPY.rig import rigBase
 from RMPY.rig import rigSingleJoint
 

@@ -36,7 +36,7 @@ def hide_rigs():
 
 def hierarchy():
     rig_hierarchy = rigHierarchy.RigHierarchy()
-    pm.parent('geo', rig_hierarchy.geometry)
+    pm.parent('Model', rig_hierarchy.geometry)
 
 
 def load_data():
@@ -73,5 +73,5 @@ def finalize():
 
 
 if __name__ == '__main__':
-    finalize()
+    build()
     # data_save_load.save_curve()

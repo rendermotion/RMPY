@@ -15,22 +15,22 @@ class RigBaseSwitchModel(rigBase.BaseModel):
         self.reverse = None
         self.attribute_output = None
         self.attribute_output_false = None
+        self.attribute_name = 'attribute'
 
 
 class RigBaseSwitch(rigBase.RigBase):
     def __init__(self, *args, **kwargs):
-        if 'model' not in kwargs.keys():
-            kwargs['model'] = RigBaseSwitchModel()
+        kwargs['model'] = kwargs.pop('model', RigBaseSwitchModel())
         super(RigBaseSwitch, self).__init__(*args, **kwargs)
         self.control = kwargs.pop('control', None)
+        self._model.attribute_name = kwargs.pop('attribute_name', self.attribute_name)
         self.reverse = None
         self.attribute_output = None
         self.attribute_output_false = None
-        self.attribute_name = 'switch'
 
     def initialize(self, **kwargs):
         """
-        Initializes the reverse, the control, and the name of the attribute.
+        Initialises the reverse, the control, and the name of the attribute.
         **kwargs:
             control: the name of the object that will be the control.
             attribute_name:the name of the attribute that will be 
@@ -39,7 +39,7 @@ class RigBaseSwitch(rigBase.RigBase):
         self.control = kwargs.pop('control', self.control)
         if self.control:
             self.control = self.rm.as_pymel_nodes(self.control)
-        self.attribute_name = kwargs.pop('attribute_name', 'switch')
+        self._model.attribute_name = kwargs.pop('attribute_name', self.attribute_name)
         self.reverse = pm.shadingNode('reverse', asUtility=True)
         self.name_convention.rename_name_in_format(self.reverse, name="reverse")
         self.attribute_output_false = self.reverse.outputX
@@ -72,6 +72,10 @@ class RigBaseSwitch(rigBase.RigBase):
         self._model.attribute_output_false = value
 
     @property
+    def attribute_name(self):
+        return self._model.attribute_name
+
+    @property
     def reverse(self):
         """
         the reverse node for the output.
@@ -84,7 +88,7 @@ class RigBaseSwitch(rigBase.RigBase):
 
     def set_control(self, **kwargs):
         self.control = kwargs.pop('control', self.control)
-        self.attribute_name = kwargs.pop('attribute_name', self.attribute_name)
+        self._model.attribute_name = kwargs.pop('attribute_name', self.attribute_name)
 
     def set_outputs(self):
         pass

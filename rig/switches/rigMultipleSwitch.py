@@ -6,6 +6,7 @@ class RigMultipleSwitchModel(rigBase.BaseModel):
         super(RigMultipleSwitchModel, self).__init__()
         self.control = None
         self.switch = {}
+        self.attribute_name = 'attribute'
 
 
 class RigMultipleSwitch(rigBase.RigBase):
@@ -21,6 +22,11 @@ class RigMultipleSwitch(rigBase.RigBase):
             kwargs['model'] = RigMultipleSwitchModel()
         super(RigMultipleSwitch, self).__init__(*args, **kwargs)
         self.control = kwargs.pop('control', None)
+        self._model.attribute_name = kwargs.pop('attribute_name', self.attribute_name)
+
+    @property
+    def attribute_name(self):
+        return self._model.attribute_name
 
     @property
     def switch(self):

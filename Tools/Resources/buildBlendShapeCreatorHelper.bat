@@ -1,0 +1,1 @@
+call mayapy3 UI_BlendShapeCreatorHelper.ui -o ../QT5/ui/FormBlendShapeCreatorHelper.py

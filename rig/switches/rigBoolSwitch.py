@@ -9,15 +9,14 @@ class RigBoolSwitchModel(rigBaseSwitch.RigBaseSwitchModel):
 
 class RigBoolSwitch(rigBaseSwitch.RigBaseSwitch):
     def __init__(self, *args, **kwargs):
-        if 'model' not in kwargs.keys():
-            kwargs['model'] = RigBoolSwitchModel()
+        kwargs['model'] = kwargs.pop('model', RigBoolSwitchModel())
         super(RigBoolSwitch, self).__init__(*args, **kwargs)
         self.initialize(*args, **kwargs)
         if self.control:
             self.set_control()
 
     def set_control(self, **kwargs):
-        self.attribute_name = kwargs.pop('attribute_name', self.attribute_name)
+        self._model.attribute_name = kwargs.pop('attribute_name', self.attribute_name)
         if self.attribute_name not in pm.listAttr(self.control):
             pm.addAttr(self.control, ln=self.attribute_name, at='bool', k=True)
         self.set_outputs()
