@@ -99,6 +99,6 @@ class Loft(creatorsBase.CreatorsBase):
 if __name__ == '__main__':
     selection = pm.ls(selection=True)
     nurbs_surface = Loft()
-    nurbs_surface.curve_base(selection, type='line')
-    #nurbs_surface.point_base(*selection, ep=True, delete_history=False)
-    #nurbs_surface.uniform_rebuild(10)'''
+    # nurbs_surface.curve_base(selection, type='line')
+    nurbs_surface.point_base(*selection, ep=True, delete_history=False)
+    # nurbs_surface.uniform_rebuild(10)

@@ -16,6 +16,7 @@ class Constraint(creatorsBase.CreatorsBase):
     def node_base(self, *args, **kwargs):
         super(Constraint, self).node_base(*args, **kwargs)
         if len(args) >= 2:
+
                 return self._constraint(*args, **kwargs)
         else:
             raise AttributeError('you should provide at least 2 attributes')
@@ -93,10 +94,11 @@ class Constraint(creatorsBase.CreatorsBase):
         else:
             name = kwargs.pop('name', self.name_convention.get_a_short_name(args[0]))
         constraints_list = []
-        for each_constraint in self.constraint_type:
-            new_constraint = each_constraint(*args, **kwargs)
-            constraints_list.append(new_constraint)
-            self.name_convention.rename_name_in_format(new_constraint, name=name)
+        for each_target in args[1:]:
+            for each_constraint in self.constraint_type:
+                new_constraint = each_constraint(args[0], each_target, **kwargs)
+                constraints_list.append(new_constraint)
+                self.name_convention.rename_name_in_format(new_constraint, name=name)
         return constraints_list
 
     def _constraint_different_len_lists(self, drivers, driven, **kwargs):

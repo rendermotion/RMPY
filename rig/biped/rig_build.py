@@ -11,9 +11,9 @@ from RMPY.rig.switches import rigBoolSwitch
 def build():
     load_sources()
     build_rig()
-    hierarchy()
-    load_data()
-    finalize()
+    # hierarchy()
+    # load_data()
+    # finalize()
 
 
 def load_sources():

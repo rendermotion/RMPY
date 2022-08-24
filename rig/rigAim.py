@@ -11,10 +11,11 @@ class AimRigModel(rigBase.BaseModel):
 
 class RigAim(rigBase.RigBase):
     def __init__(self, *args, **kwargs):
+        kwargs['model'] = kwargs.pop('model', AimRigModel())
         super(RigAim, self).__init__(*args, **kwargs)
-        self._model = AimRigModel()
         self.tip = None
         self.aim = None
+        self.root = None
 
     @property
     def aim(self):
@@ -26,34 +27,41 @@ class RigAim(rigBase.RigBase):
 
     def create_point_base(self, point, **kwargs):
         super(RigAim, self).create_point_base(point, **kwargs)
-        root = self.create.group.point_base(point, type='world', name='root')
-        aim = pm.duplicate(root)[0]
+        create_joint = kwargs.pop('create_joint', True)
+        aim = self.create.group.point_base(point, type='world', name='root')
+        target = pm.duplicate(aim)[0]
         self.name_convention.rename_name_in_format(aim, name='aim')
+        self.name_convention.rename_name_in_format(target, name='target')
 
-        pm.move(aim, 10, **{'move{}'.format(config.axis_order[0].upper()): True, 'objectSpace': True, 'relative': True})
+        pm.move(target, 10, **{'move{}'.format(config.axis_order[0].upper()): True, 'objectSpace': True, 'relative': True})
+        target.setParent(self.rig_system.kinematics)
         aim.setParent(self.rig_system.kinematics)
-        root.setParent(self.rig_system.kinematics)
-        reset = self.create.group.point_base(root, type='inserted', name='reset')
+        self.root = self.create.group.point_base(aim, type='inserted', name='reset')
 
-        self.tip = reset
-        self.aim = root
+        self.tip = self.root
+        self.aim = aim
 
-        reset_control, control = self.create.controls.point_base(aim, name='aim')
+        reset_control, control = self.create.controls.point_base(target, name='aim')
         reset_control.setParent(self.rig_system.controls)
-        parent = kwargs.pop('parent', control)
+        world_up_object = kwargs.pop('world_up_object', control)
+
         aim_vector = [0, 0, 0]
-        aim_vector[config.axis_order[0]] = 1
+        aim_vector[config.axis_order_index[0]] = 1
         up_vector = [0, 0, 0]
-        up_vector[config.axis_order[1]] = 1
-        self.create.constraint.point(point, reset, mo=True)
-        pm.aimConstraint(aim, root, aimVector=aim_vector, worldUpType='objectrotation',
-                         upVector=up_vector, worldUpObject=parent, worldUpVector=[0, 1, 0])
-        self.rm.align(root, reset_control, translate=False)
-        pm.parentConstraint(control, aim)
+        up_vector[config.axis_order_index[1]] = 1
+
+        pm.aimConstraint(target, aim, aimVector=aim_vector, worldUpType='objectrotation',
+                         upVector=up_vector, worldUpObject=world_up_object, worldUpVector=[0, 1, 0])
+        self.rm.align(aim, reset_control, translate=False)
+        if create_joint:
+            reset_joints, new_joints_list = self.create.joint.point_base(self.aim)
+            self.create.constraint.node_base(self.aim, new_joints_list[0], mo=True)
+            reset_joints.setParent(self.rig_system.joints)
+        self.create.constraint.node_base(control, target, mo=True)
         self.reset_controls.append(reset_control)
         self.controls.append(control)
 
 
 if __name__ == '__main__':
     head_aim = RigAim()
-    head_aim.create_point_base('C_head_reference_pnt')
+    head_aim.create_point_base('R_eye_reference_pnt')

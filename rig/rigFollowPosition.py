@@ -9,6 +9,11 @@ for required_plugings in ['matrixNodes']:
     else:
         print 'plugin maya muscle already loaded'
 
+"""
+A rig to follow the position of an object.
+ 
+"""
+
 
 class FollowPosition(rigBase.RigBase):
     def __init__(self, *args, **klwargs):
@@ -22,11 +27,13 @@ class FollowPosition(rigBase.RigBase):
         decompose_matrix.outputTranslate >> main_point.translate
         decompose_matrix.outputRotate >> main_point.rotate
         mult_matrix = pm.createNode('multMatrix')
+
         self.name_convention.rename_name_in_format(mult_matrix)
-        offset_reference.matrix >> mult_matrix.matrixIn[0]
-        # offset_reference.worldMatrix[0] >> mult_matrix.matrixIn[0]
-        # offset_reference.worldInverseMatrix[0] >> mult_matrix.matrixIn[1]
+        # offset_reference.matrix >> mult_matrix.matrixIn[0]
+        offset_reference.worldMatrix[0] >> mult_matrix.matrixIn[0]
+        offset_reference.worldInverseMatrix[0] >> mult_matrix.matrixIn[1]
         mult_matrix.matrixSum >> decompose_matrix.inputMatrix
+
 
 if __name__ == '__main__':
     follow_position = FollowPosition()

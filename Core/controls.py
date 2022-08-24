@@ -153,8 +153,8 @@ def add_nurbs_curve_shape(scene_object):
 
 if __name__ == '__main__':
     selection = pm.ls(selection=True)
-    mirror_selection()
-    # color_now_all_ctrls(*selection)
+    # mirror_selection()
+    color_now_all_ctrls(*selection)
     # mirror_controls(*selection)
     # get_same_number_of_shapes(*selection)
     # print selection[0].getShapes()
