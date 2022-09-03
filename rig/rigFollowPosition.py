@@ -19,7 +19,7 @@ class FollowPosition(rigBase.RigBase):
     def __init__(self, *args, **klwargs):
         super(FollowPosition, self).__init__(*args, **klwargs)
 
-    def build(self, main_point,  offset_reference):
+    def build(self, main_point,  offset_parent_reference, offset_reference):
 
         decompose_matrix = pm.createNode('decomposeMatrix')
         self.name_convention.rename_name_in_format(decompose_matrix)
@@ -31,7 +31,7 @@ class FollowPosition(rigBase.RigBase):
         self.name_convention.rename_name_in_format(mult_matrix)
         # offset_reference.matrix >> mult_matrix.matrixIn[0]
         offset_reference.worldMatrix[0] >> mult_matrix.matrixIn[0]
-        offset_reference.worldInverseMatrix[0] >> mult_matrix.matrixIn[1]
+        offset_parent_reference.worldInverseMatrix[0] >> mult_matrix.matrixIn[1]
         mult_matrix.matrixSum >> decompose_matrix.inputMatrix
 
 

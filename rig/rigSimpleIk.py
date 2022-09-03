@@ -90,7 +90,8 @@ class SimpleIK(rigBase.RigBase):
         And sets this new control as the pole vector.
         :return:
         """
-        pole_vector = self.create.space_locator.pole_vector(*self.joints)
+
+        pole_vector = self.create.space_locator.pole_vector(*self.joints[0:3])
         self.custom_world_align(pole_vector)
         pm.parent(pole_vector, self.rig_system.kinematics)
         self.set_as_pole_vector(pole_vector)
