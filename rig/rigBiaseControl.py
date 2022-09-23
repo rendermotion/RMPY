@@ -37,7 +37,7 @@ class BiasedControl(rigBase.RigBase):
     def create_biased_controls(self, number_of_points, curve=None):
         if curve:
             self.biased_line = curve
-        result = rigObjectsOnCurve.RigObjectsOnCurve(self.biased_line, number_of_nodes = number_of_points,
+        result = rigObjectsOnCurve.RigObjectsOnCurve(self.biased_line, number_of_nodes=number_of_points,
                                                      rig_system=self.rig_system
                                                      , object_type='spaceLocator', up_vector_type='scene')
         self.drivers = result.outputs
@@ -48,8 +48,8 @@ class BiasedControl(rigBase.RigBase):
         self.result_points_parent = pm.duplicate(self.driver_points_parent)[0]
         self.name_convention.rename_name_in_format(self.result_points_parent, name='resultPoints')
         for index, each in enumerate(self.result_points_parent.getChildren()):
-            self.name_convention.rename_name_in_format(each, name='resultPoints', useName=False)
-            self.name_convention.rename_name_in_format(self.drivers[index], name='driverPoints', useName=False)
+            self.name_convention.rename_name_in_format(each, name='resultPoints', objectType='spaceLocator')
+            self.name_convention.rename_name_in_format(self.drivers[index], name='driverPoints', objectType='spaceLocator')
 
             pm.pointConstraint(self.drivers[index], each, mo=False)
             #self.drivers[index].translateX >> each.translateX

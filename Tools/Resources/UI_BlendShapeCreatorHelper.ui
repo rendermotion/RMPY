@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>320</width>
-    <height>326</height>
+    <width>237</width>
+    <height>305</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,59 +15,123 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QLabel" name="blend_shape_name_lbl">
-     <property name="text">
-      <string/>
+    <widget class="QTabWidget" name="tabsBlendshapeCreation">
+     <property name="currentIndex">
+      <number>1</number>
      </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QPushButton" name="LoadObjectBtn">
-     <property name="text">
-      <string>Load Selection</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QPushButton" name="copy_weights_btn">
-     <property name="text">
-      <string>Copy weights from selection</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QPushButton" name="save_to_memory_btn">
-       <property name="text">
-        <string>Save to memory</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="paste_from_memory_btn">
-       <property name="text">
-        <string>Paste from memory</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QPushButton" name="FlipWeightsBtn">
-     <property name="text">
-      <string>Flip Weights</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QListWidget" name="listWidget"/>
-   </item>
-   <item>
-    <widget class="QPushButton" name="LinkSelected">
-     <property name="text">
-      <string>Extract_Shapes</string>
-     </property>
+     <widget class="QWidget" name="weights">
+      <attribute name="title">
+       <string>Weights</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLabel" name="blend_shape_name_lbl">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="LoadObjectBtn">
+         <property name="text">
+          <string>Load Selection</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="copy_weights_btn">
+         <property name="text">
+          <string>Copy weights from selection</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QPushButton" name="save_to_memory_btn">
+           <property name="text">
+            <string>Save to memory</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="paste_from_memory_btn">
+           <property name="text">
+            <string>Paste from memory</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QPushButton" name="FlipWeightsBtn">
+         <property name="text">
+          <string>Flip Weights</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QListWidget" name="listWidget"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="LinkSelected">
+         <property name="text">
+          <string>Extract_Shapes</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="axisSplit">
+      <attribute name="title">
+       <string>Axis split</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QGroupBox" name="inputs_grpbox">
+         <property name="title">
+          <string>Input geometries</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <widget class="QPushButton" name="main_geometry_btn">
+            <property name="text">
+             <string>Main geo</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="blendshape_geo_btn">
+            <property name="text">
+             <string>Blendshape geo</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="split_blendshape_btn">
+         <property name="text">
+          <string>Split blendshape</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>

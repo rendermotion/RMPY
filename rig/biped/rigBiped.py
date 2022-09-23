@@ -1,5 +1,5 @@
 from RMPY.rig.biped.rig import arm
-from RMPY.rig.biped.rig import rigSpine
+from RMPY.rig.biped.rig import rigForwardBackwardFKSpine
 from RMPY.rig.biped.rig import hand
 from RMPY.rig import rigFK
 from RMPY.rig import rigWorld
@@ -11,10 +11,10 @@ from RMPY.rig.biped.rig import armSpaceSwitch
 from RMPY.rig.biped.rig import legSpaceSwitch
 from RMPY.rig.biped.rig import handSpaceSwitch
 from RMPY.rig.biped.rig import rigEyesAim
-
-reload(armSpaceSwitch)
-reload(legSpaceSwitch)
-reload(handSpaceSwitch)
+from RMPY.rig.biped.rig import rigBreast
+from RMPY.rig.biped.rig import rigToes
+reload(rigEyesAim)
+reload(rigToes)
 
 
 class RigBypedModel(rigBase.BaseModel):
@@ -27,7 +27,7 @@ class RigBypedModel(rigBase.BaseModel):
         self.l_hand = hand.Hand()
         self.r_hand = hand.Hand()
         self.neck_head = neckHead.NeckHead()
-        self.spine = rigSpine.RigSpine()
+        self.spine = rigForwardBackwardFKSpine.RigForwardBackwardFKSpine()
         self.hip = rigFK.RigFK()
         self.cog = rigProp.RigProp()
         self.jaw = rigFK.RigFK()
@@ -39,6 +39,10 @@ class RigBypedModel(rigBase.BaseModel):
         self.l_hand_space_switch = handSpaceSwitch.HandSpaceSwitch()
         self.r_hand_space_switch = handSpaceSwitch.HandSpaceSwitch()
         self.eyes = rigEyesAim.RigEyesAim()
+        self.l_toes = rigToes.Toes()
+        self.r_toes = rigToes.Toes()
+        self.l_breast = rigBreast.Breast()
+        self.r_breast = rigBreast.Breast()
 
 
 class RigByped(rigBase.RigBase):
@@ -66,6 +70,10 @@ class RigByped(rigBase.RigBase):
 
         self.neck_root = [u'C_neck00_reference_pnt', u'C_head00_reference_pnt', u'C_headTip00_reference_pnt']
         self.eyes_root = [u'R_eye_reference_pnt', u'L_eye_reference_pnt']
+
+        self.breast_root = [u'{}_breast00_reference_pnt']
+        self.toes_root = [u'{}_toes00_reference_grp']
+
 
     @property
     def neck_head(self):
@@ -139,13 +147,29 @@ class RigByped(rigBase.RigBase):
         return self._model.r_hand_space_switch
 
     @property
+    def l_breast(self):
+        return self._model.l_breast
+
+    @property
+    def r_breast(self):
+        return self._model.r_breast
+
+    @property
+    def r_toes(self):
+        return self._model.r_toes
+
+    @property
+    def l_toes(self):
+        return self._model.l_toes
+
+    @property
     def jaw(self):
         return self._model.jaw
 
     def build(self):
         self.spine.create_point_base(*self.spine_root)
         self.hip.create_point_base(*self.hip_root, name='hip')
-        self.cog.create_point_base(self.hip_root[0], name='cog')
+        self.cog.create_point_base(self.hip_root[0], name='cog', depth=1)
         self.cog.custom_world_align(self.cog.reset_controls[0])
 
         self.l_arm.create_point_base(*[each.format('L') for each in self.arm_root])
@@ -188,12 +212,24 @@ class RigByped(rigBase.RigBase):
 
         self.eyes.set_parent(self.neck_head)
 
-        self.hip.set_parent(self.cog)
+        self.hip.set_parent(self.spine.backward_root)
 
         self.l_leg.set_parent(self.hip)
         self.r_leg.set_parent(self.hip)
 
+        self.l_breast.create_point_base(*[each.format('L') for each in self.breast_root])
+        self.r_breast.create_point_base(*[each.format('R') for each in self.breast_root])
+        self.l_breast.set_parent(self.spine)
+        self.r_breast.set_parent(self.spine)
+
+        self.l_toes.create_point_base(*[each.format('L') for each in self.toes_root])
+        self.r_toes.create_point_base(*[each.format('R') for each in self.toes_root])
+        self.l_toes.set_parent(self.l_leg)
+        self.r_toes.set_parent(self.r_leg)
+
         # setup as skinned joints
+        self.eyes.rename_as_skinned_joints(nub=False)
+
         self.jaw.rename_as_skinned_joints()
         self.spine.rename_as_skinned_joints()
         self.hip.rename_as_skinned_joints()
@@ -204,6 +240,12 @@ class RigByped(rigBase.RigBase):
         self.neck_head.rename_as_skinned_joints()
         self.l_leg.rename_as_skinned_joints()
         self.r_leg.rename_as_skinned_joints()
+
+        self.l_toes.rename_as_skinned_joints()
+        self.r_toes.rename_as_skinned_joints()
+
+        self.l_breast.rename_as_skinned_joints()
+        self.r_breast.rename_as_skinned_joints()
 
 
 if __name__ == '__main__':

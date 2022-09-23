@@ -63,7 +63,6 @@ class BlendShape(creatorsBase.Creator):
         self.weights_dict = data_manager.load(file_name, **kwargs)
         return self.weights_dict
 
-
     def get_weights_dictionary(self, **kwargs):
         index_source = kwargs.pop('index', None)
         if not index_source:

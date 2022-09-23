@@ -11,14 +11,15 @@ class ArmSpaceSwitch(rigBase.RigBase):
                                                                   alias_list=['world', 'shoulder'],
                                                                   attribute_name='space',
                                                                   control=arm_rig.rig_arm.ik_rig.controls[0],
-                                                                  parent=True)
+                                                                  parent=True, rig_system=arm_rig.rig_system)
         enum_space_switch.add_object(arm_rig.rig_arm.ik_rig.reset_controls[0])
 
         enum_space_switch = rigEnumSpaceSwitch.RigEnumSpaceSwitch(world_rig.tip, arm_rig.rig_clavicle.tip, arm_rig.rig_arm.ik_rig.controls[0],
                                                                   alias_list=['world', 'shoulder', 'ikHandle'],
                                                                   attribute_name='space',
                                                                   control=arm_rig.rig_arm.ik_rig.controls[1],
-                                                                  parent=True)
+                                                                  parent=True,
+                                                                  rig_system=arm_rig.rig_system)
         enum_space_switch.add_object(arm_rig.rig_arm.ik_rig.reset_controls[1])
 
 

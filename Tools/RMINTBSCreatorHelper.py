@@ -21,6 +21,8 @@ import os
 from RMPY import RMblendShapesTools
 reload(RMblendShapesTools)
 reload(FormBlendShapeCreatorHelper)
+
+
 def getMayaWindow():
     ptr = mui.MQtUtil.mainWindow()
     return wrapInstance(long(ptr), QMainWindow)

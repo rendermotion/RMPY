@@ -1,7 +1,7 @@
 import pymel.core as pm
 from RMPY.rig import rigBase
-from RMPY.rig import BiasedControl
-
+from RMPY.rig import rigBiaseControl
+reload(rigBiaseControl)
 
 if not 'MayaMuscle' in pm.pluginInfo(q=True, listPlugins=True):
     pm.loadPlugin('MayaMuscle')
@@ -39,8 +39,8 @@ class MuscleSpline(rigBase.RigBase):
         centered = kwargs.pop('centered', True)
         kwargs['centered'] = centered
         self.spline = spline
-        self.name_conv.rename_name_in_format(spline.getParent(), name='muscleSpline')
-        self.name_conv.rename_name_in_format(spline, name='muscleSplineShape')
+        self.name_convention.rename_name_in_format(spline.getParent(), name='muscleSpline')
+        self.name_convention.rename_name_in_format(spline, name='muscleSplineShape')
         pm.parent(self.spline.getParent(), self.rig_system.kinematics)
 
         pm.addAttr(spline, ln='curLen', k=True)
@@ -48,7 +48,8 @@ class MuscleSpline(rigBase.RigBase):
         pm.addAttr(spline, ln='pctStretch', k=True)
 
         for reference_point, each in zip(points, range(len(points))):
-            reset_control, control = self.rig_controls.create_point_base(reference_point, **kwargs)
+            print '*****reference_point = {}'.format(reference_point)
+            reset_control, control = self.create.controls.point_base(reference_point, **kwargs)
             self.controls.append(control)
             self.reset_controls.append(reset_control)
 
@@ -76,50 +77,54 @@ class MuscleSpline(rigBase.RigBase):
         pm.connectAttr(self.spline.outPctStretch, self.spline.pctStretch)
 
     def create_joints_on_curve(self, joint_number):
-        step = 1.0/(joint_number-1)
+        if joint_number > 1:
+            step = 1.0/(joint_number-1)
+        else:
+            step = 0.5
         root_group = pm.group(empty=True)
-        self.name_conv.rename_name_in_format(root_group, name='joints')
+        self.name_convention.rename_name_in_format(root_group, name='joints')
         root_group.setParent(self.rig_system.joints)
         self.reset_joints.append(root_group)
         for index in range(joint_number):
             new_joint = pm.joint()
             self.joints.append(new_joint)
             new_joint.setParent(None)
-
-        self.name_conv.rename_name_in_format(new_joint, objectType='skinjoint')
-        pm.addAttr(new_joint, ln='UValue', k=True)
-        new_joint.UValue.set(float(index) * step)
-        pm.connectAttr('{}.UValue'.format(new_joint), '{}.readData[{}].readU'.format(self.spline, index))
-        pm.connectAttr('{}.rotateOrder'.format(new_joint),
-                       '{}.readData[{}].readRotOrder'.format(self.spline, index))
-        pm.connectAttr('{}.outputData[{}].outTranslate'.format(self.spline, index),
-                       '{}.translate'.format(new_joint))
-        pm.connectAttr('{}.outputData[{}].outRotate'.format(self.spline, index),
-                       '{}.rotate'.format(new_joint))
-        pm.parent(new_joint, root_group)
-        new_joint.jointOrient.set(0, 0, 0)
+            self.name_convention.rename_name_in_format(new_joint, objectType='skinjoint')
+            pm.addAttr(new_joint, ln='UValue', k=True)
+            if joint_number > 1:
+                new_joint.UValue.set(float(index) * step)
+            else:
+                new_joint.UValue.set(step)
+            pm.connectAttr('{}.UValue'.format(new_joint), '{}.readData[{}].readU'.format(self.spline, index))
+            pm.connectAttr('{}.rotateOrder'.format(new_joint),
+                           '{}.readData[{}].readRotOrder'.format(self.spline, index))
+            pm.connectAttr('{}.outputData[{}].outTranslate'.format(self.spline, index),
+                           '{}.translate'.format(new_joint))
+            pm.connectAttr('{}.outputData[{}].outRotate'.format(self.spline, index),
+                           '{}.rotate'.format(new_joint))
+            pm.parent(new_joint, root_group)
+            new_joint.jointOrient.set(0, 0, 0)
 
     def biased_scale(self):
         self.fullScale = pm.createNode('plusMinusAverage')
-        self.name_conv.rename_name_in_format(self.fullScale, name='stretchScaleValue')
+        self.name_convention.rename_name_in_format(self.fullScale, name='stretchScaleValue')
         self.fullScale.operation.set(2)
 
         self.spline.pctSquash >> self.fullScale.input1D[0]
         self.spline.pctStretch >> self.fullScale.input1D[1]
-
         self.controls_multiplier()
-
         if not self.biased_control:
-            self.biased_control = BiasedControl.BiasedControl(rig_system=self.rig_system)
-            self.biased_control.create(len(new_spline.joints), curve_points=[[0, 0, 0], [0, 0, 1], [.5, 0, 1],
-                                                                             [1, 0, 1], [1, 0, 0]])
+            self.biased_control = rigBiaseControl.BiasedControl(rig_system=self.rig_system)
+            # self.biased_control.build(len(new_spline.joints))# curve_points=[[0, 0, 0], [0, 0, 1], [.5, 0, 1], [1, 0, 1], [1, 0, 0]])
+            self.biased_control.build(number_of_points=len(new_spline.joints),
+                                      curve_points=[[0, 0, 0], [0, 0, 1], [.5, 0, 1], [1, 0, 1], [1, 0, 0]])
         self.biased_control.connect(['{}.input1X'.format(each) for each in self.user_scale_nodes_list])
 
     def controls_multiplier(self):
         for each_joint in self.joints:
             scale_factor = pm.createNode('multiplyDivide')
             self.user_scale_nodes_list.append(scale_factor)
-            self.name_conv.rename_name_in_format(scale_factor, name='userScaleValue')
+            self.name_convention.rename_name_in_format(scale_factor, name='userScaleValue')
             self.fullScale.output1D >> scale_factor.input2X
             scale_factor.input1X.set(1)
             final_addition = pm.createNode('plusMinusAverage')
@@ -131,9 +136,9 @@ class MuscleSpline(rigBase.RigBase):
 
 
 if __name__ == '__main__':
- points = ['C_Muscles00_reference_LOC', 'C_Muscles01_reference_LOC', 'C_Muscles02_reference_LOC']
+ points = ['L_dynamicBreast00_reference_pnt', 'L_dynamicBreast01_reference_pnt', 'L_dynamicBreast02_reference_pnt']
  new_spline = MuscleSpline()
  new_spline.create_point_base(*points)
  #new_spline.create_curve_base('C_muscle_reference_SHP')
- new_spline.create_joints_on_curve(5)
+ new_spline.create_joints_on_curve(3)
  new_spline.biased_scale()

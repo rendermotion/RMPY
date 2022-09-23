@@ -1,5 +1,6 @@
 from maya.api import OpenMaya
 from maya.api import OpenMayaAnim
+import pymel.core as pm
 
 
 def getMfnMesh(name):
@@ -82,6 +83,13 @@ def get_vertex():
     dag_path = getDagPath('pCube3Shape.vtx[*]')
     return dag_path.node()
 
+
+def copy_vertex_position(source, destination):
+    source_mesh = getMfnMesh(source)
+    destination_mesh = getMfnMesh(destination)
+    destination_mesh.setPoints(source_mesh.getPoints())
+
+
 def test():
     skin_cluster = getMFnSkinCluster('skinCluster1')
     count = 0
@@ -114,8 +122,9 @@ def test():
 
 
 if __name__ == '__main__':
-
+    selection = pm.ls(selection=True)
+    copy_vertex_position(*selection)
     # print shells('pCube3')
-    shells_result = shells('C_featherBones00_hip_msh')
-    print len(shells_result)
-    print shells_result
+    # shells_result = shells('C_featherBones00_hip_msh')
+    # print len(shells_result)
+    # print shells_result

@@ -42,7 +42,6 @@ def hierarchy():
 def load_data():
     controls_list = pm.ls('*ctr')
     data_save_load.load_curves(*controls_list)
-
     geometry = search_hierarchy.shape_type_in_hierarchy(pm.ls('geometry')[0], mesh_list=[], object_type='mesh')
     data_save_load.load_skin_cluster(*geometry)
 

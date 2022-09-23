@@ -46,7 +46,7 @@ class RigForwardBackwardFKSpine(rigBase.RigBase):
 
         self.joints.extend(reversed(self.rig_backward_fk.joints))
 
-        self.attach_points['root'] = self.rig_backward_fk.reset_controls[0]
+        self.attach_points['root'] = self.rig_forward_fk.reset_controls[0]
         self.attach_points['tip'] = self.rig_backward_fk.joints[0]
         self.attach_points['backward_root'] = self.rig_backward_fk.joints[-1]
 

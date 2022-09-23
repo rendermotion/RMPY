@@ -38,7 +38,7 @@ class RigAim(rigBase.RigBase):
         aim.setParent(self.rig_system.kinematics)
         self.root = self.create.group.point_base(aim, type='inserted', name='reset')
 
-        self.tip = self.root
+        # self.tip = self.root
         self.aim = aim
 
         reset_control, control = self.create.controls.point_base(target, name='aim')
@@ -57,6 +57,9 @@ class RigAim(rigBase.RigBase):
             reset_joints, new_joints_list = self.create.joint.point_base(self.aim)
             self.create.constraint.node_base(self.aim, new_joints_list[0], mo=True)
             reset_joints.setParent(self.rig_system.joints)
+            self.reset_joints.extend(reset_joints)
+            self.joints.extend(new_joints_list)
+
         self.create.constraint.node_base(control, target, mo=True)
         self.reset_controls.append(reset_control)
         self.controls.append(control)

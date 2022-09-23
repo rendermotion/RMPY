@@ -292,14 +292,14 @@ class NameConvention(object):
 
         new_name_array = ()
         for each_object in string_name_list:
-            # name_tokens = each_object.split("_")
+            # name_tokens = each_object.split("|")
             # new_name = ""
             # for eachToken in name_tokens:
             #     new_name += eachToken
             if useName:
-                print ' ****** remove ns Use name'
-                print self.remove_namespace(each_object)
-                print self.get_a_short_name(self.remove_namespace(each_object))
+                # print ' ****** remove ns Use name'
+                # print self.remove_namespace(each_object)
+                # print self.get_a_short_name(self.remove_namespace(each_object))
                 wanted_name_dictionary['name'] = self.get_a_short_name(self.remove_namespace(each_object))
 
             if 'objectType' not in wanted_name_dictionary:

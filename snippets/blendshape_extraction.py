@@ -29,3 +29,7 @@ def duplicate_targets(prefix):
 
         new_geo.setParent(blend_shapes_parent)
         blend_shape.weight[each].set(0)
+
+
+if __name__ == '__main__':
+    duplicate_targets('')

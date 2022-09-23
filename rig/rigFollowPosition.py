@@ -5,11 +5,11 @@ for required_plugings in ['matrixNodes']:
     if not required_plugings in pm.pluginInfo(q=True, listPlugins=True):
         pm.loadPlugin(required_plugings)
         print 'plugin {} loaded'.format(required_plugings)
-
     else:
         print 'plugin maya muscle already loaded'
 
 """
+
 A rig to follow the position of an object.
  
 """
