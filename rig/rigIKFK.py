@@ -4,7 +4,7 @@ from RMPY.rig import rigFK
 from RMPY.rig import rigBase
 from RMPY.rig import rigSingleJoint
 from RMPY.rig import constraintSwitch
-import RMPY.core.main as rm
+import RMPY.core.rig_core as rm
 
 
 class RigIkFkModel(rigBase.BaseModel):
@@ -90,9 +90,12 @@ class RigIkFk(rigBase.RigBase):
 if __name__ == '__main__':
     root_arm = pm.ls('L_shoulder01_reference_pnt')[0]
     arm_root_points = rm.descendents_list(root_arm)[:3]
-    print arm_root_points
     arm_rig = RigIkFk()
     arm_rig.create_point_base(*arm_root_points)
+    print arm_rig.ik_fk_switch.outputs
+    print arm_rig.ik_fk_switch.joints
+    print arm_rig.tip
+
 
 
 

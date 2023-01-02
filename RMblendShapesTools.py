@@ -323,11 +323,11 @@ class BSManager(object):
 
     def RMblendShapeTargetDic (self, BSNode):
         #AliasNames=cmds.listAttr((BSNode +".weight"),m=True);
-        InputTargetGroup = cmds.getAttr ((BSNode+".inputTarget[0].inputTargetGroup"),mi=True);
+        InputTargetGroup = cmds.getAttr ((BSNode+".inputTarget[0].inputTargetGroup"), mi=True);
         BlendShapeDic={}
         if InputTargetGroup:
             for eachTarget in InputTargetGroup:
-                AliasName=cmds.listAttr((BSNode + ".weight[" + str(eachTarget) + "]"),m=True);
+                AliasName=cmds.listAttr((BSNode + ".weight[" + str(eachTarget) + "]"), m=True)
                 BlendShapeDic[str(AliasName[0])] = {}
                 BlendShapeDic[str(AliasName[0])]["TargetGroup"] = eachTarget
                 Items = cmds.getAttr ((BSNode+".inputTarget[0].inputTargetGroup["+str(eachTarget)+"].inputTargetItem"), mi = True)

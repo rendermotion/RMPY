@@ -2,6 +2,7 @@ from RMPY.rig.biped.rig import arm
 from RMPY.rig.biped.rig import rigForwardBackwardFKSpine
 from RMPY.rig.biped.rig import hand
 from RMPY.rig import rigFK
+from RMPY.rig.biped.rig import rig_jaw
 from RMPY.rig import rigWorld
 from RMPY.rig.biped.rig import neckHead
 from RMPY.rig.biped.rig import rigIKFKLegFeet
@@ -13,8 +14,11 @@ from RMPY.rig.biped.rig import handSpaceSwitch
 from RMPY.rig.biped.rig import rigEyesAim
 from RMPY.rig.biped.rig import rigBreast
 from RMPY.rig.biped.rig import rigToes
-reload(rigEyesAim)
-reload(rigToes)
+from RMPY.rig.biped.rig import neckHeadSpaceSwitch
+from RMPY.rig.biped.rig import rigEyesSpaceSwitch
+from RMPY.rig import rigSingleJoint
+reload(rigEyesSpaceSwitch)
+reload(neckHeadSpaceSwitch)
 
 
 class RigBypedModel(rigBase.BaseModel):
@@ -30,7 +34,7 @@ class RigBypedModel(rigBase.BaseModel):
         self.spine = rigForwardBackwardFKSpine.RigForwardBackwardFKSpine()
         self.hip = rigFK.RigFK()
         self.cog = rigProp.RigProp()
-        self.jaw = rigFK.RigFK()
+        self.jaw = rig_jaw.Jaw()
         self.rig_world = rigWorld.RigWorld()
         self.l_arm_space_switch = armSpaceSwitch.ArmSpaceSwitch()
         self.r_arm_space_switch = armSpaceSwitch.ArmSpaceSwitch()
@@ -38,11 +42,14 @@ class RigBypedModel(rigBase.BaseModel):
         self.r_leg_space_switch = legSpaceSwitch.LegSpaceSwitch()
         self.l_hand_space_switch = handSpaceSwitch.HandSpaceSwitch()
         self.r_hand_space_switch = handSpaceSwitch.HandSpaceSwitch()
+        self.eye_space_switch = rigEyesSpaceSwitch.EyeSpaceSwitch()
+        self.neck_head_space_switch = neckHeadSpaceSwitch.NeckHeadSpaceSwitch()
         self.eyes = rigEyesAim.RigEyesAim()
         self.l_toes = rigToes.Toes()
         self.r_toes = rigToes.Toes()
         self.l_breast = rigBreast.Breast()
         self.r_breast = rigBreast.Breast()
+        self.gums = rigSingleJoint.RigSingleJoint()
 
 
 class RigByped(rigBase.RigBase):
@@ -73,11 +80,15 @@ class RigByped(rigBase.RigBase):
 
         self.breast_root = [u'{}_breast00_reference_pnt']
         self.toes_root = [u'{}_toes00_reference_grp']
-
+        self.gums_root = [u'C_gums00_reference_pnt']
 
     @property
     def neck_head(self):
         return self._model.neck_head
+
+    @property
+    def gums(self):
+        return self._model.gums
 
     @property
     def eyes(self):
@@ -166,6 +177,15 @@ class RigByped(rigBase.RigBase):
     def jaw(self):
         return self._model.jaw
 
+    @property
+    def neck_head_space_switch(self):
+        return self._model.neck_head_space_switch
+    @property
+
+    def eye_space_switch(self):
+        return self._model.eye_space_switch
+
+
     def build(self):
         self.spine.create_point_base(*self.spine_root)
         self.hip.create_point_base(*self.hip_root, name='hip')
@@ -180,13 +200,14 @@ class RigByped(rigBase.RigBase):
         self.l_hand.create_point_base(*[each.format('L') for each in self.hand_root])
         self.l_hand.set_parent(self.l_arm)
 
-        self.l_arm_space_switch.build(self.l_arm, self.rig_world)
+        self.l_arm_space_switch.build(self.l_arm, self.rig_world, self.cog)
         self.l_hand_space_switch.build(self.l_hand, self.rig_world, self.l_arm)
 
         self.r_hand.create_point_base(*[each.format('R') for each in self.hand_root])
         self.r_hand.set_parent(self.r_arm)
 
-        self.r_arm_space_switch.build(self.r_arm, self.rig_world)
+        self.r_arm_space_switch.build(self.r_arm, self.rig_world, self.cog)
+
         self.r_hand_space_switch.build(self.r_hand, self.rig_world, self.r_arm)
 
         l_root_points = [each.format('L') for each in self.leg_root]
@@ -204,15 +225,23 @@ class RigByped(rigBase.RigBase):
         self.jaw.create_point_base(*self.jaw_root)
 
         self.eyes.create_point_base(*self.eyes_root)
+        self.eye_space_switch.build(self.eyes, self.neck_head, self.rig_world)
 
         self.neck_head.set_parent(self.spine)
+
+        self.neck_head_space_switch.build(self.neck_head, self.rig_world, self.cog)
+
+        self.gums.create_point_base(*self.gums_root)
+        self.gums.set_parent(self.neck_head)
+
         self.jaw.set_parent(self.neck_head)
         self.cog.set_parent(self.rig_world)
         self.spine.set_parent(self.cog)
 
         self.eyes.set_parent(self.neck_head)
 
-        self.hip.set_parent(self.spine.backward_root)
+        self.create.constraint.node_base(self.spine.backward_root, self.hip.root, point=True)
+        self.create.constraint.node_base(self.cog.tip, self.hip.root, orient=True, mo=True)
 
         self.l_leg.set_parent(self.hip)
         self.r_leg.set_parent(self.hip)
@@ -244,8 +273,9 @@ class RigByped(rigBase.RigBase):
         self.l_toes.rename_as_skinned_joints()
         self.r_toes.rename_as_skinned_joints()
 
-        self.l_breast.rename_as_skinned_joints()
-        self.r_breast.rename_as_skinned_joints()
+        self.l_breast.rename_as_skinned_joints(nub=False)
+        self.r_breast.rename_as_skinned_joints(nub=False)
+        self.gums.rename_as_skinned_joints(nub=False)
 
 
 if __name__ == '__main__':

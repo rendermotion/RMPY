@@ -110,9 +110,18 @@ def available_maya_files():
     return available_files
 
 
+def load_by_name(data_file):
+    for each_node in pm.ls(selection=True):
+        skin_cluster01 = skinCluster.SkinCluster()
+        skin_cluster01.load(data_file)
+        skin_cluster01.apply_weights_dictionary(geometry=each_node)
+
+
 if __name__ == '__main__':
-    # load_skin_cluster()
-    save_skin_cluster()
+    # load_by_name('BabyK_body_lvl2')
+
+    load_skin_cluster()
+    # save_skin_cluster()
     # load_curves()
 
     # save_curve()

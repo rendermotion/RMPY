@@ -2,7 +2,7 @@ import pymel.core as pm
 from RMPY import RMRigTools
 from RMPY.AutoRig import RMSpaceSwitch
 import RMPY.rig.rigBase
-import RMPY.core.main as rm
+import RMPY.core.rig_core as rm
 from RMPY.rig import rigLineBetweenPoints
 
 

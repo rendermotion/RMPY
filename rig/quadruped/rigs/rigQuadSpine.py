@@ -4,7 +4,6 @@ from RMPY.rig import rigBase
 from RMPY.rig import rigSingleJoint
 
 import pymel.core as pm
-reload(rigPointOnSurface)
 
 
 class QuadSpineModel(rigBase.BaseModel):

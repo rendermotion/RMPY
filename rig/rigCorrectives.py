@@ -50,7 +50,7 @@ class CorrectiveBlendShapes(rigBase.RigBase):
         self.apply_corrective_blend_shapes()
 
     def init_mirror(self, base_mesh):
-        self.mesh_creator = mesh.Creator()
+        self.mesh_creator = mesh.Mesh()
         self.mesh_creator.build_mirror_index(base_mesh)
 
     def create_right_side_correctives(self):
@@ -132,9 +132,10 @@ class CorrectiveBlendShapes(rigBase.RigBase):
     def build_rig_correctives(self):
         for each_corrective in self.correctives_definition.corrective_order:
             for each_geo in self.base_mesh:
-                if each_corrective in self.base_mesh[each_geo]:
+                if each_corrective in self.base_mesh[each_geo].keys():
                     last_target = self.base_mesh[each_geo][each_corrective][-1]
-            side = self.name_convention.get_from_name(last_target, 'side')
+                    side = self.name_convention.get_from_name(last_target, 'side')
+                    print 'found side {}'.format(side)
 
             if each_corrective in self.correctives_definition.config_correctives:
                 drivers = self.correctives_definition.config_correctives[each_corrective]['drivers']
@@ -175,12 +176,14 @@ class CorrectiveBlendShapes(rigBase.RigBase):
         zero_locator = pm.spaceLocator()
         self.name_convention.rename_name_in_format(zero_locator, name='zero{}'.format(default_name.capitalize()))
         driver_locator = pm.spaceLocator()
+        zero_locator.rotateOrder.set(rotation_axis.index(rotation_order))
         self.name_convention.rename_name_in_format(driver_locator, name='driver{}'.format(default_name.capitalize()))
         print 'drivers:{}'.format(drivers)
         print (str(drivers[1]), str(driver_locator))
         transform.align(str(drivers[1]), str(zero_locator))
         driver_locator.setParent(zero_locator)
         driver_locator.rotateOrder.set(rotation_axis.index(rotation_order))
+
         transform.align(str(drivers[1]), str(driver_locator))
         zero_locator.setParent(self.rig_system.kinematics)
 
@@ -208,30 +211,30 @@ class CorrectiveBlendShapes(rigBase.RigBase):
                     user_multiplier = pm.createNode('multiplyDivide')
                     self.name_convention.rename_name_in_format(side_multiplier, name='sideRotationDimmer')
                     self.name_convention.rename_name_in_format(user_multiplier, name='userDimmer')
-                    self.rig_create.connect.with_limits(
+                    self.create.connect.with_limits(
                         driver_locator.attr('rotate{}'.format(rotation_order[1].capitalize())),
                         side_multiplier.input2X, [[-45, 0], [0, 1], [45, 0]],
-                        PostInfinityType='constant', PreInfinityType='constant')
+                        post_infinity_type='constant', pre_infinity_type='constant')
 
                     if targets[0] > 0:
                         connections_list = zip([0] + targets, [0] + normalize_list(targets))
                         # plus_minus, anim_curve =
-                        self.rig_create.connect.with_limits(driver_locator.attr('rotate{}'.format(
+                        self.create.connect.with_limits(driver_locator.attr('rotate{}'.format(
                             rotation_order[0].capitalize())),
                             side_multiplier.input1X, connections_list,
-                            PostInfinityType='constant', PreInfinityType='constant')
+                            post_infinity_type='constant', pre_infinity_type='constant')
 
                     else:
                         connections_list = zip(list(reversed(targets)) + [0], list(reversed(normalize_list(targets))) + [0])
-                        self.rig_create.connect.with_limits(driver_locator.attr('rotate{}'.format(
+                        self.create.connect.with_limits(driver_locator.attr('rotate{}'.format(
                             rotation_order[0].capitalize())),
                             side_multiplier.input1X, connections_list,
-                            PostInfinityType='constant', PreInfinityType='constant')
+                            post_infinity_type='constant', pre_infinity_type='constant')
 
                     side_multiplier.outputX >> user_multiplier.input1X
                     self.rig_system.settings.attr('{}Multiply'.format(side_weight_name)) >> user_multiplier.input2X
                     user_multiplier.outputX >> self.rig_system.settings.attr(side_weight_name)
-                    self.rig_create.connect.attributes(self.rig_system.settings.attr('{}Addition'.format(side_weight_name)),
+                    self.create.connect.attributes(self.rig_system.settings.attr('{}Addition'.format(side_weight_name)),
                                                        self.rig_system.settings.attr(side_weight_name))
 
                 self.rig_system.settings.attr(side_weight_name) >> blendShape_node.attr(side_weight_name)

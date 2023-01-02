@@ -1,7 +1,7 @@
 import pymel.core as pm
 from RMPY.rig import rigBase
 from RMPY.rig import rigBiaseControl
-reload(rigBiaseControl)
+
 
 if not 'MayaMuscle' in pm.pluginInfo(q=True, listPlugins=True):
     pm.loadPlugin('MayaMuscle')

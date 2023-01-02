@@ -4,7 +4,7 @@ from RMPY.rig import rigFK
 from RMPY.rig import rigBase
 from RMPY.rig import rigSingleJoint
 from RMPY.rig import constraintSwitch
-import RMPY.core.main as rm
+import RMPY.core.rig_core as rm
 
 
 class Leg(rigBase.RigBase):

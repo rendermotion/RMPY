@@ -124,7 +124,7 @@ class ConstraintSwitch(rigBase.RigBase):
                 else:
                     output = destination[index]
 
-                self.outputs.append(output)
+                self.outputs.append(output[0])
                 # self.create.constraint.define_constraints(parent=parent, scale=scale, point=point, orient=orient)
                 self.create.constraint.node_base(constraint_a, output, parent=parent, scale=scale,
                                                  point=point, orient=orient)

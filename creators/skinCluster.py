@@ -3,7 +3,6 @@ import pymel.core as pm
 from RMPY.creators import creatorsBase
 from RMPY.core import dataManager
 from RMPY.core import polygon_tools
-reload(polygon_tools)
 
 
 class SkinCluster(creatorsBase.CreatorsBase):

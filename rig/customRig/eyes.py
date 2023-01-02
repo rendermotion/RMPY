@@ -1,6 +1,5 @@
 from RMPY.rig import rigLaces
 import pymel.core as pm
-reload(rigLaces)
 
 
 def build():

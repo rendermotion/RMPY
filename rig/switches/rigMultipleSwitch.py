@@ -18,8 +18,7 @@ class RigMultipleSwitch(rigBase.RigBase):
     based on a key, that would be a string.
     """
     def __init__(self, *args, **kwargs):
-        if 'model' not in kwargs.keys():
-            kwargs['model'] = RigMultipleSwitchModel()
+        kwargs['model'] = kwargs.pop('model', RigMultipleSwitchModel())
         super(RigMultipleSwitch, self).__init__(*args, **kwargs)
         self.control = kwargs.pop('control', None)
         self._model.attribute_name = kwargs.pop('attribute_name', self.attribute_name)

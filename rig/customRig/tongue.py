@@ -3,7 +3,6 @@ from RMPY.rig import rigSplineIK
 from RMPY.rig import rigFK
 from RMPY.rig import rigFollowPosition
 import pymel.core as pm
-reload(rigLaces)
 
 
 def build():

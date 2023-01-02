@@ -6,7 +6,6 @@ from RMPY.creators import group
 from RMPY.core import transform
 from RMPY.creators import spaceLocator
 from RMPY.creators import creatorsBase
-from RMPY.core import main as rm
 
 
 class Joint(creatorsBase.CreatorsBase):
@@ -217,8 +216,9 @@ class Joint(creatorsBase.CreatorsBase):
 
 
 if __name__ == '__main__':
-    root = pm.ls('L_index01_rig_pnt')[0]
+    pass
+    '''root = pm.ls('L_index01_rig_pnt')[0]
     root_finger = pm.ls('L_index01_rig_pnt')[0]
     finger_points = rm.descendants_list(root_finger)
     joints = Joint()
-    joints.point_base(*finger_points, orient_type='bend_orient')
+    joints.point_base(*finger_points, orient_type='bend_orient')'''

@@ -1,7 +1,6 @@
 from RMPY.rig import rigSimpleIk
 import pymel.core as pm
-from RMPY.core import main as rm
-reload(rigSimpleIk)
+from RMPY.core import rig_core as rm
 
 
 class Finger(rigSimpleIk.SimpleIK):

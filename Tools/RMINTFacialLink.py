@@ -29,9 +29,9 @@ def getMayaWindow():
     return wrapInstance(long(ptr), QMainWindow)
 
 
-class main(MayaQWidgetDockableMixin, QDialog):
+class Main(MayaQWidgetDockableMixin, QDialog):
     def __init__(self, parent=None):
-        super(main, self).__init__(parent=getMayaWindow())
+        super(Main, self).__init__(parent=getMayaWindow())
         self.ui = FormFacialLink.Ui_Form()
         self.ui.setupUi(self)
         self.setWindowTitle('Facial Link')
@@ -80,5 +80,5 @@ class main(MayaQWidgetDockableMixin, QDialog):
 
 
 if __name__ == '__main__':
-    w = main()
+    w = Main()
     w.show()

@@ -69,8 +69,8 @@ def joint_size(scene_joint):
 def is_close(a, b, rel_tol=1e-09, abs_tol=0.0):
     """
     Compares two values by a relative threshold or an absolute 
-    threshold depending which one is greather,
-    if the diference between a and b is greather than the tolerance,
+    threshold depending which one is greater,
+    if the difference between a and b is greater than the tolerance,
     it will return True, otherwise it will return false.\n
     rel_tol : by default this value will be 1e-9, and it will multiply to the higher value of a and b 
     and this will be the tolerance of the comparision unles the absolute tolerance is greater.\n

@@ -4,7 +4,7 @@ from RMPY.creators import creatorsBase
 from RMPY.core import dataManager
 
 
-class BlendShape(creatorsBase.Creator):
+class BlendShape(creatorsBase.CreatorsBase):
     def __init__(self, *args, **kwargs):
         super(BlendShape, self).__init__()
         self.node = None
@@ -109,7 +109,7 @@ class BlendShape(creatorsBase.Creator):
             for each_index in target_index_list:
                 if str(each_index) in self.weights_dict['data'].keys():
                     self.apply_weights_by_index(each_index)
-                    print 'aplying index {}'.format(each_index)
+                    print 'applying index {}'.format(each_index)
                 else:
                     print 'index not found in data {}'.format(each_index)
         else:
@@ -151,12 +151,13 @@ class BlendShape(creatorsBase.Creator):
     def create_dictionary_base(self):
         pass
 
-    def get_blend_shape(self, blend_shape_geometry, index=0, create=False):
+    def get_blend_shape(self, blend_shape_geometry, index=0, create=True):
+        self.geometry_node = blend_shape_geometry
         blend_shapes_list = self.get_blend_shape_list(blend_shape_geometry)
         if blend_shapes_list:
             return blend_shapes_list[index]
         if create:
-            return pm.ls(pm.blendShape(blend_shape_geometry, name=self.name_conv.set_name_in_format(name='blendShape')))[0]
+            return pm.ls(pm.blendShape(blend_shape_geometry, name=self.name_convention.set_name_in_format(name='blendShape')))[0]
         return None
 
     @staticmethod
@@ -167,7 +168,16 @@ class BlendShape(creatorsBase.Creator):
                 blend_shapes_list.append(each)
         return blend_shapes_list
 
+    def add_as_target(self, *geometry, **kwargs):
+        set_value = kwargs.pop('set_value', 1)
+        for geo_new_target in geometry:
+            number_of_targets = len(self.node.weightIndexList())
+            pm.blendShape(self.node, topologyCheck=False, e=True, target=[self.geometry_node, number_of_targets + 1, geo_new_target, 1.0])
+            self.node.weight[number_of_targets + 1].set(set_value)
+
 
 if __name__ == '__main__':
- skin_cluster01 = BlendShape.by_node('skinCluster2')
- skin_cluster01.save('BackBar')
+    selection = pm.ls(selection=True)
+    blend_shape = BlendShape.by_node(selection[1])
+    blend_shape.add_as_target(selection[0])
+    # skin_cluster01.save('BackBar')

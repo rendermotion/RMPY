@@ -19,8 +19,6 @@ except ImportError:
 import maya.mel as mel
 import os
 from RMPY import RMblendShapesTools
-reload(RMblendShapesTools)
-reload(FormBlendShapeCreatorHelper)
 
 
 def getMayaWindow():

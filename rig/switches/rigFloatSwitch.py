@@ -48,7 +48,7 @@ class FloatSwitch(rigBaseSwitch.RigBaseSwitch):
         self._model.multiply = value
 
     def set_control(self, **kwargs):
-        self.attribute_name = kwargs.pop('attribute_name', self.attribute_name)
+        self._model.attribute_name = kwargs.pop('attribute_name', self.attribute_name)
         if self.attribute_name not in pm.listAttr(self.control):
             pm.addAttr(self.control, ln=self.attribute_name, at='float', min=0, max=1.0/self.max_value, k=True)
         self.set_outputs()

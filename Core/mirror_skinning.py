@@ -94,7 +94,7 @@ def mirror_skinBinding(scene_objects):
                                    influenceAssociation='oneToOne', mirrorInverse=mirror_inverse)
                 destination_skin_cluster.skinningMethod.set(skin_cluster.skinningMethod.get())
             else:
-                print 'object %s not processed, already skin cluster attached' % oposite_object
+                print ('object %s not processed, already skin cluster attached'.format(oposite_object))
 
 
 def copy_mirror_skin_binding(source, destination):
@@ -149,7 +149,7 @@ def copy_skin_binding(source_object, destination_object):
         pm.copySkinWeights(sourceSkin=skin_cluster, destinationSkin=new_skin, surfaceAssociation='closestPoint',
                            influenceAssociation=['label', 'name', 'oneToOne'],
                            noMirror=True)
-    print '%s -> %s\n' % (source_object, destination_object)
+    print ('{} -> {}\n'.format(source_object, destination_object))
 
 
 def change_skinning_method(object_list):

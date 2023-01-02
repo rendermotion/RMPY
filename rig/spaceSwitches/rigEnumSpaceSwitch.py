@@ -1,7 +1,7 @@
 from RMPY.rig.spaceSwitches import space
 from RMPY.creators import constraint
 from RMPY.rig.switches import rigEnumSwitch
-
+import pymel.core as pm
 
 
 class RigEnumSpaceSwitchModel(rigEnumSwitch.RigEnumSwitchModel):
@@ -88,10 +88,22 @@ class RigEnumSpaceSwitch(rigEnumSwitch.RigEnumSwitch):
             for weight_alias, alias in zip(each_constraint_node.getWeightAliasList(), self.alias_list):
                 self.switch[alias].attribute_output >> weight_alias
 
+            if pm.objectType(each_constraint_node) == 'orientConstraint':
+                each_constraint_node.offsetX.set(-each_constraint_node.constraintRotateX.get())
+                each_constraint_node.offsetY.set(-each_constraint_node.constraintRotateY.get())
+                each_constraint_node.offsetZ.set(-each_constraint_node.constraintRotateZ.get())
+
 
 if __name__ == '__main__':
-    rig_float_space = RigEnumSpaceSwitch('C_arm_ref_pnt', 'C_leg_ref_pnt',
+    '''rig_float_space = RigEnumSpaceSwitch('C_arm_ref_pnt', 'C_leg_ref_pnt',
                                          alias_list=['puntoA', 'puntoB'],
                                          attribute_name='Orient',
                                          control='nurbsCircle1', parent=False, orient=True)
-    rig_float_space.add_object('pSphere1')
+    rig_float_space.add_object('pSphere1')'''
+
+    enum_space_switch = RigEnumSpaceSwitch('C_control02_world_ctr', 'R_intermediate01_shoulder_jnt',
+                                                              alias_list=['world', 'arm'],
+                                                              attribute_name = 'space',
+                                                              control='R_object00_palm_ctr',
+                                                              orient=True)
+    enum_space_switch.add_object('R_object00_palm_ctr', mo=True)

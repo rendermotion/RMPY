@@ -7,14 +7,16 @@ class RigFacial(rigBase.RigBase):
     def __init__(self, *args, **kwargs):
         super(RigFacial, self).__init__(*args, **kwargs)
         self.rig_definition = args[0]
-        self.build()
+        self.build(**kwargs)
 
-    def build(self):
+    def build(self, **kwargs):
         for each_definition in self.rig_definition:
             if self.rig_definition[each_definition]['type'] == 'blend_shape_definition':
-                SingleDefinition(self.rig_definition[each_definition])
+                kwargs['do_right'] = False
+                SingleDefinition(self.rig_definition[each_definition], **kwargs)
                 if self.rig_definition[each_definition]['isSymetrical']:
-                    SingleDefinition(self.rig_definition[each_definition], do_right=True)
+                    kwargs['do_right'] = True
+                    SingleDefinition(self.rig_definition[each_definition], **kwargs)
 
 
 class SingleDefinition(rigBase.RigBase):
@@ -34,8 +36,9 @@ class SingleDefinition(rigBase.RigBase):
         self.is_symetrical = definition['isSymetrical']
         try:
             self.control = pm.ls(definition['control'])[0]
+
         except:
-            print '{} doesnt exist'.format(definition['control'])
+            print ('{} doesnt exist'.format(definition['control']))
             raise RuntimeError
         self.blendShapes = definition['blendShapes']
         self.attributes = definition['attributes']
@@ -60,25 +63,40 @@ class SingleDefinition(rigBase.RigBase):
 
     def build(self, **kwargs):
         self.apply_blend_shapes(**kwargs)
-
         self.create_attributes()
-        self.connect_definition()
+        self.connect_definition(**kwargs)
 
-    def connect_definition(self):
-        for each_key in self.blend_shapes_by_connection:
-            if self.blend_shapes_by_connection[each_key]['positive'][0]:
-                bs_index = self.blend_shapes_by_connection[each_key]['positive_index']
+    def connect_definition(self, **kwargs):
+        for plug_attribute in self.blend_shapes_by_connection:
+            if self.blend_shapes_by_connection[plug_attribute]['positive'][0]:
+                bs_index = self.blend_shapes_by_connection[plug_attribute]['positive_index']
+                max_value = sorted(self.blend_shapes_by_connection[plug_attribute]['positive_full_value'][1])[-1]
+                connector = self.create.connect.with_limits(
+                    self.control.attr(plug_attribute),
+                    self.blend_shape_node.weight[bs_index], [[0, 0], [max_value, 1]],
+                    pre_infinity_type='constant')
+                self.connect_prefix_geometry(connector, pm.aliasAttr(self.blend_shape_node.weight[bs_index], q=True), **kwargs)
+            if self.blend_shapes_by_connection[plug_attribute]['negative'][0]:
+                bs_index = self.blend_shapes_by_connection[plug_attribute]['negative_index']
+                max_value = sorted(self.blend_shapes_by_connection[plug_attribute]['negative_full_value'][1])[-1]
+                connector = self.create.connect.with_limits(
+                    self.control.attr(plug_attribute),
+                    self.blend_shape_node.weight[bs_index], [[-max_value, 1], [0, 0]],
+                    post_infinity_type='constant')
+                self.connect_prefix_geometry(connector, pm.aliasAttr(self.blend_shape_node.weight[bs_index], q=True), **kwargs)
 
-                max_value = sorted(self.blend_shapes_by_connection[each_key]['positive_full_value'][1])[-1]
-                self.create.connect.with_limits(self.control.attr(each_key),
-                                                self.blend_shape_node.weight[bs_index], [[0, 0], [max_value, 1]],
-                                                pre_infinity_type='constant')
-            if self.blend_shapes_by_connection[each_key]['negative'][0]:
-                bs_index = self.blend_shapes_by_connection[each_key]['negative_index']
-                max_value = sorted(self.blend_shapes_by_connection[each_key]['negative_full_value'][1])[-1]
-                self.create.connect.with_limits(self.control.attr(each_key),
-                                                self.blend_shape_node.weight[bs_index], [[-max_value, 1], [0, 0]],
-                                                post_infinity_type='constant')
+    def connect_prefix_geometry(self, connector, blend_shape_plug, **kwargs):
+        prefix_geometry_list = kwargs.pop('prefix_geometry_list', [])
+        for each_geometry in prefix_geometry_list:
+            each_geometry_blend_shape = self.get_blend_shapes_in_history(each_geometry)[0]
+            main_blendshape = self.get_blend_shapes_in_history(self.base_mesh)[0]
+            input_connection_plug = pm.listConnections(main_blendshape.attr(blend_shape_plug), plugs=True,
+                                                       destination=False)[0]
+            alias_in_blend_shape = {pm.aliasAttr('{}.weight[{}]'.format(each_geometry_blend_shape, each),
+                                                 q=True) for each in each_geometry_blend_shape.weightIndexList()}
+            if blend_shape_plug in alias_in_blend_shape:
+                print connector
+                input_connection_plug >> each_geometry_blend_shape.attr(blend_shape_plug)
 
     def create_attributes(self):
         for each_attribute in self.order:
@@ -89,15 +107,27 @@ class SingleDefinition(rigBase.RigBase):
                            max=self.attributes[each_attribute]['max'])
 
     def apply_blend_shapes(self, **kwargs):
-        for each_key in self.blend_shapes_by_connection:
-            if self.blend_shapes_by_connection[each_key]['positive'][0]:
-                index = self.add_target_list(*self.blend_shapes_by_connection[each_key]['positive'], **kwargs)
-                self.blend_shapes_by_connection[each_key]['positive_index'] = index
-            if self.blend_shapes_by_connection[each_key]['negative'][0]:
-                index = self.add_target_list(*self.blend_shapes_by_connection[each_key]['negative'], **kwargs)
-                self.blend_shapes_by_connection[each_key]['negative_index'] = index
+        from pprint import pprint as pp
+        pp(self.blend_shapes_by_connection)
+        for plug_attribute in self.blend_shapes_by_connection:
+            if self.blend_shapes_by_connection[plug_attribute]['positive'][0]:
+                index = self.add_target_list(*self.blend_shapes_by_connection[plug_attribute]['positive'], **kwargs)
+                self.add_target_list_to_prefix(*self.blend_shapes_by_connection[plug_attribute]['positive'], **kwargs)
+                self.blend_shapes_by_connection[plug_attribute]['positive_index'] = index
+            if self.blend_shapes_by_connection[plug_attribute]['negative'][0]:
+                index = self.add_target_list(*self.blend_shapes_by_connection[plug_attribute]['negative'], **kwargs)
+                self.add_target_list_to_prefix(*self.blend_shapes_by_connection[plug_attribute]['negative'], **kwargs)
+                self.blend_shapes_by_connection[plug_attribute]['negative_index'] = index
 
     def split_blend_shapes_by_connection(self):
+        """
+        On the blendshapes list, can be multiple blendshapes connected to the same connection plug.
+        This happens when the blendshapes are intermediate blendshapes.
+        This function will look in to the facial definition blendshapes key, look for blendshapes that
+        correspond to the same connection and group them on a list.
+        Then it will organize and normalize the values so the highest corresponds to a blendshape value of 1.
+        :return:
+        """
         for each_target in self.blendShapes:
             connection = self.blendShapes[each_target]['connection']
             if connection not in self.blend_shapes_by_connection:
@@ -129,29 +159,50 @@ class SingleDefinition(rigBase.RigBase):
         for each_node in history_nodes:
             if pm.objectType(each_node) == 'blendShape':
                 result.append(each_node)
-
         if result:
             return [result[-1]]
         else:
             return None
         return result
 
+    def add_target_list_to_prefix(self, target_list, value_list, **kwargs):
+        sufix_list = kwargs.pop('prefix_geometry_list', [])
+        custom_target_name = kwargs.pop('custom_target_name', False)
+        for each_geometry in sufix_list:
+            base_mesh = each_geometry
+            blend_shape_node = self.create.BlendShape.by_node(base_mesh)
+            if not blend_shape_node:
+                blend_shape_node = pm.blendShape(base_mesh)[0]
+            else:
+                blend_shape_node = blend_shape_node.node
+            target_number = len(blend_shape_node.weightIndexList())
+            for geo_new_target, each_value in zip(reversed(target_list), reversed(value_list)):
+                target_name = '{}{}'.format(geo_new_target, each_geometry)
+                print 'searchint target name {} for blendshape node {}'.format(target_name, blend_shape_node)
+                if pm.objExists(target_name):
+                    pm.blendShape(blend_shape_node,
+                                  topologyCheck=False, e=True, target=[base_mesh, target_number,
+                                                                       target_name,
+                                                                       float((math.trunc(each_value * 100)) / 100.0)])
+                    if each_value == 1:
+                        if custom_target_name:
+                            pm.aliasAttr(custom_target_name, '{}.weight[{}]'.format(blend_shape_node, target_number))
+                        else:
+                            pm.aliasAttr(geo_new_target, '{}.weight[{}]'.format(blend_shape_node, target_number))
+
     def add_target_list(self, target_list, value_list, **kwargs):
         custom_target_name = kwargs.pop('custom_target_name', False)
-
         target_number = len(self.blend_shape_node.weightIndexList())
         for geo_new_target, each_value in zip(reversed(target_list), reversed(value_list)):
+            pm.blendShape(self.blend_shape_node,
+                          topologyCheck=False, e=True, target=[self.base_mesh, target_number,
+                                                               geo_new_target,
+                                                               float((math.trunc(each_value * 100))/100.0)])
             if each_value == 1 and custom_target_name:
-                name_used = custom_target_name
-                current_name = str(geo_new_target)
-                pm.rename(geo_new_target, custom_target_name)
-                geo_new_target = custom_target_name
-            pm.blendShape(self.blend_shape_node, topologyCheck=False, e=True, target=[self.base_mesh, target_number,
-                                                                                  geo_new_target,
-                                                                                  float((math.trunc(each_value * 100))
-                                                                                        / 100.0)])
-            if each_value == 1 and custom_target_name:
-                pm.rename(name_used, current_name)
+                if custom_target_name:
+                    pm.aliasAttr(custom_target_name, '{}.weight[{}]'.format(self.blend_shape_node, target_number))
+                else:
+                    pm.aliasAttr(geo_new_target, '{}.weight[{}]'.format(self.blend_shape_node, target_number))
         return target_number
 
     def normalize_target_list(self, target_list, value_list):

@@ -4,7 +4,6 @@ from RMPY.rig import rigPointOnSurface
 from RMPY.rig import rigFK
 from RMPY.rig import rigBase
 from RMPY.rig import rigSingleJoint
-reload(rigLaces)
 import pymel.core as pm
 
 

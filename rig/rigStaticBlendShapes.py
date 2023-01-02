@@ -7,7 +7,6 @@ class StaticBlendShapes(rigBase.RigBase):
         """
         Connects all the static blendshapes that are required. the static connections shows which geo,
         will connect with which
-
         :param args: list of sets first element is the geometry that will be plugged in the second element
         (blendshapeGeo,'destinationGeo')
         :param kwargs:
@@ -38,7 +37,7 @@ class StaticBlendShapes(rigBase.RigBase):
             pm.blendShape(blend_shape_node, e=True, target=[geo_destination, number_of_targets + 1, geo_new_target, 1.0])
             blend_shape_node.weight[number_of_targets + 1].set(1)
         else:
-            blend_shape_node = pm.blendShape(geo_destination, before=True)
+            blend_shape_node = pm.blendShape(geo_destination, before=True)[0]
             self.name_convention.rename_name_in_format(blend_shape_node,
                                                        name=self.name_convention.get_a_short_name(geo_destination),
                                                        system='staticRig')

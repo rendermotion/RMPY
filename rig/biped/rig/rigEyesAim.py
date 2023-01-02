@@ -3,7 +3,7 @@ from RMPY.rig import rigBase
 from RMPY.core import config
 import pymel.core.datatypes as dataTypes
 import pymel.core as pm
-reload(rigAim)
+
 
 class EyesAimModel(rigBase.BaseModel):
     def __init__(self):
@@ -66,7 +66,6 @@ class RigEyesAim(rigBase.RigBase):
         self.r_eye.create_point_base(args[1])
         self.r_eye.set_parent(self.root)
 
-        print self.l_eye.reset_controls + self.r_eye.reset_controls
         self.create.constraint.node_base(self.controls[0], *(self.l_eye.reset_controls + self.r_eye.reset_controls), mo=True)
         self.joints.extend(self.l_eye.joints)
         self.joints.extend(self.r_eye.joints)

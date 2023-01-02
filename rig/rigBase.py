@@ -4,7 +4,7 @@ from RMPY.creators import creators
 from RMPY.core import transform
 from RMPY.core import config
 import pymel.core as pm
-from RMPY.core import main as rm
+from RMPY.core import rig_core as rm
 
 
 class BaseModel(object):

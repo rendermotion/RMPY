@@ -3,6 +3,7 @@ from RMPY.rig.biped.rig import finger
 from RMPY.rig import rigSingleJoint
 import pymel.core as pm
 from RMPY.rig.biped.rig import arm
+from RMPY.core import config
 
 
 class HandModel(rigBase.BaseModel):
@@ -57,7 +58,7 @@ class Hand(rigBase.RigBase):
     def set_parent(self, rig_object, **kwargs):
         """
         This is the default function to parent modules, when you set parent an object it will look for the
-        root on the dictionary attachments. If this has not being asigned the default value will be the first elementq
+        root on the dictionary attachments. If this has not being asigned the default value will be the first element
         of the list rig_reset_controls. So you can asign what ever point you want to be the driver of all the rig
         or let the rig find it by itself.
         :param rig_object: object or rig that you expect to be the parent of the module.
@@ -69,7 +70,12 @@ class Hand(rigBase.RigBase):
             # print '{} in constraining {} {}'.format(self.create.constraint.constraint_type, rig_object.tip, self.root)
             self.create.constraint.point(rig_object.tip, self.root, mo=True, **kwargs)
             # self.create.constraint.define_constraints(point=False, scale=False, parent=False, orient=True)
-            self.create.constraint.orient(self.tip, rig_object.tip, mo=True, **kwargs)
+            if self.name_convention.get_from_name(self.palm.controls[0], 'side') == 'R' and config.mirror_controls:
+                self.create.connect.times_factor(self.palm.controls[0].rotateX, rig_object.tip.rotateX, -1)
+            else:
+                self.palm.controls[0].rotateX >> rig_object.tip.rotateX
+
+            # self.create.constraint.orient(self.tip, rig_object.tip, mo=True, **kwargs)
         else:
             try:
                 self.create.constraint.node_base(rig_object, self.root, mo=True, **kwargs)
@@ -79,6 +85,5 @@ class Hand(rigBase.RigBase):
 
 if __name__ == '__main__':
     palm_root = pm.ls('L_palm01_reference_pnt')[0]
-    print palm_root
     hand = Hand()
     hand.create_point_base(palm_root)

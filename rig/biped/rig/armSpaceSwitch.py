@@ -6,13 +6,13 @@ class ArmSpaceSwitch(rigBase.RigBase):
     def __init__(self, *args, **kwargs):
         super(ArmSpaceSwitch, self).__init__(*args, **kwargs)
 
-    def build(self, arm_rig, world_rig):
+    def build(self, arm_rig, world_rig, cog_rig):
         enum_space_switch = rigEnumSpaceSwitch.RigEnumSpaceSwitch(world_rig.tip, arm_rig.rig_clavicle.tip,
                                                                   alias_list=['world', 'shoulder'],
                                                                   attribute_name='space',
                                                                   control=arm_rig.rig_arm.ik_rig.controls[0],
                                                                   parent=True, rig_system=arm_rig.rig_system)
-        enum_space_switch.add_object(arm_rig.rig_arm.ik_rig.reset_controls[0])
+        enum_space_switch.add_object(arm_rig.rig_arm.ik_rig.controls[0])
 
         enum_space_switch = rigEnumSpaceSwitch.RigEnumSpaceSwitch(world_rig.tip, arm_rig.rig_clavicle.tip, arm_rig.rig_arm.ik_rig.controls[0],
                                                                   alias_list=['world', 'shoulder', 'ikHandle'],
@@ -20,7 +20,16 @@ class ArmSpaceSwitch(rigBase.RigBase):
                                                                   control=arm_rig.rig_arm.ik_rig.controls[1],
                                                                   parent=True,
                                                                   rig_system=arm_rig.rig_system)
-        enum_space_switch.add_object(arm_rig.rig_arm.ik_rig.reset_controls[1])
+        enum_space_switch.add_object(arm_rig.rig_arm.ik_rig.controls[1])
+
+        enum_space_switch = rigEnumSpaceSwitch.RigEnumSpaceSwitch(arm_rig.rig_clavicle.tip, world_rig.tip,
+                                                                  cog_rig.tip,
+                                                                  alias_list=['shoulder', 'world', 'hip'],
+                                                                  attribute_name='space',
+                                                                  control=arm_rig.rig_arm.fk_rig.controls[0],
+                                                                  orient=True,
+                                                                  rig_system=arm_rig.rig_system)
+        enum_space_switch.add_object(arm_rig.rig_arm.fk_rig.controls[0])
 
 
 if __name__ == '__main__':

@@ -1,6 +1,6 @@
 from RMPY.rig import rigFK
 import pymel.core as pm
-from RMPY.core import main as rm
+from RMPY.core import rig_core as rm
 
 
 class Finger(rigFK.RigFK):

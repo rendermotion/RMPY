@@ -1,6 +1,5 @@
 from RMPY.rig.biped.rig import rigRibon
 from RMPY.rig.biped.rig import rigTwistJoints
-reload(rigTwistJoints)
 
 
 class RibbonTwistJointModel(rigRibon.RibonModel):
@@ -28,7 +27,7 @@ class RibbonTwistJoint(rigRibon.Ribon):
 
 if __name__ == '__main__':
     ribbon_twist = RibbonTwistJoint()
-    ribbon_twist.create_point_base("R_intermediate01_shoulder_jnt",
-                                   "R_intermediate02_shoulder_jnt", folicule_number=5)
+    ribbon_twist.create_point_base('L_clavicle00_clavicle_jnt', "L_intermediate00_shoulder_jnt",
+                                   "L_intermediate01_shoulder_jnt", folicule_number=5)
 
 

@@ -8,7 +8,6 @@ from PySide2.QtWidgets import *
 from PySide2 import __version__
 from shiboken2 import wrapInstance
 from RMPY.Tools.QT5.ui import FormRigTools
-reload(FormRigTools)
 import maya.mel as mel
 import os
 from RMPY import RMRigTools
@@ -24,8 +23,6 @@ from RMPY.snippets import locator_at_average
 from RMPY.AutoRig import RMRigFK
 from RMPY.core import transform
 from RMPY.core import hierarchy
-
-reload(locator_at_average)
 
 
 def getMayaWindow():

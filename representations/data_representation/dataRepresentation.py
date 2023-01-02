@@ -2,7 +2,6 @@ from RMPY.core import dataManager
 import pymel.core as pm
 import maya.cmds as cmds
 from RMPY.representations.data_representation import genericAttribute
-reload(genericAttribute)
 
 
 class GeneralData(object):

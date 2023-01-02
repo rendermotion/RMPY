@@ -54,7 +54,9 @@ class Arm(RMPY.rig.rigBase.RigBase):
                                              folicule_number=5)
 
         self.reset_joints = [self.rig_clavicle.reset_joints[0]] + self.twist_arm.reset_joints + self.twist_forearm.reset_joints
-        self.joints = [self.rig_clavicle.joints[0]] + self.twist_arm.joints + self.twist_forearm.joints
+        self.joints.extend([self.rig_clavicle.joints[0]])
+        self.joints.extend(self.twist_arm.joints)
+        self.joints.extend(self.twist_forearm.joints)
         self.reset_controls = self.rig_clavicle.reset_controls + self.rig_arm.reset_controls
         self.controls = self.rig_clavicle.controls + self.rig_arm.controls
         self.attach_points['tip'] = self.rig_arm.tip

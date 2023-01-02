@@ -4,7 +4,6 @@ from RMPY.rig import rigMuscleSpline
 from RMPY.core import config
 import pymel.core.datatypes as dataTypes
 import pymel.core as pm
-reload(rigAim)
 
 
 class BreastModel(rigBase.BaseModel):
@@ -68,7 +67,9 @@ class Breast(rigBase.RigBase):
         reset_joint, joint_list = self.create.joint.point_base(self.root)
         reset_joint.setParent(self.rig_system.joints)
         self.create.constraint.node_base(self.root, reset_joint, self.breast_aim.reset_controls[0], mo=True)
-        pm.aimConstraint(self.dynamic_breast.tip, joint_list[0])
+        pm.aimConstraint(self.dynamic_breast.tip, joint_list[0], upVector=[0, 1, 0], worldUpObject=self.root,
+                         worldUpType='objectrotation',
+                         worldUpVector=[0, 1, 0])
         self.joints.extend(joint_list)
 
         # self.create.constraint.node_base(self.controls[0], *self.breast_aim.reset_controls, mo=True)
@@ -77,3 +78,5 @@ class Breast(rigBase.RigBase):
 if __name__ == '__main__':
     rig_breast = Breast()
     rig_breast.create_point_base('R_breast00_reference_pnt')
+    print rig_breast.joints
+    rig_breast.rename_as_skinned_joints(nub=False)

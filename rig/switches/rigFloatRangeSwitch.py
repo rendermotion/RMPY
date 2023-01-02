@@ -61,7 +61,7 @@ class FloatRangeSwitch(rigBaseSwitch.RigBaseSwitch):
                                                                in_tangent_type='linear',
                                                                out_tangent_type='linear', )[1]
         self.attribute_output = self.animation_curve.output
-        self.initialize()  # initializes the negate output
+        # self.initialize()  # initializes the negate output
 
 
 if __name__ == '__main__':

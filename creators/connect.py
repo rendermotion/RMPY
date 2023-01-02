@@ -110,7 +110,7 @@ class Connect(creatorsBase.CreatorsBase):
         if value:
             if pm.objectType(value[0].node()) == 'plusMinusAverage':
                 plus_minus = value[0].node()
-                if attribute_x.get(type=True) in ['double', 'doubleLinear', 'doubleAngle', 'float']:
+                if attribute_x.get(type=True) in ['double', 'doubleLinear', 'doubleAngle', 'float', 'enum']:
                     for eachKey in keys:
                         pm.setDrivenKeyframe('%s' % plus_minus.input1D[len(plus_minus.input1D.elements())],
                                              currentDriver='%s' % attribute_x, inTangentType=in_tangent_type,
@@ -130,7 +130,7 @@ class Connect(creatorsBase.CreatorsBase):
                 else:
                     print 'could not add data type: %s' % attribute_x.get(type=True)
             else:
-                if attribute_x.get(type=True) in ['double', 'doubleLinear', 'doubleAngle', 'float']:
+                if attribute_x.get(type=True) in ['double', 'doubleLinear', 'doubleAngle', 'float', 'enum']:
                     plus_minus = pm.shadingNode("plusMinusAverage", asUtility=True, name="additiveConnection")
                     self.name_convention.rename_name_in_format(plus_minus)
                     plus_minus.operation.set(operation)

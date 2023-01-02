@@ -172,7 +172,7 @@ class TwistJoints(rigBase.RigBase):
             pm.xform(Locator, translation=list(initial_point + (step_vector * count)), worldSpace=True)
             pm.matchTransform(Locator, align_object, position=False, rotation=True, scale=False)
 
-        reset_joints, joints = self.create.joint.point_base(*locators_list, name='twist')
+        reset_joints, joints = self.create.joint.point_base(*locators_list, name='twist', orient_type='point_orient')
         self.reset_joints.append(reset_joints)
         self.reset_joints[-1].setParent(self.rig_system.joints)
         self.joints.extend(joints)
@@ -182,7 +182,7 @@ class TwistJoints(rigBase.RigBase):
 
 if __name__ == '__main__':
     TJ = TwistJoints()
-    TJ.create_point_base("L_intermediate01_shoulder_jnt", "L_intermediate02_shoulder_jnt")
+    TJ.create_point_base('L_clavicle00_clavicle_jnt', "L_intermediate00_shoulder_jnt", "L_intermediate01_shoulder_jnt")
 
 
 
