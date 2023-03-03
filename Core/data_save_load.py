@@ -119,7 +119,6 @@ def load_by_name(data_file):
 
 if __name__ == '__main__':
     # load_by_name('BabyK_body_lvl2')
-
     load_skin_cluster()
     # save_skin_cluster()
     # load_curves()

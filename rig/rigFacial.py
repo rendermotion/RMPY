@@ -73,8 +73,8 @@ class SingleDefinition(rigBase.RigBase):
                 max_value = sorted(self.blend_shapes_by_connection[plug_attribute]['positive_full_value'][1])[-1]
                 connector = self.create.connect.with_limits(
                     self.control.attr(plug_attribute),
-                    self.blend_shape_node.weight[bs_index], [[0, 0], [max_value, 1]],
-                    pre_infinity_type='constant')
+                    self.blend_shape_node.weight[bs_index], [[0, 0], [max_value, 1]], pre_infinity_type='constant')
+
                 self.connect_prefix_geometry(connector, pm.aliasAttr(self.blend_shape_node.weight[bs_index], q=True), **kwargs)
             if self.blend_shapes_by_connection[plug_attribute]['negative'][0]:
                 bs_index = self.blend_shapes_by_connection[plug_attribute]['negative_index']

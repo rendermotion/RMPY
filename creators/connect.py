@@ -116,7 +116,12 @@ class Connect(creatorsBase.CreatorsBase):
                                              currentDriver='%s' % attribute_x, inTangentType=in_tangent_type,
                                              outTangentType=out_tangent_type, dv=eachKey[0], v=eachKey[1])
                     animation_curve_node = \
-                        pm.listConnections('%s' % plus_minus.input1D[len(plus_minus.input1D.elements())])[0]
+                        pm.listConnections('{}'.format(plus_minus.input1D[len(plus_minus.input1D.elements())]))
+                    if animation_curve_node:
+                        animation_curve_node = animation_curve_node[0]
+                    else:
+                        print('{}'.format(plus_minus.input1D[len(plus_minus.input1D.elements())]))
+                        raise(RuntimeError('no connection exists in {}'.format(plus_minus.input1D[len(plus_minus.input1D.elements())])))
                     self.name_convention.rename_name_in_format(animation_curve_node)
                 elif attribute_x.get(type=True) in ['double3']:
                     for eachKey in keys:

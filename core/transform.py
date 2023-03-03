@@ -4,6 +4,7 @@ from RMPY.core import config
 import maya.api.OpenMaya as om
 from RMPY import nameConvention
 
+
 def align(*args, **kwargs):
     """
     General align function\n 
