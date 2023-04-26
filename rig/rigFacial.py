@@ -95,7 +95,7 @@ class SingleDefinition(rigBase.RigBase):
             alias_in_blend_shape = {pm.aliasAttr('{}.weight[{}]'.format(each_geometry_blend_shape, each),
                                                  q=True) for each in each_geometry_blend_shape.weightIndexList()}
             if blend_shape_plug in alias_in_blend_shape:
-                print connector
+                print(connector)
                 input_connection_plug >> each_geometry_blend_shape.attr(blend_shape_plug)
 
     def create_attributes(self):
@@ -178,7 +178,7 @@ class SingleDefinition(rigBase.RigBase):
             target_number = len(blend_shape_node.weightIndexList())
             for geo_new_target, each_value in zip(reversed(target_list), reversed(value_list)):
                 target_name = '{}{}'.format(geo_new_target, each_geometry)
-                print 'searchint target name {} for blendshape node {}'.format(target_name, blend_shape_node)
+                print('searchint target name {} for blendshape node {}'.format(target_name, blend_shape_node))
                 if pm.objExists(target_name):
                     pm.blendShape(blend_shape_node,
                                   topologyCheck=False, e=True, target=[base_mesh, target_number,

@@ -34,7 +34,7 @@ class CreatorsBase(object):
         else:
             if pop_name:
                 self.name_convention.default_names['name'] = pop_name
-            print 'a list was provided {}'.format(args[0])
+            print ('a list was provided {}'.format(args[0]))
 
     def _dictionary(self):
         result_dict = dict(type=str(self.__class__.__name__),

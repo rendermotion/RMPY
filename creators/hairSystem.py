@@ -53,7 +53,7 @@ class HairSystem(creatorsBase.CreatorsBase):
             elif pm.objectType(each_node) == 'time':
                 self._connect_time(each_node)
             else:
-                print 'connection with type {} not defined'.format()
+                print ('connection with type {} not defined'.format())
 
     def _connect_time(self, time_node):
         pm.connectAttr('{}.outTime'.format(time_node), '{}.currentTime'.format(self._node), f=True)

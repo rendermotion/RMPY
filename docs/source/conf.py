@@ -15,16 +15,17 @@
 import os
 import sys
 print ('This is the path***********************')
-print os.path.abspath('.')
+print(os.path.abspath('.'))
 current_path = os.path.abspath('.')
-print os.listdir(current_path)
-path_tokens = os.path.abspath('.').split('/')
-print os.listdir('/'.join(path_tokens[:-2]))
+print(os.listdir(current_path))
+path_tokens = os.path.abspath('.').split('\\')
+print(path_tokens)
+print(os.listdir('/'.join(path_tokens[:-2])))
 
 sys.path.append('/'.join(path_tokens[:-2]))
 
 for each in sys.path:
-    print each
+    print(each)
 
 # -- Project information -----------------------------------------------------
 
@@ -70,7 +71,7 @@ master_doc = 'index'
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = 'en'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.

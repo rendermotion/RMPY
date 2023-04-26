@@ -44,9 +44,9 @@ class Follicle(creatorsBase.CreatorsBase):
         self._hair_system = value
 
     def point_base(self, *points, **kwargs):
-        print 'follicle Naming {}'.format(points[0])
+        print('follicle Naming {}'.format(points[0]))
         self.setup_name_convention_node_base(points[0])
-        print '{}'.format(self.name_convention.default_names)
+        print ('{}'.format(self.name_convention.default_names))
         self.build()
         return self._node
 
@@ -122,5 +122,5 @@ class Follicle(creatorsBase.CreatorsBase):
 if __name__ == '__main__':
     new_fol = Follicle()
     for each in range(10):
-        print 1.0 / 9.0 * each
+        print (1.0 / 9.0 * each)
         new_fol.surface_base('C_basePlane00_suspension_GRP', v_value=1.0 / 10.0 * each)

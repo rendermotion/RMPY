@@ -273,7 +273,7 @@ def reorient_to_world(root_node):
     pm.parent(child_list, root_node)
     for each_node in root_node.getChildren(type='transform'):
         if not each_node.getShapes():
-            print 'doing {}'.format(each_node)
+            print ('doing {}'.format(each_node))
             reorient_to_world(each_node)
 
 

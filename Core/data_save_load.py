@@ -22,10 +22,10 @@ def save_curve(*args):
                 curve_node.save()
                 saved_curves_list.append(each)
             else:
-                print "the curve {} doesn't exists".format(each)
+                print ("the curve {} doesn't exists".format(each))
         except RuntimeWarning('{} not saved'.format):
             pass
-    print 'following curves where saved: {}'.format(saved_curves_list)
+    print ('following curves where saved: {}'.format(saved_curves_list))
 
 
 def load_curves(*args):
@@ -45,7 +45,7 @@ def load_curves(*args):
                 curve_node.load()
                 curve_node.set_repr_dict()
             else:
-                print "the curve {} doesn't exists".format(each)
+                print ("the curve {} doesn't exists".format(each))
         except RuntimeWarning('{} not loaded'.format):
             pass
 
@@ -64,10 +64,10 @@ def save_skin_cluster(*args):
                 skin_cluster01.save('{}'.format(each_node))
                 saved_skin_cluster_list.append(each_node)
             else:
-                print "object {} does'nt have a skincluster".format(each_node)
+                print ("object {} does'nt have a skincluster".format(each_node))
         except RuntimeWarning('{} not saved'.format(each_node)):
             pass
-    print 'following skin in nodes where saved: {}'.format(saved_skin_cluster_list)
+    print('following skin in nodes where saved: {}'.format(saved_skin_cluster_list))
 
 
 def load_skin_cluster(*args):

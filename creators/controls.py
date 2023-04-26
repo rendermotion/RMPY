@@ -195,7 +195,7 @@ class Controls(creatorsBase.CreatorsBase):
             pm.importFile(FinalPath, i=True, type="mayaBinary", ignoreVersion=True, mergeNamespacesOnClash=False,
                                     rpr="ControlMover", pr=False)
         else:
-            print "archivo no encontrado %s , %s, %s "% (path, RMPYPATH, FinalPath)
+            print ("archivo no encontrado %s , %s, %s "% (path, RMPYPATH, FinalPath))
             return None
 
         control = pm.ls(MoversTypeDic[control_type]["object"])[0]
@@ -216,7 +216,7 @@ class Controls(creatorsBase.CreatorsBase):
             self.scale_controls(reset_group)
             return reset_group, control
         else:
-            print "Error importing Shape File"
+            print ("Error importing Shape File")
             return None
 
 

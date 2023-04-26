@@ -53,7 +53,7 @@ class Loft(creatorsBase.CreatorsBase):
         delete_history = kwargs.pop('delete_history', False)
         self.path = path[0]
         self._create_profile(**kwargs)
-        print self.profile
+        print(self.profile)
 
         original_surf = pm.extrude(self.profile, self.path, fixedPath=True,
                                    useComponentPivot=1, useProfileNormal=True)

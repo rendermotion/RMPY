@@ -21,10 +21,10 @@ class SkinCluster(creatorsBase.CreatorsBase):
                 new_class_object.node = node_name
                 return new_class_object
             else:
-                print "error couldn't create skin cluster, node class is :%s" % node_name.__class__
+                print ("error couldn't create skin cluster, node class is :%s" % node_name.__class__)
         else:
             new_class_object.node = skin_node_name
-            print "WARNING: skinCluster object created, node doesn't exists"
+            print ("WARNING: skinCluster object created, node doesn't exists")
             return new_class_object
         return None
 
@@ -39,7 +39,7 @@ class SkinCluster(creatorsBase.CreatorsBase):
             new_class_object.node = skin_cluster
             return new_class_object
         else:
-            print "error couldn't create skin cluster no skinCluster on history of object %s" % node_name
+            print ("error couldn't create skin cluster no skinCluster on history of object %s" % node_name)
         return None
 
     def save(self, *args, **kwargs):
@@ -58,7 +58,7 @@ class SkinCluster(creatorsBase.CreatorsBase):
             file_name = '{}'.format(self.node)
         data_manager = dataManager.DataManager()
         data_manager.file_path = '{}{}'.format(data_manager.file_path, self.extra_path)
-        print 'path to search = {}'.format(data_manager.file_path)
+        print('path to search = {}'.format(data_manager.file_path))
         self.weights_dict = data_manager.load(file_name, **kwargs)
         return self.weights_dict
 
@@ -165,7 +165,7 @@ class SkinCluster(creatorsBase.CreatorsBase):
                                                                             each_vertex,
                                                                             index_source_joint), 0)
         else:
-            print 'one of this joints is not on the skin cluster: {}, {}'.format(source_joint, destination_joint)
+            print ('one of this joints is not on the skin cluster: {}, {}'.format(source_joint, destination_joint))
 
     def copy_by_definition(self, relation_dictionary, order_list=None):
         """Copies the skinning from joint to joint as described on the parameter relation dictionary.

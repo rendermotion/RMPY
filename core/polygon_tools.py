@@ -107,13 +107,13 @@ def test():
     # print iterator.getStrings()
     # print iterator.getDagPath().fullPathName()
     # print skin_cluster.influenceObjects()[0].node()
-    print get_vertex().apiTypeStr
-    print getDagPath('pCube3Shape.vtx[*]')
+    print (get_vertex().apiTypeStr)
+    print (getDagPath('pCube3Shape.vtx[*]'))
     empty_object = OpenMaya.MObject()
     influence_indices = OpenMaya.MIntArray()
     for i in range(0, count):
         influence_indices.append(i)
-    print skin_cluster.getWeights(getDagPath('pCube3Shape.vtx[*]'), empty_object, influence_indices)
+    print (skin_cluster.getWeights(getDagPath('pCube3Shape.vtx[*]'), empty_object, influence_indices))
 
     # while not iterator.isDone():
     #     dag_path = iterator.getDagPath()

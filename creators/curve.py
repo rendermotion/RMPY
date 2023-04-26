@@ -53,7 +53,7 @@ class Curve(creatorsBase.CreatorsBase):
                                               name='curveOnsurface', objectType='nurbsCurve'), k=knot_vector)
             return curve
         else:
-            print 'must provide a surface as key word argument'
+            print('must provide a surface as key word argument')
         return None
 
     def animation_base(self, animated_node):
@@ -106,9 +106,9 @@ class Curve(creatorsBase.CreatorsBase):
             for each_shape in shapes:
                 index = 0
                 if each_shape.intermediateObject.get():
-                    print 'found intermediate'
+                    print ('found intermediate')
                 else:
-                    print 'found Shape'
+                    print ('found Shape')
                     if index > 0:
                         each_shape.rename('%sShape%s' % (each_object, index))
                     else:

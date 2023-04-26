@@ -49,7 +49,7 @@ def get_oposite(scene_object):
             if pm.objExists('%s%s' % (namespace, '_'.join(token_list))):
                 result_list.append(RMRigTools.validate_pymel_nodes('%s%s' % (namespace, '_'.join(token_list))))
             else:
-                print 'no oposite found for object %s' % each_object
+                print ('no oposite found for object {}'.format(each_object))
         else:
             if token_list[0] in ['FR', 'MR', 'BR', 'FL', 'ML', 'BL', 'C', 'R', 'L']:
                 if 'L' in token_list[0]:
@@ -60,7 +60,7 @@ def get_oposite(scene_object):
                 if pm.objExists('%s%s' % (namespace, '_'.join(token_list))):
                     result_list.append(RMRigTools.validate_pymel_nodes('%s%s' % (namespace, '_'.join(token_list))))
                 else:
-                    print 'no oposite found for object %s' % each_object
+                    print ('no oposite found for object {}'.format(each_object))
     if return_list:
         return result_list
     else:
@@ -104,7 +104,7 @@ def copy_mirror_skin_binding(source, destination):
     :return:
     """
     mirror_inverse = True
-    print 'copying from {} to {}'.format(source, destination)
+    print('copying from {} to {}'.format(source, destination))
     skin_cluster = get_skinCluster(source)
     if skin_cluster:
         skinJoints = get_oposite(skin_cluster.influenceObjects())
@@ -115,9 +115,9 @@ def copy_mirror_skin_binding(source, destination):
                                influenceAssociation='oneToOne', mirrorInverse=mirror_inverse)
             destination_skinCluster.skinningMethod.set(skin_cluster.skinningMethod.get())
         else:
-            print 'object %s not processed, allready skin cluster attached' % oposite_object
+            print ('object {} not processed, allready skin cluster attached'.format(oposite_object))
     else:
-        print'didnt find skinCluster in source object'
+        print("Did'nt find skinCluster in source object")
 
 
 def copy_skin_binding_structure(source, destination):
@@ -135,7 +135,7 @@ def copy_skin_binding_structure(source, destination):
             pm.copySkinWeights(sourceSkin=skin_cluster, destinationSkin=new_skin, surfaceAssociation='closestPoint',
                                noMirror=True)
             done += '%s -> %s\n' % (each_object, match_structure.match_dictionary[each_object])
-    print done
+    print (done)
 
 
 def copy_skin_binding(source_object, destination_object):

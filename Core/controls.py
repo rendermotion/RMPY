@@ -130,7 +130,7 @@ def mirror_controls(*controls):
             transfer_curve(source_shape, destination_shape, world_space=False)
             mirror_shape(destination_shape, scale_vector=[1, 1, 1])
         else:
-            print 'coulnt find oposite curve for {}'.format(each)
+            print('coulnt find oposite curve for {}'.format(each))
 
 
 def get_oposite_side(control):

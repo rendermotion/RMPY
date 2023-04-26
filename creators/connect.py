@@ -50,8 +50,8 @@ class Connect(creatorsBase.CreatorsBase):
                     pm.connectAttr(attribute_source, '{}.input3D[{}]'.format(plus_minus, next_index))
 
                 else:
-                    print 'could not add data type: %s, %s' % (pm.getAttr(attribute_source, type=True),
-                                                               pm.getAttr(attribute_source).__class__)
+                    print ('could not add data type: {}, {}'.format(pm.getAttr(attribute_source, type=True),
+                                                               pm.getAttr(attribute_source).__class__))
             else:
                 if pm.getAttr(attribute_source, type=True) in ['float', 'double', 'doubleLinear',
                                                                'doubleAngle'] or pm.getAttr(
@@ -80,8 +80,8 @@ class Connect(creatorsBase.CreatorsBase):
                     pm.connectAttr(attribute_source, '{}.input3D[1]'.format(plus_minus))
                     pm.connectAttr('{}.output3D'.format(plus_minus), attribute_destination)
                 else:
-                    print 'could not add data type: %s class: %s' % (pm.getAttr(attribute_source, type=True),
-                                                                     pm.getAttr(attribute_source).__class__)
+                    print('could not add data type: {} class: {}'.format(pm.getAttr(attribute_source, type=True),
+                                                                     pm.getAttr(attribute_source).__class__))
             return plus_minus
         else:
             pm.connectAttr(attribute_source, attribute_destination)
@@ -133,7 +133,7 @@ class Connect(creatorsBase.CreatorsBase):
                         pm.listConnections('%s' % plus_minus.input3D[len(plus_minus.input3D.elements()) % 3])[0]
                     self.name_convention.rename_name_in_format(animation_curve_node)
                 else:
-                    print 'could not add data type: %s' % attribute_x.get(type=True)
+                    print ('could not add data type: %s' % attribute_x.get(type=True))
             else:
                 if attribute_x.get(type=True) in ['double', 'doubleLinear', 'doubleAngle', 'float', 'enum']:
                     plus_minus = pm.shadingNode("plusMinusAverage", asUtility=True, name="additiveConnection")
@@ -162,7 +162,7 @@ class Connect(creatorsBase.CreatorsBase):
                     animation_curve_node = pm.listConnections('%s' % plus_minus.input3D[1])[0]
                     self.name_convention.rename_name_in_format(animation_curve_node)
                 else:
-                    print 'could not add data type: %s' % attribute_x.get(type=True)
+                    print('could not add data type: %s' % attribute_x.get(type=True))
         else:
             for eachKey in keys:
                 pm.setDrivenKeyframe('%s' % attrribute_y, currentDriver='%s' % attribute_x, dv=eachKey[0], v=eachKey[1],

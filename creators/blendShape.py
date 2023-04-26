@@ -21,10 +21,10 @@ class BlendShape(creatorsBase.CreatorsBase):
                 new_class_object.node = node_name
                 return new_class_object
             else:
-                print "error couldn't create blendShape, node class is :%s" % node_name.__class__
+                print("error couldn't create blendShape, node class is :%s" % node_name.__class__)
         else:
             new_class_object.node = blend_shape_name
-            print "WARNING: BlendShape object created, node doesn't exists"
+            print("WARNING: BlendShape object created, node doesn't exists")
             return new_class_object
         return None
 
@@ -40,8 +40,8 @@ class BlendShape(creatorsBase.CreatorsBase):
             new_class_object.node = blend_shape
             return new_class_object
         else:
-            print "error couldn't create blendShape no blendShape on history of object {} \n " \
-            "or object it is not a blendShape".format(node_name)
+            print("error couldn't create blendShape no blendShape on history of object {} \n " \
+            "or object it is not a blendShape".format(node_name))
         return None
 
     def save(self, *args, **kwargs):
@@ -93,7 +93,7 @@ class BlendShape(creatorsBase.CreatorsBase):
         if weights_list:
             weights = cmds.getAttr("%s.inputTarget[0].%s[*]" % (self.node, source_weights_token))
         else:
-            print 'weights doesnt exist on index source {}'.format(index_source)
+            print ('weights doesnt exist on index source {}'.format(index_source))
             weights = []
             weights_list = []
         return {'weights': weights, 'weights_list': weights_list}
@@ -103,15 +103,15 @@ class BlendShape(creatorsBase.CreatorsBase):
         if not index_source:
             target_index_list = pm.getAttr(("{}.inputTarget[0].inputTargetGroup".format(self.node)), mi=True)
             target_index_list.append(-1)
-            print self.weights_dict['data'].keys()
-            print target_index_list
+            print (self.weights_dict['data'].keys())
+            print (target_index_list)
             self.apply_weights_by_index(-1)
             for each_index in target_index_list:
                 if str(each_index) in self.weights_dict['data'].keys():
                     self.apply_weights_by_index(each_index)
-                    print 'applying index {}'.format(each_index)
+                    print ('applying index {}'.format(each_index))
                 else:
-                    print 'index not found in data {}'.format(each_index)
+                    print ('index not found in data {}'.format(each_index))
         else:
             self.apply_weights_by_index(index_source)
 

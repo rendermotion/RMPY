@@ -1,19 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
     <title>Rigs &#8212; RMPY 0.0.1 documentation</title>
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Tools" href="tools.html" />
@@ -34,15 +32,15 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="rigs">
-<h1>Rigs<a class="headerlink" href="#rigs" title="Permalink to this headline">¶</a></h1>
+  <section id="rigs">
+<h1>Rigs<a class="headerlink" href="#rigs" title="Permalink to this heading">¶</a></h1>
 <p>The rigs module has a base class called RigBase</p>
-<dl class="class">
-<dt id="RMPY.creators.skinCluster.SkinCluster">
-<em class="property">class </em><code class="descclassname">RMPY.creators.skinCluster.</code><code class="descname">SkinCluster</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#RMPY.creators.skinCluster.SkinCluster" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
-<dt id="RMPY.creators.skinCluster.SkinCluster.copy_by_definition">
-<code class="descname">copy_by_definition</code><span class="sig-paren">(</span><em>relation_dictionary</em>, <em>order_list=None</em><span class="sig-paren">)</span><a class="headerlink" href="#RMPY.creators.skinCluster.SkinCluster.copy_by_definition" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="creators.skinCluster.SkinCluster">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">creators.skinCluster.</span></span><span class="sig-name descname"><span class="pre">SkinCluster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#creators.skinCluster.SkinCluster" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="creators.skinCluster.SkinCluster.copy_by_definition">
+<span class="sig-name descname"><span class="pre">copy_by_definition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relation_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#creators.skinCluster.SkinCluster.copy_by_definition" title="Permalink to this definition">¶</a></dt>
 <dd><p>Copies the skinning from joint to joint as described on the parameter relation dictionary.
 :param relation_dictionary: a dictionary of objects relations of which weights will be copyed where.
 And since the keys on the dictionary cant be repeated, the keys are the destination of the weights,
@@ -52,9 +50,9 @@ this list should have the keys of the relation_dictionary.
 :return:</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="RMPY.creators.skinCluster.SkinCluster.copy_skin">
-<code class="descname">copy_skin</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#RMPY.creators.skinCluster.SkinCluster.copy_skin" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="creators.skinCluster.SkinCluster.copy_skin">
+<span class="sig-name descname"><span class="pre">copy_skin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#creators.skinCluster.SkinCluster.copy_skin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Copy’s the skinning between different meshes
 only by providing the meshes.</p>
 <p>:args[0] the source mehs, this geo</p>
@@ -62,9 +60,9 @@ only by providing the meshes.</p>
 <p>:return a list with all the skin clusters that where created during execution</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="RMPY.creators.skinCluster.SkinCluster.switch_skin">
-<code class="descname">switch_skin</code><span class="sig-paren">(</span><em>geometry</em>, <em>joint_switch_dictionary</em><span class="sig-paren">)</span><a class="headerlink" href="#RMPY.creators.skinCluster.SkinCluster.switch_skin" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="creators.skinCluster.SkinCluster.switch_skin">
+<span class="sig-name descname"><span class="pre">switch_skin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">joint_switch_dictionary</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#creators.skinCluster.SkinCluster.switch_skin" title="Permalink to this definition">¶</a></dt>
 <dd><p>switches the joints in skinning
 :param joint_switch_dictionary:
 :param geometry: geometry where the skin wants to be changed.
@@ -73,7 +71,7 @@ only by providing the meshes.</p>
 
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -96,9 +94,12 @@ only by providing the meshes.</p>
 <li class="toctree-l1"><a class="reference internal" href="name_convention.html">Name Convention</a></li>
 <li class="toctree-l1"><a class="reference internal" href="creators.html">Creators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="representations.html">Representations</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Rigs</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Rigs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#creators.skinCluster.SkinCluster"><code class="docutils literal notranslate"><span class="pre">SkinCluster</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="tools.html">Tools</a></li>
-<li class="toctree-l1"><a class="reference internal" href="system structure.html">System structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="system%20structure.html">System structure</a></li>
 </ul>
 
 <div class="relations">
@@ -111,17 +112,15 @@ only by providing the meshes.</p>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -138,8 +137,8 @@ only by providing the meshes.</p>
       &copy;2019, Daniel Ruiz Vargas.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 6.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
       |
       <a href="_sources/rigs.rst.txt"
