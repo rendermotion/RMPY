@@ -19,6 +19,9 @@ print(os.path.abspath('.'))
 current_path = os.path.abspath('.')
 print(os.listdir(current_path))
 path_tokens = os.path.abspath('.').split('\\')
+if len(path_tokens) == 1:
+    path_tokens = os.path.abspath('.').split('/')
+
 print(path_tokens)
 print(os.listdir('/'.join(path_tokens[:-2])))
 
