@@ -1,5 +1,6 @@
+===============
 Representations
-***************
+===============
 
 A representation is a class to have access to certain data in the rig.
 It most of this data will be use full to save it, to load it, or to generate operations among it.

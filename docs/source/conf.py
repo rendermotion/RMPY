@@ -14,7 +14,7 @@
 #
 import os
 import sys
-print ('This is the path***********************')
+print('This is the path***********************')
 print(os.path.abspath('.'))
 current_path = os.path.abspath('.')
 print(os.listdir(current_path))
@@ -30,7 +30,7 @@ for each in sys.path:
 # -- Project information -----------------------------------------------------
 
 project = 'RMPY'
-copyright = '2019, Daniel Ruiz Vargas'
+copyright = '2023, Daniel Ruiz Vargas'
 author = 'Daniel Ruiz Vargas'
 
 # The short X.Y version
@@ -87,7 +87,9 @@ pygments_style = None
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-# html_theme = 'alabaster'
+html_theme = 'alabaster'
+# Theme installed with pip install sphinx-rtd-theme
+# html_theme = 'sphinx_rtd_theme'
 # html_theme = 'default'
 
 # Theme options are theme-specific and customize the look and feel of a theme

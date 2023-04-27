@@ -14,7 +14,6 @@ Chapters:
 
 .. toctree::
     :maxdepth: 2
-
     name_convention
     creators
     representations

@@ -16,7 +16,7 @@ var/
 sdist/
 develop-eggs/
 .installed.cfg
-
+docs/build
 # Installer logs
 pip-log.txt
 
@@ -30,4 +30,4 @@ pip-log.txt
 #Mr Developer
 .mr.developer.cfg
 .idea/workspace.xml
-.idea/workspace.xml
+
