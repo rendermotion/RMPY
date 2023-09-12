@@ -45,7 +45,7 @@ class Curve(object):
             else:
                 file_name = '%s' % self.node
 
-            print "couldn't load file name: {}".format(file_name)
+            print ("couldn't load file name: {}".format(file_name))
 
     def get_repr_dict(self):
         self.repr_dict = {'type': 'curve',
@@ -92,12 +92,13 @@ class Curve(object):
                                    *self.repr_dict['data']['shapes'][current_key]['cps'], type='nurbsCurve')
 
                 else:
-                    print 'not valid curve type found in representation dictionary load, check source {}'.format(
-                        self.repr_dict)
+                    print ('not valid curve type found in '
+                           'representation dictionary load, check source {}'.format(self.repr_dict))
             else:
-                print 'not valid type key on curve representation dictionary load, check source {}'.format(self.repr_dict)
+                print ('not valid type key on curve representation '
+                       'dictionary load, check source {}'.format(self.repr_dict))
         else:
-            print 'no representation dictionary for {}'.format(self.node)
+            print ('no representation dictionary for {}'.format(self.node))
 
 
 if __name__ == '__main__':

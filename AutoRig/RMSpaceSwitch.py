@@ -205,7 +205,7 @@ class RMSpaceSwitch(object):
             if SpaceObject in TL:
                 pm.connectAttr (Switch + ".outColorR", WA[TL.index(SpaceObject)])
             else:
-                print "Error, cant find spaceobject in constraint targetList"
+                print ("Error, cant find spaceobject in constraint targetList")
 
     def RemoveSpaceObject(self, ControlObject, SpaceObject, SpaceSwitchName = "spaceSwitch"):
         SpaceSwDic = self.GetSpaceSwitchDic( ControlObject, SpaceSwitchName = SpaceSwitchName)
@@ -256,7 +256,7 @@ class RMSpaceSwitch(object):
                     self.DeleteSpaceSwitchAttr(Object, SpaceSwitchName)
 
     def AddEnumParameters(self, Enum, scene_object, Name ='spaceSwitch'):
-        print 'object1111::: %s  %s'%(scene_object, scene_object.__class__)
+        print('object1111::: %s  %s'%(scene_object, scene_object.__class__))
         AttributeList = pm.listAttr(scene_object)
         if Name  in AttributeList:
             if pm.getAttr (scene_object + "." + Name, type=True)== 'enum':
@@ -282,7 +282,7 @@ class RMSpaceSwitch(object):
         if Name  in AttributeList:
             pm.deleteAttr (Object,at = Name)
         else:
-            print "The Attribute %s could not be found on obj %s" % (Name , Object)
+            print ("The Attribute %s could not be found on obj %s" % (Name , Object))
 
     def ConstraintsDictionary (self, Condition):
         returnedDic = {}
@@ -373,7 +373,8 @@ class RMSpaceSwitch(object):
                 if EnumRelationDic[eachEnumRD]['object'] == "":
                     EnumRelationDic[eachEnumRD]['object'] = ConstraintDic['alias'][EnumRelationDic[eachEnumRD]['plugs'][eachPlug]]
                 elif EnumRelationDic[eachEnumRD]['object'] != ConstraintDic['alias'][EnumRelationDic[eachEnumRD]['plugs'][eachPlug]]:
-                    print "Object mismatch  on Plug" , EnumRelationDic[eachEnumRD]['object'] , ConstraintDic['alias'][EnumRelationDic[eachEnumRD]['plugs'][eachPlug]]
+                    print("Object mismatch  on Plug", EnumRelationDic[eachEnumRD]['object'],
+                          ConstraintDic['alias'][EnumRelationDic[eachEnumRD]['plugs'][eachPlug]])
         return EnumRelationDic
 
     def RMCreateListConstraintSwitch(self,Constrained, Constraints ,ControlObject, SpaceSwitchName = 'spaceSwitch', reverse = False):

@@ -82,9 +82,9 @@ def createControlForObject(objects, controls):
         for index in range(0, len(controls)):
             SinglePropRig(objects[index], controls[index])
     elif len(controls) == 1 and len(objects) > 1:
-        print "not suported Selection"
+        print ("not suported Selection")
     else:
-        print "not suported Selection"
+        print ("not suported Selection")
 
 
 def isNoiseControl(Object):
@@ -111,7 +111,7 @@ def addNoiseOnControl(Object, Control):
     if Object.__class__ == list:
         pass
 
-    elif Object.__class__ in [str, unicode]:
+    elif Object.__class__ in [str]:
         Object = [Object]
 
     else:
@@ -162,9 +162,9 @@ def deleteSimpleRig():
             for eachObject in geolist:
                 RMRigTools.RMLockAndHideAttributes(geolist, "1111111111")
         else:
-            print "no skin cluster Identified"
+            print ("no skin cluster Identified")
     else:
-        print "no constraint Node Identified"
+        print ("no constraint Node Identified")
 
 
 class constraintComponents(object):

@@ -32,7 +32,7 @@ from RMPY.snippets import ChangeNameConvention
 from RMPY.AutoRig.snippets import FetTipRotation
 def getMayaWindow():
     ptr = mui.MQtUtil.mainWindow()
-    return wrapInstance(long(ptr), QMainWindow)
+    return wrapInstance(int(ptr), QMainWindow)
 
 
 class Main(MayaQWidgetDockableMixin, QDialog):
@@ -78,7 +78,6 @@ class Main(MayaQWidgetDockableMixin, QDialog):
 
     def MirrorSelectionBtnPressed(self):
         selection = cmds.ls(sl = True, type="transform")
-        print selection
         self.MirrorSelection (selection)
 
     def CreateRigBtnPressed(self):
@@ -94,13 +93,13 @@ class Main(MayaQWidgetDockableMixin, QDialog):
                 if cmds.objExists(OpositObject):
                     RMUncategorized.SetObjectTransformDic({OpositObject: ObjectTransformDic[eachObject]}, MirrorTranslateX = 1 , MirrorTranslateY = 1 , MirrorTranslateZ = -1 , MirrorRotateX = -1 , MirrorRotateY = -1 , MirrorRotateZ = 1)
                 else:
-                    print 'object not found %s'%OpositObject
+                    print ('object not found %s'%OpositObject)
             else:
                 OpositObject = self.NameConv.set_from_name(eachObject, "R", "side")
                 if cmds.objExists(OpositObject):
                     RMUncategorized.SetObjectTransformDic({OpositObject : ObjectTransformDic[eachObject]}, MirrorTranslateX = 1 , MirrorTranslateY = 1 , MirrorTranslateZ = -1 , MirrorRotateX = -1 , MirrorRotateY = -1 , MirrorRotateZ = 1)
                 else:
-                    print 'object not found %s' % OpositObject
+                    print ('object not found %s' % OpositObject)
     def ClavicleSpaceSwitchBtnPressed(self):
         RedoClavicleSpaceSwitch.clavicleSpaceSwitch()
     def PoleVectorBtnPressed(self):

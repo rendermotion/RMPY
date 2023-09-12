@@ -25,7 +25,7 @@ from RMPY import RMblendShapesTools as RMbst
 
 def getMayaWindow():
     ptr = mui.MQtUtil.mainWindow()
-    return wrapInstance(long(ptr), QMainWindow)
+    return wrapInstance(int(ptr), QMainWindow)
 
 
 class Main(QDialog):

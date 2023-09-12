@@ -67,8 +67,8 @@ if __name__ == '__main__':
                        'L_wrist01_reference_pnt')
     new_arm = Arm()
     new_arm.create_point_base(*arm_points)
-    print 'reset = {}'.format(new_arm.reset_joints)
-    print 'Joints = {}'.format(new_arm.joints)
+    print ('reset = {}'.format(new_arm.reset_joints))
+    print ('Joints = {}'.format(new_arm.joints))
 
 
 

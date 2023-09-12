@@ -15,7 +15,7 @@ from RMPY.snippets import locator_at_average
 
 def getMayaWindow():
     ptr = mui.MQtUtil.mainWindow()
-    return wrapInstance(long(ptr), QMainWindow)
+    return wrapInstance(int(ptr), QMainWindow)
 
 
 class Main(MayaQWidgetDockableMixin, QDialog):

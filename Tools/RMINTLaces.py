@@ -26,11 +26,11 @@ from RMPY.snippets import sinFunct
 
 def getMayaWindow():
     ptr = mui.MQtUtil.mainWindow()
-    return wrapInstance(long(ptr), QMainWindow)
+    return wrapInstance(int(ptr), QMainWindow)
 
 class main(MayaQWidgetDockableMixin, QDialog):
-    def __init__ (self, NameConv=None, parent=None):
-        super(main,self).__init__(parent = getMayaWindow())
+    def __init__(self, NameConv=None, parent=None):
+        super(main, self).__init__(parent = getMayaWindow())
         self.isShapeSelected = False
         self.ui = FormLaces.Ui_Form()
         self.ui.setupUi(self)

@@ -32,7 +32,7 @@ pol=self.sizePolicy()
 
 def getMayaWindow():
     ptr = mui.MQtUtil.mainWindow()
-    return wrapInstance(long(ptr), QMainWindow)
+    return wrapInstance(int(ptr), QMainWindow)
 
 
 class main(MayaQWidgetDockableMixin, QDialog):
@@ -53,7 +53,7 @@ class main(MayaQWidgetDockableMixin, QDialog):
     def GetTransformBtnPressed(self):
         selection = cmds.ls(sl=True)
         self.TramsformDic = RMUncategorized.ObjectTransformDic(selection)
-        print "saving file to: %s" % (self.DiskCachePath)
+        print ("saving file to: %s" % (self.DiskCachePath))
         SaveDic = {'type': 'ObjectTransforms', 'data': self.TramsformDic}
         if not os.path.exists(self.Directory):
             os.makedirs(self.Directory)
@@ -81,11 +81,11 @@ class main(MayaQWidgetDockableMixin, QDialog):
                 if OpenDic['type'] == str('ObjectTransforms'):
                     self.TramsformDic = OpenDic['data']
                     RMUncategorized.SetObjectTransformDic(self.TramsformDic)
-                    print self.TramsformDic
+                    print (self.TramsformDic)
                 else:
-                    print "File loaded not Valid"
+                    print ("File loaded not Valid")
         else:
-            print "No File Selected"
+            print ("No File Selected")
             # if self.TramsformDic!={}:
             #	RMUncategorized.SetObjectTransformDic(self.TramsformDic)
             # else:
@@ -102,12 +102,12 @@ class main(MayaQWidgetDockableMixin, QDialog):
                 if OpenDic['type'] == str('ObjectTransforms'):
                     self.TramsformDic = OpenDic['data']
                     RMUncategorized.SetObjectTransformDic(self.TramsformDic)
-                    print "File Loaded succesfully"
-                    print self.TramsformDic
+                    print ("File Loaded succesfully")
+                    print (self.TramsformDic)
                 else:
-                    print "File loaded not Valid"
+                    print ("File loaded not Valid")
         else:
-            print "No File Selected"
+            print ("No File Selected")
 
     def ResetTransformBtnPressed(self):
         selection = cmds.ls(sl=True)

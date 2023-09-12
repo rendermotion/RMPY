@@ -53,7 +53,7 @@ class RMNeckHead(object):
 
     def RMCreateHeadRig(self):
         headSize = RMRigTools.RMLenghtOfBone(self.HeadJoints[0])
-        print '%s %s' % (self.rootHeadJoints, self.rootHeadJoints.__class__)
+        print ('%s %s' % (self.rootHeadJoints, self.rootHeadJoints.__class__))
         resetHeadControl, headControl = RMRigShapeControls.RMImportMoveControl(self.rootHeadJoints, scale=headSize,
                                                                                name="head", Type="head")
         pm.parentConstraint(headControl, self.HeadJoints[0])

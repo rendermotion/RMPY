@@ -5,11 +5,11 @@ def progressiveConstraint(startObject, endObject, objectList, constraintType="pa
     constraintValue = float(0.0)
     NumElements = len(objectList)
     deltaConstValue = 1.0 / (float(NumElements) + 1)
-    print deltaConstValue
+    print (deltaConstValue)
 
     for eachObject in objectList:
         constraintValue = constraintValue + deltaConstValue
-        print "ConstValue = %s" % constraintValue
+        print ("ConstValue = %s" % constraintValue)
 
         if constraintType == 'parent':
             cmds.parentConstraint(startObject, eachObject, w=1.0 - constraintValue, mo=mo)

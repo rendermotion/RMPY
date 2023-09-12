@@ -1,5 +1,4 @@
 def RMPyArrayToMelArray(Array):
-	print type(Array)
 	Txt="{"
 	for g in range(0,Array):
 		Txt+="\""

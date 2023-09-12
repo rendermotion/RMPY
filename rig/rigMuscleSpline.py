@@ -6,7 +6,7 @@ from RMPY.rig import rigBiaseControl
 if not 'MayaMuscle' in pm.pluginInfo(q=True, listPlugins=True):
     pm.loadPlugin('MayaMuscle')
 else:
-    print 'plugin maya muscle already loaded'
+    print('plugin maya muscle already loaded')
 
 
 class MuscleSpline(rigBase.RigBase):
@@ -48,7 +48,7 @@ class MuscleSpline(rigBase.RigBase):
         pm.addAttr(spline, ln='pctStretch', k=True)
 
         for reference_point, each in zip(points, range(len(points))):
-            print '*****reference_point = {}'.format(reference_point)
+            print ('*****reference_point = {}'.format(reference_point))
             reset_control, control = self.create.controls.point_base(reference_point, **kwargs)
             self.controls.append(control)
             self.reset_controls.append(reset_control)

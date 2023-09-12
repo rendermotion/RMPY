@@ -40,7 +40,7 @@ class DataManager(object):
                 data_file.close()
                 return data_loaded
             except IOError:
-                print 'error trying to open file: \n {}'.format(full_path_file_name)
+                print('error trying to open file: \n {}'.format(full_path_file_name))
         return None
 
     def search(self, search_string):

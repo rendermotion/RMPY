@@ -31,8 +31,6 @@ def changeNameConv(correct_object):
         side = get_key(side, original_name_conv.translator['side'])
         system = original_name_conv.get_from_name(each, 'system')
         objectType = original_name_conv.get_from_name(each, 'objectType')
-        print each
-        print 'name=%s'%name
         name_conv.rename_name_in_format(each, name=name, side=side, objectType=objectType, useName=False)
         for each_children in each.getChildren():
             if pm.objectType(each_children) == 'transform':
@@ -41,6 +39,5 @@ def changeNameConv(correct_object):
 
 if __name__ == '__main__':
     selection = pm.ls('Character01_MD_Spine_pnt_rfr')
-    print selection
     changeNameConv(selection)
 

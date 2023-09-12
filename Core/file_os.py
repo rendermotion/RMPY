@@ -27,7 +27,7 @@ def validate_path(path_file_name):
             file_path_joined = '/'.join(incremental_list_path)
             if original_tokens[index + 1] not in next(os.walk(file_path_joined))[1]:
                 os.mkdir('{}/{}'.format(file_path_joined, original_tokens[index + 1]))
-                print 'in {} \n the path {} was created'.format(file_path_joined, each_token)
+                print ('in {} \n the path {} was created'.format(file_path_joined, each_token))
         else:
             incremental_list_path.append(each_token)
 

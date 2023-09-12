@@ -53,8 +53,8 @@ class RigTail(rigBase.RigBase):
         for each in self.ik_tail.reset_controls:
             self.points_on_surface.append(rigPointOnSurface.RigPointOnSurface(self.surface, rig_system=self.rig_system))
             self.points_on_surface[-1].create_point_base(each)
-            print '******** constraint_'
-            print self.create.constraint.constraint_type
+            print ('******** constraint_')
+            print (self.create.constraint.constraint_type)
             self.create.constraint.node_base(self.points_on_surface[-1].tip, each, mo=True)
 
         self.fk_tail.create_point_base(*args, orient_type='point_orient')

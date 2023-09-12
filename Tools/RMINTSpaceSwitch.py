@@ -24,7 +24,7 @@ from RMPY.AutoRig import RMSpaceSwitch
 
 def getMayaWindow():
     ptr = mui.MQtUtil.mainWindow()
-    return wrapInstance(long(ptr), QMainWindow)
+    return wrapInstance(int(ptr), QMainWindow)
 
 
 class main(MayaQWidgetDockableMixin,QDialog):

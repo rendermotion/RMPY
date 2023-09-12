@@ -31,7 +31,7 @@ class RigControlsForPoints(rigBase.RigBase):
                 each_control.rotate >> point.rotate
                 each_control.scale >> point.scale
         else:
-            print 'unknown link type {}'.format(link_type)
+            print('unknown link type {}'.format(link_type))
 
 
 if __name__ == '__main__':

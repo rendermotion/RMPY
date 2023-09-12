@@ -318,5 +318,4 @@ if __name__ == '__main__':
     ik_rig = IKRig()
     ik_rig.create_point_base(*arm_points[:3])
     ik_rig.make_stretchy()
-    print 'done'
 

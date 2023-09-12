@@ -149,7 +149,7 @@ if __name__ == '__main__':
         for each_setup in each_dictionary.keys():
             for each_blendshape in each_dictionary[each_setup]['blendShapes'].keys():
                 if not pm.objExists(each_blendshape):
-                    print '{} not found'.format(each_blendshape)
+                    print('{} not found'.format(each_blendshape))
 
                 if not pm.ls(each_blendshape)[0].getParent().name() == 'blendshapes':
                     selection_list.append(each_blendshape)

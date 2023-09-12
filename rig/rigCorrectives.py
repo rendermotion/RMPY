@@ -55,7 +55,7 @@ class CorrectiveBlendShapes(rigBase.RigBase):
 
     def create_right_side_correctives(self):
         for each_base_mesh in self.base_mesh:
-            print 'doing mesh :{}'.format(each_base_mesh)
+            print ('doing mesh :{}'.format(each_base_mesh))
             self.init_mirror(each_base_mesh)
             correctives = self.base_mesh[each_base_mesh]
             for each_corrective_list in correctives:
@@ -71,7 +71,7 @@ class CorrectiveBlendShapes(rigBase.RigBase):
 
     def apply_corrective_blend_shapes(self):
         for each_base_mesh in self.base_mesh:
-            print 'requesting blendShape  on {}'.format(each_base_mesh)
+            print ('requesting blendShape  on {}'.format(each_base_mesh))
             blend_shape = blendShape.BlendShape.by_node(each_base_mesh, index=-1, create=True)
             blend_shape_node = blend_shape.node
             # name = 'C_{}_0001_BS'.format(each_base_mesh.split('_')[2])
@@ -112,7 +112,6 @@ class CorrectiveBlendShapes(rigBase.RigBase):
     def apply_blendShapes(self, base_mesh, blendshape_node, correctives_list, index, weights_list, target_name):
             last_target = correctives_list[-1]
             cmds.rename(last_target, target_name)
-            print blendshape_node, base_mesh, index, target_name
             pm.blendShape(blendshape_node, e=True, target=[base_mesh,
                                                            index,
                                                            target_name, 1.0])
@@ -120,10 +119,6 @@ class CorrectiveBlendShapes(rigBase.RigBase):
             target_value = weights_list[:-1]
 
             for corrective_mesh, index_value in zip(correctives_list[:-1], target_value):
-                print index_value
-                print corrective_mesh
-                print index
-                print base_mesh
                 pm.blendShape(blendshape_node, e=True, ib=True, target=[base_mesh,
                                                                         index,
                                                                         corrective_mesh,
@@ -135,7 +130,7 @@ class CorrectiveBlendShapes(rigBase.RigBase):
                 if each_corrective in self.base_mesh[each_geo].keys():
                     last_target = self.base_mesh[each_geo][each_corrective][-1]
                     side = self.name_convention.get_from_name(last_target, 'side')
-                    print 'found side {}'.format(side)
+                    print ('found side {}'.format(side))
 
             if each_corrective in self.correctives_definition.config_correctives:
                 drivers = self.correctives_definition.config_correctives[each_corrective]['drivers']
@@ -156,16 +151,16 @@ class CorrectiveBlendShapes(rigBase.RigBase):
                     if 'RFlip' in self.correctives_definition.config_correctives[each_corrective].keys():
                         if self.correctives_definition.config_correctives[each_corrective]['RFlip']:
                             res_list = [-1 * each for each in targets]
-                            print 'connecting {}{} with {} in A'.format(side, each_corrective, res_list)
+                            print ('connecting {}{} with {} in A'.format(side, each_corrective, res_list))
                             self.rig_correctives(right_drivers, rotation_order, res_list, each_corrective, side)
                         else:
-                            print 'connecting {}{} with {} in B'.format(side, each_corrective, targets)
+                            print ('connecting {}{} with {} in B'.format(side, each_corrective, targets))
                             self.rig_correctives(right_drivers, rotation_order, targets, each_corrective, side)
                     else:
-                        print 'connecting {}{} with {} in C'.format(side, each_corrective, targets)
+                        print ('connecting {}{} with {} in C'.format(side, each_corrective, targets))
                         self.rig_correctives(right_drivers, rotation_order, targets, each_corrective, side)
                 else:
-                    print 'connecting {}{} with {} in D'.format(side, each_corrective, targets)
+                    print ('connecting {}{} with {} in D'.format(side, each_corrective, targets))
                     self.rig_correctives(drivers, rotation_order, targets, each_corrective, side)
 
     def rig_correctives(self, drivers, rotation_order, targets, weight_name, side):
@@ -178,7 +173,7 @@ class CorrectiveBlendShapes(rigBase.RigBase):
         driver_locator = pm.spaceLocator()
         zero_locator.rotateOrder.set(rotation_axis.index(rotation_order))
         self.name_convention.rename_name_in_format(driver_locator, name='driver{}'.format(default_name.capitalize()))
-        print 'drivers:{}'.format(drivers)
+        print ('drivers:{}'.format(drivers))
         print (str(drivers[1]), str(driver_locator))
         transform.align(str(drivers[1]), str(zero_locator))
         driver_locator.setParent(zero_locator)

@@ -75,9 +75,9 @@ def createControlForObject(objects , controls , centerPivot = False):
         for index in range(0,len(controls)):
             SinglePropRig(objects[index],controls[index] , centerPivot = centerPivot)
     elif len(controls) == 1 and len(objects)>1:
-        print "not suported Selection"
+        print ("not suported Selection")
     else:
-        print "not suported Selection"
+        print ("not suported Selection")
 
 def isNoiseControl(Object):
     Attributes = pm.listAttr(Object)
@@ -150,9 +150,9 @@ def deleteSimpleRig():
             for eachObject in geolist:
                 RMRigTools.RMLockAndHideAttributes(geolist,"1111111111")
         else:
-            print "no skin cluster Identified"
+            print ("no skin cluster Identified")
     else:
-        print "no constraint Node Identified"        
+        print ("no constraint Node Identified")
 def openTransform():
     controlObj = pm.ls(selection = True)
     parentObject = pm.listRelatives(controlObj[0], parent=True)[0]

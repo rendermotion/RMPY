@@ -6,6 +6,9 @@ from RMPY.core import polygon_tools
 
 
 class SkinCluster(creatorsBase.CreatorsBase):
+    """
+    The main creator of skin clusters
+    """
     def __init__(self, *args, **kwargs):
         super(SkinCluster, self).__init__(*args, **kwargs)
         self.node = None
@@ -227,9 +230,6 @@ class SkinCluster(creatorsBase.CreatorsBase):
 
             self.weights_dict['weights'][each_vertex] = [new_index_list, tuple(new_weight_list)]
         self.weights_dict['influences'] = new_list
-
-    def create_dictionary_base(self):
-        pass
 
     def copy_skin(self, *args):
         """

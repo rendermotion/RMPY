@@ -15,7 +15,7 @@ def addAttributesDic (Object , attributesDic):
 				keyable = attributesDic[eachAttribute]["keyable"]
 			else :
 				keyable = 1
-			print "Adding Attribute %s , keyable:%s"%(eachAttribute,keyable)
+			print("Adding Attribute %s , keyable:%s"%(eachAttribute,keyable))
 			cmds.addAttr(Object,at="float", ln = eachAttribute, hnv = 1, hxv = 1, h = 0, k = keyable, smn = float(attributesDic[eachAttribute]["min"]), smx = float(attributesDic[eachAttribute]["max"]))
 selection = cmds.ls(selection = True)
 for i in selection:

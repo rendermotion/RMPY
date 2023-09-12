@@ -25,9 +25,9 @@ def getUvData(name):
     for uvSet in mesh.getUVSetNames():
         uvCounts, uvIds = mesh.getAssignedUVs(uvSet)
         uvData[uvSet] = uvDataTuple(uvCounts, uvIds, getMfnMesh(name).getUVs(uvSet))
-        print uvCounts
-        print uvIds
-        print mesh.getUVs(uvSet)
+        # print uvCounts
+        # print uvIds
+        # print mesh.getUVs(uvSet)
     return uvData
 
 
@@ -44,10 +44,7 @@ def build():
     polyCounts = len(uvCounts)
     uvIds = toCopyUvData.values()[0].uvIds
     u, v = toCopyUvData.values()[0].uvs
-    print 'after function'
-    print u
-    print v
-    print uvIds
+
     ##############
     # Clear Uvs
     # Set Uvs
@@ -62,8 +59,8 @@ def build():
     # pCube1.assignUVs(uvCounts, uvIds, uvSetName)
     assign_uvs('pCube1', uvCounts, uvIds,  uvSetName)
 
-    print pCube1.numUVs(pCube1.getUVSetNames()[0])
-    print pCube1.numUVs(pCube1.getUVSetNames()[1])
+    print(pCube1.numUVs(pCube1.getUVSetNames()[0]))
+    print(pCube1.numUVs(pCube1.getUVSetNames()[1]))
 
 
 def assign_uvs(mesh_name, uvCounts, uvIds, uvSetName):
@@ -72,7 +69,7 @@ def assign_uvs(mesh_name, uvCounts, uvIds, uvSetName):
     index_polygon = 0
     for each_uv_face_vertex_number in uvCounts:
         for each_uv_index in range(each_uv_face_vertex_number):
-            print index_polygon, each_uv_index, uvIds[index_uvIds], uvSetName
+            print(index_polygon, each_uv_index, uvIds[index_uvIds], uvSetName)
             geo_object.assignUV(index_polygon, each_uv_index, uvIds[index_uvIds], uvSetName)
             index_uvIds += 1
         index_polygon += 1

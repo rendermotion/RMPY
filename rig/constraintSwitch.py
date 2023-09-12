@@ -134,7 +134,7 @@ class ConstraintSwitch(rigBase.RigBase):
                 self.constraints.extend(constraints)
 
         else:
-            print 'list_a and list_b should be the same size'
+            print('list_a and list_b should be the same size')
 
     def create_attribute_control(self, control, **kwargs):
         self.controls.append(control)

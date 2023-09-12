@@ -24,9 +24,7 @@ class RMRibbon(object):
 
     def nurbPlaneBetweenObjects(self, Object01, Object02):
         VP1 = om.MVector(pm.xform(Object01, a=True, ws=True, q=True, rp=True))
-        print VP1
         VP2 = om.MVector(pm.xform(Object02, a=True, ws=True, q=True, rp=True))
-        print VP2
         longitud = VP1 - VP2
         plano = pm.nurbsPlane(ax=[0, 1, 0], p=[(longitud.length()) / 2, 0, 0], w=longitud.length(), lr=.05, d=3, u=8,
                               v=1, ch=0, name="bendyPlane")
@@ -37,7 +35,7 @@ class RMRibbon(object):
 
     # nurbPlaneBetweenObjects("joint1","joint2")
     def RibbonCreation(self, Object01, Object02, foliculeNumber=5):
-        print 'creating riboon in %s and %s'% (Object01, Object02)
+        print ('creating riboon in %s and %s'% (Object01, Object02))
         self.baseObjects.append(Object01)
         self.baseObjects.append(Object02)
         VP1 = om.MVector(pm.xform(Object01, a=True, ws=True, q=True, rp=True))
@@ -47,8 +45,8 @@ class RMRibbon(object):
         pm.select(cl=True)
         RibbonSize = VP1 - VP2
 
-        print "plano = %s" % plano
-        print "len = %s" % RibbonSize.length()
+        print("plano = {}".format(plano))
+        print("len = %s".format(RibbonSize.length()))
 
         MainSkeleton = pm.group(em=True, name="%sTo%sRibbon" % (self.name_conv.get_a_short_name(Object01),
                                                                 self.name_conv.get_a_short_name(Object02)))

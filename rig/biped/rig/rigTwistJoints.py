@@ -56,8 +56,8 @@ class TwistJoints(rigBase.RigBase):
         Distance = RMRigTools.RMPointDistance(twist_joint, look_at_object)
 
         # pm.parentConstraint(twist_joint, self.reset_joints)
-        print 'doing constraints \n'
-        print self.create.constraint.constraint_type
+        print ('doing constraints \n')
+        print (self.create.constraint.constraint_type)
         self.create.constraint.node_base(twist_joint, self.reset_joints, mo=True)
 
         # reset_point, control = RMRigShapeControls.RMCreateBoxCtrl(self.joints[0], Xratio=.1, Yratio=.1, Zratio=.1, customSize=Distance / 5, name="TwistOrigin")

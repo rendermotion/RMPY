@@ -42,7 +42,7 @@ Dictionaries = {
  
 def getMayaWindow():
     ptr = mui.MQtUtil.mainWindow()
-    return wrapInstance(long(ptr), QMainWindow)
+    return wrapInstance(int(ptr), QMainWindow)
 
 class main(MayaQWidgetDockableMixin,QDialog):
     def __init__(self, parent=None):
@@ -133,7 +133,7 @@ class main(MayaQWidgetDockableMixin,QDialog):
         if os.path.isfile(FinalPath):
             cmds.file( FinalPath, i=True, type="mayaBinary", ignoreVersion = True, mergeNamespacesOnClash=False, rpr="", pr = False)
         else:
-            print "archivo de RigFacial No encontrado"
+            print ("archivo de RigFacial No encontrado")
             return None
 
 

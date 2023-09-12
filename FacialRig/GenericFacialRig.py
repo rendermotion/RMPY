@@ -87,7 +87,7 @@ class GenericFacial():
 
                 NumBS += 1
             else:
-                print "el objeto" + keys + " no fue encontrado."
+                print ("el objeto" + keys + " no fue encontrado.")
                 self.FaceBlendShapeDic[keys]["Exists"] = False
 
         if self.FaceBlendShapeDic["Incisibus"]["Exists"]:
@@ -353,7 +353,7 @@ class GenericFacial():
             cmds.parent("LeyePointLookAt", "OjosLookAt_L");
             cmds.parent("ReyePointLookAt", "OjosLookAt_R");
         else:
-            print "No existen los objetos LEye y REye"
+            print ("No existen los objetos LEye y REye")
 
             # SetupEyes()
             # LinkM(self.FaceBlendShapeDic)

@@ -30,15 +30,15 @@ def lockKneeOnSpecific(Constraint, IKJointLimb, SkinJointLimb, PoleVectorControl
     Plug = [keys for keys in SpaceSwitchDic['alias'] if SpaceSwitchDic['alias'][keys] == IKJointLimb]
     Connection = cmds.listConnections("%s.%s" % (Constraint, Plug[0]), plugs=True, destination=False)
 
-    print "Plug:%s" % Plug
-    print "Connection:%s" % Connection
+    print ("Plug:%s" % Plug)
+    print ("Connection:%s" % Connection)
 
     cmds.parentConstraint(IKJointLimb, SkinJointLimb, e=True, remove=True)
     cmds.parentConstraint(group, SkinJointLimb, mo=False)
 
     SpaceSwitchDic = (SpcSw.getParentConstraintDic(Constraint))
     NewPlug = [keys for keys in SpaceSwitchDic['alias'] if SpaceSwitchDic['alias'][keys] == group]
-    print "NewPlug:%s" % NewPlug
+    print ("NewPlug:%s" % NewPlug)
 
     cmds.connectAttr(Connection[0], "%s.%s" % (Constraint, NewPlug[0]))
 

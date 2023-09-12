@@ -10,4 +10,4 @@ def correctPoleVectors():
             cmds.setAttr("%s.rotateZ" % SceneObj[0], 90)
             cmds.setAttr("%s.rotateX" % SceneObj[0], 90)
         else:
-            print "problems found trying to parse %s, %s objects found" % (SceneObj, len(SceneObj))
+            print ("problems found trying to parse %s, %s objects found" % (SceneObj, len(SceneObj)))

@@ -34,7 +34,7 @@ except:
             logging.Logger.manager.loggerDict["pyside2uic.uiparser"].setLevel(logging.CRITICAL)
             logging.Logger.manager.loggerDict["pyside2uic.properties"].setLevel(logging.CRITICAL)
         except:
-            print "PySide(2) and PyQt4 not found"
+            print ("PySide(2) and PyQt4 not found")
 
 def loadUiType( uiFile ):
     if default ==  "pyqt4":
@@ -59,10 +59,10 @@ def loadUiType( uiFile ):
 def wrapinstance( ptr, base=None ):
     if ptr is None:
         return None
-    ptr = long( ptr ) 
+    ptr = int( ptr )
     if globals().has_key( 'shiboken' ):
         if base is None:
-            qObj = shiboken.wrapInstance( long( ptr ), QObject )
+            qObj = shiboken.wrapInstance( int( ptr ), QObject )
             metaObj = qObj.metaObject()
             cls = metaObj.className()
             superCls = metaObj.superClass().className()
@@ -72,9 +72,9 @@ def wrapinstance( ptr, base=None ):
                 base = getattr( QtGui, superCls ) 
             else:
                 base = QWidget
-        return shiboken.wrapInstance( long( ptr ), base )
+        return shiboken.wrapInstance( int( ptr ), base )
     elif globals().has_key( 'sip' ):
         base = QObject
-        return sip.wrapinstance( long( ptr ), base )
+        return sip.wrapinstance( int( ptr ), base )
     else:
         return None

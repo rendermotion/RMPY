@@ -91,8 +91,8 @@ def SetObjectTransformDic(OTDic, MirrorTranslateX=1, MirrorTranslateY=1, MirrorT
             except:
                 None
         else:
-            print "No Object Matches name:"
-            print keys
+            print ("No Object Matches name:")
+            print (keys)
             break
 
 
@@ -115,8 +115,8 @@ def ignoreNamespace(Name, selectedNamespace=None):
                         if len(usingNamespace) == 1:
                             return usingNamespace
                     else:
-                        print "try to select an object with the namespace that you want to paste duplicateObject:%s" % (
-                        Name)
+                        print ("try to select an object with the namespace "
+                               "that you want to paste duplicateObject:{}".format(Name))
                         return None
                     # for i in FocusObject:
                     #	values = i.split(":")
@@ -142,4 +142,4 @@ def ExtractGeometry():
     elif cmds.objectType(selected[0]) == "blendShape" or cmds.objectType(selected[0]) == "skinCluster":
         cmds.connectAttr(selected[0] + ".outputGeometry[0]", sphereShape[0] + ".inMesh")
     else:
-        print "El tipo de objeto no fue identificado"
+        print ("El tipo de objeto no fue identificado")

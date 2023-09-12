@@ -27,7 +27,7 @@ from RMPY.core import hierarchy
 
 def getMayaWindow():
     ptr = mui.MQtUtil.mainWindow()
-    return wrapInstance(long(ptr), QMainWindow)
+    return wrapInstance(int(ptr), QMainWindow)
 
 
 class Main(MayaQWidgetDockableMixin, QDialog):
@@ -86,7 +86,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         if selection:
             transform.reorient_to_world(selection[0])
         else:
-            print 'select the root node to orient the transforms'
+            print ('select the root node to orient the transforms')
 
     def locator_at_average(self):
         selection = pm.ls(selection=True)
@@ -204,7 +204,6 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         Array = self.ui.listWidget.selectedItems()
         cmds.select(clear=True)
         for g in (Array):
-            print g.text()
             cmds.select(g.text(), add=True)
 
     @staticmethod
@@ -236,7 +235,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
                                                           MirrorTranslateX=1, MirrorTranslateY=1, MirrorTranslateZ=-1,
                                                           MirrorRotateX=-1, MirrorRotateY=-1, MirrorRotateZ=1)
                 else:
-                    print 'object not found %s' % oposit_object
+                    print ('object not found %s' % oposit_object)
             else:
                 oposit_object = self.name_convention.set_from_name(str(eachObject), "R", "side")
                 if cmds.objExists(oposit_object):
@@ -244,7 +243,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
                                                           MirrorTranslateX=1, MirrorTranslateY=1, MirrorTranslateZ=-1,
                                                           MirrorRotateX=-1, MirrorRotateY=-1, MirrorRotateZ=1)
                 else:
-                    print 'object not found %s' % oposit_object
+                    print ('object not found %s' % oposit_object)
 
     @staticmethod
     def selection_at_average():

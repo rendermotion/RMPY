@@ -23,7 +23,7 @@ from RMPY import RMblendShapesTools
 
 def getMayaWindow():
     ptr = mui.MQtUtil.mainWindow()
-    return wrapInstance(long(ptr), QMainWindow)
+    return wrapInstance(int(ptr), QMainWindow)
 
 
 class Main(MayaQWidgetDockableMixin, QDialog):
@@ -59,7 +59,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
             if len(self.BSdictionary.keys()) >= 1:
                 self.ui.listWidget.setCurrentRow(0)
         else:
-            print "No Blendshape Node found"
+            print ("No Blendshape Node found")
 
     def FlipWeightsBtnPressed(self):
         blend_shape_node = self.ui.blend_shape_name_lbl.text()
@@ -76,7 +76,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
             selected_items_index = self.get_selected_items_index(blend_shape_node)
             source_index = selected_items_index[0]
             for each_index in selected_items_index[1:]:
-                print 'source: %s destination: %s' % (source_index, each_index)
+                print ('source: %s destination: %s' % (source_index, each_index))
                 RMblendShapesTools.copyCurrentPaintTargetWeights(blend_shape_node, source_index, each_index)
 
     def get_selected_items_index(self, blend_shape_node):
@@ -94,7 +94,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         if blend_shape_node != "":
             selected_items_index = self.get_selected_items_index(blend_shape_node)
             for each_index in selected_items_index:
-                print 'destination: %s' % (each_index)
+                print ('destination: %s' % (each_index))
                 RMblendShapesTools.paste_paint_from_dictionary(blend_shape_node, each_index, self.memory)
 
     def save_to_memory_btn_pressed(self):

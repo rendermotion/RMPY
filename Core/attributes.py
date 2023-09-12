@@ -34,7 +34,7 @@ def lock_and_hide_attributes(*scene_objects, **kwargs):
                 else:
                     pass
     else:
-        print "error in LockAndHideAttr Not valid Len on BitString"
+        print ("error in LockAndHideAttr Not valid Len on BitString")
         return False
     return True
 
@@ -66,7 +66,7 @@ class GeneralAttribute(object):
             else:
                 self.set_data_dict()
         else:
-            print 'attribute not recognized {}'.format(attribute)
+            print ('attribute not recognized {}'.format(attribute))
 
     def set_data_dict(self, *data_dictionary):
         """
@@ -80,12 +80,12 @@ class GeneralAttribute(object):
             if self.data['value']:
                 self.set_multi_index()
             else:
-                print 'the attribute {} in {} didnt contained any data to set'.format(self.name, self.node)
+                print ('the attribute {} in {} didnt contained any data to set'.format(self.name, self.node))
         else:
             if not cmds.getAttr('{}.{}'.format(self.node, self.name), lock=True):
                 cmds.setAttr('{}.{}'.format(self.node, self.name), self.data['value'])
             else:
-                print 'the following attribute could not be loaded since it is locked . {}.{}'.format(self.node, self.name)
+                print ('the following attribute could not be loaded since it is locked . {}.{}'.format(self.node, self.name))
 
         return self.data
 
@@ -134,7 +134,7 @@ class GeneralAttribute(object):
                             values = values[0]
                     dict_data[index] = [indices, values]
         except():
-            print 'an error ocurred trying to save data value {}'.format(pm.Attribute('{}.{}'.format(self.node, self.name)))
+            print ('an error ocurred trying to save data value {}'.format(pm.Attribute('{}.{}'.format(self.node, self.name))))
         return dict_data
 
 
@@ -146,5 +146,5 @@ if __name__ == '__main__':
         # if '.' not in each_attribute:
         # print cmds.getAttr('{}.{}'.format(attachment, each_attribute), type=True)
         attribute = GeneralAttribute('{}.{}'.format(attachment, each_attribute))
-        print attribute.get_data_dict()
+        print (attribute.get_data_dict())
         attribute.set_data_dict()

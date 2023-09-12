@@ -20,9 +20,9 @@ def deleteSimpleRig():
 			for eachObject in geolist:
 				RMRigTools.RMLockAndHideAttributes(geolist,"1111111111")
 		else:
-			print "no skin cluster Identified"
+			print ("no skin cluster Identified")
 	else:
-		print "no constraint Node Identified"
+		print ("no constraint Node Identified")
 deleteSimpleRig()
 
 

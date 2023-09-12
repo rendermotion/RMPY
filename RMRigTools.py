@@ -9,7 +9,6 @@ def average(*args):
     average_result = []
     for vector_index, each_vector in enumerate(args):
         for index, each_value in enumerate(each_vector):
-            print index, each_value
             if vector_index == 0:
                 average_result = each_vector
             else:
@@ -22,7 +21,6 @@ def connectWithLimits(AttrX, AttrY, keys):
     AttrY = validate_pymel_nodes(AttrY)
     value = pm.listConnections(AttrY, destination=False, plugs=True, skipConversionNodes=True)
     if value:
-        print value[0].node()
         if pm.objectType(value[0].node()) == 'plusMinusAverage':
             plusMinus = value[0].node()
             if AttrX.get(type=True) in ['float', 'doubleLinear', 'doubleAngle']:
@@ -37,7 +35,7 @@ def connectWithLimits(AttrX, AttrY, keys):
                                            currentDriver='%s' % AttrX, dv=eachKey[0], v=eachKey[1])
             else:
 
-                print 'could not add data type: %s' % AttrX.get(type=True)
+                print ('could not add data type: %s' % AttrX.get(type=True))
         else:
             if AttrX.get(type=True) in ['float','doubleLinear', 'doubleAngle']:
                 plusMinus = pm.shadingNode("plusMinusAverage", asUtility=True, name="additiveConnection")
@@ -56,7 +54,7 @@ def connectWithLimits(AttrX, AttrY, keys):
                     pm.setDrivenKeyframe('%s' % plusMinus.input3D[1],
                                            currentDriver='%s' % AttrX, dv=eachKey[0], v=eachKey[1])
             else:
-                print 'could not add data type: %s' % AttrX.get(type=True)
+                print ('could not add data type: %s' % AttrX.get(type=True))
     else:
         for eachKey in keys:
             pm.setDrivenKeyframe('%s'%AttrY, currentDriver='%s' % AttrX, dv=eachKey[0], v=eachKey[1])
@@ -67,7 +65,6 @@ def connectAttr(attribute_source, attribute_destination, name = 'additiveConnect
     attribute_destination = validate_pymel_nodes(attribute_destination)
     value = pm.listConnections(attribute_destination, destination = False, plugs=True, skipConversionNodes = True)
     if value:
-        print value[0].node()
         if pm.objectType(value[0].node()) == 'plusMinusAverage':
             plusMinus = value[0].node()
             if attribute_source.get(type=True) in ['float','doubleLinear', 'doubleAngle']:
@@ -78,7 +75,7 @@ def connectAttr(attribute_source, attribute_destination, name = 'additiveConnect
                 attribute_source >> plusMinus.input3D[len(plusMinus.input3D.elements()) % 3]
             else:
 
-                print 'could not add data type: %s' % attribute_source.get(type=True)
+                print ('could not add data type: %s' % attribute_source.get(type=True))
         else:
             if attribute_source.get(type=True) in ['float', 'doubleLinear', 'doubleAngle']:
                 plusMinus = pm.shadingNode("plusMinusAverage", asUtility=True, name="additiveConnection")
@@ -94,7 +91,7 @@ def connectAttr(attribute_source, attribute_destination, name = 'additiveConnect
                 attribute_source >> plusMinus.input3D[1]
                 plusMinus.output3D >> attribute_destination
             else:
-                print 'could not add data type: %s' % attribute_source.get(type=True)
+                print ('could not add data type: %s' % attribute_source.get(type=True))
     else:
         pm.connectAttr(attribute_source, attribute_destination)
 
@@ -117,7 +114,7 @@ def validate_pymel_nodes(nodes):
         try:
             return return_list[0]
         except:
-            print 'object/s do not exist::%s' % nodes
+            print ('object/s do not exist::%s' % nodes)
             raise()
     else:
         return return_list
@@ -314,7 +311,6 @@ def RMLockAndHideAttributes(Obj, BitString, LHType="LH"):
                ".scaleZ": 8,
                ".visibility": 9}
     if (len(BitString) == 10):
-        print ObjArray
         for eachObj in ObjArray:
             for parameter in InfoDic:
                 if BitString[InfoDic[parameter]] == "0":
@@ -332,7 +328,7 @@ def RMLockAndHideAttributes(Obj, BitString, LHType="LH"):
                 else:
                     pass
     else:
-        print "error in LockAndHideAttr Not valid Len on BitString"
+        print ("error in LockAndHideAttr Not valid Len on BitString")
         return False
     return True
 
@@ -589,9 +585,8 @@ def RMCreateClustersOnCurve(curve, NameConv=None):
     print ("form:%s", form)
     #   Form (open = 0, closed = 1, periodic = 2)
     clusterList = []
-    print form
     if form == 0 or form == 1:
-        print "Open Line"
+        #"Open Line"
         for i in range(0, (degree + spans)):
             Cluster2Handle, cluster = pm.cluster(curve + ".cv[" + str(i) + "]", name="ClusterOnCurve")
             if NameConv.is_name_in_format(curve):
@@ -604,10 +599,9 @@ def RMCreateClustersOnCurve(curve, NameConv=None):
             pm.setAttr(cluster + ".visibility", 0)
             ##pm.cluster(cluster,edit=True,geometry = curve + ".["+str(i)+"]")
     if form == 2:
-        print "periodic Line"
+        # "periodic Line"
         for i in range(0, spans):
             Cluster2Handle, cluster = pm.cluster(curve + ".cv[" + str(i) + "]", name="ClusterOnCurve")
-            print cluster
             if NameConv.is_name_in_format(curve):
                 cluster = NameConv.rename_based_on_base_name(curve, cluster, name= cluster)
                 # Cluster2Handle = NameConv.RMRenameBasedOnBaseName(curve, Cluster2Handle, NewName = Cluster2Handle)
@@ -628,7 +622,7 @@ def objectsInListExists(objectsLists,verbose = True ):
             listString = '%s %s'%(listString, eachObject)
         exists = exists and existEachObjec
     if verbose and not exists:
-        print 'the folowing objects were not found: %s'%listString
+        print ('the folowing objects were not found: {}'.format(listString))
     return exists
 
 class boundingBoxInfo(object):
@@ -639,6 +633,7 @@ class boundingBoxInfo(object):
         self.xmax = None
         self.ymax = None
         self.zmax = None
+        self.BaseObject = scene_object
 
         if scene_object.__class__ == list:
             for eachObject in scene_object:
@@ -657,7 +652,7 @@ class boundingBoxInfo(object):
                     self.zmax = Values[5]
 
         else:
-            if scene_object.__class__ in [str, unicode]:
+            if scene_object.__class__ in [str]:
                 scene_object = validate_pymel_nodes(scene_object)
             elif pm.general.PyNode in inspect.getmro(type(scene_object)):
                 pass
@@ -688,7 +683,7 @@ class boundingBoxInfo(object):
         self.offsetZ = (self.minDistanceToCenterZ - self.maxDistanceToCenterZ) / 2
 
     def recalculate(self):
-
+        Values = pm.xform( self.BaseObject, q=True, bb=True)
         self.position = pm.xform(self.BaseObject, q=True, rp=True, worldSpace=True)
         self.lenX = Values[3] - Values[0]
         self.lenY = Values[4] - Values[1]
@@ -971,7 +966,6 @@ class RMRigTools(object):
             #print "periodic Line"
             for i in range(0, spans):
                 Cluster2Handle, cluster = pm.cluster(curve + ".cv[" + str(i) + "]", name="ClusterOnCurve")
-                print cluster
                 if self.NameConv.is_name_in_format(curve):
                     self.NameConv.rename_based_on_base_name(curve, cluster, name=cluster)
                     # Cluster2Handle = self.NameConv.RMRenameBasedOnBaseName(curve, Cluster2Handle, NewName = Cluster2Handle)

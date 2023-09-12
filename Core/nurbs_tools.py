@@ -111,13 +111,13 @@ def test():
     # print iterator.getStrings()
     # print iterator.getDagPath().fullPathName()
     # print skin_cluster.influenceObjects()[0].node()
-    print get_vertex().apiTypeStr
-    print getDagPath('pCube3Shape.vtx[*]')
+    # print (get_vertex().apiTypeStr)
+    # print (getDagPath('pCube3Shape.vtx[*]'))
     empty_object = OpenMaya.MObject()
     influence_indices = OpenMaya.MIntArray()
     for i in range(0, count):
         influence_indices.append(i)
-    print skin_cluster.getWeights(getDagPath('pCube3Shape.vtx[*]'), empty_object, influence_indices)
+    print (skin_cluster.getWeights(getDagPath('pCube3Shape.vtx[*]'), empty_object, influence_indices))
 
     # while not iterator.isDone():
     #     dag_path = iterator.getDagPath()
@@ -133,13 +133,13 @@ def test_transform():
     nurbs = getMFnNurbsSurface('C_extrude00_rig_grpShape')# 'nurbsPlaneShape1'
     test_point = locator_transform.translation(OpenMaya.MSpace.kObject)
     locator_point = OpenMaya.MPoint(test_point)
-    print 'numregions:{}'.format(nurbs.numRegions)
-    print 'formInU:{}'.format(nurbs.formInU)
-    print 'formInV:{}'.format(nurbs.formInV)
+    print ('numregions:{}'.format(nurbs.numRegions))
+    print ('formInU:{}'.format(nurbs.formInU))
+    print ('formInV:{}'.format(nurbs.formInV))
 
-    print locator_point
-    print locator_point.__class__
-    print nurbs.closestPoint(locator_point)
+    print (locator_point)
+    print (locator_point.__class__)
+    print (nurbs.closestPoint(locator_point))
 
 
 if __name__ == '__main__':

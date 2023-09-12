@@ -123,7 +123,7 @@ class RMRigShapeControls(object):
             "head": {"filename": "ControlHead.mb", "object": "HeadControl"},
             "circleDeform": {"filename": "ControlCircularDeform.mb", "object": "CircularDeform"}
         }
-        print 'inside Iport move control'
+        print ('inside Iport move control')
         path = os.path.dirname(RMRigTools.__file__)
         RMPYPATH = os.path.split(path)
         FinalPath = os.path.join(RMPYPATH[0], "RMPY\AutoRig\RigShapes", MoversTypeDic[Type]["filename"])
@@ -133,7 +133,7 @@ class RMRigShapeControls(object):
             #pm.importFile(FinalPath, i=True, type="mayaBinary", ignoreVersion=True, mergeNamespacesOnClash=False,
             #          rpr="ControlMover", pr=False)
         else:
-            print "archivo no encontrado %s , %s, %s "% (path, RMPYPATH, FinalPath)
+            print ("archivo no encontrado %s , %s, %s "% (path, RMPYPATH, FinalPath))
             return None
         Ctrl = pm.ls(MoversTypeDic[Type]["object"])[0]
 
@@ -158,7 +158,7 @@ class RMRigShapeControls(object):
             ParentGroup = self.rigTools.RMCreateGroupOnObj(Ctrl)
             return ParentGroup, Ctrl
         else:
-            print "Error importing Shape File"
+            print ("Error importing Shape File")
             return None
 
 
@@ -179,9 +179,9 @@ def fixShapeName(object_list):
         for each_shape in shapes:
             index = 0
             if each_shape.intermediateObject.get():
-                print 'found intermediate'
+                print ('found intermediate')
             else:
-                print 'found Shape'
+                print ('found Shape')
                 if index > 0:
                     each_shape.rename('%sShape%s' % (each_object, index))
                 else:
@@ -303,12 +303,12 @@ def RMImportMoveControl(Obj, scale=1, NameConv=None, name='', Type="move"):
     RMPYPATH = os.path.split(path)
     FinalPath = os.path.join(RMPYPATH[0], "RMPY\AutoRig\RigShapes", MoversTypeDic[Type]["filename"])
     if os.path.isfile(FinalPath):
-        print 'ready  to import'
+        print ('ready  to import')
         pm.importFile(FinalPath, i=True, type="mayaBinary", ignoreVersion=True, mergeNamespacesOnClash=False,
                   rpr="ControlMover", pr=False)
-        print 'imported !!'
+        print ('imported !!')
     else:
-        print "archivo no encontrado %s , %s, %s " % (path, RMPYPATH, FinalPath)
+        print ("archivo no encontrado %s , %s, %s " % (path, RMPYPATH, FinalPath))
         return None
 
     Ctrl = pm.ls(MoversTypeDic[Type]["object"])[0]
@@ -334,7 +334,7 @@ def RMImportMoveControl(Obj, scale=1, NameConv=None, name='', Type="move"):
         ParentGroup = RMRigTools.RMCreateGroupOnObj(Ctrl)
         return ParentGroup, Ctrl
     else:
-        print "Error importing Shape File"
+        print ("Error importing Shape File")
         return None
 
 if __name__=='__main__':

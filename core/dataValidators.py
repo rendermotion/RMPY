@@ -15,7 +15,7 @@ def as_pymel_nodes(nodes):
             try:
                 return_list += pm.ls(each)
             except:
-                print "Error, can't convert %s to PyNode" % each
+                print ("Error, can't convert %s to PyNode" % each)
                 raise AttributeError
 
     if converted_to_list:

@@ -45,7 +45,7 @@ class GenericFacial():
 				self.FaceBlendShapeDic[keys]["Exists"] = True
 				NumBS+=1
 			else:
-				print "el objeto" + keys + " no fue encontrado."
+				print ("el objeto" + keys + " no fue encontrado.")
 				self.FaceBlendShapeDic[keys]["Exists"] = False
 		
 		if cmds.objExists("RHEyeLashesClosed") and cmds.objExists("LFEyeLashesClosed") :
@@ -240,7 +240,7 @@ class GenericFacial():
 			cmds.parent("ReyePointLookAt","OjosLookAt_R");
 
 		else:
-			print "No existen los objetos LEye y REye"
+			print ("No existen los objetos LEye y REye")
 
 #RMRigTools.connectWithLimits("REyeFollow.rotateY","FacialBS.REyeRollLf",[[0,0],[16,1]])
 #RMRigTools.connectWithLimits("REyeFollow.rotateY","FacialBS.REyeRollRh",[[0,0],[-16,1]])

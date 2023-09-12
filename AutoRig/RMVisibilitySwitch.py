@@ -65,7 +65,7 @@ class RMVisibilitySwitch(object):
                 # print ("connecting Visibility %s.%s to %s.%s"%(ControlObject,VisibilitySwitch,eachObject,visibilityType) )
                 pm.connectAttr("%s.%s" % (ControlObject, VisibilitySwitch), "%s.%s" % (eachObject, visibilityType))
         else:
-            print "Not Valid Object"
+            print ("Not Valid Object")
 
     def GetAfectedObjectsList(self, ControlObject, VisibilitySwitch='visibility'):
         ControlObject = RMRigTools.validate_pymel_nodes(ControlObject)

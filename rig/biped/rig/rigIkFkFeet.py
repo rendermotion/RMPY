@@ -41,7 +41,7 @@ class IkFkFeet(constraintSwitch.ConstraintSwitch):
                 # scale_constraints = each_joint.parentMatrix[0].listConnections(type='scaleConstraint', plugs=True)
                 # scale_constraints[0].disconnect()
         else:
-            print 'you should provide a control on the kwargs'
+            print('you should provide a control on the kwargs')
 
 
 if __name__ == '__main__':

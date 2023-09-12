@@ -57,7 +57,7 @@ class GenericAttribute(object):
                         GenericAttribute('{}.{}'.format(self.attribute, each_key),
                                          data=self.data['value'][each_key])
             else:
-                print 'not value found on {} in attribute {}'.format(self.data['value'], self.attribute)
+                print ('not value found on {} in attribute {}'.format(self.data['value'], self.attribute))
 
         elif self.data['type'] in ['pointArray']:
             if self.data['value'] is not None and not cmds.getAttr(self.attribute, lock=True) \
@@ -71,12 +71,12 @@ class GenericAttribute(object):
                     and not pm.listConnections(self.attribute):
                 cmds.setAttr(self.attribute, self.data['value'])
         elif self.data["type"] in ['string']:
-            print 'setting attribute {} with value {}'.format(self.attribute, self.data['value'])
+            print ('setting attribute {} with value {}'.format(self.attribute, self.data['value']))
             if self.data['value'] is not None and not cmds.getAttr(self.attribute, lock=True) \
                     and not pm.listConnections(self.attribute):
                 cmds.setAttr(self.attribute, self.data['value'], type=str(self.data["type"]))
         else:
-            print 'attribute not identified {}'.format(self.attribute)
+            print ('attribute not identified {}'.format(self.attribute))
 
     def get_data_dict(self):
         """
@@ -110,7 +110,7 @@ class GenericAttribute(object):
                     self.data["value"] = data_value
                 else:
                     # pass
-                    print 'data type not supported {} {}'.format(data_value.__class__, self.data['type'])
+                    print ('data type not supported {} {}'.format(data_value.__class__, self.data['type']))
         return self.data
 
     def get_list(self):
@@ -127,7 +127,7 @@ class GenericAttribute(object):
             elif each.__class__ == pm.datatypes.Matrix:
                 list_of_values.append(each.get())
             else:
-                print 'class_inside a list not_supported {}'.format(each.__class__)
+                print ('class_inside a list not_supported {}'.format(each.__class__))
         return list_of_values
 
     @property

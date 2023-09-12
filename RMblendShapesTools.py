@@ -27,13 +27,13 @@ def invertCurrentPaintTargetWeights(ObjectName,index):
     NM = cmds.getAttr("%s.inputTarget[0].normalizationGroup[%s].normalizationWeights  "%(ObjectName,index))
     TargetIndex = cmds.getAttr("%s.inputTarget[0].paintTargetIndex"%ObjectName)
 
-    print 'CompTarget:%s'% (CompTarget)
-    print 'TargetIndex:%s'% (TargetIndex)
-    print 'NormID:%s'% (NormID)
-    print 'BaseWeights:%s'% (BaseWeights)
-    print 'NM:%s'% (NM)
+    print ('CompTarget:%s'% (CompTarget))
+    print ('TargetIndex:%s'% (TargetIndex))
+    print ('NormID:%s'% (NormID))
+    print ('BaseWeights:%s'% (BaseWeights))
+    print ('NM:%s'% (NM))
     weights = cmds.getAttr("%s.inputTarget[0].inputTargetGroup[%s].targetWeights"%(ObjectName,index))
-    print 'weights:%s'% (weights)
+    print ('weights:%s'% (weights))
     newWeights = []
     weightIndex=0
     #for i in weights[0]:
@@ -207,7 +207,6 @@ class BSManager(object):
             BlendShapeDict = self.RMblendShapeTargetDic(BlendShapeNode)
 
             NewTargetIndex = len(BlendShapeDict)
-            pp.pprint (BlendShapesOfSingleControl)
 
             if  'positive' in BlendShapesOfSingleControl:
                 if len (BlendShapesOfSingleControl['positive']) >= 1:
@@ -247,12 +246,12 @@ class BSManager(object):
                 if (prefix + BlendShapesOfSingleControl['positive'][len(BlendShapesOfSingleControl['positive']) - 1]) not in BlendShapeDict:
                     for eachBS in BlendShapesOfSingleControl['positive']:
                         if cmds.objExists(prefix + eachBS):
-                            print "adding pblendShape:%s"% (prefix + eachBS)
+                            print("adding pblendShape:%s"% (prefix + eachBS))
                             cmds.blendShape(BlendShapeNode, edit=True, target = [blendShapeOriginalGeo, NewTargetIndex + 1, prefix + objectPrefix + eachBS, float (abs(BSDefinition['blendShapes'][eachBS]["value"])) / 10.0 ])
                             #NewTargetIndex += 1
                             AtLeastOne = True
                         else:
-                            print " BS  %s not found on scene"%(prefix+ objectPrefix + eachBS)
+                            print (" BS  %s not found on scene"%(prefix+ objectPrefix + eachBS))
                     if AtLeastOne:
                         NewTargetIndex += 1
                         self.connectFromDefinition( BSDefinition,BlendShapesOfSingleControl['positive'][len(BlendShapesOfSingleControl['positive']) - 1], BlendShapeNode, prefix, 10, objectPrefix = objectPrefix)
@@ -264,12 +263,12 @@ class BSManager(object):
                 if (prefix + BlendShapesOfSingleControl['negative'][len(BlendShapesOfSingleControl['negative']) - 1]) not in BlendShapeDict:
                     for eachBS in BlendShapesOfSingleControl['negative']:
                         if cmds.objExists(prefix + eachBS):
-                            print "adding blendShape:%s"% (prefix+objectPrefix + eachBS)
+                            print ("adding blendShape:%s"% (prefix+objectPrefix + eachBS))
                             cmds.blendShape(BlendShapeNode, edit=True, target = [blendShapeOriginalGeo, NewTargetIndex + 1, prefix+ objectPrefix + eachBS, float (abs(BSDefinition['blendShapes'][eachBS]["value"])) / 10.0 ])
                             #NewTargetIndex += 1
                             AtLeastOne = True 
                         else:
-                            print " BS  %s not found on scene"%(prefix + objectPrefix + eachBS)
+                            print (" BS  %s not found on scene"%(prefix + objectPrefix + eachBS))
                     if AtLeastOne:
                         NewTargetIndex += 1
                         self.connectFromDefinition( BSDefinition,BlendShapesOfSingleControl['negative'][len(BlendShapesOfSingleControl['negative']) - 1], BlendShapeNode, prefix, -10,  objectPrefix = objectPrefix)
@@ -290,12 +289,12 @@ class BSManager(object):
     def CreateMulipleBlendShapes (self,BSDefinition, prefix, BSGroups,  blendShapeNode = None, objectPrefix = ''):
         self.FaceBlendShapeDic = None
         if BSDefinition[BSGroups]['Type'] == "blendShapeDefinition":
-            print  "blendShapeNode%s"%blendShapeNode
+            print ("blendShapeNode%s"%blendShapeNode)
             if blendShapeNode == None :
 
                 BSNodeArray = mel.eval('''source RMDeformers.mel;\nstring $BSNode[]=GetDeformer("'''+ objectPrefix + BSDefinition[BSGroups]['baseMesh']+'''","blendShape");''')
                 if len(BSNodeArray) == 0:
-                    print "No blendshape Found on %s" % BSDefinition[BSGroups]['baseMesh']
+                    print ("No blendshape Found on %s" % BSDefinition[BSGroups]['baseMesh'])
                     BSName = BSGroups + objectPrefix + "BS"
                     #blendShapeOriginalGeo = cmds.duplicate(prefix + BSDefinition[BSGroups]['baseMesh'], name = self.NameConv.RMGetAShortName(BSDefinition[BSGroups]['baseMesh']) + BSGroups)
                     Side = self.getSideFromPrefix(prefix)
@@ -354,9 +353,9 @@ class BSManager(object):
                             self.AddAttributes ( control, eachAttribute, jointLinkDefinition['attributes'][eachAttribute]['min'], jointLinkDefinition['attributes'][eachAttribute]['max'])
                             RMRigTools.RMConnectWithLimits('%s.%s'%(control,jointLinkDefinition['joints'][eachJoint]['connection'] ), '%s.%s'%(JointName, jointLinkDefinition['joints'][eachJoint]['inputPlug']), jointLinkDefinition['joints'][eachJoint]['value'])
                     else:
-                        print "Joint object doesnt exists:%s"%JointName
+                        print ("Joint object doesnt exists:%s"%JointName)
         else:
-            print "Control object doesnt exists:%s"%control
+            print ("Control object doesnt exists:%s"%control)
             control = self.NameConv.set_from_name(jointLinkDefinition['control'], Side, Token='Side')
 
 #if __name__=="__main__":

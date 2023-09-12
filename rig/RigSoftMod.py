@@ -51,7 +51,7 @@ class SoftModRig(rigSingleJoint.SingleJointRig):
                 self.create_sphere_display_control_base(control, radius)
                 control.radius >> soft_mod.falloffRadius
         else:
-            print 'geo key word arg needs to be specified with valid scene geometry'
+            print('geo key word arg needs to be specified with valid scene geometry')
 
     def create_sphere_display_control_base(self, control, radius):
         new_sphere_transform, new_sphere_creator = pm.polySphere()

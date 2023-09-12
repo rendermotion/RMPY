@@ -17,7 +17,7 @@ class RigBlendShapeControls(rigBase.RigBase):
                 self.rig_system._create_controls()
 
             else:
-                print 'please provide root or points to build'
+                print('please provide root or points to build')
 
         self.build()
 

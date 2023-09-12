@@ -21,10 +21,10 @@ import maya.mel as mel
 
 def getMayaWindow():
     ptr = mui.MQtUtil.mainWindow()
-    return wrapInstance(long(ptr), QMainWindow)
+    return wrapInstance(int(ptr), QMainWindow)
 
 
-class main(MayaQWidgetDockableMixin,QDialog):
+class main(MayaQWidgetDockableMixin, QDialog):
     def __init__(self, parent=None):
         super(main, self).__init__(parent=getMayaWindow())
         self.ui = FormRigDisplay.Ui_Form()

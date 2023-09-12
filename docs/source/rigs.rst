@@ -4,7 +4,12 @@ Rigs
 The rigs module has a base class called RigBase
 
 
-.. currentmodule:: creators.skinCluster
-.. autoclass:: SkinCluster
-    :members:
+.. currentmodule:: rig.rigBase
 
+.. autoclass:: BaseModel
+    :members:
+    :undoc-members:
+
+.. autoclass:: RigBase
+    :members:
+    :undoc-members:

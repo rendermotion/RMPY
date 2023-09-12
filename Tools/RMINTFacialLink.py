@@ -26,7 +26,7 @@ from RMPY import RMUncategorized
 
 def getMayaWindow():
     ptr = mui.MQtUtil.mainWindow()
-    return wrapInstance(long(ptr), QMainWindow)
+    return wrapInstance(int(ptr), QMainWindow)
 
 
 class Main(MayaQWidgetDockableMixin, QDialog):
@@ -54,7 +54,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
             cmds.file(FinalPath, i=True, type="mayaBinary", ignoreVersion=True, mergeNamespacesOnClash=False,
                       rpr="FacialControls", pr=False)
         else:
-            print "archivo no encontrado"
+            print ("archivo no encontrado")
 
     def Link(self):
         self.FacialRig.LinkFacial()

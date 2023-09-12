@@ -27,7 +27,7 @@ from RMPY import nameConvention
 
 def getMayaWindow():
     ptr = mui.MQtUtil.mainWindow()
-    return wrapInstance(long(ptr), QMainWindow)
+    return wrapInstance(int(ptr), QMainWindow)
 
 class main(MayaQWidgetDockableMixin, QDialog):
     def __init__(self, NameConv=None, parent=None):

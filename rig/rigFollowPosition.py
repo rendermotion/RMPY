@@ -4,9 +4,9 @@ import pymel.core as pm
 for required_plugings in ['matrixNodes']:
     if not required_plugings in pm.pluginInfo(q=True, listPlugins=True):
         pm.loadPlugin(required_plugings)
-        print 'plugin {} loaded'.format(required_plugings)
+        print('plugin {} loaded'.format(required_plugings))
     else:
-        print 'plugin maya muscle already loaded'
+        print('plugin maya muscle already loaded')
 
 """
 

@@ -18,7 +18,7 @@ class GeneralData(object):
             new_instance = cls(node=pm.ls(scene_node)[0])
             return new_instance
         else:
-            print 'object provided doesnt exists'
+            print ('object provided doesnt exists')
             return None
 
     def save(self, *args, **kwargs):

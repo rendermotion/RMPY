@@ -15,7 +15,6 @@ class RMGenericJointChainRig(object):
 
     def CreateJointChainRig(self, node, UDaxis="Y"):
         jointChain = RMRigTools.RMCustomPickWalk(node, "joint", -1)
-        print jointChain
         self.CreateJointChainSquareRig(jointChain, UDaxis=UDaxis)
 
     def CreateJointChainSquareRig(self, JointChain, UDaxis="Y"):
@@ -54,7 +53,7 @@ class RMGenericJointChainRig(object):
                                                JointChain[eachjoint] + ".rotateX",
                                                [[-10, sideVariation * 100], [0, 0], [10, sideVariation * -100]])
         else:
-            print "Not Valid UD Axis Provided"
+            print ("Not Valid UD Axis Provided")
 
     def addChainParameters(self, control, number, UD=True, LR=True, Twist=True, smn=-10, smx=10):
         for element in range(number):

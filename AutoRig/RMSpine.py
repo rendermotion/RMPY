@@ -324,7 +324,7 @@ class RMSpine(object):
                     elif ConstraintType == "orient":
                         pm.orientConstraint(eachDriver, eachConstrained , weight = weight,mo = True)
                     else:
-                        print "not valid costraintType requested, valid types are point, parent, or orient"
+                        print ("not valid costraintType requested, valid types are point, parent, or orient")
 
 
     def RMGaussCosine(self,XValue,Center,GaussLen):

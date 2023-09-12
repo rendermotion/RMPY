@@ -20,4 +20,14 @@ The only way to create it is using the point_base function.
     :members:
     :undoc-members:
 
+skinCluster
+===========
+
+.. currentmodule:: creators.skinCluster
+
+.. autoclass:: SkinCluster
+    :members:
+
+
+
 

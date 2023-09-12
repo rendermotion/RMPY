@@ -48,7 +48,7 @@ def SpiralOfPointsStraight(initRadius, endRadius, numberOfPoints, startPoint, en
     distancia = RMRigTools.RMPointDistance(startPoint, endPoint)
     minLength = math.sin(math.pi / (numberOfPoints + 1)) * initRadius  # initRadiusdistancia/numberOfPoints/10
 
-    print "minLength:%s" % minLength
+    print ("minLength:%s" % minLength)
 
     if minLength * numberOfPoints < distancia:
         # Locators = RigTools.RMCreateNLocatorsBetweenObjects( startPoint, endPoint, numberOfPoints )
@@ -80,7 +80,6 @@ def SpiralOfPointsStraight(initRadius, endRadius, numberOfPoints, startPoint, en
                                          [[-currentStep, angle], [-(currentStep - unfoldStep), 0],
                                           [currentStep - unfoldStep, 0], [currentStep, -angle]])
             currentStep = currentStep - unfoldStep
-            print currentRadius
             currentRadius = currentRadius - deltaRadius
             index += 1
 
@@ -88,20 +87,20 @@ def SpiralOfPointsStraight(initRadius, endRadius, numberOfPoints, startPoint, en
 def SpiralFunction(ElementIndex, NumberOfElements, initRadius, endRadius, length):
     resolution = float(length) / (float(NumberOfElements) + 1)
     initDiameter = (float(initRadius) * 2)
-    print "resolution:%s" % resolution
+    print ("resolution:%s" % resolution)
 
     if initDiameter >= resolution:
         initAngle = 180 - SegmentAngleInCircle(initRadius, resolution)
-        print "initAngle %s" % initAngle
+        print ("initAngle %s" % initAngle)
     else:
-        print "something went wrong with initDiameter"
+        print ("something went wrong with initDiameter")
         initAngle = 90
     endDiameter = (float(endRadius) * 2)
     if endDiameter >= resolution:
         endAngle = 180 - SegmentAngleInCircle(endRadius, resolution)
-        print "endAngle %s" % endAngle
+        print("endAngle %s" % endAngle)
     else:
-        print "something went wrong with endDiameter"
+        print ("something went wrong with endDiameter")
         endAngle = 90
 
     return -(initAngle + ((endAngle - initAngle) / NumberOfElements) * (ElementIndex))
@@ -112,28 +111,28 @@ def SpiralFunctionBiasedPoints(ElementIndex, NumberOfElements, initRadius, endRa
     endDiameter = (float(endRadius) * 2)
     DeltaVector = (
     (((Distance - initialSize) - (NumberOfElements * initialSize)) * 2) / (NumberOfElements * (NumberOfElements + 1)))
-    print "DeltaVector :%s", DeltaVector
+    print ("DeltaVector :%s", DeltaVector)
     initResolution = initialSize + (DeltaVector * (NumberOfElements))
     endResolution = initialSize
-    print "initialSize :%s", initialSize
-    print "initDiameter:%s", initDiameter
+    print ("initialSize :%s", initialSize)
+    print ("initDiameter:%s", initDiameter)
 
     if initDiameter >= initResolution:
-        print "initResolution %s" % initResolution
-        print "initDiameter %s" % initDiameter
+        print ("initResolution %s" % initResolution)
+        print ("initDiameter %s" % initDiameter)
 
         initAngle = 180 - (90 - math.degrees(math.asin(initResolution / initDiameter))) * 2
-        print "initAngle %s" % initAngle
+        print ("initAngle %s" % initAngle)
 
     else:
-        print "some trouble calculating the End Angle"
+        print ("some trouble calculating the End Angle")
         initAngle = 90
 
     if endDiameter >= endResolution:
         endAngle = 180 - (90 - math.degrees(math.asin(endResolution / endDiameter))) * 2
-        print "endAngle %s" % endAngle
+        print ("endAngle %s" % endAngle)
     else:
-        print "some trouble calculating the End Angle"
+        print("some trouble calculating the End Angle")
         endAngle = 90
 
     return -(initAngle + ((endAngle - initAngle) / NumberOfElements) * (NumberOfElements - ElementIndex))

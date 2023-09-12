@@ -108,7 +108,7 @@ class BiasedControl(rigBase.RigBase):
             for index, each_attribute in enumerate(connection_attribute_list):
                 self.result[index] >> each_attribute
         else:
-            print 'Mismatch number of elements on connection attribute list and result list'
+            print ('Mismatch number of elements on connection attribute list and result list')
 
     def build(self, **kwargs):
         connection_attribute_list = kwargs.pop('connection_attribute_list', None)

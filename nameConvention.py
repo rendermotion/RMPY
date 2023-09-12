@@ -150,7 +150,7 @@ class NameConvention(object):
                 elif eachName == 'system':
                     self.default_names[eachName] = 'rig'
                 else:
-                    print eachName
+                    print (eachName)
                     raise 'error must provide a default value for each token not token found %s' % eachName
 
     def token_validation(self, Token, TokenName):
@@ -173,15 +173,15 @@ class NameConvention(object):
             else:
                 return self.default_names[Token]
         else:
-            print 'Error no such token in name convention'
+            print ('Error no such token in name convention')
             return None
 
     def set_from_name(self, ObjName, TextString, Token, mode="regular"):
         'Valid Modes are regular add, and prefix'
         returnTuple = ()
-        if (type(ObjName) == str) or (type(ObjName) == unicode):
+        if type(ObjName) == str:
             ObjectList = [ObjName]
-        elif (type(ObjName) == list):
+        elif type(ObjName) == list:
             ObjectList = ObjName
         else:
             ObjectList = []
@@ -204,14 +204,14 @@ class NameConvention(object):
     def rename_set_from_name(self, ObjName, TextString, Token, mode="regular"):
         ObjName = validate_input_nodes(ObjName)
         returnListType = False
-        if (type(ObjName) == str) or (type(ObjName) == unicode):
+        if type(ObjName) == str:
             ObjectList = [ObjName]
             returnListType = False
         elif (type(ObjName) == list):
             ObjectList = ObjName
             returnListType = True
         else:
-            print 'error not valid object on RMRenameSetFromName :%s' % ObjName
+            print ('error not valid object on RMRenameSetFromName :{}'.format(ObjName))
             return
         returnList = []
         newName = ""
@@ -287,8 +287,8 @@ class NameConvention(object):
     def rename_name_in_format(self, *current_name, **wanted_name_dictionary):
         useName = wanted_name_dictionary.pop('useName', False)
         string_name_list = validate_input_nodes(current_name)
-        print 'useName ={}'.format(useName)
-        print 'changing name to : {}'.format(string_name_list)
+        print ('useName ={}'.format(useName))
+        print('changing name to : {}'.format(string_name_list))
 
         new_name_array = ()
         for each_object in string_name_list:
@@ -317,7 +317,6 @@ class NameConvention(object):
         return new_name_array
 
     def is_name_in_format(self, obj_name):
-        print obj_name
         obj_name = validate_input_nodes(obj_name)
         string_in_name = str(obj_name)
         splitString = string_in_name.split("_")
@@ -328,12 +327,12 @@ class NameConvention(object):
                     if splitString[self.name_convention[keys]] in self.validation[keys]:
                         valid = valid and True
                     else:
-                        print 'key not found: %s' % keys
-                        print '%s not found in %s' % (splitString[self.name_convention[keys]], self.validation[keys])
+                        print ('key not found: %s' % keys)
+                        print ('%s not found in %s' % (splitString[self.name_convention[keys]], self.validation[keys]))
                         valid = False
             return valid
         else:
-            print 'Not same token number in name {} '.format(obj_name)
+            print('Not same token number in name {} '.format(obj_name))
             return False
 
     def guess_object_type(self, scene_object):
@@ -352,7 +351,7 @@ class NameConvention(object):
             else:
                 return ObjType
         if ObjType == self.translator['objectType']['undefined']:
-            print 'Type not identified:', cmds.objectType(scene_object)
+            print('Type not identified:', cmds.objectType(scene_object))
         return ObjType
 
     def rename_guess_type_in_name(self, current_name):
@@ -367,7 +366,7 @@ class NameConvention(object):
         name_list = []
         if type(current_name) == list:
             name_list = current_name
-        elif type(current_name) in [str, unicode]:
+        elif type(current_name) in [str]:
             name_list = [current_name]
         for current_name in name_list:
             new_name = current_name
@@ -445,5 +444,5 @@ if __name__ == '__main__':
     import pymel.core as pm
     # locator = pm.ls('locator1')[0]
     name_convention = NameConvention()
-    print name_convention.remove_namespace('C_joint00_tail_jnt')
+    print (name_convention.remove_namespace('C_joint00_tail_jnt'))
     # name_convention.set_defaults_from_name('L_main_now_msh', side=True, name=True, system=True, objectType=True)
