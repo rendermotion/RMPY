@@ -176,7 +176,7 @@ texinfo_documents = [
 
 # -- Options for Epub output -------------------------------------------------
 
-# Bibliographic Dublin Core info.
+# Bibliographic Dublin core info.
 epub_title = project
 
 # The unique identifier of the text. This can be a ISBN number

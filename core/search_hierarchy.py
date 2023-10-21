@@ -49,10 +49,6 @@ def none_skinned_mesh_in_hierarchy(scene_object, mesh_list=None):
             if not skin_clusters:
                 mesh_list.append(scene_object.getParent())
 
-            else:
-                print scene_object
-                print skin_clusters
-
     for each in scene_object.getChildren():
         none_skinned_mesh_in_hierarchy(each, mesh_list=mesh_list)
     return mesh_list
