@@ -270,6 +270,10 @@ class RigBase(object):
                                 pm.datatypes.Vector(0.0, 1.0, 0.0),
                                 scale_z=scale_z)
 
+    def __getattr__(self, item):
+        return getattr(self._model, item)
+
+
 
 if __name__ == '__main__':
     rig_base = RigBase()
