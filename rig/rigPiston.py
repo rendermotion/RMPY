@@ -35,6 +35,7 @@ class RigPiston(rigBase.RigBase):
             This scale value will be proportional to the original distance between the points, when the rig was created.
         :return:
         """
+        super(RigPiston, self).create_point_base(*args, **kwargs)
         parent_root = kwargs.pop('parent_root', None)
         parent_tip = kwargs.pop('parent_tip', None)
         do_scale = kwargs.pop('do_scale', True)

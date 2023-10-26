@@ -150,8 +150,7 @@ class NameConvention(object):
                 elif eachName == 'system':
                     self.default_names[eachName] = 'rig'
                 else:
-                    print (eachName)
-                    raise 'error must provide a default value for each token not token found %s' % eachName
+                    raise f'error must provide a default value for each token not token found {eachName}'
 
     def token_validation(self, Token, TokenName):
         if TokenName in self.validation:
@@ -287,9 +286,6 @@ class NameConvention(object):
     def rename_name_in_format(self, *current_name, **wanted_name_dictionary):
         useName = wanted_name_dictionary.pop('useName', False)
         string_name_list = validate_input_nodes(current_name)
-        print ('useName ={}'.format(useName))
-        print('changing name to : {}'.format(string_name_list))
-
         new_name_array = ()
         for each_object in string_name_list:
             # name_tokens = each_object.split("|")

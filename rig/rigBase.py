@@ -157,22 +157,19 @@ class RigBase(object):
         self.setup_name_convention_node_base(*args, **kwargs)
 
     def setup_name_convention_node_base(self, *args, **kwargs):
-        print ('setting up name convention based on {}'.format(args))
         pop_name = kwargs.pop('name', None)
         system_name = self.name_convention.get_from_name(args[0], 'system')
         if system_name == config.default_reference_system_name:
+            self.name_convention.default_names['system'] = self.name_convention.get_a_short_name(args[0])
             if pop_name:
-                print ('changing name to pop_name: {}'.format(pop_name))
                 self.name_convention.default_names['name'] = pop_name
             # else:
             #    self.name_convention.default_names['name'] = self.name_convention.get_a_short_name(args[0])
-            self.name_convention.default_names['system'] = self.name_convention.get_a_short_name(args[0])
+
         else:
             if pop_name:
-                print('changing name to pop_name: {}'.format(pop_name))
                 self.name_convention.default_names['name'] = pop_name
             else:
-                print('changing name to getting a short name {}'.format(args[0]))
                 self.name_convention.default_names['name'] = self.name_convention.get_a_short_name(args[0])
             self.name_convention.default_names['system'] = self.name_convention.get_from_name(args[0], 'system')
 
@@ -235,7 +232,7 @@ class RigBase(object):
         # self.create.constraint.define_constraints(point=False, scale=True, parent=True, orient=False)
 
         if RigBase in type(rig_object).__mro__:
-            print ('{} in constraining {} {}'.format(self.create.constraint.constraint_type, rig_object.tip, self.root))
+            print('{} in constraining {} {}'.format(self.create.constraint.constraint_type, rig_object.tip, self.root))
 
             self.create.constraint.node_base(rig_object.tip, self.root, mo=True, **kwargs)
         else:
@@ -253,7 +250,7 @@ class RigBase(object):
             rename_joints = self.joints
 
         for each_joint in rename_joints:
-            self.name_convention.rename_set_from_name(each_joint, 'skinjoint', 'objectType')
+            self.name_convention.rename_set_from_name(each_joint, 'objectType', 'skinjoint')
             side = self.name_convention.get_from_name(each_joint, 'side')
             each_joint.side.set(['C', 'L', 'R'].index(side))
             pm.setAttr('{}.type'.format(each_joint), 18)
