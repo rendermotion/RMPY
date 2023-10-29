@@ -126,7 +126,6 @@ class RigLaces(rigBase.RigBase):
         pm.parent(clusters_group, self.rig_system.kinematics)
         pm.parent(joints_group, self.rig_system.joints)
         for eachJoint in rig_objects_on_curve.joints:
-            print eachJoint
             pm.parent(eachJoint, joints_group)
             self.joints.append(eachJoint)
             self.rig_system.settings.worldScale >> eachJoint.scaleX

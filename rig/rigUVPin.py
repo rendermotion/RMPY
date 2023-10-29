@@ -28,7 +28,6 @@ class RigUVPin(rigBase.RigBase):
     def position_reference_locator(self):
         return self._model.position_reference_locator
 
-
     def create_point_base(self, scene_node, **kwargs):
         super(RigUVPin, self).create_point_base(scene_node, **kwargs)
         geometry = kwargs.pop('geometry', None)
@@ -57,7 +56,7 @@ class RigUVPin(rigBase.RigBase):
                 self.name_convention.rename_name_in_format(self.position_reference_locator, name='pointOnSurface')
 
                 pm.connectAttr('{}.worldPosition'.format(self.position_reference_locator),
-                '{}.inPosition'.format(self.closest_point_on_mesh))
+                               '{}.inPosition'.format(self.closest_point_on_mesh))
 
                 # reference_offset = pm.group(empty=True)
 
