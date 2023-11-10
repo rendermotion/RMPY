@@ -9,9 +9,9 @@ def rename_selection():
 	selection = pm.ls(selection=True)
 	fix_shapes(*selection)
 	for index, each in enumerate(selection):
-		side = 'L'
+		side = 'R'
 		system_name = 'reference'
-		name = 'toePinky'
+		name = 'grapplinHook'
 		# name_conv.rename_name_in_format(each, side=side, system=system_name, name='shoe{}'.format(chr(65+index)))
 		# name_conv.rename_name_in_format(each, side=side, system=system_name, name='finger{}'.format(chr(65 + index)))
 		name_conv.rename_name_in_format(each, side=side, system=system_name, name=name)
@@ -33,8 +33,8 @@ def fix_shapes(*scene_object_list):
 			each.rename('{}Shape'.format(object_name))
 
 
-set_in_name()
-# rename_selection()
+# set_in_name()
+rename_selection()
 
 
 
