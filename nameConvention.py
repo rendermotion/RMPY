@@ -123,7 +123,7 @@ class NameConvention(object):
             "skinCluster": 'skn',
             'fourByFourMatrix': 'ffm',
             'vectorProduct': 'vcp',
-            'NurbsSurface': 'nrb'
+            'nurbsSurface': 'nrb'
         },
             'side': {'left': 'L', 'right': 'R', 'center': 'C'}
         }
@@ -134,7 +134,7 @@ class NameConvention(object):
             'clusterHandle': 'clsh',
             "baseLattice": "blt",
             "locator": "loc",
-            'NurbsSurface': 'nrb'
+            'nurbsSurface': 'nrb'
         }
         self.default_names = {}
         for eachName in self.name_convention.keys():
