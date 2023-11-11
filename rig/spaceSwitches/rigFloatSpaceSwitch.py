@@ -42,7 +42,6 @@ class RigFloatSpaceSwitch(rigFloatSwitch.FloatSwitch):
 
         for each_constraint_node in constraint_nodes:
             weight_alias = each_constraint_node.getWeightAliasList()
-            print weight_alias
             self.attribute_output >> weight_alias[0]
             self.attribute_output_false >> weight_alias[1]
 

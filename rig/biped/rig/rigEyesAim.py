@@ -74,7 +74,6 @@ class RigEyesAim(rigBase.RigBase):
 if __name__ == '__main__':
     rig_eyes = RigEyesAim()
     rig_eyes.create_point_base(u'R_eye_reference_pnt', u'L_eye_reference_pnt', type='circle')
-    print rig_eyes.joints
 
 
 

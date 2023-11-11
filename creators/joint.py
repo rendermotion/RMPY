@@ -152,7 +152,7 @@ class Joint(creatorsBase.CreatorsBase):
     def default_orient(self, *joint_list, **kwargs):
         aim_axis = kwargs.pop('aim_axis', config.axis_order[0])
         up_axis = kwargs.pop('up_axis', config.axis_order[1])
-        axis = '%s%s%s' % (aim_axis, up_axis, filter(lambda ch: ch not in '%s%s' % (aim_axis, up_axis), 'xyz'))
+        axis = '%s%s%s' % (aim_axis, up_axis, filter(lambda ch: ch not in f'{aim_axis}{up_axis}', 'xyz'))
         for each_joint in joint_list:
             joint_child = each_joint.getChildren(type='joint')
             if joint_child:

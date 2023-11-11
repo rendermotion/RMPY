@@ -78,5 +78,4 @@ class Breast(rigBase.RigBase):
 if __name__ == '__main__':
     rig_breast = Breast()
     rig_breast.create_point_base('R_breast00_reference_pnt')
-    print rig_breast.joints
     rig_breast.rename_as_skinned_joints(nub=False)

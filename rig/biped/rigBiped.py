@@ -17,8 +17,7 @@ from RMPY.rig.biped.rig import rigToes
 from RMPY.rig.biped.rig import neckHeadSpaceSwitch
 from RMPY.rig.biped.rig import rigEyesSpaceSwitch
 from RMPY.rig import rigSingleJoint
-reload(rigEyesSpaceSwitch)
-reload(neckHeadSpaceSwitch)
+
 
 
 class RigBypedModel(rigBase.BaseModel):

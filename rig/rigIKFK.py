@@ -92,10 +92,6 @@ if __name__ == '__main__':
     arm_root_points = rm.descendents_list(root_arm)[:3]
     arm_rig = RigIkFk()
     arm_rig.create_point_base(*arm_root_points)
-    print arm_rig.ik_fk_switch.outputs
-    print arm_rig.ik_fk_switch.joints
-    print arm_rig.tip
-
 
 
 
