@@ -2,19 +2,13 @@ import sys
 import maya.cmds as cmds
 import maya.OpenMayaUI as mui
 from maya.app.general.mayaMixin import MayaQWidgetDockableMixin
-try:
-    from PySide2.QtCore import *
-    from PySide2.QtGui import *
-    from PySide2.QtWidgets import *
-    from PySide2 import __version__
-    from shiboken2 import wrapInstance
-    from RMPY.Tools.QT5.ui  import FormFacialRig
-except ImportError:
-    from PySide.QtCore import *
-    from PySide.QtGui import *
-    from PySide import __version__
-    from shiboken import wrapInstance
-    from RMPY.Tools.QT4.ui import FormFacialRig
+
+from PySide2.QtCore import *
+from PySide2.QtGui import *
+from PySide2.QtWidgets import *
+from PySide2 import __version__
+from shiboken2 import wrapInstance
+from RMPY.Tools.QT5.ui  import FormFacialRig
 import maya.mel as mel
 import os
 from RMPY import RMblendShapesTools
@@ -67,7 +61,7 @@ class main(MayaQWidgetDockableMixin,QDialog):
         self.ui.PrefixLineEdit.textChanged.connect(self.CheckBtnPressed)
 
     def usePrefixChkBxStateChanged(self):
-        if self.ui.UsePrefixChkBx.checkState() == QtCore.Qt.CheckState.Checked:
+        if self.ui.UsePrefixChkBx.checkState() == Qt.CheckState.Checked:
             self.ui.PrefixLineEdit.setEnabled(True)
         else: 
             self.ui.PrefixLineEdit.setDisabled(True)
@@ -109,31 +103,32 @@ class main(MayaQWidgetDockableMixin,QDialog):
         if self.ui.PrefixLineEdit.isEnabled():
             objectNamePrefix = self.ui.PrefixLineEdit.text()
         else:
-            objectNamePrefix=''
+            objectNamePrefix = ''
         self.ui.listWidget.clear()
         eachDic = Dictionaries[self.ui.ListCBx.currentText()]
         for eachDefinition in eachDic:
-            print eachDefinition
+            print(eachDefinition)
             if eachDic[eachDefinition]['Type'] == 'blendShapeDefinition':
-                arrayPrefix =[]
+                array_prefix = []
                 if eachDic[eachDefinition]['isSymetrical'] == True:
-                    arrayPrefix = ["L","R"]
+                    array_prefix = ["L","R"]
                 else :
-                    arrayPrefix = [""]
-                for eachPrefix in arrayPrefix:
+                    array_prefix = [""]
+                for eachPrefix in array_prefix:
                     for eachBlendShape in sorted(eachDic[eachDefinition]['blendShapes']):
                         if not cmds.objExists(eachPrefix + objectNamePrefix + eachBlendShape):
-                            self.ui.listWidget.addItem(eachPrefix+ objectNamePrefix + eachBlendShape)
+                            self.ui.listWidget.addItem(eachPrefix + objectNamePrefix + eachBlendShape)
 
     def ImportFacialInterfaceBtnPressed(self):
         path = os.path.dirname(RMRigTools.__file__)
-        RMMel=os.path.split(path)
-        FinalPath = os.path.join(RMMel[0],"Python\FacialRig\RigShapes\FacialInterface.mb")
+        final_path = os.path.join(f"{path}\FacialRig\RigShapes\FacialInterface.mb")
 
-        if os.path.isfile(FinalPath):
-            cmds.file( FinalPath, i=True, type="mayaBinary", ignoreVersion = True, mergeNamespacesOnClash=False, rpr="", pr = False)
+        if os.path.isfile(final_path):
+            cmds.file(final_path, i=True, type="mayaBinary",
+                      ignoreVersion=True, mergeNamespacesOnClash=False,
+                      rpr="", pr=False)
         else:
-            print ("archivo de RigFacial No encontrado")
+            print(f"archivo de RigFacial No encontrado {final_path}")
             return None
 
 

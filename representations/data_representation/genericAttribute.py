@@ -22,6 +22,7 @@ class GenericAttribute(object):
                 value.-the value of the attribute or another dictionary representing
                        all the attributes on a multi attribute or a compound attribute.
         """
+        self.verbose = kwargs.pop('verbose', False)
         self.attribute = attribute
         self.data = kwargs.pop('data', None)
         self.internal_error = False
@@ -47,17 +48,24 @@ class GenericAttribute(object):
         :return: None, no value is returned
         """
         if self.data['type'] == 'TdataCompound':
-            if self.data['value']:
-                for each_key in self.data['value'].keys():
-                    if re.match('\D', each_key) is None:
-                        GenericAttribute('{}[{}]'.format(self.attribute, each_key),
-                                         data=self.data['value'][each_key])
+            if not 'multi_index' in self.data.keys():
+                if self.data['value']:
+                    for each_key in self.data['value'].keys():
+                        if re.match('\D', each_key) is None:
+                            GenericAttribute('{}[{}]'.format(self.attribute, each_key),
+                                             data=self.data['value'][each_key])
 
-                    else:
-                        GenericAttribute('{}.{}'.format(self.attribute, each_key),
-                                         data=self.data['value'][each_key])
+                        else:
+                            GenericAttribute('{}.{}'.format(self.attribute, each_key),
+                                             data=self.data['value'][each_key])
+                else:
+                    if self.verbose:
+                        print('not value found in attribute {}'.format(self.attribute))
             else:
-                print ('not value found on {} in attribute {}'.format(self.data['value'], self.attribute))
+                if self.data['multi_index']:
+                    cmds.setAttr(self.attribute, size=self.data['multi_index'][-1])
+                    for each_index, each_value in zip(self.data['multi_index'], self.data['value']):
+                        cmds.setAttr('{}[{}]'.format(self.attribute, each_index), each_value)
 
         elif self.data['type'] in ['pointArray']:
             if self.data['value'] is not None and not cmds.getAttr(self.attribute, lock=True) \
@@ -71,12 +79,14 @@ class GenericAttribute(object):
                     and not pm.listConnections(self.attribute):
                 cmds.setAttr(self.attribute, self.data['value'])
         elif self.data["type"] in ['string']:
-            print ('setting attribute {} with value {}'.format(self.attribute, self.data['value']))
+            if self.verbose:
+                print('setting attribute {} with value {}'.format(self.attribute, self.data['value']))
             if self.data['value'] is not None and not cmds.getAttr(self.attribute, lock=True) \
                     and not pm.listConnections(self.attribute):
                 cmds.setAttr(self.attribute, self.data['value'], type=str(self.data["type"]))
         else:
-            print ('attribute not identified {}'.format(self.attribute))
+            if self.verbose:
+                print('attribute not identified {}'.format(self.attribute))
 
     def get_data_dict(self):
         """
@@ -89,9 +99,15 @@ class GenericAttribute(object):
             self.data["name"] = self.attribute
 
             if self.isMulti:
-                for each_index in self.multi_index:
-                    self.data["value"][int(each_index)] = GenericAttribute("{}[{}]".format(self.attribute,
-                                                                                           each_index)).get_data_dict()
+
+                try:
+                    self.data['value']=cmds.getAttr(self.attribute)[0]
+                    self.data['multi_index'] = self.multi_index
+
+                except:
+                    for each_index in self.multi_index:
+                        self.data["value"][int(each_index)] = GenericAttribute("{}[{}]".format(self.attribute,
+                                                                                               each_index)).get_data_dict()
             else:
                 for each_attribute_name in self.child_attributes:
                     if self.attribute.split('.')[-1] != each_attribute_name:
@@ -109,8 +125,8 @@ class GenericAttribute(object):
                                            'double', 'enum', 'bool', bool, float]:
                     self.data["value"] = data_value
                 else:
-                    # pass
-                    print ('data type not supported {} {}'.format(data_value.__class__, self.data['type']))
+                    if self.verbose:
+                        print ('data type not supported {} {}'.format(data_value.__class__, self.data['type']))
         return self.data
 
     def get_list(self):
@@ -121,13 +137,14 @@ class GenericAttribute(object):
         """
         data_list = cmds.getAttr(self.attribute)
         list_of_values = []
-        for each in data_list:
-            if each.__class__ in [int, float, tuple, unicode, long]:
-                list_of_values.append(each)
-            elif each.__class__ == pm.datatypes.Matrix:
-                list_of_values.append(each.get())
-            else:
-                print ('class_inside a list not_supported {}'.format(each.__class__))
+
+        if data_list[0].__class__ in [int, float, tuple]:
+            list_of_values = data_list
+        elif data_list[0].__class__ == pm.datatypes.Matrix:
+            list_of_values = data_list
+        else:
+            print(f'class_inside a list not_supported {data_list[0].__class__}')
+
         return list_of_values
 
     @property

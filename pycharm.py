@@ -2,7 +2,7 @@ import maya.cmds as cmds
 
 
 def disconnect():
-    if (cmds.commandPort(':4434', q=True)):
+    if cmds.commandPort(':4434', q=True):
         cmds.commandPort(name=":4434", cl=True)
         print('disconnecting ":4434"')
     else:

@@ -7,7 +7,7 @@ from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 from PySide2 import __version__
 from shiboken2 import wrapInstance
-from RMPY.Tools.QT5.ui import FormRigTools
+from RMPY.Tools.QT5.ui import FormRigTools_old
 import maya.mel as mel
 import os
 from RMPY import RMRigTools
@@ -23,6 +23,9 @@ from RMPY.snippets import locator_at_average
 from RMPY.AutoRig import RMRigFK
 from RMPY.core import transform
 from RMPY.core import hierarchy
+import importlib
+from RMPY.core import mirror_skinning
+importlib.reload(FormRigTools)
 
 
 def getMayaWindow():
@@ -59,7 +62,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.ui.aim_button_btn.clicked.connect(self.aim_align)
         self.ui.hierarchy_switch_btn.clicked.connect(self.hierarchise)
         self.ui.selection_at_average_btn.clicked.connect(self.selection_at_average)
-
+        self.ui.copy_skin_button.clicked.connect(self.copy_skinning)
         # self.ui.OrientNubButton.clicked.connect(self.OrientNubButtonPressed)
         # self.ui.unfoldRigBtn.clicked.connect(self.unfoldRigBtnPressed)
 
@@ -71,6 +74,10 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.ui.listWidget.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.name_convention = nameConvention.NameConvention()
         self.rig_base = rigBase.RigBase()
+
+    def copy_skinning(self):
+        selection = pm.ls(selection=True)
+        mirror_skinning.copy_skinning(*selection)
 
     def hierarchise(self):
         selection = pm.ls(selection=True)
