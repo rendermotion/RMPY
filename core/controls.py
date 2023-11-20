@@ -138,6 +138,12 @@ def get_oposite_side(control):
         return control.replace('L_', 'R_')
     elif 'R_' in str(control):
         return control.replace('R_', 'L_')
+
+    # support for MGear control type
+    elif '_L' in str(control):
+        return control.replace('_L', '_R')
+    elif '_R' in str(control):
+        return control.replace('_R', '_L')
     return None
 
 

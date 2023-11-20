@@ -25,7 +25,8 @@ from RMPY.core import transform
 from RMPY.core import hierarchy
 import importlib
 from RMPY.core import mirror_skinning
-importlib.reload(FormRigTools)
+from RMPY.Tools.QT5.ui import FormRigTools
+
 
 
 def getMayaWindow():

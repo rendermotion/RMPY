@@ -12,11 +12,17 @@ class RigFacial(rigBase.RigBase):
     def build(self, **kwargs):
         for each_definition in self.rig_definition:
             if self.rig_definition[each_definition]['type'] == 'blend_shape_definition':
-                kwargs['do_right'] = False
                 SingleDefinition(self.rig_definition[each_definition], **kwargs)
                 if self.rig_definition[each_definition]['isSymetrical']:
-                    kwargs['do_right'] = True
-                    SingleDefinition(self.rig_definition[each_definition], **kwargs)
+                    right_definition = {'blendShapes': {},
+                                        'attributes': self.rig_definition[each_definition]['attributes'],
+                                        'control': self.rig_definition[each_definition]['control'].replace('L', 'R'),
+                                        'baseMesh': self.rig_definition[each_definition]['baseMesh'],
+                                        'type': self.rig_definition[each_definition]['type'],
+                                        'order': self.rig_definition[each_definition]['order']}
+                    for each_key in self.rig_definition[each_definition]['blendShapes'].keys():
+                        right_definition['blendShapes'][f'R{each_key[1:]}'] = self.rig_definition[each_definition]['blendShapes'][each_key]
+                    SingleDefinition(right_definition, **kwargs)
 
 
 class SingleDefinition(rigBase.RigBase):
@@ -25,7 +31,6 @@ class SingleDefinition(rigBase.RigBase):
     """
 
     def __init__(self, definition, **kwargs):
-        do_right = kwargs.pop('do_right', False)
         super(SingleDefinition, self).__init__(**kwargs)
         if pm.ls(definition['baseMesh']):
             self.base_mesh = pm.ls(definition['baseMesh'])[0]
@@ -33,7 +38,10 @@ class SingleDefinition(rigBase.RigBase):
             print('the object baseMesh {} doesnt exists'.format(definition['baseMesh']))
             raise RuntimeError
 
-        self.is_symetrical = definition['isSymetrical']
+        # A list with the objects that will have a prefix geometry
+        self.prefix_geometry_list = kwargs.pop('prefix_geometry_list', [])
+
+        # self.is_symetrical = definition['isSymetrical']
         try:
             self.control = pm.ls(definition['control'])[0]
 
@@ -48,15 +56,10 @@ class SingleDefinition(rigBase.RigBase):
             self.blend_shape_node = blend_shapes_list[blend_shape_node_index]
 
         else:
+            print(f'no blendshape node found on {self.base_mesh}')
             self.blend_shape_node = pm.blendShape(self.base_mesh)[0]
         # self.attributes = definition['attributes']
         self.order = definition['order']
-        if do_right and self.is_symetrical:
-            for each_key in self.blendShapes.keys():
-                self.blendShapes['R{}'.format(each_key[1:])] = self.blendShapes[each_key]
-                self.blendShapes.pop(each_key)
-            self.control = pm.ls(str(self.control).replace('L_', 'R_'))[0]
-
         self.blend_shapes_by_connection = {}
         self.split_blend_shapes_by_connection()
         self.build(**kwargs)
@@ -86,8 +89,7 @@ class SingleDefinition(rigBase.RigBase):
                 self.connect_prefix_geometry(connector, pm.aliasAttr(self.blend_shape_node.weight[bs_index], q=True), **kwargs)
 
     def connect_prefix_geometry(self, connector, blend_shape_plug, **kwargs):
-        prefix_geometry_list = kwargs.pop('prefix_geometry_list', [])
-        for each_geometry in prefix_geometry_list:
+        for each_geometry in self.prefix_geometry_list:
             each_geometry_blend_shape = self.get_blend_shapes_in_history(each_geometry)[0]
             main_blendshape = self.get_blend_shapes_in_history(self.base_mesh)[0]
             input_connection_plug = pm.listConnections(main_blendshape.attr(blend_shape_plug), plugs=True,
@@ -160,10 +162,9 @@ class SingleDefinition(rigBase.RigBase):
             if pm.objectType(each_node) == 'blendShape':
                 result.append(each_node)
         if result:
-            return [result[-1]]
+            return result
         else:
             return None
-        return result
 
     def add_target_list_to_prefix(self, target_list, value_list, **kwargs):
         sufix_list = kwargs.pop('prefix_geometry_list', [])

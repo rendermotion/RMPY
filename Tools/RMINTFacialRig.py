@@ -97,7 +97,7 @@ class main(MayaQWidgetDockableMixin,QDialog):
     def deleteAttributes(self):
         selection = cmds.ls(selection = True)
         for eachObject in selection:
-            RMParametersManager.deleteAttributes(eachObject)
+            RMParametersManager.delete_attributes(eachObject)
 
     def CheckBtnPressed(self):
         if self.ui.PrefixLineEdit.isEnabled():
