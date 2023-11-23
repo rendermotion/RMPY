@@ -1,7 +1,6 @@
 import pymel.core as pm
 from RMPY import nameConvention
 controls_list = pm.ls('*_ctr')
-print controls_list
 #controls_list = pm.ls(selection = True)
 name_conv = nameConvention.NameConvention()
 for each in controls_list:

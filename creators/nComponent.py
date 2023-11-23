@@ -35,7 +35,7 @@ class Creator(creatorsBase.Creator):
             if pm.objectType(each_node) == 'hairSystem':
                 self._connect_hair_system(each_node)
             else:
-                print ('component connection with type {} not defined'.format(pm.objectType(each_node)))
+                print('component connection with type {} not defined'.format(pm.objectType(each_node)))
 
     def _connect_hair_system(self, hair_system):
         hair_system.nucleusId >> self._node.objectId
@@ -44,8 +44,8 @@ class Creator(creatorsBase.Creator):
 
 
 if __name__ == '__main__':
- hair_system = pm.ls('C_hairSystem01_rig_GRPShape')[0]
- component = Creator()
- component.create()
- component.connect(hair_system)
- print pm.getAttr('{}.componentIndices'.format(component.node))
+    hair_system = pm.ls('C_hairSystem01_rig_GRPShape')[0]
+    component = Creator()
+    component.create()
+    component.connect(hair_system)
+
