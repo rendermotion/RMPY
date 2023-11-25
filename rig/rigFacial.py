@@ -131,20 +131,21 @@ class SingleDefinition(rigBase.RigBase):
         :return:
         """
         for each_target in self.blendShapes:
-            connection = self.blendShapes[each_target]['connection']
-            if connection not in self.blend_shapes_by_connection:
-                self.blend_shapes_by_connection[connection] = {'positive': [[], []],
-                                                               'negative': [[], []],
-                                                               'positive_full_value': [[], []],
-                                                               'negative_full_value': [[], []],
-                                                               }
-            if self.blendShapes[each_target]['value'] > 0:
-                self.blend_shapes_by_connection[connection]['positive_full_value'][0].append(each_target)
-                self.blend_shapes_by_connection[connection]['positive_full_value'][1].append(self.blendShapes[each_target]['value'])
-            else:
-                self.blend_shapes_by_connection[connection]['negative_full_value'][0].append(each_target)
-                self.blend_shapes_by_connection[connection]['negative_full_value'][1].append(self.blendShapes[each_target]['value']
-                                                                                         * -1)
+            if pm.objExists(each_target):
+                connection = self.blendShapes[each_target]['connection']
+                if connection not in self.blend_shapes_by_connection:
+                    self.blend_shapes_by_connection[connection] = {'positive': [[], []],
+                                                                   'negative': [[], []],
+                                                                   'positive_full_value': [[], []],
+                                                                   'negative_full_value': [[], []],
+                                                                   }
+                if self.blendShapes[each_target]['value'] > 0:
+                    self.blend_shapes_by_connection[connection]['positive_full_value'][0].append(each_target)
+                    self.blend_shapes_by_connection[connection]['positive_full_value'][1].append(self.blendShapes[each_target]['value'])
+                else:
+                    self.blend_shapes_by_connection[connection]['negative_full_value'][0].append(each_target)
+                    self.blend_shapes_by_connection[connection]['negative_full_value'][1].append(self.blendShapes[each_target]['value']
+                                                                                             * -1)
 
         for each_connection in self.blend_shapes_by_connection:
             if self.blend_shapes_by_connection[each_connection]['positive_full_value'][0]:

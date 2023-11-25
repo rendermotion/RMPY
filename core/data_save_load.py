@@ -1,6 +1,9 @@
+import pathlib
+
 from RMPY.representations import curve
 from RMPY.creators import skinCluster
 import pymel.core as pm
+from RMPY.core import file_os
 from RMPY.core import config
 import os
 
@@ -88,11 +91,13 @@ def load_skin_cluster(*args):
 def export_maya_file(**kwargs):
     file_name = kwargs.pop('file_name', 'reference_points')
     full_path = '{}/mayaFiles'.format(config.output.file_path)
+    file_os.validate_path(full_path)
     pm.exportSelected('{}/{}.mb'.format(full_path, file_name))
 
 
 def import_maya_file(file_name):
     full_path = '{}/mayaFiles'.format(config.output.file_path)
+    file_os.validate_path(full_path)
     pm.importFile('{}/{}'.format(full_path, file_name))
 
 
@@ -104,9 +109,10 @@ def import_all_available_maya_files():
 def available_maya_files():
     full_path = '{}/mayaFiles'.format(config.output.file_path)
     available_files = []
-    for each in os.listdir(full_path):
-        if each.split('.')[-1] == 'ma' or each.split('.')[-1] == 'mb':
-            available_files.append(each)
+    if pathlib.Path(full_path).exists():
+        for each in os.listdir(full_path):
+            if each.split('.')[-1] == 'ma' or each.split('.')[-1] == 'mb':
+                available_files.append(each)
     return available_files
 
 
