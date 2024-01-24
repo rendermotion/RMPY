@@ -34,7 +34,7 @@ class HairSystem(creatorsBase.CreatorsBase):
 
     def create(self, *args, **kwargs):
         self._node = pm.createNode('hairSystem')
-        self.name_conv.rename_name_in_format(self.transform, name='hairSystem')
+        self.name_convention.rename_name_in_format(self.transform, name='hairSystem')
         self._node.clumpWidth.set(0.00001)
         self._node.active.set(1)
 
@@ -70,7 +70,7 @@ class HairSystem(creatorsBase.CreatorsBase):
         node.outHair >> self._node.inputHair[connect_index]
 
     def add_follicle(self):
-        new_follicle = follicle.Creator(name_conv=self.name_conv)
+        new_follicle = follicle.Follicle(name_convention=self.name_convention)
 
         new_follicle.hair_system = self.node
         new_follicle.build()

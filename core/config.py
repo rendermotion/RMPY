@@ -1,6 +1,6 @@
 from RMPY.core import file_os
-from bgb_short.pipeline import environment
 
+from bgb_short.pipeline import environment
 
 class Outputs(object):
     def __init__(self):

@@ -4,9 +4,9 @@ from RMPY.creators import hairSystem
 from RMPY.creators import nRigid
 
 
-class Creator(creatorsBase.Creator):
+class NComponent(creatorsBase.Creator):
     def __init__(self, *args, **kwargs):
-        super(Creator, self).__init__(*args, **kwargs)
+        super(NComponent, self).__init__(*args, **kwargs)
         self._node = None
         self.create()
 
@@ -45,7 +45,7 @@ class Creator(creatorsBase.Creator):
 
 if __name__ == '__main__':
     hair_system = pm.ls('C_hairSystem01_rig_GRPShape')[0]
-    component = Creator()
+    component = NComponent()
     component.create()
     component.connect(hair_system)
 
