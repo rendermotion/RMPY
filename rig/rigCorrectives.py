@@ -9,7 +9,7 @@ rotation_axis = ['xyz', 'yzx', 'zxy', 'xzy', 'yxz', 'zyx']
 
 def right_list(list_objects):
     """
-        swithchs the token L to R in any given list of objects.
+        switches the token L to R in any given list of objects.
 
     """
     result = []

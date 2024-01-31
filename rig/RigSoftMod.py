@@ -59,10 +59,10 @@ class SoftModRig(rigSingleJoint.SingleJointRig):
         pfx = pm.createNode('pfxToon')
         transform_pfx = pm.ls('pfxToon1')[0]
         new_sphere_transform.setParent(self.rig_system.kinematics)
-        self.name_conv.rename_name_in_format(transform_pfx, name='display')
-        self.name_conv.rename_name_in_format(pfx, name='displaypfx')
-        self.name_conv.rename_name_in_format(new_sphere_transform, name='displaySphere')
-        self.name_conv.rename_name_in_format(new_sphere_creator, name='displaySphereCreation')
+        self.name_convention.rename_name_in_format(transform_pfx, name='display')
+        self.name_convention.rename_name_in_format(pfx, name='displaypfx')
+        self.name_convention.rename_name_in_format(new_sphere_transform, name='displaySphere')
+        self.name_convention.rename_name_in_format(new_sphere_creator, name='displaySphereCreation')
 
         new_sphere_transform.outMesh >> pfx.inputSurface[0].surface
         new_sphere_transform.worldMatrix >> pfx.inputSurface[0].inputWorldMatrix
