@@ -26,7 +26,9 @@ from RMPY.core import hierarchy
 import importlib
 from RMPY.core import mirror_skinning
 from RMPY.Tools.QT5.ui import FormRigTools
-
+from RMPY.core import controls
+import importlib
+importlib.reload(controls)
 
 
 def getMayaWindow():
@@ -64,6 +66,10 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.ui.hierarchy_switch_btn.clicked.connect(self.hierarchise)
         self.ui.selection_at_average_btn.clicked.connect(self.selection_at_average)
         self.ui.copy_skin_button.clicked.connect(self.copy_skinning)
+        self.ui.CopyCvsPosBtn.clicked.connect(self.copy_cv_position)
+        self.ui.pushButton_2.clicked.connect(self.mirror_shapes)
+
+
         # self.ui.OrientNubButton.clicked.connect(self.OrientNubButtonPressed)
         # self.ui.unfoldRigBtn.clicked.connect(self.unfoldRigBtnPressed)
 
@@ -76,6 +82,12 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.name_convention = nameConvention.NameConvention()
         self.rig_base = rigBase.RigBase()
 
+    def copy_cv_position(self):
+        controls.transfer_curve_by_selection()
+
+    def mirror_shapes(self):
+        selection = pm.ls(selection=True)
+        controls.mirror_controls(*selection)
     def copy_skinning(self):
         selection = pm.ls(selection=True)
         mirror_skinning.copy_skinning(*selection)

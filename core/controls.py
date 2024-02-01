@@ -122,15 +122,16 @@ def mirror_shape(*shapes, **kwargs):
 
 def mirror_controls(*controls):
     for each in controls:
+        print(f'doing {each}')
         source_shape = pm.ls(each)[0]
         oposite_side = get_oposite_side(each)
+        print(oposite_side)
         if oposite_side:
-            oposite_side = pm.ls(oposite_side)[0]
             destination_shape = pm.ls(oposite_side)[0]
             transfer_curve(source_shape, destination_shape, world_space=False)
             mirror_shape(destination_shape, scale_vector=[1, 1, 1])
         else:
-            print('coulnt find oposite curve for {}'.format(each))
+            print('coulnt find opposite curve for {}'.format(each))
 
 
 def get_oposite_side(control):
