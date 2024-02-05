@@ -5,12 +5,23 @@ from RMPY.rig import rigBase
 class ModelSingleJoint(rigBase.BaseModel):
     def __init__(self):
         super(ModelSingleJoint, self).__init__()
+        self.root_node = None
 
 
 class RigSingleJoint(rigBase.RigBase):
     def __init__(self, *args, **kwargs):
         super(RigSingleJoint, self).__init__(*args, ** kwargs)
         self._model = ModelSingleJoint()
+
+    @property
+    def root_node(self):
+        if not self._model.root_node:
+            self._model.root_node = pm.group(empty=True)
+            self.name_convention.rename_name_in_format(self._model.root_node, name='rootNode')
+            self._model.root_node.setParent(self.rig_system.controls)
+            self.root = self._model.root_node
+
+        return self._model.root_node
 
     def create_point_base(self, *locator_list, **kwargs):
         super(RigSingleJoint, self).create_point_base(*locator_list, **kwargs)
@@ -24,14 +35,17 @@ class RigSingleJoint(rigBase.RigBase):
             self.rm.align(joint, reset_joint)
 
             self.joints.append(joint)
+            self.reset_joints.append(reset_joint)
+
             self.name_convention.rename_name_in_format(reset_joint, useName=True)
             self.name_convention.rename_name_in_format(joint)
 
             joint.setParent(reset_joint)
+
             reset_control, control = self.create.controls.point_base(joint, **kwargs)
             self.reset_controls.append(reset_control)
             self.controls.append(control)
-            reset_control.setParent(self.rig_system.controls)
+            reset_control.setParent(self.root_node)
             reset_joint.setParent(self.rig_system.joints)
             if static:
                 control.translate >> joint.translate

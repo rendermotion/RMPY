@@ -4,6 +4,7 @@ import pymel.core as pm
 from RMPY.rig import rigPointOnSurface
 from RMPY.rig import rigUVPin
 import importlib
+importlib.reload(rigLaces)
 
 
 class LaceRingModel(rigSingleJoint.ModelSingleJoint):
@@ -71,8 +72,8 @@ class LaceRing(rigSingleJoint.RigSingleJoint):
                     # pm.parentConstraint('R_laceJoint05_sideStrap_JNT', controls_rig.reset_controls[-1], mo=True)
             index += 1
         if create_path_surface:
-            self._model.surface = pm.loft(self.lace_rig.curve, self.lace_rig.upVectorCurve, ch=False)[0]
-            self.name_conv.rename_name_in_format(self.surface)
+            self._model.surface = pm.loft(self.lace_rig.curve, self.lace_rig.up_vector_curve, ch=False)[0]
+            self.name_convention.rename_name_in_format(self.surface)
             self.surface.setParent(self.rig_system.kinematics)
 
             if nurbs_to_poly_output:
@@ -86,7 +87,7 @@ class LaceRing(rigSingleJoint.RigSingleJoint):
                                                             normalizeTrimmedUVRange=1, matchRenderTessellation=0,
                                                             useSurfaceShader=1)[0]
                 self._model.geometry_output = pm.ls(self.geometry_output)[0]
-                self.name_conv.rename_name_in_format(self.geometry_output, name='driverGeometry')
+                self.name_convention.rename_name_in_format(self.geometry_output, name='driverGeometry')
                 self.geometry_output.setParent(self.rig_system.kinematics)
 
                 for each in self.reset_controls:
