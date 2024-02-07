@@ -33,16 +33,14 @@ class LaceRing(rigSingleJoint.RigSingleJoint):
         kwargs['no_controls'] = kwargs.pop('no_controls', True)
         periodic = kwargs.pop('periodic', False)
         kwargs['periodic'] = periodic
-
         self._model.lace_rig = rigLaces.RigLaces(rig_system=self.rig_system)
         if len(args) < 4:
             kwargs['controls_number'] = kwargs.pop('controls_number', len(args) + 2)
-
         self.lace_rig.create_point_base(*args, **kwargs)
         # controls_rig = singleJointRig.SingleJointRig(rig_system=self.lace_rig.rig_system)
-
         self.lace_rig.rename_as_skinned_joints(nub=False)
-
+        for each in self.lace_rig.clusters:
+            print(each)
         if r_l_order_change:
             if not periodic:
                 points_order, clusters_order, middle_point = self._split_in_the_middle(*args,
@@ -56,21 +54,31 @@ class LaceRing(rigSingleJoint.RigSingleJoint):
                 clusters_order.append(self.lace_rig.clusters[1])
 
         else:
-            points_order = args
-            clusters_order = self.lace_rig.clusters[1:-1]
-            middle_point = len(args) - 1
-        index = 0
-        for each_child, each_cluster in zip(points_order, clusters_order):
+            if len(self.lace_rig.clusters) % 2:
+                points_order = args
+                clusters_order = self.lace_rig.clusters[1:-1]
+                middle_point = None
+                print('no middle point')
+            else:
+                points_order = args
+                clusters_order = self.lace_rig.clusters[1:-1]
+                print(clusters_order)
+                middle_point = (len(args)+1)/2
+
+        for index, (each_child, each_cluster) in enumerate(zip(points_order, clusters_order)):
             super(LaceRing, self).create_point_base(each_child, link_type=link_type)
             pm.parentConstraint(self.joints[-1], each_cluster, mo=True)
             if not periodic:
                 if index == 0:
                     pm.parentConstraint(self.joints[0], self.lace_rig.clusters[0], mo=True)
                     # pm.parentConstraint('L_laceJoint06_sideStrap_JNT', controls_rig.reset_controls[0], mo=True)
-                if index == middle_point:
+                # if middle_point:
+                #     if index == middle_point:
+                #         pm.parentConstraint(self.joints[-1], self.lace_rig.clusters[-1], mo=True)
+                        # pm.parentConstraint('R_laceJoint05_sideStrap_JNT', controls_rig.reset_controls[-1], mo=True)
+                if index == len(clusters_order) - 1:
                     pm.parentConstraint(self.joints[-1], self.lace_rig.clusters[-1], mo=True)
-                    # pm.parentConstraint('R_laceJoint05_sideStrap_JNT', controls_rig.reset_controls[-1], mo=True)
-            index += 1
+
         if create_path_surface:
             self._model.surface = pm.loft(self.lace_rig.curve, self.lace_rig.up_vector_curve, ch=False)[0]
             self.name_convention.rename_name_in_format(self.surface)
@@ -111,7 +119,6 @@ class LaceRing(rigSingleJoint.RigSingleJoint):
                     point_on_surface = rigPointOnSurface.RigPointOnSurface(self.surface, rig_system=self.rig_system)
                     point_on_surface.create_point_base(each)
                     pm.parentConstraint(point_on_surface.tip, each, mo=True)
-
 
     def static_connection(self, control, action_element):
         # deprecated

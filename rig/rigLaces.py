@@ -96,7 +96,7 @@ class RigLaces(rigBase.RigBase):
         self.name_convention.set_from_name(curve, 'laceCurve', 'name')
         curve.setParent(self.rig_system.kinematics)
         if controls_number:
-            self._model.curve = self.create.curve.curve_base(curve, spans=controls_number)
+            self._model.curve = self.create.curve.curve_base(curve, spans=controls_number-1)
         else:
             self._model.curve = curve
 
