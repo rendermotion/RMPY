@@ -2,6 +2,7 @@ from RMPY.core import file_os
 from bgb_short.pipeline import environment
 
 
+
 class Outputs(object):
     def __init__(self):
         pass
@@ -9,8 +10,6 @@ class Outputs(object):
     def file_path(self):
         env = environment.Environment()
         file_path = env.data
-        print(env.data)
-        print(env._project_path, env._asset_type, env._asset_path.format(env.asset), env._rig_path.format(env.asset), env._data_path )
         file_os.validate_path(file_path)
         # file_path = file_os.get_file_path()
         if not file_path:

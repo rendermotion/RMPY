@@ -66,7 +66,7 @@ class LaceRing(rigSingleJoint.RigSingleJoint):
                 middle_point = (len(args)+1)/2
 
         for index, (each_child, each_cluster) in enumerate(zip(points_order, clusters_order)):
-            super(LaceRing, self).create_point_base(each_child, link_type=link_type)
+            super(LaceRing, self).create_point_base(each_child, **kwargs)
             pm.parentConstraint(self.joints[-1], each_cluster, mo=True)
             if not periodic:
                 if index == 0:
@@ -148,5 +148,7 @@ if __name__ == '__main__':
     pass
     strap_points = pm.ls('C_spine*_reference_pnt')
     lace_ring = LaceRing()
-    lace_ring.create_point_base(*strap_points, create_path_surface=True)
+    lace_ring.create_point_base('L_belt00_reference_pnt', 'L_belt01_reference_pnt', 'C_belt00_reference_pnt',
+                                'R_belt01_reference_pnt', 'R_belt00_reference_pnt',
+                                centered=True, create_path_surface=True, r_l_order_change=True)
 

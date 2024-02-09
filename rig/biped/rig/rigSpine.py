@@ -30,7 +30,7 @@ class RigSpine(rigBase.RigBase):
         self.update_name_convention()
         self.rig_system.create()
         self.rig_spline_ik.create_point_base(*args, **kwargs)
-        self.rig_spline_ik.stretchy_ik()
+        self.rig_spline_ik._stretchy_ik()
         self.rig_spline_ik.curve = self.create.curve.curve_base(self.rig_spline_ik.curve, spans=2)
         cluster_node_list, cluster_handler_list = self.create.cluster.curve_base(self.rig_spline_ik.curve)
         cluster_group = pm.group(empty=True)
