@@ -190,7 +190,8 @@ class Main(MayaQWidgetDockableMixin, QDialog):
     # RMCreateBonesAtPoints $temp;''')
     def AlignPositionBtnPressed(self):
         selection = cmds.ls(selection=True)
-        RMRigTools.RMAlign(selection[1], selection[0], 1)
+        for each in selection[:-1]:
+            RMRigTools.RMAlign(selection[-1], each, 1)
 
     # mel.eval('''source RMRigTools.mel;
     # string $temp[]=`ls -sl`;
@@ -198,15 +199,16 @@ class Main(MayaQWidgetDockableMixin, QDialog):
 
     def AlignRotationBtnPressed(self):
         selection = cmds.ls(selection=True)
-        selection = cmds.ls(selection=True)
-        RMRigTools.RMAlign(selection[1], selection[0], 2)
+        for each in selection[:-1]:
+            RMRigTools.RMAlign(selection[-1], each, 2)
 
     # mel.eval('''source RMRigTools.mel;
     # string $temp[]=`ls -sl`;
     # RMAlign $temp[1] $temp[0] 2;''')
     def AlignAllBtnPressed(self):
         selection = cmds.ls(selection=True)
-        RMRigTools.RMAlign(selection[1], selection[0], 3)
+        for each in selection[:-1]:
+            RMRigTools.RMAlign(selection[-1], each, 3)
 
     # mel.eval('''source RMRigTools.mel;
     # string $temp[]=`ls -sl`;

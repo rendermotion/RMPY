@@ -10,8 +10,8 @@ class ModelSingleJoint(rigBase.BaseModel):
 
 class RigSingleJoint(rigBase.RigBase):
     def __init__(self, *args, **kwargs):
+        kwargs['model'] = kwargs.pop('model', ModelSingleJoint())
         super(RigSingleJoint, self).__init__(*args, ** kwargs)
-        self._model = ModelSingleJoint()
 
     @property
     def root_node(self):

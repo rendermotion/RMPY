@@ -1,8 +1,8 @@
 import pymel.core as pm
-import maya.cmds as cmds
 from RMPY.core import dataValidators
 from RMPY.creators import creatorsBase
-from RMPY.core import dataManager
+from RMPY.core import config
+from RMPY.creators import spaceLocator
 
 
 class Curve(creatorsBase.CreatorsBase):
@@ -70,20 +70,33 @@ class Curve(creatorsBase.CreatorsBase):
         periodic = kwargs.pop('periodic', False)
         degree = kwargs.pop('degree', 3)
         ep = kwargs.pop('ep', False)
+        name = kwargs.pop('name', 'line')
+        offset_curve = kwargs.pop('offset_curve', False)
+        offset_value = kwargs.pop('offset_value', 1)
+        offset_axis = kwargs.pop('offset_axis', config.axis_order[1].capitalize())
+        if offset_curve:
+            space_locator = spaceLocator.SpaceLocator()
+            new_points = space_locator.node_base(*list_of_points)
+            move_axis = str(f'move{offset_axis}')
+            move_kwargs = dict()
+            move_kwargs[move_axis] = True
+            move_kwargs['objectSpace'] = True
+            move_kwargs['relative'] = True
+            pm.move(offset_value, new_points, **move_kwargs)
+            list_of_points = new_points
 
         list_of_points = [dataValidators.as_vector_position(each_point) for each_point in list_of_points]
-
         if not periodic:
             if ep:
-                curve = pm.curve(degree=degree, ep=list_of_points, name='line', **kwargs)
+                curve = pm.curve(degree=degree, ep=list_of_points, name=name, **kwargs)
             else:
-                curve = pm.curve(degree=degree, p=list_of_points, name='line', **kwargs)
+                curve = pm.curve(degree=degree, p=list_of_points, name=name, **kwargs)
         else:
             if ep:
                 full_list_point = list_of_points + list_of_points[:3]
                 num_elements = len(full_list_point)
                 knot_vector = range(-degree + 1, 0) + range(num_elements)
-                curve = pm.curve(degree=degree, periodic=True, p=full_list_point, k=knot_vector, name='line', **kwargs)
+                curve = pm.curve(degree=degree, periodic=True, p=full_list_point, k=knot_vector, name=name, **kwargs)
                 for ep_point, position_point in zip(curve.ep, list_of_points):
                     pm.select()
                     pm.move(ep_point, *position_point, moveXYZ=True, worldSpace=True)
@@ -91,8 +104,11 @@ class Curve(creatorsBase.CreatorsBase):
                 full_list_point = list_of_points + list_of_points[:3]
                 num_elements = len(full_list_point)
                 knot_vector = range(-degree + 1, 0) + range(num_elements)
-                curve = pm.curve(degree=degree, p=full_list_point, periodic=periodic, name='line', k=knot_vector, **kwargs)
+                curve = pm.curve(degree=degree, p=full_list_point, periodic=periodic, name=name, k=knot_vector, **kwargs)
         self.name_convention.rename_name_in_format(curve, name=str(curve))
+        if offset_curve:
+            pm.delete(new_points)
+
         return curve
 
     @staticmethod
@@ -124,10 +140,7 @@ class Curve(creatorsBase.CreatorsBase):
                 pm.delete(eachCurve)
 
 
-
-
-
 if __name__ == '__main__':
-    selection = pm.ls('C_cuerda00_reference_grp')[0]
+    selection = pm.ls('C_spine00_reference_grp')[0]
     nurbs_curve = Curve()
-    nurbs_curve.point_base(*selection.getChildren(), ep=True)
+    nurbs_curve.point_base(*selection.getChildren(), ep=True, offset_curve=True, offset_value=.1)

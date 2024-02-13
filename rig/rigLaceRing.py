@@ -27,15 +27,16 @@ class LaceRing(rigSingleJoint.RigSingleJoint):
         create_path_surface = kwargs.pop('create_path_surface', False)
         self._model.surface = kwargs.pop('surface', None)
         nurbs_to_poly_output = kwargs.pop('nurbs_to_poly_output', False)
-
         kwargs['offset_by_points'] = kwargs.pop('offset_by_points', True)
         kwargs['curve_distance'] = kwargs.pop('curve_distance', 0.4)
         kwargs['no_controls'] = kwargs.pop('no_controls', True)
         periodic = kwargs.pop('periodic', False)
         kwargs['periodic'] = periodic
+        kwargs['joint_number'] = kwargs.pop('joint_number', 10)
         self._model.lace_rig = rigLaces.RigLaces(rig_system=self.rig_system)
         if len(args) < 4:
             kwargs['controls_number'] = kwargs.pop('controls_number', len(args) + 2)
+
         self.lace_rig.create_point_base(*args, **kwargs)
         # controls_rig = singleJointRig.SingleJointRig(rig_system=self.lace_rig.rig_system)
         self.lace_rig.rename_as_skinned_joints(nub=False)
@@ -52,7 +53,6 @@ class LaceRing(rigSingleJoint.RigSingleJoint):
                 cluster_list=new_list)
                 points_order.append(args[0])
                 clusters_order.append(self.lace_rig.clusters[1])
-
         else:
             if len(self.lace_rig.clusters) % 2:
                 points_order = args
@@ -103,7 +103,7 @@ class LaceRing(rigSingleJoint.RigSingleJoint):
                     new_uv_pin.create_point_base(each, geometry=self.geometry_output)
                     new_uv_pin.clean_up()
                     pm.parentConstraint(new_uv_pin.tip, each, mo=True)
-                    self.uvPin_list.append(new_uv_pin)
+                    self._model.uvPin_list.append(new_uv_pin)
                     pm.delete(self.surface)
                     self._model.surface = None
 
@@ -145,10 +145,9 @@ class LaceRing(rigSingleJoint.RigSingleJoint):
 
 
 if __name__ == '__main__':
-    pass
-    strap_points = pm.ls('C_spine*_reference_pnt')
+
+    strap_points = pm.ls('C_spineLace00_reference_grp')[0]
     lace_ring = LaceRing()
-    lace_ring.create_point_base('L_belt00_reference_pnt', 'L_belt01_reference_pnt', 'C_belt00_reference_pnt',
-                                'R_belt01_reference_pnt', 'R_belt00_reference_pnt',
-                                centered=True, create_path_surface=True, r_l_order_change=True)
+    lace_ring.create_point_base(*strap_points.getChildren(), centered=True,
+                                create_path_surface=True, joint_number=0, nurbs_to_poly_output=True)
 

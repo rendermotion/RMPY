@@ -19,7 +19,6 @@ from RMPY.rig.biped.rig import rigEyesSpaceSwitch
 from RMPY.rig import rigSingleJoint
 
 
-
 class RigBypedModel(rigBase.BaseModel):
     def __init__(self, **kwargs):
         super(RigBypedModel, self).__init__(**kwargs)
