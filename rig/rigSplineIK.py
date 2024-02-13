@@ -141,9 +141,8 @@ class RigSplineIK(rigBase.RigBase):
 if __name__ == '__main__':
     rig_spine = RigSplineIK()
     # spine_root = pm.ls('C_Spine01_reference_pnt')[0]
-    spine_points = [u'C_spine00_reference_pnt', u'C_spine01_reference_pnt', u'C_spine02_reference_pnt',
-                    u'C_spine03_reference_pnt', u'C_spine04_reference_pnt', u'C_spine05_reference_pnt']
+    spine_points = pm.ls('C_chain00_reference_grp')[0]
 
-    rig_spine.create_point_base(*spine_points, stretchy_ik=True, create_up_vectors=True)
+    rig_spine.create_point_base(*spine_points.getChildren(), stretchy_ik=True, create_up_vectors=True)
 
 
