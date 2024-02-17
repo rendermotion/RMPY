@@ -109,7 +109,7 @@ class RigChain(rigBase.RigBase):
             self.joints_reference_points.append(space_loc)
             points_list.extend(short_vertex_list)
 
-        self.name_conv.rename_name_in_format(*self.joints_reference_points,
+        self.name_convention.rename_name_in_format(*self.joints_reference_points,
                                              system=self.name,
                                              name='points',
                                              side='C')

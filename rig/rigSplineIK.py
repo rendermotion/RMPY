@@ -66,7 +66,6 @@ class RigSplineIK(rigBase.RigBase):
 
         self._create_equidistant_joints(number_of_joints)
         stretchy_ik = kwargs.pop('stretchy_ik', True)
-        self._spline_ik_creation(stretchy_ik=stretchy_ik)
         self.curve = curve
         self._spline_ik_creation(stretchy_ik=stretchy_ik)
         if create_up_vectors:
@@ -83,7 +82,7 @@ class RigSplineIK(rigBase.RigBase):
                                                              name="splineIK")
 
         self.name_convention.rename_name_in_format(self.ik, self.effector, self.curve)
-        self.reset_joints.setParent(self.rig_system.joints)
+        pm.parent(self.reset_joints, self.rig_system.joints)
         self.curve.setParent(self.rig_system.kinematics)
         self.ik.setParent(self.rig_system.kinematics)
         if stretchy_ik:
@@ -91,11 +90,11 @@ class RigSplineIK(rigBase.RigBase):
 
     def _create_equidistant_joints(self, number_of_joints):
         pm.select(clear=True)
-        vector = [0, 0, 0]
-        vector[config.axis_order_index] = 1
+        vector = pm.datatypes.Vector(0, 0, 0)
+        vector[config.axis_order_index[0]] = 1
         self.reset_joints.append(pm.group(empty=True))
         for index in range(number_of_joints):
-            new_joint = pm.joint(position=vector*index)
+            new_joint = pm.joint(position=vector*float(index))
             self.joints.append(new_joint)
         self.name_convention.rename_name_in_format(*self.joints)
         self.name_convention.rename_name_in_format(*self.reset_joints, name='resetJoints')
@@ -107,16 +106,13 @@ class RigSplineIK(rigBase.RigBase):
         self.curve.worldSpace[0] >> new_curve_info.inputCurve
         start_length = new_curve_info.arcLength.get()
         # start_char = ord('A')
-        for index, each_joint in enumerate(self.joints[1:]):
-            unit_conversion = pm.createNode('unitConversion')
-            scale_multiply = pm.createNode('multiplyDivide')
-            self.name_convention.rename_name_in_format(unit_conversion, scale_multiply, name='stretchyIK')
-            unit_conversion.conversionFactor.set(each_joint.translateX.get()/start_length)
-            new_curve_info.arcLength >> unit_conversion.input
-            unit_conversion.output >> scale_multiply.input1X
-            scale_multiply.outputX >> each_joint.translateX
-            self.reset_joints.scaleX >> scale_multiply.input2X
-            scale_multiply.operation.set(2)
+        unit_conversion = pm.createNode('unitConversion')
+        scale_multiply = pm.createNode('multiplyDivide')
+        self.name_convention.rename_name_in_format(unit_conversion, scale_multiply, name='stretchyIK')
+        unit_conversion.conversionFactor.set(1.0/len(self.joints))
+        new_curve_info.arcLength >> unit_conversion.input
+        for each_joint in self.joints[1:]:
+            unit_conversion.output >> each_joint.translateX
 
             # pm.addAttr(self.rig_system.settings, ln='jointScale{}'.format(chr(start_char + index)),
             #            at='double', k=True)
