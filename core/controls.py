@@ -72,10 +72,10 @@ def transfer_curve(source, destination, world_space=True):
         shape_source.worldSpace[0] // shape_destination.create
 
 
-def transfer_curve_by_selection():
+def transfer_curve_by_selection(world_space=False):
     selection = pm.ls(selection=True)
     for each_object in selection[1:]:
-        transfer_curve(selection[0], each_object, world_space=False)
+        transfer_curve(selection[0], each_object, world_space=world_space)
 
 
 def object_valid_shapes(scene_object):
@@ -167,6 +167,6 @@ if __name__ == '__main__':
     # print selection[0].getShapes()
     # shapes = object_valid_shapes(selection[0])
     # match_number_of_shapes(selection[0], selection[1])
-    transfer_curve_by_selection()
+    transfer_curve_by_selection(world_space=True)
     # mirror_selection()
     # mirror_shape(*selection, scale_vector=[-1, 1, 1])
