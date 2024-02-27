@@ -95,16 +95,17 @@ class Curve(creatorsBase.CreatorsBase):
             if ep:
                 full_list_point = list_of_points + list_of_points[:3]
                 num_elements = len(full_list_point)
-                knot_vector = range(-degree + 1, 0) + range(num_elements)
-                curve = pm.curve(degree=degree, periodic=True, p=full_list_point, k=knot_vector, name=name, **kwargs)
+                knot_vector = list(range(-degree + 1, 0)) + list(range(num_elements))
+                curve = pm.curve(degree=degree, periodic=True, p=full_list_point, k=knot_vector, name='line', **kwargs)
+
                 for ep_point, position_point in zip(curve.ep, list_of_points):
                     pm.select()
                     pm.move(ep_point, *position_point, moveXYZ=True, worldSpace=True)
             else:
                 full_list_point = list_of_points + list_of_points[:3]
                 num_elements = len(full_list_point)
-                knot_vector = range(-degree + 1, 0) + range(num_elements)
-                curve = pm.curve(degree=degree, p=full_list_point, periodic=periodic, name=name, k=knot_vector, **kwargs)
+                knot_vector = list(range(-degree + 1, 0)) + list(range(num_elements))
+                curve = pm.curve(degree=degree, p=full_list_point, periodic=periodic, name='line', k=knot_vector, **kwargs)
         self.name_convention.rename_name_in_format(curve, name=str(curve))
         if offset_curve:
             pm.delete(new_points)
@@ -143,4 +144,5 @@ class Curve(creatorsBase.CreatorsBase):
 if __name__ == '__main__':
     selection = pm.ls('C_spine00_reference_grp')[0]
     nurbs_curve = Curve()
-    nurbs_curve.point_base(*selection.getChildren(), ep=True, offset_curve=True, offset_value=.1)
+    nurbs_curve.point_base(*selection.getChildren(), ep=True, periodic=True)
+
