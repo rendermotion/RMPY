@@ -1,9 +1,12 @@
 from RMPY.rig import rigBase
 import pymel.core as pm
+
+
 class RigWheelModel(rigBase.BaseModel):
     def __init__(self):
         super().__init__()
         self.circle = None
+
 
 class RigWheel(rigBase.RigBase):
     def __init__(self, *args, **kwargs):
@@ -13,7 +16,7 @@ class RigWheel(rigBase.RigBase):
     def create_point_base(self, *points, **kwargs):
         super(RigWheel, self).__init__(*points, **kwargs)
 
-        self._model.circle, circle_creator = pm.circle(normal=[1,0,0], degree=1)
+        self._model.circle, circle_creator = pm.circle(normal=[1, 0, 0], degree=1)
         self.name_convention.rename_name_in_format(self.circle, circle_creator, name='wheelCylinder')
         pm.matchTransform(self.circle, points[0])
         forward_vector = self.create.space_locator.node_base(points[0], name='forwardVector')[0]
@@ -25,7 +28,6 @@ class RigWheel(rigBase.RigBase):
         pm.parent(previous_position, self.rig_system.kinematics)
         pm.addAttr(self.rig_system.settings, longName='startFrame', k=True, min=0)
         pm.addAttr(self.rig_system.settings, longName='radius', proxy=circle_creator.radius)
-
 
         expression_text = f'vector $current_position = `xform -q -t -ws {self.circle}`;\n'
         expression_text +=f'vector $prev_position = `xform -q -t -ws {previous_position}`;\n'
@@ -39,11 +41,11 @@ class RigWheel(rigBase.RigBase):
         expression_text += f'vector $delta_distance =  $current_position - $prev_position;\n'
         expression_text += f'vector $forward_direction = $reference_front_vector - $current_position;\n'
         expression_text += f'float $direction_multiplier = dotProduct($forward_direction, $delta_distance, 1);\n'
-        expression_text += f'{self.circle}.rotateX = {self.circle}.rotateX + (rad_to_deg(mag($delta_distance)/{self.rig_system.settings}.radius)* $direction_multiplier);\n'
+        expression_text += f'{self.circle}.rotateX = {self.circle}.rotateX + (rad_to_deg(mag($delta_distance)/' \
+                           f'{self.rig_system.settings}.radius)* $direction_multiplier);\n'
         expression_text += '}\n'
-        expression_text += f'{previous_position}.translateX=$current_position.x;\n'
-        expression_text += f'{previous_position}.translateY=$current_position.y;\n'
-        expression_text += f'{previous_position}.translateZ=$current_position.z;\n'
+        expression_text += f' xform -translation ($current_position.x) ($current_position.y) ($current_position.z) ' \
+                           f'-worldSpace  {previous_position};\n'
         pm.expression(string=expression_text)
 
 

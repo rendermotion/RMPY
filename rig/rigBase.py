@@ -228,18 +228,18 @@ class RigBase(object):
         :param rig_object: object or rig that you expect to be the parent of the module.
         :return:
         """
-
+        kwargs['mo'] = kwargs.pop('mo', True)
         # self.create.constraint.define_constraints(point=False, scale=True, parent=True, orient=False)
 
         if RigBase in type(rig_object).__mro__:
             print('{} in constraining {} {}'.format(self.create.constraint.constraint_type, rig_object.tip, self.root))
 
-            self.create.constraint.node_base(rig_object.tip, self.root, mo=True, **kwargs)
+            self.create.constraint.node_base(rig_object.tip, self.root, **kwargs)
         else:
             try:
-                self.create.constraint.node_base(rig_object, self.root, mo=True, **kwargs)
+                self.create.constraint.node_base(rig_object, self.root, **kwargs)
 
-            except AttributeError():
+            except AttributeError:
                 raise AttributeError('not valid object to parent')
         assert not hasattr(super(RigBase, self), 'set_parent')
 
