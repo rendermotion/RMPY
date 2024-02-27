@@ -48,8 +48,9 @@ def load_curves(*args):
                 curve_node.load()
                 curve_node.set_repr_dict()
             else:
-                print ("the curve {} doesn't exists".format(each))
-        except RuntimeWarning('{} not loaded'.format):
+                print(f"the curve {each} doesn't exists")
+        except :
+            RuntimeWarning(f'{each} not loaded')
             pass
 
 
