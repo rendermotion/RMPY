@@ -18,6 +18,8 @@ def save_curve(*args):
     else:
         scene_curves = pm.ls(selection=True)
     saved_curves_list = []
+    non_saved_curves_list = []
+
     for each in scene_curves:
         try:
             if pm.objExists(each):
@@ -25,10 +27,11 @@ def save_curve(*args):
                 curve_node.save()
                 saved_curves_list.append(each)
             else:
-                print ("the curve {} doesn't exists".format(each))
-        except RuntimeWarning('{} not saved'.format):
-            pass
-    print ('following curves where saved: {}'.format(saved_curves_list))
+                print("the curve {} doesn't exists".format(each))
+        except:
+            non_saved_curves_list.append(each)
+    print (f'following curves where saved: {saved_curves_list}')
+    print(f'not saved: {non_saved_curves_list} ')
 
 
 def load_curves(*args):
