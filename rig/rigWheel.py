@@ -23,7 +23,7 @@ class RigWheel(rigBase.RigBase):
         previous_position = self.create.space_locator.node_base(points[0], name='previousPosition')[0]
         self.root = self.create.group.point_base(self.circle, name='rootMovement')
         pm.parent(forward_vector, self.root)
-        pm.move(1, forward_vector, moveX=True)
+        pm.move(1, forward_vector, moveX=True, localSpace=True)
         pm.parent(self.root, self.rig_system.kinematics)
         pm.parent(previous_position, self.rig_system.kinematics)
         pm.addAttr(self.rig_system.settings, longName='startFrame', k=True, min=0)
@@ -41,7 +41,7 @@ class RigWheel(rigBase.RigBase):
         expression_text += f'vector $delta_distance =  $current_position - $prev_position;\n'
         expression_text += f'vector $forward_direction = $reference_front_vector - $current_position;\n'
         expression_text += f'float $direction_multiplier = dotProduct($forward_direction, $delta_distance, 1);\n'
-        expression_text += f'{self.circle}.rotateZ = {self.circle}.rotateZ + (rad_to_deg(mag($delta_distance)/' \
+        expression_text += f'{self.circle}.rotateZ = {self.circle}.rotateZ - (rad_to_deg(mag($delta_distance)/' \
                            f'{self.rig_system.settings}.radius)* $direction_multiplier);\n'
         expression_text += '}\n'
         expression_text += f' xform -translation ($current_position.x) ($current_position.y) ($current_position.z) ' \
