@@ -142,7 +142,7 @@ class Curve(creatorsBase.CreatorsBase):
 
 
 if __name__ == '__main__':
-    selection = pm.ls('C_spine00_reference_grp')[0]
+    selection = pm.ls(selection=True)
     nurbs_curve = Curve()
-    nurbs_curve.point_base(*selection.getChildren(), ep=True, periodic=True)
+    nurbs_curve.point_base(*selection, ep=True, periodic=False)
 

@@ -30,7 +30,8 @@ class RigProp(rigBase.RigBase):
                 'world' each control will align to the world
         :return:
         """
-
+        static = kwargs.pop('static', False)
+        kwargs['static'] = static
         depth = kwargs.pop('depth', 2)
         size = kwargs.pop('size', 1.0)
         size_step = kwargs.pop('size_step', -size/10.0)
@@ -49,7 +50,9 @@ class RigProp(rigBase.RigBase):
                 else:
                     if offset_visibility:
                         single_joint.controls[0].addAttr('offset_visibility', at='bool', k=True)
-
+                if static:
+                    if len(single_joint.reset_joints) > 1:
+                        pm.parent(single_joint.reset_joints[-1], single_joint.joints[-2])
                 if align == 'world':
                     self.custom_world_align(single_joint.reset_controls[-1])
             self.joints.extend(single_joint.joints)
@@ -57,6 +60,8 @@ class RigProp(rigBase.RigBase):
             self.reset_controls.extend(single_joint.reset_controls)
             self.reset_joints.extend(single_joint.reset_joints)
 
+        if static:
+            self.tip = self.controls[-1]
         # self.controls = single_joint.controls
         # self.reset_controls = single_joint.reset_controls
         # self.joints = single_joint.joints

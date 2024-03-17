@@ -47,9 +47,24 @@ class RigSingleJoint(rigBase.RigBase):
             self.controls.append(control)
             reset_control.setParent(self.root_node)
             reset_joint.setParent(self.rig_system.joints)
+
             if static:
-                control.translate >> joint.translate
-                control.rotate >> joint.rotate
+                if self.name_convention.default_names['side'] == 'R':
+                    control.translateX >> joint.translateX
+                    control.translateY >> joint.translateY
+                    self.create.connect.times_factor(control.translateZ, joint.translateZ, -1)
+
+                    self.create.connect.times_factor(control.rotateX, joint.rotateX, -1)
+                    self.create.connect.times_factor(control.rotateY, joint.rotateY, -1)
+                    control.rotateZ >> joint.rotateZ
+
+
+
+
+
+                else:
+                    control.translate >> joint.translate
+                    control.rotate >> joint.rotate
             else:
                 self.create.constraint.node_base(control, joint, mo=True)
 
