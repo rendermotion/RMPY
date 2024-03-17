@@ -3,18 +3,19 @@ what is RMPY
 ============
 
 RMPY it is a set of functions and classes that make easy to do rigging in maya.
-It is a structured way to create rigs using an architecture that simplifies and makes clear the creation of rigs.
+It is a structured way to create rigs using an object oriented architecture that simplifies the creation of rigs.
 
 
 Getting started
 ---------------
 First you should understand how the architecture is structured and the different parts that conform a rig.
 
+
 Chapters:
 
 .. toctree::
     :maxdepth: 2
-
+    :caption: Getting started
     name_convention
     creators
     representations
