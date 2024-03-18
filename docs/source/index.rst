@@ -16,6 +16,7 @@ First you should understand how the architecture is structured and the different
 Chapters:
 
 .. toctree::
+    :maxdepth: 2
     /creators/index
     Name convention <name_convention>
     Groups </creators/group>
