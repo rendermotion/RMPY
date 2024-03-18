@@ -17,12 +17,11 @@ import os
 import sys
 
 extensions = [
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.autodoc',
-    'sphinx.ext.autosummary',
-    'sphinx.ext.mathjax',
-    'sphinx.ext.viewcode',
-    'sphinx_rtd_theme',
+    "sphinx.ext.duration",
+    "sphinx.ext.doctest",
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.intersphinx",
 ]
 
 # print('This is the path***********************')
