@@ -17,7 +17,12 @@ Chapters:
 
 .. toctree::
     /creators/index
-
+    knowing the name convention <name_convention>
+    creation groups </creators/group>
+    /representations
+    /rigs
+    /tools
+    system structure </system_structure>
 
 
 License
