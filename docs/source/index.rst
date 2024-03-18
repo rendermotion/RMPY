@@ -16,14 +16,8 @@ First you should understand how the architecture is structured and the different
 Chapters:
 
 .. toctree::
-    :maxdepth: 2
-    knowing the name convention <name_convention>
-    creation groups </creators/group>
-    /creators
-    /representations
-    /rigs
-    /tools
-    /system structure
+    /creators/index
+
 
 
 License
