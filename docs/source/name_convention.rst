@@ -28,9 +28,8 @@ lets say a BSM to differentiate the meshes from the blendshape Meshes. As I said
 overwritten by any value on the valid list.
 
 
-<paragraph>
+.. note::
     Main functions to
-<block_quote>
 
 
 
