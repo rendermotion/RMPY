@@ -14,21 +14,21 @@
 #
 import os
 import sys
-print('This is the path***********************')
-print(os.path.abspath('.'))
+# print('This is the path***********************')
+# print(os.path.abspath('.'))
 current_path = os.path.abspath('.')
-print(os.listdir(current_path))
+# print(os.listdir(current_path))
 path_tokens = os.path.abspath('.').split('\\')
 if len(path_tokens) == 1:
     path_tokens = os.path.abspath('.').split('/')
 
-print(path_tokens)
-print(os.listdir('/'.join(path_tokens[:-2])))
+# print(path_tokens)
+# print(os.listdir('/'.join(path_tokens[:-2])))
 
 sys.path.append('/'.join(path_tokens[:-2]))
 
-for each in sys.path:
-    print(each)
+#for each in sys.path:
+#    print(each)
 
 # -- Project information -----------------------------------------------------
 
@@ -92,7 +92,7 @@ pygments_style = None
 #
 # html_theme = 'alabaster'
 # Theme installed with pip install sphinx-rtd-theme
-html_theme = 'default'
+html_theme = 'alabaster'
 # html_theme = 'default'
 
 # Theme options are theme-specific and customize the look and feel of a theme
