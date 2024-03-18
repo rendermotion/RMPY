@@ -28,7 +28,7 @@ if len(path_tokens) == 1:
 # print(os.listdir('/'.join(path_tokens[:-2])))
 
 sys.path.append('/'.join(path_tokens[:-2]))
-print(os.listdir(os.path.abspath()))
+print(os.listdir(os.path.abspath('.')))
 # sys.path.append(os.path.abspath("_ext"))
 #for each in sys.path:
 #    print(each)
