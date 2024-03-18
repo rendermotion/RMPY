@@ -1,7 +1,7 @@
 
 
 
-what is RMPY
+What is RMPY
 ============
 
 RMPY it is a set of functions and classes that make easy to do rigging in maya.
@@ -15,6 +15,7 @@ First you should understand how the architecture is structured and the different
 
 .. toctree::
     :maxdepth: 2
+
     /creators/index
     Name convention <name_convention>
     Groups </creators/group>
