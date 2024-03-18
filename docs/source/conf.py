@@ -16,18 +16,10 @@
 import os
 import sys
 
-extensions = [
-    "sphinx.ext.duration",
-    "sphinx.ext.doctest",
-    "sphinx.ext.autodoc",
-    "sphinx.ext.autosummary",
-    "sphinx.ext.intersphinx",
-]
-
 # print('This is the path***********************')
 # print(os.path.abspath('.'))
 current_path = os.path.abspath('.')
-# print(os.listdir(current_path))
+print(os.listdir(current_path))
 path_tokens = os.path.abspath('.').split('\\')
 if len(path_tokens) == 1:
     path_tokens = os.path.abspath('.').split('/')
@@ -36,8 +28,8 @@ if len(path_tokens) == 1:
 # print(os.listdir('/'.join(path_tokens[:-2])))
 
 sys.path.append('/'.join(path_tokens[:-2]))
-print(os.listdir(os.path.abspath("_ext")))
-sys.path.append(os.path.abspath("_ext"))
+print(os.listdir(os.path.abspath()))
+# sys.path.append(os.path.abspath("_ext"))
 #for each in sys.path:
 #    print(each)
 
