@@ -19,11 +19,11 @@ Chapters:
     :maxdepth: 2
     knowing the name convention <name_convention>
     creation groups </creators/group>
-    creators
-    representations
-    rigs
-    tools
-    system structure
+    /creators
+    /representations
+    /rigs
+    /tools
+    /system structure
 
 
 License
