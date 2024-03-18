@@ -1,5 +1,5 @@
 from RMPY.rig import rigBase
-
+import pymel.core as pm
 
 class RigSpaceModel(rigBase.BaseModel):
     def __init__(self):
@@ -32,10 +32,14 @@ class RigSpace(rigBase.RigBase):
 
         self.root = self.create.group.point_base(space_object, type='world', name=self.name)
         self.tip = self.create.group.point_base(reference_object, type='world', name=self.name)
-
-        self.tip.setParent(self.root)
         self.root.setParent(self.rig_system.kinematics)
         self.create.constraint.parent(space_object, self.root)
+        scale_node = self.create.constraint.scale(reference_object, self.root)
+        pm.delete(scale_node)
+        # pm.matchTransform(self.tip, reference_object)
+        self.tip.setParent(self.root)
+
+
 
 
 if __name__ == '__main__':
