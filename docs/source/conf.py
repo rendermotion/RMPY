@@ -66,7 +66,6 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.githubpages',
     'sphinx.ext.autosummary'
-    "sphinx.ext.duration",
     "sphinx.ext.doctest",
     "sphinx.ext.intersphinx",
 ]
