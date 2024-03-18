@@ -92,7 +92,7 @@ pygments_style = None
 #
 # html_theme = 'alabaster'
 # Theme installed with pip install sphinx-rtd-theme
-html_theme = 'alabaster'
+html_theme = 'sphinx_rtd_theme'
 # html_theme = 'default'
 
 # Theme options are theme-specific and customize the look and feel of a theme
@@ -114,8 +114,13 @@ html_static_path = []
 # default: ``['localtoc.html', 'relations.html', 'sourcelink.html',
 # 'searchbox.html']``.
 #
-# html_sidebars = {}
 
+# html_sidebars = {}
+# html_logo = "img/logo.svg"
+# html_theme_options = {
+#     "logo_only": True,
+#     "display_version": False,
+# }
 
 # -- Options for HTMLHelp output ---------------------------------------------
 
