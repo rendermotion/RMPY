@@ -13,10 +13,8 @@ Getting started
 First you should understand how the architecture is structured and the different parts that conform a rig.
 
 
-Chapters:
-
 .. toctree::
-    :maxdepth: 1
+    :maxdepth: 2
     /creators/index
     Name convention <name_convention>
     Groups </creators/group>
