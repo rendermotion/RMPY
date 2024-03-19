@@ -1,3 +1,16 @@
+.. toctree::
+    :maxdepth: 2
+    :hidden:
+    :caption: Getting started
+
+    /how_to_install
+    /creators/index
+    Name convention <name_convention>
+    Groups </creators/group>
+    /representations
+    /rigs
+    /tools
+    system structure </system_structure>
 
 
 
@@ -10,19 +23,13 @@ It is a structured way to create rigs using an object oriented architecture that
 
 Getting started
 ---------------
-First you should understand how the architecture is structured and the different parts that conform a rig.
+
+    :doc:`/how_to_install`
+
+    do you want to understand how the architecture is structured and the different parts that conform a rig.
+    :doc:`/creators/index`
 
 
-.. toctree::
-    :maxdepth: 2
-
-    /creators/index
-    Name convention <name_convention>
-    Groups </creators/group>
-    /representations
-    /rigs
-    /tools
-    system structure </system_structure>
 
 
 License
