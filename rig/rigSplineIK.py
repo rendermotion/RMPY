@@ -62,9 +62,10 @@ class RigSplineIK(rigBase.RigBase):
     def create_curve_base(self, curve, **kwargs):
         number_of_joints = kwargs.pop('number_of_joints', 10)
         create_up_vectors = kwargs.pop('create_up_vectors', False)
+        distance_between_joints = kwargs.pop('create_up_vectors', curve.length()/(number_of_joints-1))
         super(RigSplineIK, self).create_point_base(curve, **kwargs)
 
-        self._create_equidistant_joints(number_of_joints)
+        self._create_equidistant_joints(number_of_joints, distance_between=distance_between_joints)
         stretchy_ik = kwargs.pop('stretchy_ik', True)
         self.curve = curve
         self._spline_ik_creation(stretchy_ik=stretchy_ik)
@@ -88,10 +89,10 @@ class RigSplineIK(rigBase.RigBase):
         if stretchy_ik:
             self._stretchy_ik()
 
-    def _create_equidistant_joints(self, number_of_joints):
+    def _create_equidistant_joints(self, number_of_joints, distance_between=1):
         pm.select(clear=True)
         vector = pm.datatypes.Vector(0, 0, 0)
-        vector[config.axis_order_index[0]] = 1
+        vector[config.axis_order_index[0]] = 1 * distance_between
         self.reset_joints.append(pm.group(empty=True))
         for index in range(number_of_joints):
             new_joint = pm.joint(position=vector*float(index))

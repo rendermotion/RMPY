@@ -68,7 +68,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.ui.copy_skin_button.clicked.connect(self.copy_skinning)
         self.ui.CopyCvsPosBtn.clicked.connect(self.copy_cv_position)
         self.ui.pushButton_2.clicked.connect(self.mirror_shapes)
-
+        self.ui.points_between_btn.clicked.connect(self.create_locators_between_points)
 
         # self.ui.OrientNubButton.clicked.connect(self.OrientNubButtonPressed)
         # self.ui.unfoldRigBtn.clicked.connect(self.unfoldRigBtnPressed)
@@ -116,6 +116,9 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         selection = pm.ls(selection=True)
         self.rig_base.create.space_locator.node_base(*selection)
 
+    def create_locators_between_points(self):
+        selection = pm.ls(selection=True)
+        RMRigTools.RMCreateNLocatorsBetweenObjects(selection[0], selection[1], self.ui.spinBox.value())
     def unfoldRigBtnPressed(self):
         selection = cmds.ls(selection=True)
         RMUnfoldRig.SpiralOfPointsStraight(self.ui.initRadiusSpnBx.value(), self.ui.endRadiusSpnBx.value(),

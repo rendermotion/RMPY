@@ -83,9 +83,9 @@ class RigLaces(rigBase.RigBase):
         super(RigLaces, self).create_point_base(*points)
         self.build_points = points
         points = self.rm.dataValidators.as_pymel_nodes(points)
-        controls_number = kwargs.pop('controls_number', len(points))
+        controls_number = kwargs.pop('controls_number', 0)
         kwargs['offset_by_points'] = kwargs.pop('offset_by_points', True)
-        joint_number = kwargs.pop('joint_number', controls_number*2)
+        joint_number = kwargs.pop('joint_number', 10)
         periodic = kwargs.pop('periodic', False)
         single_orient_object = kwargs.pop('single_orient_object', False)
         self.no_controls = kwargs.pop('no_controls', False)
@@ -93,8 +93,10 @@ class RigLaces(rigBase.RigBase):
 
         self.name_convention.set_from_name(curve, 'laceCurve', 'name')
         curve.setParent(self.rig_system.kinematics)
+
         if controls_number:
             self._model.curve = self.create.curve.curve_base(curve, spans=controls_number-1)
+            kwargs['controls_number'] = controls_number
         else:
             self._model.curve = curve
 
@@ -163,11 +165,15 @@ class RigLaces(rigBase.RigBase):
         offset_vector = kwargs.pop('offset_vector', [0, 1, 0])
         fk_controls = kwargs.pop('fk_controls', False)
         offset_by_points = kwargs.pop('offset_by_points')
+        controls_number = kwargs.pop('controls_number', None)
+        curve_distance = kwargs.pop('curve_distance', self.curve.length() / len(self.build_points))
 
         if offset_by_points:
             self._model.up_vector_curve = self.create.curve.point_base(*self.build_points, offset_curve=True,
-                                                                       offset_value=self.curve.length()/len(self.build_points),
+                                                                       offset_value=curve_distance,
                                                                        ep=True, name='upVectorCurve')
+            if controls_number:
+                self._model.up_vector_curve = self.create.curve.curve_base(self.up_vector_curve, spans=controls_number - 1)
         else:
             self._model.up_vector_curve = pm.duplicate(self.curve)[0]
             self.up_vector_curve.translate.set(self.up_vector_curve.translate.get() + offset_vector)

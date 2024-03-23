@@ -220,23 +220,23 @@ class RigByped(rigBase.RigBase):
         self.r_leg_space_switch.build(self.r_leg, self.rig_world)
 
         self.neck_head.create_point_base(*self.neck_root)
-        self.jaw.create_point_base(*self.jaw_root)
+        # self.jaw.create_point_base(*self.jaw_root)
 
-        self.eyes.create_point_base(*self.eyes_root)
-        self.eye_space_switch.build(self.eyes, self.neck_head, self.rig_world)
+        # self.eyes.create_point_base(*self.eyes_root)
+        # self.eye_space_switch.build(self.eyes, self.neck_head, self.rig_world)
 
         self.neck_head.set_parent(self.spine)
 
         self.neck_head_space_switch.build(self.neck_head, self.rig_world, self.cog)
 
-        self.gums.create_point_base(*self.gums_root)
-        self.gums.set_parent(self.neck_head)
+        # self.gums.create_point_base(*self.gums_root)
+        # self.gums.set_parent(self.neck_head)
 
-        self.jaw.set_parent(self.neck_head)
+        # self.jaw.set_parent(self.neck_head)
         self.cog.set_parent(self.rig_world)
         self.spine.set_parent(self.cog)
 
-        self.eyes.set_parent(self.neck_head)
+        # self.eyes.set_parent(self.neck_head)
 
         self.create.constraint.node_base(self.spine.backward_root, self.hip.root, point=True)
         self.create.constraint.node_base(self.cog.tip, self.hip.root, orient=True, mo=True)
@@ -244,20 +244,20 @@ class RigByped(rigBase.RigBase):
         self.l_leg.set_parent(self.hip)
         self.r_leg.set_parent(self.hip)
 
-        self.l_breast.create_point_base(*[each.format('L') for each in self.breast_root])
-        self.r_breast.create_point_base(*[each.format('R') for each in self.breast_root])
-        self.l_breast.set_parent(self.spine)
-        self.r_breast.set_parent(self.spine)
+        # self.l_breast.create_point_base(*[each.format('L') for each in self.breast_root])
+        # self.r_breast.create_point_base(*[each.format('R') for each in self.breast_root])
+        # self.l_breast.set_parent(self.spine)
+        # self.r_breast.set_parent(self.spine)
 
-        self.l_toes.create_point_base(*[each.format('L') for each in self.toes_root])
-        self.r_toes.create_point_base(*[each.format('R') for each in self.toes_root])
-        self.l_toes.set_parent(self.l_leg)
-        self.r_toes.set_parent(self.r_leg)
+        # self.l_toes.create_point_base(*[each.format('L') for each in self.toes_root])
+        # self.r_toes.create_point_base(*[each.format('R') for each in self.toes_root])
+        # self.l_toes.set_parent(self.l_leg)
+        # self.r_toes.set_parent(self.r_leg)
 
         # setup as skinned joints
-        self.eyes.rename_as_skinned_joints(nub=False)
+        # self.eyes.rename_as_skinned_joints(nub=False)
 
-        self.jaw.rename_as_skinned_joints()
+        # self.jaw.rename_as_skinned_joints()
         self.spine.rename_as_skinned_joints()
         self.hip.rename_as_skinned_joints()
         self.l_arm.rename_as_skinned_joints()
@@ -268,12 +268,12 @@ class RigByped(rigBase.RigBase):
         self.l_leg.rename_as_skinned_joints()
         self.r_leg.rename_as_skinned_joints()
 
-        self.l_toes.rename_as_skinned_joints()
-        self.r_toes.rename_as_skinned_joints()
+        # self.l_toes.rename_as_skinned_joints()
+        # self.r_toes.rename_as_skinned_joints()
 
-        self.l_breast.rename_as_skinned_joints(nub=False)
-        self.r_breast.rename_as_skinned_joints(nub=False)
-        self.gums.rename_as_skinned_joints(nub=False)
+        # self.l_breast.rename_as_skinned_joints(nub=False)
+        # self.r_breast.rename_as_skinned_joints(nub=False)
+        # self.gums.rename_as_skinned_joints(nub=False)
 
 
 if __name__ == '__main__':
