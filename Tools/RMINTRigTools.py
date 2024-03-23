@@ -69,6 +69,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.ui.CopyCvsPosBtn.clicked.connect(self.copy_cv_position)
         self.ui.pushButton_2.clicked.connect(self.mirror_shapes)
         self.ui.points_between_btn.clicked.connect(self.create_locators_between_points)
+        self.ui.mirror_skin_button.clicked.connect(self.mirror_skinning_multiple_objects)
 
         # self.ui.OrientNubButton.clicked.connect(self.OrientNubButtonPressed)
         # self.ui.unfoldRigBtn.clicked.connect(self.unfoldRigBtnPressed)
@@ -81,6 +82,10 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.ui.listWidget.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.name_convention = nameConvention.NameConvention()
         self.rig_base = rigBase.RigBase()
+
+    def mirror_skinning_multiple_objects(self):
+        selection = pm.ls(selection=True)
+        mirror_skinning.mirror_skinBinding(selection)
 
     def copy_cv_position(self):
         controls.transfer_curve_by_selection()

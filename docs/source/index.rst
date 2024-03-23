@@ -1,26 +1,35 @@
+.. toctree::
+    :maxdepth: 2
+    :hidden:
+    :caption: Getting started
 
-what is RMPY
+    /how_to_install
+    /creators/index
+    Name convention <name_convention>
+    Groups </creators/group>
+    /representations
+    /rigs
+    /tools
+    system structure </system_structure>
+
+
+
+What is RMPY
 ============
 
 RMPY it is a set of functions and classes that make easy to do rigging in maya.
-It is a structured way to create rigs using an architecture that simplifies and makes clear the creation of rigs.
+It is a structured way to create rigs using an object oriented architecture that simplifies the creation of rigs.
 
 
 Getting started
 ---------------
-First you should understand how the architecture is structured and the different parts that conform a rig.
 
-Chapters:
+    :doc:`/how_to_install`
 
-.. toctree::
-    :maxdepth: 2
+    do you want to understand how the architecture is structured and the different parts that conform a rig.
+    :doc:`/creators/index`
 
-    name_convention
-    creators
-    representations
-    rigs
-    tools
-    system structure
+
 
 
 License
@@ -30,9 +39,5 @@ License
 
 Indices and tables
 ==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 
 
