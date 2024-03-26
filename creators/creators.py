@@ -3,6 +3,7 @@ from RMPY.creators import spaceLocator
 from RMPY.creators.skinCluster import SkinCluster
 from RMPY.creators.blendShape import BlendShape
 from RMPY.creators import group as groupCreator
+from RMPY.creators import lattice as latticeCreator
 from RMPY.creators import joint as jointCreator
 from RMPY.creators import connect as connectCreator
 from RMPY.creators import controls as controlsCreator
@@ -24,8 +25,9 @@ loft = loftCreator.Loft()
 connect = connectCreator.Connect()
 motion_path = motionPathCreator.MotionPath()
 follicle = follicleCreator.Follicle()
+lattice = latticeCreator.Lattice()
 creators_list = [follicle, constraint, cluster, curve, space_locator, skin_cluster,
-                 group, joint, connect, controls, motion_path, loft]
+                 group, joint, connect, controls, motion_path, loft, lattice]
 
 
 
