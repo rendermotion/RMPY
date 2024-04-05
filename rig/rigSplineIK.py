@@ -88,6 +88,9 @@ class RigSplineIK(rigBase.RigBase):
         self.ik.setParent(self.rig_system.kinematics)
         if stretchy_ik:
             self._stretchy_ik()
+        else:
+            self._non_stretchy_lenght()
+
 
     def _create_equidistant_joints(self, number_of_joints, distance_between=1):
         pm.select(clear=True)
@@ -100,6 +103,17 @@ class RigSplineIK(rigBase.RigBase):
         self.name_convention.rename_name_in_format(*self.joints)
         self.name_convention.rename_name_in_format(*self.reset_joints, name='resetJoints')
         pm.parent(self.reset_joints[0], self.rig_system.joints)
+
+    def _non_stretchy_lenght(self):
+        pm.addAttr(self.rig_system.settings, ln='ropeLength', k=True)
+        scale_division = pm.createNode('multiplyDivide')
+        self.rig_system.settings.ropeLength.set(self.curve.length())
+        self.rig_system.settings.ropeLength >> scale_division.input1X
+        scale_division.operation.set(2)
+        self.name_convention.rename_name_in_format(scale_division, name='curveLength')
+        scale_division.input2X.set(len(self.joints)-1)
+        for each_joint in self.joints[1:]:
+            scale_division.outputX >> each_joint.translateX
 
     def _stretchy_ik(self):
         new_curve_info = pm.createNode('curveInfo')
