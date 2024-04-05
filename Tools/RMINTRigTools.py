@@ -27,8 +27,11 @@ import importlib
 from RMPY.core import mirror_skinning
 from RMPY.Tools.QT5.ui import FormRigTools
 from RMPY.core import controls
+from RMPY.core import rig_core
 import importlib
 importlib.reload(controls)
+importlib.reload(FormRigTools)
+
 
 
 def getMayaWindow():
@@ -70,7 +73,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.ui.pushButton_2.clicked.connect(self.mirror_shapes)
         self.ui.points_between_btn.clicked.connect(self.create_locators_between_points)
         self.ui.mirror_skin_button.clicked.connect(self.mirror_skinning_multiple_objects)
-
+        self.ui.curve_point_based_btn.clicked.connect(self.curve_point_base)
         # self.ui.OrientNubButton.clicked.connect(self.OrientNubButtonPressed)
         # self.ui.unfoldRigBtn.clicked.connect(self.unfoldRigBtnPressed)
 
@@ -82,6 +85,12 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.ui.listWidget.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.name_convention = nameConvention.NameConvention()
         self.rig_base = rigBase.RigBase()
+
+    def curve_point_base(self):
+        selection = pm.ls(selection=True)
+        rig_core.curve.point_base(*selection,
+                                  ep=self.ui.create_curve_edit_points_chkbx.isChecked(),
+                                  periodic=self.ui.create_curve_periodic_chkbx.isChecked())
 
     def mirror_skinning_multiple_objects(self):
         selection = pm.ls(selection=True)

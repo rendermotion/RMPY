@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>577</width>
-    <height>419</height>
+    <width>589</width>
+    <height>447</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -178,6 +178,43 @@
              <zorder>ConstShapeLblBtn</zorder>
              <zorder>CopyCvsPosBtn</zorder>
              <zorder>pushButton_2</zorder>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="groupBox_3">
+             <property name="title">
+              <string>Create curve</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_8">
+              <item>
+               <widget class="QPushButton" name="curve_point_based_btn">
+                <property name="text">
+                 <string>Curve point base</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_3">
+                <item>
+                 <widget class="QCheckBox" name="create_curve_edit_points_chkbx">
+                  <property name="text">
+                   <string>edit points</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QCheckBox" name="create_curve_periodic_chkbx">
+                  <property name="text">
+                   <string>periodic</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
             </widget>
            </item>
            <item>
@@ -385,6 +422,13 @@
           <widget class="QPushButton" name="SelectJoints">
            <property name="text">
             <string>Select Joints</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="add_to_selection_btn">
+           <property name="text">
+            <string>Add list selected to viewport selection</string>
            </property>
           </widget>
          </item>

@@ -168,7 +168,7 @@ class SingleDefinition(rigBase.RigBase):
             return None
 
     def add_target_list_to_prefix(self, target_list, value_list, **kwargs):
-        sufix_list = kwargs.pop('prefix_geometry_list', [])
+        sufix_list = self.prefix_geometry_list # kwargs.pop('prefix_geometry_list', [])
         custom_target_name = kwargs.pop('custom_target_name', False)
         for each_geometry in sufix_list:
             base_mesh = each_geometry
