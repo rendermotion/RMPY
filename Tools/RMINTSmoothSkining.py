@@ -7,7 +7,7 @@ from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 from PySide2 import __version__
 from shiboken2 import wrapInstance
-from RMPY.Tools.QT5.ui import FormRigTools
+from RMPY.Tools.QT5.ui import FormRigTools_old
 
 from RMPY import RMRigTools
 from RMPY.snippets import locator_at_average

@@ -72,5 +72,5 @@ def finalize():
 
 
 if __name__ == '__main__':
-    build()
+    build_rig()
     # data_save_load.save_curve()

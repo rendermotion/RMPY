@@ -1,9 +1,8 @@
 import pymel.core as pm
 from RMPY.rig import rigBase
 from RMPY.creators import nucleus
-from RMPY.rig import rig
-from pprint import pprint as pp
-from RMPY.rig import rigLaces
+from RMPY.rig import rigObjectsOnCurve
+
 
 class DynamicHairModel(object):
     def __init__(self):
@@ -28,25 +27,25 @@ class DynamicHair(rigBase.RigBase):
             existing_nucleus = True
             self.nucleus = kwargs.pop('nucleus')
         else:
-            self.nucleus = nucleus.Creator(name_conv=self.name_conv)
+            self.nucleus = nucleus.Nucleus(name_convention=self.name_convention)
             self.nucleus.node.enable.set(0)
 
         if not existing_nucleus:
             self.nucleus.node.setParent(self.dynamics)
 
         self.dynamic_output_curves = pm.group(empty=True)
-        self.name_conv.rename_name_in_format(self.dynamic_output_curves, name='output')
+        self.name_convention.rename_name_in_format(self.dynamic_output_curves, name='output')
         self.dynamic_output_curves.setParent(self.dynamics)
 
         self.nucleus.add_hair_system()
         self.hair_system_index = len(self.nucleus.hair_systems) - 1
 
-        self.name_conv.rename_name_in_format(self.nucleus.hair_systems[self.hair_system_index].transform,
-                                             name='hairSystem')
+        self.name_convention.rename_name_in_format(self.nucleus.hair_systems[self.hair_system_index].transform,
+                                                   name='hairSystem')
 
         self.nucleus.hair_systems[self.hair_system_index].transform.setParent(self.dynamics)
 
-        self.laces_system = rigLaces.RigLaces(rig_system=self.rig_system)
+        self.objects_on_curve = rigObjectsOnCurve.RigObjectsOnCurve(rig_system=self.rig_system)
 
     @property
     def created_output_curves(self):
@@ -77,7 +76,7 @@ class DynamicHair(rigBase.RigBase):
         if not self._model.dynamics:
             self._model.dynamics = pm.group(empty=True)
 
-            self.name_conv.rename_name_in_format(self._model.dynamics, name='dynamics')
+            self.name_convention.rename_name_in_format(self._model.dynamics, name='dynamics')
             self._model.dynamics.setParent(self.rig_system.kinematics)
         return self._model.dynamics
 
@@ -86,7 +85,7 @@ class DynamicHair(rigBase.RigBase):
         if not self._model.reset_follicles:
             self._model.reset_follicles = pm.group(empty=True)
 
-            self.name_conv.rename_name_in_format(self._model.reset_follicles, name='follicles')
+            self.name_convention.rename_name_in_format(self._model.reset_follicles, name='follicles')
             self._model.reset_follicles.setParent(self.dynamics)
         return self._model.reset_follicles
 
@@ -122,21 +121,21 @@ class DynamicHair(rigBase.RigBase):
     def create_point_base(self, *points, **kwargs):
         super(DynamicHair, self).create_point_base(*points, **kwargs)
 
-        self.nucleus.name_conv = self.name_conv
+        self.nucleus.name_convention = self.name_convention
         controls_number = kwargs.pop('controls_number', None)
         keepRange = kwargs.pop('keepRange', 2)
         periodic = kwargs.pop('periodic', False)
         rebuildType = kwargs.pop('rebuildType', 0)
         ep = kwargs.pop('ep', True)
 
-        curve = self.rig_create.nurbs_curve.point_base(*points, periodic=periodic, ep=ep)
+        curve = self.create.curve.point_base(*points, periodic=periodic, ep=ep)
 
         if controls_number:
             if controls_number < 4:
                 controls_number = 4
 
         if controls_number:
-            # base_curve = self.rig_create.nurbs_curve.curve_base(curve, spans=controls_number, keepRange=keepRange,
+            # base_curve = self.create.nurbs_curve.curve_base(curve, spans=controls_number, keepRange=keepRange,
             # rebuildType=rebuildType)
 
             base_curve = pm.rebuildCurve(curve, rebuildType=rebuildType, spans=controls_number, keepRange=keepRange)[0]
@@ -165,19 +164,22 @@ class DynamicHair(rigBase.RigBase):
             self._create_joints_on_curve(output_curve, joint_count)
 
     def _create_joints_on_curve(self, curve, joint_count):
-        joints_dict = self.laces_system.joints_on_curve(joint_count, curve=curve, up_vector_type="object")
+        self.objects_on_curve.create_curve_base(curve, object_type='joint', name='curveJoint',
+                                                number_of_nodes=joint_count,
+                                                up_vector_type="object")
 
         new_parent = pm.group(empty=True, name='curveJoints')
-        self.name_conv.rename_name_in_format(new_parent)
+        self.name_convention.rename_name_in_format(new_parent)
         new_parent.setParent(self.rig_system.joints)
         self.reset_joints.append(new_parent)
-        self.joints.append(joints_dict['joints'])
-        self.name_conv.rename_name_in_format(joints_dict['joints'], name='curveJoint')
-        pm.parent(joints_dict['joints'], new_parent)
-        self.up_vectors.append(joints_dict['UpVector'])
-        joints_dict['UpVector'].setParent(self.dynamics)
-        joints_dict['UpVector'].translateY.set(13)
-        joints_dict['UpVector'].rotateZ.set(90)
+        self.joints.extend(self.objects_on_curve.joints)
+        self.reset_joints.extend(self.objects_on_curve.reset_joints)
+        # self.name_convention.rename_name_in_format(joints_dict['joints'], name='curveJoint')
+        pm.parent(self.objects_on_curve.reset_joints, new_parent)
+        self.up_vectors.append(self.objects_on_curve.up_vector)
+        self.objects_on_curve.up_vector.setParent(self.dynamics)
+        self.objects_on_curve.up_vector.translateY.set(13)
+        self.objects_on_curve.up_vector.rotateZ.set(90)
 
     def add_collision(self, *mesh):
         for each_geo in mesh:
@@ -186,6 +188,6 @@ class DynamicHair(rigBase.RigBase):
 
 
 if __name__ == '__main__':
-    hair_root = pm.ls('C_dynamicSpl00_reference_GRP')[0]
+    hair_root = pm.ls('L_wheel00_reference_grp')[0]
     dynamic_hair = DynamicHair()
     dynamic_hair.create_point_base(*hair_root.getChildren())

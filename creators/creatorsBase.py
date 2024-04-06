@@ -14,6 +14,8 @@ class CreatorsBase(object):
 
     def curve_base(self, *args, **kwargs):
         self.setup_name_convention_node_base(args[0], **kwargs)
+    def geo_base(self, *args, **kwargs):
+        self.setup_name_convention_node_base(args[0], **kwargs)
 
     def setup_name_convention_node_base(self, *args, **kwargs):
         pop_name = kwargs.pop('name', None)

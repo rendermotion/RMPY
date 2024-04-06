@@ -29,11 +29,12 @@ class RigAim(rigBase.RigBase):
         super(RigAim, self).create_point_base(point, **kwargs)
         create_joint = kwargs.pop('create_joint', True)
         aim = self.create.group.point_base(point, type='world', name='root')
+        aim_distance = kwargs.pop('aim_distance', 10)
         target = pm.duplicate(aim)[0]
         self.name_convention.rename_name_in_format(aim, name='aim')
         self.name_convention.rename_name_in_format(target, name='target')
 
-        pm.move(target, 10, **{'move{}'.format(config.axis_order[0].upper()): True, 'objectSpace': True, 'relative': True})
+        pm.move(target, aim_distance, **{'move{}'.format(config.axis_order[0].upper()): True, 'objectSpace': True, 'relative': True})
         target.setParent(self.rig_system.kinematics)
         aim.setParent(self.rig_system.kinematics)
         self.root = self.create.group.point_base(aim, type='inserted', name='reset')

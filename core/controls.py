@@ -72,10 +72,10 @@ def transfer_curve(source, destination, world_space=True):
         shape_source.worldSpace[0] // shape_destination.create
 
 
-def transfer_curve_by_selection():
+def transfer_curve_by_selection(world_space=False):
     selection = pm.ls(selection=True)
     for each_object in selection[1:]:
-        transfer_curve(selection[0], each_object, world_space=False)
+        transfer_curve(selection[0], each_object, world_space=world_space)
 
 
 def object_valid_shapes(scene_object):
@@ -122,15 +122,16 @@ def mirror_shape(*shapes, **kwargs):
 
 def mirror_controls(*controls):
     for each in controls:
+        print(f'doing {each}')
         source_shape = pm.ls(each)[0]
         oposite_side = get_oposite_side(each)
+        print(oposite_side)
         if oposite_side:
-            oposite_side = pm.ls(oposite_side)[0]
             destination_shape = pm.ls(oposite_side)[0]
             transfer_curve(source_shape, destination_shape, world_space=False)
             mirror_shape(destination_shape, scale_vector=[1, 1, 1])
         else:
-            print('coulnt find oposite curve for {}'.format(each))
+            print('coulnt find opposite curve for {}'.format(each))
 
 
 def get_oposite_side(control):
@@ -138,6 +139,12 @@ def get_oposite_side(control):
         return control.replace('L_', 'R_')
     elif 'R_' in str(control):
         return control.replace('R_', 'L_')
+
+    # support for MGear control type
+    elif '_L' in str(control):
+        return control.replace('_L', '_R')
+    elif '_R' in str(control):
+        return control.replace('_R', '_L')
     return None
 
 
@@ -160,6 +167,6 @@ if __name__ == '__main__':
     # print selection[0].getShapes()
     # shapes = object_valid_shapes(selection[0])
     # match_number_of_shapes(selection[0], selection[1])
-    transfer_curve_by_selection()
+    transfer_curve_by_selection(world_space=True)
     # mirror_selection()
     # mirror_shape(*selection, scale_vector=[-1, 1, 1])

@@ -3,9 +3,9 @@ from RMPY import RMRigTools
 from RMPY.creators import creatorsBase
 
 
-class Creator(creatorsBase.CreatorsBase):
+class NRigid(creatorsBase.CreatorsBase):
     def __init__(self, *args, **kwargs):
-        super(Creator, self).__init__(*args, **kwargs)
+        super(NRigid, self).__init__(*args, **kwargs)
 
         self._node = pm.createNode('nRigid')
         mesh = kwargs.pop('mesh', None)

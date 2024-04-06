@@ -1,0 +1,1 @@
+call pyuic5 UI_RigTools.ui -o ../QT5/ui/FormRigTools.py

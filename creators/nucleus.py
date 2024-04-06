@@ -5,9 +5,9 @@ from RMPY.creators import nRigid
 from RMPY.core import dataValidators
 
 
-class Creator(creatorsBase.Creator):
+class Nucleus(creatorsBase.CreatorsBase):
     def __init__(self, *args, **kwargs):
-        super(Creator, self).__init__(*args, **kwargs)
+        super(Nucleus, self).__init__(*args, **kwargs)
 
         self._node = None
         self._hair_systems = []
@@ -56,7 +56,7 @@ class Creator(creatorsBase.Creator):
 
     def create(self):
         self._node = pm.createNode('nucleus')
-        self.name_conv.rename_name_in_format(self._node)
+        self.name_convention.rename_name_in_format(self._node)
         self.start_frame = pm.playbackOptions(q=True, min=True)
         time_node = pm.ls(type='time')
         self.connect(*time_node)
@@ -107,7 +107,7 @@ class Creator(creatorsBase.Creator):
                        '{}.inputPassiveStart[{}]'.format(self.node, connect_index))
 
     def add_hair_system(self):
-        new_hair_system = hairSystem.Creator(name_conv=self.name_conv)
+        new_hair_system = hairSystem.HairSystem(name_convention=self.name_convention)
 
         self.connect(new_hair_system.node)
         self.hair_systems.append(new_hair_system)
@@ -116,7 +116,7 @@ class Creator(creatorsBase.Creator):
         mesh = dataValidators.as_pymel_nodes(mesh)
 
         for each_mesh in mesh:
-            new_nrigid = nRigid.Creator(name_conv=self.name_conv, mesh=each_mesh)
+            new_nrigid = nRigid.NRigid(name_convention=self.name_convention, mesh=each_mesh)
             self.connect(new_nrigid.node)
             for each_hair_system in self.hair_systems:
                 for each_follicle in each_hair_system.follicles:

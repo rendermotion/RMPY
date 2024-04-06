@@ -1,5 +1,5 @@
 import pymel.core as pm
-
+from RMPY.core import config
 from RMPY.rig import rigBase
 
 from RMPY.rig import rigObjectsOnCurve
@@ -9,7 +9,7 @@ from RMPY.rig import rigControlsForPoints
 class RigLacesModel(rigBase.BaseModel):
     def __init__(self):
         super(RigLacesModel, self).__init__()
-        self.clusters = None
+        self.clusters = []
         self.up_vector = None
 
         self.curve = None
@@ -30,9 +30,8 @@ class RigLaces(rigBase.RigBase):
     def __init__(self, *args, **kwargs):
         kwargs['model'] = kwargs.pop('model', RigLacesModel())
         super(RigLaces, self).__init__(*args, **kwargs)
-        self.clusters = []
-        self.rig_outputs = None
-        self.rig_up_vectors = None
+        self.no_controls = False
+        self.build_points = None
 
     @property
     def rig_outputs(self):
@@ -82,17 +81,22 @@ class RigLaces(rigBase.RigBase):
 
     def create_point_base(self, *points, **kwargs):
         super(RigLaces, self).create_point_base(*points)
+        self.build_points = points
         points = self.rm.dataValidators.as_pymel_nodes(points)
-        controls_number = kwargs.pop('controls_number', len(points))
-        joint_number = kwargs.pop('joint_number', controls_number*2)
+        controls_number = kwargs.pop('controls_number', 0)
+        kwargs['offset_by_points'] = kwargs.pop('offset_by_points', True)
+        joint_number = kwargs.pop('joint_number', 10)
         periodic = kwargs.pop('periodic', False)
         single_orient_object = kwargs.pop('single_orient_object', False)
+        self.no_controls = kwargs.pop('no_controls', False)
         curve = self.create.curve.point_base(*points, periodic=periodic, ep=True)
 
         self.name_convention.set_from_name(curve, 'laceCurve', 'name')
         curve.setParent(self.rig_system.kinematics)
+
         if controls_number:
-            self._model.curve = self.create.curve.curve_base(curve, spans=controls_number)
+            self._model.curve = self.create.curve.curve_base(curve, spans=controls_number-1)
+            kwargs['controls_number'] = controls_number
         else:
             self._model.curve = curve
 
@@ -109,11 +113,11 @@ class RigLaces(rigBase.RigBase):
             self._model.curve = curve
         else:
             self._model.curve = self.create.curve.curve_base(curve, spans=num_cvs)
-        self.laces_system_multiple_rotation_controls(joint_number, **kwargs)
+        if joint_number:
+            self.laces_system_multiple_rotation_controls(joint_number, **kwargs)
 
     def laces_system(self, joint_number, **kwargs):
         cluster_nodes, self.clusters = self.create.cluster.curve_base(self.curve)
-
         rig_objects_on_curve = rigObjectsOnCurve.RigObjectsOnCurve(self.curve,
                                                                    number_of_nodes=joint_number,
                                                                    up_vector_type="object", rig_system=self.rig_system)
@@ -135,19 +139,18 @@ class RigLaces(rigBase.RigBase):
         pm.parent(self.clusters, clusters_group)
         pm.parent(rig_objects_on_curve.up_vector, self.rig_system.kinematics)
 
-        create_controls = rigControlsForPoints.RigControlsForPoints()
-        create_controls.create_point_base(*self.clusters, name='controls', **kwargs)
+        if not self.no_controls:
+            create_controls = rigControlsForPoints.RigControlsForPoints()
+            create_controls.create_point_base(*self.clusters, name='controls', **kwargs)
 
-        self._model.controls = create_controls.controls
-        self._model.reset_controls = create_controls.reset_controls
+            self._model.controls = create_controls.controls
+            self._model.reset_controls = create_controls.reset_controls
+            pm.parent(create_controls.reset_controls, self.rig_system.controls)
 
         self.up_vector.create_point_base(rig_objects_on_curve.up_vector,
                                          name="upVector", **kwargs)
 
         pm.parent(self.up_vector.reset_controls[0], self.rig_system.kinematics)
-
-        for eachControl in create_controls.reset_controls:
-            pm.parent(eachControl, self.rig_system.controls)
 
         self.rig_system.settings.worldScale >> self.rig_system.controls.scaleX
         self.rig_system.settings.worldScale >> self.rig_system.controls.scaleY
@@ -161,12 +164,22 @@ class RigLaces(rigBase.RigBase):
     def laces_system_multiple_rotation_controls(self, joint_number, **kwargs):
         offset_vector = kwargs.pop('offset_vector', [0, 1, 0])
         fk_controls = kwargs.pop('fk_controls', False)
+        offset_by_points = kwargs.pop('offset_by_points')
+        controls_number = kwargs.pop('controls_number', None)
+        curve_distance = kwargs.pop('curve_distance', self.curve.length() / len(self.build_points))
 
-        self._model.up_vector_curve = pm.duplicate(self.curve)[0]
-        self.name_convention.rename_name_in_format(self._model.up_vector_curve, name='upVectorCurve')
+        if offset_by_points:
+            self._model.up_vector_curve = self.create.curve.point_base(*self.build_points, offset_curve=True,
+                                                                       offset_value=curve_distance,
+                                                                       ep=True, name='upVectorCurve')
+            if controls_number:
+                self._model.up_vector_curve = self.create.curve.curve_base(self.up_vector_curve, spans=controls_number - 1)
+        else:
+            self._model.up_vector_curve = pm.duplicate(self.curve)[0]
+            self.up_vector_curve.translate.set(self.up_vector_curve.translate.get() + offset_vector)
 
+        # self.name_convention.rename_name_in_format(self._model.up_vector_curve, name='upVectorCurve')
         self.up_vector_curve.setParent(self.rig_system.kinematics)
-        self.up_vector_curve.translate.set(self.up_vector_curve.translate.get() + offset_vector)
 
         handlers, self.clusters = self.create.cluster.curve_base(self.curve, self.up_vector_curve)
         self._model.clusters_parent = pm.group(empty=True, name='clusters')
@@ -174,29 +187,28 @@ class RigLaces(rigBase.RigBase):
         pm.parent(self.clusters_parent, self.rig_system.kinematics)
         pm.parent(self.clusters, self.clusters_parent)
 
-        controls_group = pm.group(empty=True, name='laceControls')
-        # self.name_convention.rename_name_in_format(controls_group, name='laceControls')
-
-        create_controls = rigControlsForPoints.RigControlsForPoints(rig_system=self.rig_system)
-        create_controls.create_point_base(*self.clusters, name="control", **kwargs)
-
-        controls_group.setParent(self.rig_system.controls)
-        self.name_convention.rename_name_in_format(controls_group, self.clusters_parent, useName=True)
-        self._model.reset_controls = create_controls.reset_controls
-        self._model.controls = create_controls.controls
-        for index, eachControl in enumerate(create_controls.reset_controls):
-            if not fk_controls:
-                pm.parent(eachControl, controls_group)
-            else:
-                if index == 0:
+        if not self.no_controls:
+            controls_group = pm.group(empty=True, name='laceControls')
+            # self.name_convention.rename_name_in_format(controls_group, name='laceControls')
+            create_controls = rigControlsForPoints.RigControlsForPoints(rig_system=self.rig_system)
+            create_controls.create_point_base(*self.clusters, name="control", **kwargs)
+            controls_group.setParent(self.rig_system.controls)
+            self.name_convention.rename_name_in_format(controls_group, self.clusters_parent, useName=True)
+            self._model.reset_controls = create_controls.reset_controls
+            self._model.controls = create_controls.controls
+            for index, eachControl in enumerate(create_controls.reset_controls):
+                if not fk_controls:
                     pm.parent(eachControl, controls_group)
                 else:
-                    pm.parent(eachControl, create_controls.controls[index - 1])
+                    if index == 0:
+                        pm.parent(eachControl, controls_group)
+                    else:
+                        pm.parent(eachControl, create_controls.controls[index - 1])
+            self._model.controls_parent = controls_group
+        if joint_number:
+            self._create_output_joints_on_two_curves(joint_number)
 
-        self.laces_system_based_on_two_curves(joint_number)
-        self._model.controls_parent = controls_group
-
-    def laces_system_based_on_two_curves(self, joint_number):
+    def _create_output_joints_on_two_curves(self, joint_number):
         self.rig_up_vectors = rigObjectsOnCurve.RigObjectsOnCurve(self.up_vector_curve, up_vector_type='world',
                                                                   number_of_nodes=joint_number,
                                                                   rig_system=self.rig_system)
@@ -210,10 +222,8 @@ class RigLaces(rigBase.RigBase):
 
 
 if __name__ == '__main__':
-    rope_root = pm.ls(u'C_tail00_reference_pnt', u'C_tail01_reference_pnt', u'C_tail02_reference_pnt',
-                      u'C_tail03_reference_pnt', u'C_tail04_reference_pnt', u'C_tail05_reference_pnt')
+    rope_root = pm.ls('C_spine00_reference_grp')[0]
     laces_rig = RigLaces()
-    laces_rig.create_point_base(u'C_tail00_reference_pnt', u'C_tail01_reference_pnt', u'C_tail02_reference_pnt',
-                                u'C_tail03_reference_pnt', u'C_tail04_reference_pnt', u'C_tail05_reference_pnt',
+    laces_rig.create_point_base(*rope_root.getChildren(),
                                 single_orient_object=False,
                                 offset_axis='y', centered=True, world_align=True)

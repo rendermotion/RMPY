@@ -53,7 +53,6 @@ class RigForwardBackwardFKSpine(rigBase.RigBase):
 
 if __name__ == '__main__':
     spine_root = pm.ls('*Spine*', type='transform')
-    print spine_root
     fk_spine = RigForwardBackwardFKSpine()
     fk_spine.create_point_base(*spine_root)
     fk_spine.rename_as_skinned_joints(nub=False)

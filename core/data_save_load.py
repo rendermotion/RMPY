@@ -1,6 +1,9 @@
+import pathlib
+
 from RMPY.representations import curve
 from RMPY.creators import skinCluster
 import pymel.core as pm
+from RMPY.core import file_os
 from RMPY.core import config
 import os
 
@@ -15,6 +18,8 @@ def save_curve(*args):
     else:
         scene_curves = pm.ls(selection=True)
     saved_curves_list = []
+    non_saved_curves_list = []
+
     for each in scene_curves:
         try:
             if pm.objExists(each):
@@ -22,10 +27,11 @@ def save_curve(*args):
                 curve_node.save()
                 saved_curves_list.append(each)
             else:
-                print ("the curve {} doesn't exists".format(each))
-        except RuntimeWarning('{} not saved'.format):
-            pass
-    print ('following curves where saved: {}'.format(saved_curves_list))
+                print("the curve {} doesn't exists".format(each))
+        except:
+            non_saved_curves_list.append(each)
+    print (f'following curves where saved: {saved_curves_list}')
+    print(f'not saved: {non_saved_curves_list} ')
 
 
 def load_curves(*args):
@@ -45,8 +51,9 @@ def load_curves(*args):
                 curve_node.load()
                 curve_node.set_repr_dict()
             else:
-                print ("the curve {} doesn't exists".format(each))
-        except RuntimeWarning('{} not loaded'.format):
+                print(f"the curve {each} doesn't exists")
+        except :
+            RuntimeWarning(f'{each} not loaded')
             pass
 
 
@@ -88,11 +95,13 @@ def load_skin_cluster(*args):
 def export_maya_file(**kwargs):
     file_name = kwargs.pop('file_name', 'reference_points')
     full_path = '{}/mayaFiles'.format(config.output.file_path)
-    pm.exportSelected('{}/{}.ma'.format(full_path, file_name))
+    file_os.validate_path(full_path)
+    pm.exportSelected('{}/{}.mb'.format(full_path, file_name))
 
 
 def import_maya_file(file_name):
     full_path = '{}/mayaFiles'.format(config.output.file_path)
+    file_os.validate_path(full_path)
     pm.importFile('{}/{}'.format(full_path, file_name))
 
 
@@ -104,9 +113,10 @@ def import_all_available_maya_files():
 def available_maya_files():
     full_path = '{}/mayaFiles'.format(config.output.file_path)
     available_files = []
-    for each in os.listdir(full_path):
-        if each.split('.')[-1] == 'ma' or each.split('.')[-1] == 'mb':
-            available_files.append(each)
+    if pathlib.Path(full_path).exists():
+        for each in os.listdir(full_path):
+            if each.split('.')[-1] == 'ma' or each.split('.')[-1] == 'mb':
+                available_files.append(each)
     return available_files
 
 

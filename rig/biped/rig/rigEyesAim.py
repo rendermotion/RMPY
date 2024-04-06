@@ -59,11 +59,11 @@ class RigEyesAim(rigBase.RigBase):
         self.controls.append(controls)
 
         self._model.l_eye = rigAim.RigAim(rig_system=self.rig_system)
-        self.l_eye.create_point_base(args[0])
+        self.l_eye.create_point_base(args[0], aim_distance=aim_distance)
         self.l_eye.set_parent(self.root)
 
         self._model.r_eye = rigAim.RigAim(rig_system=self.rig_system)
-        self.r_eye.create_point_base(args[1])
+        self.r_eye.create_point_base(args[1], aim_distance=aim_distance)
         self.r_eye.set_parent(self.root)
 
         self.create.constraint.node_base(self.controls[0], *(self.l_eye.reset_controls + self.r_eye.reset_controls), mo=True)
@@ -74,7 +74,6 @@ class RigEyesAim(rigBase.RigBase):
 if __name__ == '__main__':
     rig_eyes = RigEyesAim()
     rig_eyes.create_point_base(u'R_eye_reference_pnt', u'L_eye_reference_pnt', type='circle')
-    print rig_eyes.joints
 
 
 

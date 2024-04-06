@@ -7,7 +7,7 @@ from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 from PySide2 import __version__
 from shiboken2 import wrapInstance
-from RMPY.Tools.QT5.ui import FormRigTools
+from RMPY.Tools.QT5.ui import FormRigTools_old
 import maya.mel as mel
 import os
 from RMPY import RMRigTools
@@ -23,6 +23,15 @@ from RMPY.snippets import locator_at_average
 from RMPY.AutoRig import RMRigFK
 from RMPY.core import transform
 from RMPY.core import hierarchy
+import importlib
+from RMPY.core import mirror_skinning
+from RMPY.Tools.QT5.ui import FormRigTools
+from RMPY.core import controls
+from RMPY.core import rig_core
+import importlib
+importlib.reload(controls)
+importlib.reload(FormRigTools)
+
 
 
 def getMayaWindow():
@@ -59,7 +68,12 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.ui.aim_button_btn.clicked.connect(self.aim_align)
         self.ui.hierarchy_switch_btn.clicked.connect(self.hierarchise)
         self.ui.selection_at_average_btn.clicked.connect(self.selection_at_average)
-
+        self.ui.copy_skin_button.clicked.connect(self.copy_skinning)
+        self.ui.CopyCvsPosBtn.clicked.connect(self.copy_cv_position)
+        self.ui.pushButton_2.clicked.connect(self.mirror_shapes)
+        self.ui.points_between_btn.clicked.connect(self.create_locators_between_points)
+        self.ui.mirror_skin_button.clicked.connect(self.mirror_skinning_multiple_objects)
+        self.ui.curve_point_based_btn.clicked.connect(self.curve_point_base)
         # self.ui.OrientNubButton.clicked.connect(self.OrientNubButtonPressed)
         # self.ui.unfoldRigBtn.clicked.connect(self.unfoldRigBtnPressed)
 
@@ -71,6 +85,26 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.ui.listWidget.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.name_convention = nameConvention.NameConvention()
         self.rig_base = rigBase.RigBase()
+
+    def curve_point_base(self):
+        selection = pm.ls(selection=True)
+        rig_core.curve.point_base(*selection,
+                                  ep=self.ui.create_curve_edit_points_chkbx.isChecked(),
+                                  periodic=self.ui.create_curve_periodic_chkbx.isChecked())
+
+    def mirror_skinning_multiple_objects(self):
+        selection = pm.ls(selection=True)
+        mirror_skinning.mirror_skinBinding(selection)
+
+    def copy_cv_position(self):
+        controls.transfer_curve_by_selection()
+
+    def mirror_shapes(self):
+        selection = pm.ls(selection=True)
+        controls.mirror_controls(*selection)
+    def copy_skinning(self):
+        selection = pm.ls(selection=True)
+        mirror_skinning.copy_skinning(*selection)
 
     def hierarchise(self):
         selection = pm.ls(selection=True)
@@ -96,6 +130,9 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         selection = pm.ls(selection=True)
         self.rig_base.create.space_locator.node_base(*selection)
 
+    def create_locators_between_points(self):
+        selection = pm.ls(selection=True)
+        RMRigTools.RMCreateNLocatorsBetweenObjects(selection[0], selection[1], self.ui.spinBox.value())
     def unfoldRigBtnPressed(self):
         selection = cmds.ls(selection=True)
         RMUnfoldRig.SpiralOfPointsStraight(self.ui.initRadiusSpnBx.value(), self.ui.endRadiusSpnBx.value(),
@@ -170,7 +207,8 @@ class Main(MayaQWidgetDockableMixin, QDialog):
     # RMCreateBonesAtPoints $temp;''')
     def AlignPositionBtnPressed(self):
         selection = cmds.ls(selection=True)
-        RMRigTools.RMAlign(selection[1], selection[0], 1)
+        for each in selection[:-1]:
+            RMRigTools.RMAlign(selection[-1], each, 1)
 
     # mel.eval('''source RMRigTools.mel;
     # string $temp[]=`ls -sl`;
@@ -178,15 +216,16 @@ class Main(MayaQWidgetDockableMixin, QDialog):
 
     def AlignRotationBtnPressed(self):
         selection = cmds.ls(selection=True)
-        selection = cmds.ls(selection=True)
-        RMRigTools.RMAlign(selection[1], selection[0], 2)
+        for each in selection[:-1]:
+            RMRigTools.RMAlign(selection[-1], each, 2)
 
     # mel.eval('''source RMRigTools.mel;
     # string $temp[]=`ls -sl`;
     # RMAlign $temp[1] $temp[0] 2;''')
     def AlignAllBtnPressed(self):
         selection = cmds.ls(selection=True)
-        RMRigTools.RMAlign(selection[1], selection[0], 3)
+        for each in selection[:-1]:
+            RMRigTools.RMAlign(selection[-1], each, 3)
 
     # mel.eval('''source RMRigTools.mel;
     # string $temp[]=`ls -sl`;

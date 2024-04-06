@@ -12,23 +12,26 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+
 import os
 import sys
-print('This is the path***********************')
-print(os.path.abspath('.'))
+
+# print('This is the path***********************')
+# print(os.path.abspath('.'))
 current_path = os.path.abspath('.')
 print(os.listdir(current_path))
 path_tokens = os.path.abspath('.').split('\\')
 if len(path_tokens) == 1:
     path_tokens = os.path.abspath('.').split('/')
 
-print(path_tokens)
-print(os.listdir('/'.join(path_tokens[:-2])))
+# print(path_tokens)
+# print(os.listdir('/'.join(path_tokens[:-2])))
 
 sys.path.append('/'.join(path_tokens[:-2]))
+print(os.listdir(os.path.abspath('.')))
 
-for each in sys.path:
-    print(each)
+#for each in sys.path:
+#    print(each)
 
 # -- Project information -----------------------------------------------------
 
@@ -54,9 +57,16 @@ release = '0.0.1'
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.githubpages',
-    'sphinx.ext.autosummary'
+    'sphinx.ext.autosummary',
+    "sphinx.ext.doctest",
+    "sphinx.ext.intersphinx",
+    'sphinx_rtd_theme'
 ]
-
+intersphinx_mapping = {
+    "rtd": ("https://docs.readthedocs.io/en/stable/", None),
+    "python": ("https://docs.python.org/3/", None),
+    "sphinx": ("https://www.sphinx-doc.org/en/master/", None),
+}
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['ntemplates']
 
@@ -114,8 +124,13 @@ html_static_path = []
 # default: ``['localtoc.html', 'relations.html', 'sourcelink.html',
 # 'searchbox.html']``.
 #
-# html_sidebars = {}
 
+# html_sidebars = {}
+# html_logo = "img/logo.svg"
+# html_theme_options = {
+#     "logo_only": True,
+#     "display_version": False,
+# }
 
 # -- Options for HTMLHelp output ---------------------------------------------
 

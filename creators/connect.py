@@ -177,9 +177,28 @@ class Connect(creatorsBase.CreatorsBase):
         return plus_minus, animation_curve_node
 
     def times_factor(self, attr_a, attr_b, factor=1, name='unitConversion'):
+        """
+
+        """
         unit_conversion = pm.createNode("unitConversion", name=name)
         self.name_convention.rename_name_in_format(unit_conversion, name=name)
         pm.setAttr('{}.conversionFactor'.format(unit_conversion), factor)
         pm.connectAttr(attr_a, '{}.input'.format(unit_conversion))
         pm.connectAttr('{}.output'.format(unit_conversion), attr_b)
         return unit_conversion
+
+    def static_connection(self, *args, **kwargs):
+        do_translate = kwargs.pop('translate', True)
+        do_rotate = ('rotate', True)
+        do_scale = ('scale', False)
+        source = pm.ls(args[0])[0]
+        for destination in pm.ls(args[1:]):
+            if do_translate:
+                source.translate >> destination.translate
+            if do_rotate:
+                source.rotate >> destination.rotate
+            if do_scale:
+                source.scale >> destination.scale
+
+
+

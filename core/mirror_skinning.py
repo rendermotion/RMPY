@@ -135,7 +135,7 @@ def copy_skin_binding_structure(source, destination):
             pm.copySkinWeights(sourceSkin=skin_cluster, destinationSkin=new_skin, surfaceAssociation='closestPoint',
                                noMirror=True)
             done += '%s -> %s\n' % (each_object, match_structure.match_dictionary[each_object])
-    print (done)
+    print(done)
 
 
 def copy_skin_binding(source_object, destination_object):
