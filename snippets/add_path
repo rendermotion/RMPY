@@ -1,0 +1,2 @@
+PYTHONPATH="/Users/danielkenobi/Documents/maya/scripts/:$PYTHONPATH"
+export PYTHONPATH

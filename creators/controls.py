@@ -4,7 +4,7 @@ import os
 from RMPY.core import config
 from RMPY.core import transform
 from RMPY.core import dataValidators
-
+from pathlib import Path
 from RMPY.creators import creatorsBase
 
 
@@ -188,9 +188,9 @@ class Controls(creatorsBase.CreatorsBase):
             "circleDeform": {"filename": "ControlCircularDeform.mb", "object": "CircularDeform"},
             'b':{"filename": "ControlB.mb", "object": "BControl"}
         }
-        path = os.path.dirname(RMRigTools.__file__)
+        path = Path(RMRigTools.__file__)
         RMPYPATH = os.path.split(path)
-        FinalPath = os.path.join(RMPYPATH[0], "RMPY\AutoRig\RigShapes", MoversTypeDic[control_type]["filename"])
+        FinalPath = Path(Path(RMPYPATH[0]), Path("AutoRig/RigShapes"), MoversTypeDic[control_type]["filename"])
         if os.path.isfile(FinalPath):
             pm.importFile(FinalPath, i=True, type="mayaBinary", ignoreVersion=True, mergeNamespacesOnClash=False,
                                     rpr="ControlMover", pr=False)

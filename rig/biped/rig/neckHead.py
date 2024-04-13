@@ -39,7 +39,9 @@ class NeckHead(rigBase.RigBase):
         kwargs['orient_type'] = orient_type
         self.neck.create_point_base(*args[:-1], **kwargs)
         self.neck.tip = self.neck.joints[0]
-        self.head.create_point_base(*args[-2:], type='head', **kwargs)
+        kwargs['type'] = 'head'
+        print(args[-2:])
+        self.head.create_point_base(*args[-2:], **kwargs)
         self.head.set_parent(self.neck)
         self.reset_controls.extend(self.neck.reset_controls)
         self.reset_controls.extend(self.head.reset_controls)
