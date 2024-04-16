@@ -31,6 +31,8 @@ class BlendShape(creatorsBase.CreatorsBase):
     @classmethod
     def by_node(cls, node_name, **kwargs):
         new_class_object = cls()
+        kwargs['create'] = kwargs.pop('create', True)
+
         if node_name.__class__ == pm.nodetypes.BlendShape:
             blend_shape = node_name
         else:
