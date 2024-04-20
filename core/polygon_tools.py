@@ -1,7 +1,7 @@
 from maya.api import OpenMaya
 from maya.api import OpenMayaAnim
 import maya.cmds as cmds
-
+import pymel.core as pm
 
 def getMfnMesh(name):
     sel = OpenMaya.MSelectionList()
@@ -45,8 +45,8 @@ def shells(geometry):
 
 class TopologyMatch(object):
     def __init__(self, face_source, face_destination, **kwargs):
-        self.geometry_source=kwargs.pop('geometry_source')
-        self.geometry_destination=kwargs.pop
+        self.geometry_source = kwargs.pop('geometry_source')
+        self.geometry_destination = kwargs.pop
 
 
 def get_face_list(mesh_vertices):
@@ -232,7 +232,7 @@ def test_print_nurbs_function():
 
 def apply_skinning(self, vertex_indices, weight_values):
     vertex_list = OpenMaya.MSelectionList()
-    vertex_list.add('{}.vtx[]')
+    vertex_list.add(f'pPlaneShape1.vtx[*]')
     vertex_dag_path, vertex_object = vertex_list.getComponent(0)
     influence_indices = OpenMaya.MIntArray()
     influence_indices.append(2)
@@ -270,6 +270,78 @@ def setting_up_some_skinning():
                                   weights,
                                   normalize=False,
                                   returnOldWeights=True))
+
+
+def selection_index_list():
+    selection = pm.ls(selection=True)
+    index_list = []
+    for each in selection:
+        try:
+            index_list.extend(each.indices())
+        except:
+            print ('{} object has no indices'.format(index_list))
+    return index_list
+def select_from_list(scene_object, index_list, **kwargs):
+    inverse = kwargs.pop('inverse', False)
+    scene_object = pm.ls(scene_object)[0]
+    selection_list = []
+    for each in index_list:
+        selection_list.append('{}.f[{}]'.format(scene_object, each))
+    pm.select(clear=True)
+    if inverse:
+        pm.select(scene_object.f)
+        pm.select(selection_list, deselect=True)
+    else:
+        pm.select(selection_list, add=True)
+
+
+def select_affected_vertices(geometry, indices_list, **kwargs):
+    inverse = kwargs.pop('inverse', False)
+    scene_object = pm.ls(geometry)[0]
+    selection_list = []
+    for each in indices_list:
+        selection_list.append('{}.vtx[{}]'.format(scene_object, each))
+    pm.select(clear=True)
+    if inverse:
+        pm.select(scene_object.vtx)
+        pm.select(selection_list, deselect=True)
+    else:
+        pm.select(selection_list, add=True)
+
+
+def short_selection_index_list():
+    selection = pm.ls(selection=True)
+    index_list = []
+    for each in selection:
+        try:
+            current_indes_list = each.indices()
+            if len(current_indes_list) > 1:
+                index_list.extend([(current_indes_list[0], current_indes_list[-1])])
+            else:
+                index_list.extend(current_indes_list)
+        except:
+            print ('{} object has no indices'.format(each))
+
+    return index_list
+
+
+def select_from_list(scene_object, index_list, **kwargs):
+    inverse = kwargs.pop('inverse', False)
+    scene_object = pm.ls(scene_object)[0]
+    selection_list = []
+
+    for each in index_list:
+        if each.__class__ is int:
+            selection_list.append('{}.f[{}]'.format(scene_object, each))
+        else:
+            selection_list.append('{}.f[{}:{}]'.format(scene_object, each[0], each[1]))
+
+    pm.select(clear=True)
+    if inverse:
+        pm.select(scene_object.f)
+        pm.select(selection_list, deselect=True)
+    else:
+        pm.select(selection_list, add=True)
 
 
 if __name__ == '__main__':

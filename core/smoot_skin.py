@@ -1,6 +1,8 @@
 from maya.api import OpenMaya
 from maya.api import OpenMayaAnim
 import maya.cmds as cmds
+
+
 class SmoothSkin(object):
     def __init__(self):
         self._mesh = None
@@ -47,6 +49,7 @@ class SmoothSkin(object):
         for each in string_joint_list:
             dag_path = self.getDagPath(each)
             self._joint_list.append(dag_path)
+
     def get_index_of_points_affected_by_influences(self, *influences):
         self.joint_list = influences
         vertex_index = []
@@ -60,6 +63,7 @@ class SmoothSkin(object):
                 influence_list.extend(fn_vertices.getElements())
             vertex_index.append(set(influence_list))
         return vertex_index
+
     def closest_point_to_surface(self, index_list):
         # Returns a list of uv points of an specific index list of vertex.
         return_list = []
@@ -87,24 +91,42 @@ class SmoothSkin(object):
     def getMfnMesh(self, name):
         dagPath = self.getDagPath(name)
         return OpenMaya.MFnMesh(dagPath)
+
     def getMfnNurbs(self, name):
         surface_path = self.getDagPath(name)
         return OpenMaya.MFnNurbsSurface(surface_path.node())
 
-    def apply_skinning(self, vertex_indices, weight_values):
-        vertex_list = OpenMaya.MSelectionList()
-        for each in vertex_indices:
-            vertex_list.add(f'{self.mesh.name}.vtx[{each}]')
+    def apply_skinning(self, vertex_indices, weight_values, influence):
+        if influence.__class__ == str:
+            index_influence = self.skin_cluster.indexForInfluenceObject(self.getDagPath(influence))
+        else:
+            index_influence = influence
+        influence_indices = OpenMaya.MIntArray()
+        influence_indices.append(index_influence)
+
+        for each_index, each_value in zip(vertex_indices, weight_values):
+            vertex_list = OpenMaya.MSelectionList()
+            vertex_list.add(f'{self.mesh.dagPath()}.vtx[{each_index}]')
             vertex_dag_path, vertex_object = vertex_list.getComponent(0)
-            influence_indices = OpenMaya.MIntArray()
-            influence_indices.append(2)
-            weights = OpenMaya.MDoubleArray(weight_values)
-            self.skin_cluster.setWeights(self.getDagPath(self.mesh.name),
+            print(vertex_object, vertex_object.__class__)
+            weights = OpenMaya.MDoubleArray([each_value])
+            self.skin_cluster.setWeights(self.mesh.dagPath(),
                                          vertex_object,
                                          influence_indices,
                                          weights,
-                              normalize=False,
-                              returnOldWeights=True)
+                                         normalize=False,
+                                         returnOldWeights=True)
+    def get_skinning(self, influence):
+        if influence.__class__ == str:
+            index_influence = self.skin_cluster.indexForInfluenceObject(self.getDagPath(influence))
+        else:
+            index_influence = influence
+
+        influence_indices = OpenMaya.MIntArray(index_influence)
+        empty_object = OpenMaya.MObject()
+        skinweights = self.skin_cluster.getWeights(self.mesh.dagPath(), empty_object, influence_indices)
+        return skinweights
+
     def get_skincluster_from_mesh(self):
         for each in cmds.listHistory(self.mesh.name(), pruneDagObjects=True):
             if cmds.objectType(each) == 'skinCluster':
@@ -135,10 +157,12 @@ class SmoothSkin(object):
 if __name__ == '__main__':
     smooth_skin = SmoothSkin().by_geometry('pPlane1')
     index_list = smooth_skin.get_index_of_points_affected_by_influences('joint2')
-    print(index_list)
+    # print(index_list)
     smooth_skin.surface = 'nurbsCylinder1'
-    print(smooth_skin.surface)
+    # print(smooth_skin.surface)
     # print(smooth_skin.closest_point_to_surface(index_list[0]))
-    print(smooth_skin.mesh.numVertices)
+    # print(smooth_skin.mesh.numVertices)
+    smooth_skin.apply_skinning([4, 5, 6, 7, 1], [1, .75, .5, .25, 0], 'joint1')
+    smooth_skin.get_skinning('joint1')
 
 
