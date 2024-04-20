@@ -7,6 +7,7 @@ class LegSpaceSwitch(rigBase.RigBase):
         super(LegSpaceSwitch, self).__init__(*args, **kwargs)
 
     def build(self, leg_rig, world_rig):
+
         enum_space_switch = rigEnumSpaceSwitch.RigEnumSpaceSwitch(world_rig.tip, leg_rig.root,
                                                                   alias_list=['world', 'hip'],
                                                                   attribute_name='space',

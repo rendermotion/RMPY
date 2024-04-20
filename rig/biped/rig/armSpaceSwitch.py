@@ -34,10 +34,9 @@ class ArmSpaceSwitch(rigBase.RigBase):
 
 
 if __name__ == '__main__':
-    enum_space_switch = rigEnumSpaceSwitch.RigEnumSpaceSwitch('pTorus1', 'pCube1', 'pCylinder1',
-                                                              alias_list=['torus', 'cube', 'cylinder'],
-                                                              attribute_name='primitives',
-                                                              control='pSphere1',
+    enum_space_switch = rigEnumSpaceSwitch.RigEnumSpaceSwitch('C_control02_world_ctr', 'R_clavicle01_clavicle_jnt',
+                                                              alias_list=['world', 'shoulder'],
+                                                              attribute_name='space',
+                                                              control='R_jointIK00_shoulder_ctr',
                                                               parent=True)
-
-    enum_space_switch.add_object('pSphere1')
+    enum_space_switch.add_object('R_jointIK00_shoulder_ctr', mo=True)

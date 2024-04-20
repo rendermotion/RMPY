@@ -88,10 +88,13 @@ class RigIkFk(rigBase.RigBase):
 
 
 if __name__ == '__main__':
-    root_arm = pm.ls('L_shoulder01_reference_pnt')[0]
-    arm_root_points = rm.descendents_list(root_arm)[:3]
-    arm_rig = RigIkFk()
-    arm_rig.create_point_base(*arm_root_points)
+    # root_arm = pm.ls('L_shoulder01_reference_pnt')[0]
+    # arm_root_points = rm.descendents_list(root_arm)[:3]
+    # arm_rig = RigIkFk()
+    # arm_rig.create_point_base(*arm_root_points)
+    leg_root_points = ['R_leg01_reference_pnt', 'R_Knee01_reference_pnt', 'R_ankle01_reference_pnt']
+    leg_rig = RigIkFk()
+    leg_rig.create_point_base(*leg_root_points)
 
 
 

@@ -12,6 +12,6 @@ class HandSpaceSwitch(rigBase.RigBase):
                                                                   attribute_name='space',
                                                                   control=hand_rig.controls[0],
                                                                   orient=True, rig_system=hand_rig.rig_system)
-        enum_space_switch.add_object(hand_rig.controls[0], mo=True)
+        enum_space_switch.add_object(hand_rig.controls[0])
 
 

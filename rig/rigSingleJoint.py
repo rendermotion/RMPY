@@ -43,11 +43,17 @@ class RigSingleJoint(rigBase.RigBase):
             joint.setParent(reset_joint)
 
             reset_control, control = self.create.controls.point_base(joint, **kwargs)
+
+            if self.reset_controls:
+                if len(self.reset_controls) == 1:
+                    self.reset_controls[0].setParent(self.root_node)
+                reset_control.setParent(self.root_node)
+            else:
+                reset_control.setParent(self.rig_system.controls)
+
+            reset_joint.setParent(self.rig_system.joints)
             self.reset_controls.append(reset_control)
             self.controls.append(control)
-            reset_control.setParent(self.root_node)
-            reset_joint.setParent(self.rig_system.joints)
-
             if static:
                 if self.name_convention.default_names['side'] == 'R':
                     control.translateX >> joint.translateX
@@ -57,10 +63,6 @@ class RigSingleJoint(rigBase.RigBase):
                     self.create.connect.times_factor(control.rotateX, joint.rotateX, -1)
                     self.create.connect.times_factor(control.rotateY, joint.rotateY, -1)
                     control.rotateZ >> joint.rotateZ
-
-
-
-
 
                 else:
                     control.translate >> joint.translate

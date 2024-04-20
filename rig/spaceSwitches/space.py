@@ -34,10 +34,11 @@ class RigSpace(rigBase.RigBase):
         self.tip = self.create.group.point_base(reference_object, type='world', name=self.name)
         self.root.setParent(self.rig_system.kinematics)
         self.create.constraint.parent(space_object, self.root)
-        scale_node = self.create.constraint.scale(reference_object, self.root)
+        self.tip.setParent(self.root)
+        scale_node = self.create.constraint.scale(reference_object, self.tip)
         pm.delete(scale_node)
         # pm.matchTransform(self.tip, reference_object)
-        self.tip.setParent(self.root)
+
 
 
 
