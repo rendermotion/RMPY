@@ -10,7 +10,7 @@ def get_blend_shapes_in_history(scene_node):
     return result
 
 
-def duplicate_targets( **kwargs):
+def duplicate_targets(**kwargs):
     prefix = kwargs.pop('prefix', '')
     geometry_node = kwargs.pop('geometry_node', pm.ls(selection=True)[0])
     duplicated_object = kwargs.pop('duplicated_object', geometry_node)
@@ -27,7 +27,7 @@ def duplicate_targets( **kwargs):
         if prefix not in 'LR':
             new_geo.rename('{}{}'.format(prefix, alias_name.title()))
         else:
-            new_geo.rename('{}{}'.format(prefix, alias_name))
+            new_geo.rename('{}{}'.format(alias_name, prefix))
 
         new_geo.setParent(blend_shapes_parent)
         blend_shape.weight[each].set(0)
