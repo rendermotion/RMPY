@@ -2,20 +2,15 @@ import sys
 import maya.cmds as cmds
 import maya.OpenMayaUI as mui
 from maya.app.general.mayaMixin import MayaQWidgetDockableMixin
-try:
-    from PySide2.QtCore import *
-    from PySide2.QtGui import *
-    from PySide2.QtWidgets import *
-    from PySide2 import __version__
-    from shiboken2 import wrapInstance
-    from RMPY.Tools.QT5.ui import FormGenericPropRig
 
-except ImportError:
-    from PySide.QtCore import *
-    from PySide.QtGui import *
-    from PySide import __version__
-    from shiboken import wrapInstance
-    from RMPY.Tools.QT4.ui import FormGenericPropRig
+from PySide6.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
+from PySide6 import __version__
+from shiboken6 import wrapInstance
+from RMPY.Tools.QT5.ui import FormGenericPropRig
+
+
 import maya.mel as mel
 import os
 

@@ -3,11 +3,11 @@
 # Form implementation generated from reading ui file 'UI_FacialRig.ui'
 #
 # Created: Tue Mar 15 20:23:49 2022
-#      by: pyside2-uic  running on PySide2 2.0.0~alpha0
+#      by: PySide6-uic  running on PySide6 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide6 import QtCore, QtGui, QtWidgets
 
 class Ui_Form(object):
     def setupUi(self, Form):
