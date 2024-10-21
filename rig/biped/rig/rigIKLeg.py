@@ -15,7 +15,7 @@ class IKLeg(rigSimpleIk.SimpleIK):
 if __name__ == '__main__':
     ik_leg_rig = IKLeg()
     ik_leg_rig.create_point_base(u'L_leg01_reference_pnt', u'L_Knee01_reference_pnt', u'L_ankle01_reference_pnt')
-    print ik_leg_rig.joints
+    print (ik_leg_rig.joints)
 
 
 

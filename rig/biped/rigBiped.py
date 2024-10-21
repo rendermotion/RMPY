@@ -21,6 +21,7 @@ from RMPY.rig import rigOutput
 import importlib
 importlib.reload(rigOutput)
 
+
 class RigBypedModel(rigBase.BaseModel):
     def __init__(self, **kwargs):
         super(RigBypedModel, self).__init__(**kwargs)
@@ -50,7 +51,7 @@ class RigBypedModel(rigBase.BaseModel):
         self.l_breast = rigBreast.Breast()
         self.r_breast = rigBreast.Breast()
         self.gums = rigSingleJoint.RigSingleJoint()
-        self.rig_output = None
+        self.rig_output = rigOutput.RigOutput()
 
 
 class RigByped(rigBase.RigBase):
@@ -58,7 +59,7 @@ class RigByped(rigBase.RigBase):
         super(RigByped, self).__init__(*args, **kwargs)
         self._model = RigBypedModel()
 
-        self.arm_root = [u'{}_clavicle01_reference_pnt', u'{}_shoulder01_reference_pnt', u'{}_elbow01_reference_pnt',
+        self.arm_root = [u'{}_clavicle01_reference_pnt', u'{}_arm01_reference_pnt', u'{}_elbow01_reference_pnt',
                          u'{}_wrist01_reference_pnt']
 
         self.leg_root = [u'{}_leg01_reference_pnt', u'{}_Knee01_reference_pnt', u'{}_ankle01_reference_pnt']
@@ -182,7 +183,6 @@ class RigByped(rigBase.RigBase):
     def neck_head_space_switch(self):
         return self._model.neck_head_space_switch
     @property
-
     def eye_space_switch(self):
         return self._model.eye_space_switch
 
@@ -193,36 +193,27 @@ class RigByped(rigBase.RigBase):
         self.cog.create_point_base(self.hip_root[0], name='cog', depth=1)
         self.cog.custom_world_align(self.cog.reset_controls[0])
 
-        self.rig_output = rigOutput.RigOutput(self.cog)
-        self.rig_output.add_rig(self.spine, name='spine')
-        self.rig_output.add_rig(self.hip, name='hip')
-        self.rig_output.parent('spine', 'world')
-        self.rig_output.parent('hip', 'world')
+        self.cog.set_parent(self.rig_world, create_hierarchy_joints=True, output_joint_rig=self.rig_output)
+
+        self.create.constraint.node_base(self.spine.backward_root, self.hip.root, point=True)
+        self.create.constraint.node_base(self.cog.tip, self.hip.root, orient=True, mo=True)
+        self.hip._create_output_points(self.cog, create_hierarchy_joints=True, output_joint_rig=self.rig_output)
+        self.spine.set_parent(self.cog, create_hierarchy_joints=True, output_joint_rig=self.rig_output)
 
         self.l_arm.create_point_base(*[each.format('L') for each in self.arm_root])
-        self.l_arm.set_parent(self.spine)
-        self.rig_output.add_rig(self.l_arm, name='l_arm')
-        self.rig_output.parent('l_arm', 'spine')
+        self.l_arm.set_parent(self.spine, create_hierarchy_joints=True, output_joint_rig=self.rig_output)
 
         self.r_arm.create_point_base(*[each.format('R') for each in self.arm_root])
-        self.r_arm.set_parent(self.spine)
-
-        self.rig_output.add_rig(self.r_arm, name='r_arm')
-        self.rig_output.parent('r_arm', 'spine')
+        self.r_arm.set_parent(self.spine, create_hierarchy_joints=True, output_joint_rig=self.rig_output)
 
         self.l_hand.create_point_base(*[each.format('L') for each in self.hand_root])
-        self.l_hand.set_parent(self.l_arm)
-
-        self.rig_output.add_rig(self.l_hand, name='l_hand')
-        self.rig_output.parent('l_hand', 'l_arm')
+        self.l_hand.set_parent(self.l_arm, create_hierarchy_joints=True, output_joint_rig=self.rig_output)
 
         self.l_arm_space_switch.build(self.l_arm, self.rig_world, self.cog)
         self.l_hand_space_switch.build(self.l_hand, self.rig_world, self.l_arm)
 
         self.r_hand.create_point_base(*[each.format('R') for each in self.hand_root])
-        self.r_hand.set_parent(self.r_arm)
-        self.rig_output.add_rig(self.r_hand, name='r_hand')
-        self.rig_output.parent('r_hand', 'r_arm')
+        self.r_hand.set_parent(self.r_arm, create_hierarchy_joints=True, output_joint_rig=self.rig_output)
 
         self.r_arm_space_switch.build(self.r_arm, self.rig_world, self.cog)
 
@@ -245,7 +236,7 @@ class RigByped(rigBase.RigBase):
         # self.eyes.create_point_base(*self.eyes_root)
         # self.eye_space_switch.build(self.eyes, self.neck_head, self.rig_world)
 
-        self.neck_head.set_parent(self.spine)
+        self.neck_head.set_parent(self.spine, create_hierarchy_joints=True, output_joint_rig=self.rig_output)
 
         self.neck_head_space_switch.build(self.neck_head, self.rig_world, self.cog)
 
@@ -253,16 +244,13 @@ class RigByped(rigBase.RigBase):
         # self.gums.set_parent(self.neck_head)
 
         # self.jaw.set_parent(self.neck_head)
-        self.cog.set_parent(self.rig_world)
-        self.spine.set_parent(self.cog)
+        #
+        # self.spine.set_parent(self.cog)
 
         # self.eyes.set_parent(self.neck_head)
 
-        self.create.constraint.node_base(self.spine.backward_root, self.hip.root, point=True)
-        self.create.constraint.node_base(self.cog.tip, self.hip.root, orient=True, mo=True)
-
-        self.l_leg.set_parent(self.hip)
-        self.r_leg.set_parent(self.hip)
+        self.l_leg.set_parent(self.hip, create_hierarchy_joints=True, output_joint_rig=self.rig_output)
+        self.r_leg.set_parent(self.hip, create_hierarchy_joints=True, output_joint_rig=self.rig_output)
 
         # self.l_breast.create_point_base(*[each.format('L') for each in self.breast_root])
         # self.r_breast.create_point_base(*[each.format('R') for each in self.breast_root])
@@ -278,15 +266,6 @@ class RigByped(rigBase.RigBase):
         # self.eyes.rename_as_skinned_joints(nub=False)
 
         # self.jaw.rename_as_skinned_joints()
-        self.spine.rename_as_skinned_joints()
-        self.hip.rename_as_skinned_joints()
-        self.l_arm.rename_as_skinned_joints()
-        self.r_arm.rename_as_skinned_joints()
-        self.l_hand.rename_as_skinned_joints()
-        self.r_hand.rename_as_skinned_joints()
-        self.neck_head.rename_as_skinned_joints()
-        self.l_leg.rename_as_skinned_joints()
-        self.r_leg.rename_as_skinned_joints()
 
         # self.l_toes.rename_as_skinned_joints()
         # self.r_toes.rename_as_skinned_joints()

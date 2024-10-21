@@ -79,7 +79,8 @@ class NameConvention(object):
                            'objectType': ['jnt', 'sknjnt', 'nub', 'skn', 'UDF', 'shp', 'msh', 'rmsh', 'grp', 'pnc',
                                           'orc', 'prc', 'scc', 'pvc', 'ctr', 'pnt', 'ikh', 'ikf', 'rvs', 'mult', 'cnd',
                                           'blt', 'cui', 'dbtw', 'cls', 'clsh', 'pma', 'b2a', 'mph', 'ffd', 'bs', 'aim',
-                                          'cfme', 'lft', 'psfi', 'guide', 'unc', 'skn', 'dmx', 'mmx', 'nrb', 'ffm','vcp']}
+                                          'cfme', 'lft', 'psfi', 'guide', 'unc', 'skn', 'dmx', 'mmx', 'nrb', 'ffm',
+                                          'vcp', 'auu']}
         self.translator = {'objectType': {
             "joint": "jnt",
             "skinjoint": "sknjnt",
@@ -89,6 +90,7 @@ class NameConvention(object):
             'decomposeMatrix': 'dmx',
             "undefined": "UDF",
             "nurbsCurve": "shp",
+            'animCurveUU': 'auu',
             'multMatrix': 'mmx',
             "mesh": "msh",
             "renderMesh": "rmsh",
@@ -379,36 +381,36 @@ class NameConvention(object):
         else:
             return new_name_array
 
-    def rename_based_on_base_name(self, base_name, obj_to_rename, **wantedNameDic):
+    def rename_based_on_base_name(self, base_name, obj_to_rename, **new_name_dictionary):
 
         obj_to_rename = validate_input_nodes(obj_to_rename)
         base_name = validate_input_nodes(base_name)
 
-        wantedNameCreated = {}
+        new_name_token_list = {}
         if self.is_name_in_format(base_name):
-            baseNameTokens = base_name.split('_')
+            base_name_token_list = base_name.split('_')
             for eachToken in self.name_convention:
-                if eachToken in wantedNameDic:
-                    wantedNameCreated[eachToken] = str(wantedNameDic[eachToken])
+                if eachToken in new_name_dictionary:
+                    new_name_token_list[eachToken] = str(new_name_dictionary[eachToken])
                 else:
-                    wantedNameCreated[eachToken] = baseNameTokens[self.name_convention[eachToken]]
-
-                wantedNameCreated['objectType'] = self.guess_object_type(obj_to_rename)
+                    new_name_token_list[eachToken] = base_name_token_list[self.name_convention[eachToken]]
+                if eachToken not in new_name_dictionary:
+                    new_name_token_list['objectType'] = self.guess_object_type(obj_to_rename)
         else:
             for eachToken in self.name_convention:
-                if eachToken in wantedNameDic:
-                    wantedNameCreated[eachToken] = str(wantedNameDic[eachToken])
+                if eachToken in new_name_dictionary:
+                    new_name_token_list[eachToken] = str(new_name_dictionary[eachToken])
                 else:
-                    wantedNameCreated[eachToken] = self.default_names[eachToken]
-            if not 'name' in wantedNameDic:
+                    new_name_token_list[eachToken] = self.default_names[eachToken]
+            if not 'name' in new_name_dictionary:
                 NamesList = obj_to_rename.split("_")
                 NewName = ""
                 for names in NamesList:
                     NewName += names
-                wantedNameCreated['name'] = NewName
+                new_name_token_list['name'] = NewName
 
         if cmds.objExists(obj_to_rename):
-            NewName = self.set_name_in_format(**wantedNameCreated)
+            NewName = self.set_name_in_format(**new_name_token_list)
             cmds.rename(obj_to_rename, NewName)
             return NewName
         else:
