@@ -33,7 +33,7 @@ class Joint(creatorsBase.CreatorsBase):
             pm.select(cl=True)
             new_joint = pm.joint(p=[0, 0, 0], name="joint")
             new_joint.segmentScaleCompensate.set(0)
-            transform.align(point, new_joint)
+            pm.matchTransform(new_joint, point)
             joint_array.append(new_joint)
             self.name_convention.rename_name_in_format(new_joint, name=custom_name, objectType=joint_type)
 
@@ -95,32 +95,32 @@ class Joint(creatorsBase.CreatorsBase):
             if index == 0:
                 pm.parent(joint_array[0], ParentJoint)
 
-            transform.align(point_array[index], joint_array[index])
+            pm.matchTransform(joint_array[index], point_array[index])
             pm.makeIdentity(joint_array[index], apply=True, t=1, r=1, s=0)
 
             if index > 0:
                 if index == 1:
-                    AxisOrientJoint = pm.joint()
-                    pm.parent(AxisOrientJoint, ParentJoint)
-                    transform.align(point_array[0], AxisOrientJoint)
-                    pm.makeIdentity(AxisOrientJoint, apply=True, t=1, r=1, s=0)
+                    axis_orient_joint = pm.joint()
+                    pm.parent(axis_orient_joint, ParentJoint)
+                    pm.matchTransform(axis_orient_joint, point_array[0])
+                    pm.makeIdentity(axis_orient_joint, apply=True, t=1, r=1, s=0)
 
                     if z_axis_orientation in "Yy":
-                        pm.xform(AxisOrientJoint, translation=[0, -1, 0], objectSpace=True)
+                        pm.xform(axis_orient_joint, translation=[0, -1, 0], objectSpace=True)
 
                     elif z_axis_orientation in "Xx":
-                        pm.xform(AxisOrientJoint, translation=[-1, 0, 0], objectSpace=True)
+                        pm.xform(axis_orient_joint, translation=[-1, 0, 0], objectSpace=True)
 
                     elif z_axis_orientation in "Zz":
-                        pm.xform(AxisOrientJoint, translation=[0, 0, -1], objectSpace=True)
+                        pm.xform(axis_orient_joint, translation=[0, 0, -1], objectSpace=True)
 
-                    pm.parent(joint_array[0], AxisOrientJoint)
+                    pm.parent(joint_array[0], axis_orient_joint)
                     pm.parent(joint_array[index], joint_array[index - 1])
                     pm.joint(joint_array[index - 1], edit=True, orientJoint=config.axis_order)
 
                     pm.parent(joint_array[index - 1], world=True)
-                    pm.delete(AxisOrientJoint)
-                    transform.align(joint_array[index - 1], ParentJoint)
+                    pm.delete(axis_orient_joint)
+                    pm.matchTransform(ParentJoint, joint_array[index - 1])
                     pm.parent(joint_array[index - 1], ParentJoint)
 
                 else:
@@ -144,7 +144,7 @@ class Joint(creatorsBase.CreatorsBase):
                             # pm.joint(jointArray[index-1], e=True, orientation=[parentOrient[0], parentOrient[1], parentOrient[2]])
 
             if index == len(point_array) - 1:
-                transform.align(joint_array[index - 1], joint_array[index], rotate=False)
+                pm.matchTransform(joint_array[index], joint_array[index - 1], position=True)
                 pm.makeIdentity(joint_array[index], apply=True, t=0, r=1, s=0)
             joint_array[index].rotateOrder.set(config.axis_order)
         return ParentJoint, joint_array
@@ -161,13 +161,13 @@ class Joint(creatorsBase.CreatorsBase):
             else:
                 parent = each_joint.getParent()
                 if parent:
-                    transform.align(parent, each_joint, translate=False)
+                    pm.matchTransform(each_joint, parent, rotation=True)
                 pm.makeIdentity(each_joint, t=False, r=True, s=False, apply=True)
 
     def point_orient(self, *joint_list, **kwargs):
         point_list = kwargs.pop('point_list', None)
         for each_joint, each_point in zip(joint_list, point_list):
-            transform.align(each_point, each_joint, translate=False)
+            pm.matchTransform(each_joint, each_point, rotation=True)
             pm.makeIdentity(each_joint, t=False, r=True, s=False, apply=True)
 
     def bend_orient(self, *joint_list):
@@ -223,3 +223,5 @@ if __name__ == '__main__':
     finger_points = rm.descendants_list(root_finger)
     joints = Joint()
     joints.point_base(*finger_points, orient_type='bend_orient')'''
+    joints = Joint()
+    joints.point_base('C_Hip00_reference_pnt', 'C_Hip01_reference_pnt')

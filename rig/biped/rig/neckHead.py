@@ -52,7 +52,6 @@ class NeckHead(rigBase.RigBase):
         self.twist_neck.create_point_base(self.root, self.neck.joints[0], self.head.joints[0], folicule_number=5)
         pm.parent(self.head.joints[0], self.neck.joints[0])
         pm.delete(self.neck.joints[1], self.head.reset_joints[0])
-
         self.joints.extend(self.twist_neck.joints)
         self.joints.extend(self.head.joints)
 

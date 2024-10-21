@@ -222,28 +222,50 @@ class RigBase(object):
     def set_parent(self, rig_object, **kwargs):
         """
         This is the default function to parent modules, when you set parent an object it will look for the
-        root on the dictionary attachments. If this has not being asigned the default value will be the first elementq
+        root on the dictionary attachments. If this has not being asigned the default value will be the first element
         of the list rig_reset_controls. So you can asign what ever point you want to be the driver of all the rig
         or let the rig find it by itself.
         :param rig_object: object or rig that you expect to be the parent of the module.
         :return:
         """
         kwargs['mo'] = kwargs.pop('mo', True)
+        create_hierarchy_joints = kwargs.pop('create_hierarchy_joints', False)
+        output_joint_rig = kwargs.pop('output_joint_rig', None)
         # self.create.constraint.define_constraints(point=False, scale=True, parent=True, orient=False)
 
         if RigBase in type(rig_object).__mro__:
             print('{} in constraining {} {}'.format(self.create.constraint.constraint_type, rig_object.tip, self.root))
-
             self.create.constraint.node_base(rig_object.tip, self.root, **kwargs)
         else:
             try:
                 self.create.constraint.node_base(rig_object, self.root, **kwargs)
-
             except AttributeError:
                 raise AttributeError('not valid object to parent')
         assert not hasattr(super(RigBase, self), 'set_parent')
 
-    def rename_as_skinned_joints(self, nub=True):
+        self._create_output_points(rig_object, create_hierarchy_joints=create_hierarchy_joints,
+                                   output_joint_rig=output_joint_rig)
+
+    def _create_output_points(self, rig_object, **kwargs):
+        create_hierarchy_joints = kwargs.pop('create_hierarchy_joints', False)
+        output_joint_rig = kwargs.pop('output_joint_rig', None)
+        if create_hierarchy_joints and output_joint_rig:
+            rig_joints = []
+            for index, each in enumerate(self.joints):
+                new_joint = pm.joint()
+                self.name_convention.rename_based_on_base_name(each, new_joint, name='main', objectType='skinjoint')
+                rig_joints.append(new_joint)
+                if index == 0:
+                    if rig_object.outputs:
+                        new_joint.setParent(rig_object.outputs[-1], noInvScale=True, relative=True)
+                    else:
+                        new_joint.setParent(output_joint_rig.outputs[-1], noInvScale=True, relative=True)
+                else:
+                    new_joint.setParent(rig_joints[index - 1], noInvScale=True, relative=True)
+                self.create.constraint.matrix_node_base(each, new_joint)
+                self.outputs.append(new_joint)
+
+    def rename_as_skinned_joints(self, nub=True, create_outputs=False):
         if nub:
             rename_joints = self.joints[:-1]
         else:

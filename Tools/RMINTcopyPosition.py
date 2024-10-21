@@ -2,19 +2,14 @@ import sys
 import maya.cmds as cmds
 import maya.OpenMayaUI as mui
 from maya.app.general.mayaMixin import MayaQWidgetDockableMixin
-try:
-    from PySide2.QtCore import *
-    from PySide2.QtGui import *
-    from PySide2.QtWidgets import *
-    from PySide2 import __version__
-    from shiboken2 import wrapInstance
-    from RMPY.Tools.QT5.ui import FormCopyPosition
-except ImportError:
-    from PySide.QtCore import *
-    from PySide.QtGui import *
-    from PySide import __version__
-    from shiboken import wrapInstance
-    from RMPY.Tools.QT4.ui import FormCopyPosition
+
+from PySide6.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
+from PySide6 import __version__
+from shiboken6 import wrapInstance
+from RMPY.Tools.QT5.ui import FormCopyPosition
+
 import maya.mel as mel
 import os
 import inspect
@@ -35,9 +30,9 @@ def getMayaWindow():
     return wrapInstance(int(ptr), QMainWindow)
 
 
-class main(MayaQWidgetDockableMixin, QDialog):
+class Main(MayaQWidgetDockableMixin, QDialog):
     def __init__(self, parent=None):
-        super(main, self).__init__(parent=getMayaWindow())
+        super(Main, self).__init__(parent=getMayaWindow())
         self.ui = FormCopyPosition.Ui_Form()
         self.ui.setupUi(self)
         self.setWindowTitle('RM Transform Tools ')
@@ -67,8 +62,7 @@ class main(MayaQWidgetDockableMixin, QDialog):
         if not os.path.exists(self.Directory):
             os.makedirs(self.Directory)
         fname = QFileDialog.getSaveFileName(parent=self, caption='Save Filename As',
-                                                  dir=unicode(self.Directory))  # self.Directory
-        print fname
+                                                  dir=self.Directory)  # self.Directory
         with open(fname[0], 'w') as outfile:
             json.dump(SaveDic, outfile, sort_keys=True, indent=4)
 
@@ -77,7 +71,7 @@ class main(MayaQWidgetDockableMixin, QDialog):
         with open(self.DiskCachePath, 'r') as outfile:
             OpenDic = json.load(outfile)
         if OpenDic != u'':
-            if OpenDic.has_key('data') and OpenDic.has_key('type'):
+            if 'data' in OpenDic.keys() and 'type' in OpenDic.keys():
                 if OpenDic['type'] == str('ObjectTransforms'):
                     self.TramsformDic = OpenDic['data']
                     RMUncategorized.SetObjectTransformDic(self.TramsformDic)

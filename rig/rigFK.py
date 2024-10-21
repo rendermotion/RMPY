@@ -39,8 +39,9 @@ class RigFK(rigBase.RigBase):
 
 if __name__ == '__main__':
     rig_fk = RigFK()
-    rig_fk.create_point_base(u'C_Hip01_reference_pnt', u'C_tail01_reference_pnt', u'C_tail02_reference_pnt',
-                             u'C_tail03_reference_pnt', u'C_tail04_reference_pnt', u'C_tail05_reference_pnt',
-                             orient_type='point_orient')
-    # rig_fk.create_point_base(u'R_leg01_reference_pnt', u'R_Knee01_reference_pnt', u'R_ankle01_reference_pnt')
+    # rig_fk.create_point_base(u'C_Hip01_reference_pnt', u'C_tail01_reference_pnt', u'C_tail02_reference_pnt',
+    #                          u'C_tail03_reference_pnt', u'C_tail04_reference_pnt', u'C_tail05_reference_pnt',
+    #                          orient_type='point_orient')
+    rig_fk.create_point_base(u'C_Hip00_reference_pnt', u'C_Hip01_reference_pnt')
+
 

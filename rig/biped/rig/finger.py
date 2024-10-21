@@ -10,6 +10,7 @@ class Finger(rigFK.RigFK):
     def create_point_base(self, *args, **kwargs):
         orient_type = kwargs.pop('orient_type', 'point_orient')
         kwargs['orient_type'] = orient_type
+        kwargs['name'] = 'finger'
         super(Finger, self).create_point_base(*args, **kwargs)
 
 

@@ -115,10 +115,30 @@ class Constraint(creatorsBase.CreatorsBase):
                 self._constraint(drivers[int(constraint_weight_value)], each, w=1.0 - constraint_value, **kwargs)
                 self._constraint(drivers[int(constraint_weight_value) + 1], each, w=constraint_value, **kwargs)
 
+    def matrix_node_base(self, driver, driven, mo=False):
+
+        matrix_mult = pm.createNode('multMatrix')
+        self.name_convention.rename_name_in_format(matrix_mult, name=self.name_convention.get_a_short_name(driven))
+
+        if mo:
+            print(driven.worldMatrix[0].get())
+            print(driver.worldInverseMatrix[1].get())
+            matrix_mult.matrixIn[0].set(driven.worldMatrix[0].get() * driver.worldInverseMatrix[0].get())
+
+        driven.translate.set(0, 0, 0)
+        driven.rotate.set(0, 0, 0)
+        driven.scale.set(1, 1, 1)
+
+        driver.worldMatrix[0] >> matrix_mult.matrixIn[1]
+        matrix_mult.matrixSum >> driven.offsetParentMatrix
+        if driven.getParent():
+            driven.getParent().worldInverseMatrix[0] >> matrix_mult.matrixIn[2]
+
+
 
 if __name__ == '__main__':
-    locators = pm.ls('locator*', type='transform')
-    nurbs_curves = pm.ls('nurb*', type='transform')
-    selection = pm.ls(selection=True)
+    locators = pm.ls('locator1', type='transform')
+    nurbs_curves = pm.ls('joint1')
     constraint = Constraint()
-    constraint.node_list_base(nurbs_curves, locators, mo=False)
+    print(locators, nurbs_curves)
+    constraint.matrix_node_base(locators[0], nurbs_curves[0], mo=True)
