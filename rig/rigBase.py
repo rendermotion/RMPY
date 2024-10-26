@@ -137,7 +137,7 @@ class RigBase(object):
 
     def create_point_base(self, *args, **kwargs):
         """
-        base function for point creation, it validates the args values and turn them in to points.
+        Base function for rig creation, it validates the args values and turn them in to points.
         it creates two arrays one of objects, one of points, and one of rotation vectors
         """
         self.setup_name_convention_node_base(*args, **kwargs)
@@ -145,7 +145,10 @@ class RigBase(object):
 
     def create_node_base(self, *args, **kwargs):
         """
-        base function for node creation, it gets as input any kind of nodes and returns them as a 
+        Base function for node creation, it gets as input any kind of nodes, usually this can be transforms.
+        There is no real difference with create point base, other than create point base validates the input,
+        and if no nodes are provided it will create them. Node base,  shoud only be used with maya nodes and it is an
+        alternative to create_point_base.
         """
         self.setup_name_convention_node_base(*args, **kwargs)
         assert not hasattr(super(RigBase, self), 'node_base')

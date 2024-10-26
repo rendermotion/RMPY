@@ -2,11 +2,7 @@ import pymel.core as pm
 import inspect
 
 
-def as_pymel_nodes(nodes):
-    converted_to_list = False
-    if type(nodes) not in [list, tuple]:
-        nodes = [nodes]
-        converted_to_list = True
+def as_pymel_nodes(*nodes):
     return_list = []
     for each in nodes:
         if pm.general.PyNode in inspect.getmro(type(each)):
@@ -15,16 +11,14 @@ def as_pymel_nodes(nodes):
             try:
                 return_list += pm.ls(each)
             except:
-                print ("Error, can't convert %s to PyNode" % each)
+                print("Error, can't convert %s to PyNode" % each)
                 raise AttributeError
-
-    if converted_to_list:
-        try:
-            return return_list[0]
-        except:
-            raise (AttributeError, 'object/s do not exist::%s' % nodes)
+    if len(return_list) == 1:
+        return return_list[0]
+    elif len(return_list) > 1:
+        return tuple(return_list)
     else:
-        return return_list
+        return None
 
 
 def as_vector_position(input_data):
@@ -56,5 +50,40 @@ def as_vector_rotation(input_data):
         return pm.datatypes.Vector(input_data)
 
 
+def as_point(input_data):
+    if input_data.__class__ == pm.general.MeshVertex:
+        position = as_vector_position(input_data)
+        x_vector = as_vector_rotation(input_data)
+        up_vector = pm.datatypes.Vector([0, 1, 0])
+        dot_result = x_vector.dot(up_vector)
+        if dot_result == 1 or dot_result == -1:
+            up_vector = pm.datatypes.Vector([1, 0, 0])
+        y_vector = up_vector.cross(x_vector)
+        z_vector = x_vector.cross(y_vector)
+        new_space_locator = pm.spaceLocator()
+        new_space_locator.offsetParentMatrix.set(list([*x_vector, 0, *z_vector, 0, *y_vector, 0, *position, 1]))
+    else:
+        print(f'not valid Data {input_data.__class__}')
+
+
 if __name__ == '__main__':
-    pm.ls(selection=True)
+    import maya.cmds as cmds
+
+    selection = pm.ls(selection=True)[0]
+    as_point(selection)
+
+import maya.cmds as cmds
+
+def remove_prefix(prefix):
+    """Removes the specified prefix from all objects in the Maya scene.
+
+    Args:
+        prefix (str): The prefix to be removed.
+    """
+
+    for obj in cmds.ls(f'{prefix}*'):
+        new_name = obj[len(prefix):]
+        cmds.rename(obj, new_name)
+
+prefix_to_remove = "__pasted"  # Replace with the desired prefix
+remove_prefix(prefix_to_remove)
