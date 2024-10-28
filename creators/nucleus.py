@@ -44,7 +44,7 @@ class Nucleus(creatorsBase.CreatorsBase):
 
     @node.setter
     def node(self, value):
-        self._node = dataValidators.as_pymel_nodes(value)
+        self._node = dataValidators.as_pymel_nodes(value)[0]
 
     @property
     def start_frame(self):
@@ -113,7 +113,7 @@ class Nucleus(creatorsBase.CreatorsBase):
         self.hair_systems.append(new_hair_system)
 
     def add_collision_mesh(self, *mesh):
-        mesh = dataValidators.as_pymel_nodes(mesh)
+        mesh = dataValidators.as_pymel_nodes(*mesh)
 
         for each_mesh in mesh:
             new_nrigid = nRigid.NRigid(name_convention=self.name_convention, mesh=each_mesh)

@@ -17,6 +17,7 @@ class RigWorld(rigProp.RigProp):
 
     def build(self):
         reference_group = pm.group(empty=True)
+        print(reference_group)
         self.name_convention.rename_name_in_format(reference_group, name='world', system='reference')
         super(RigWorld, self).create_point_base(reference_group, name='control', depth=4, centered=True)
         self.rm.lock_and_hide_attributes(self.controls[-1], bit_string='0000000000')
@@ -27,7 +28,7 @@ class RigWorld(rigProp.RigProp):
 
 if __name__ == '__main__':
     rig_world = RigWorld()
-    rig_world.settings_height = 5
+    # rig_world.settings_height = 5
 
 
 

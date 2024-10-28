@@ -31,7 +31,7 @@ class Group(creatorsBase.CreatorsBase):
         super(Group, self).point_base(*scene_nodes, **kwargs)
         group_type = kwargs.pop('type', "inserted")
         name = kwargs.pop('name', None)
-        scene_nodes = dataValidators.as_pymel_nodes(scene_nodes)
+        scene_nodes = dataValidators.as_pymel_nodes(*scene_nodes)
         new_groups_result = []
 
         for each_node in scene_nodes:

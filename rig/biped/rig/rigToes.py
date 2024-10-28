@@ -23,7 +23,7 @@ class Toes(rigBase.RigBase):
 
     def create_point_base(self, toes_root, **kwargs):
         super(Toes, self).create_point_base(toes_root, **kwargs)
-        toes_root = self.rm.dataValidators.as_pymel_nodes(toes_root)
+        toes_root = self.rm.dataValidators.as_pymel_nodes(toes_root)[0]
         fingers_root = self.create.group.point_base(toes_root, type='world')
         toes_list = toes_root.getChildren(type='transform')
         self.attach_points['root'] = fingers_root

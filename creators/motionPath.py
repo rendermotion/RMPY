@@ -23,7 +23,7 @@ class MotionPath(creatorsBase.CreatorsBase):
         """
         motion_path_list = []
         if 'curve' in kwargs.keys():
-            self.curve = dataValidators.as_pymel_nodes(kwargs.pop('curve'))
+            self.curve = dataValidators.as_pymel_nodes(kwargs.pop('curve'))[0]
 
         name = kwargs.pop('name', 'motionPath')
 
@@ -69,7 +69,7 @@ class MotionPath(creatorsBase.CreatorsBase):
                     motion_path_node = pm.pathAnimation(each_node, c=self.curve, follow=True, worldUpType="scene",
                                                         **kwargs)
 
-                motion_path_node = dataValidators.as_pymel_nodes(motion_path_node)
+                motion_path_node = dataValidators.as_pymel_nodes(motion_path_node)[0]
                 motion_path_list.append(motion_path_node)
 
                 list_add_double_linear = each_node.listConnections(type='addDoubleLinear', source=False)

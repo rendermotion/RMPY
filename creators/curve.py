@@ -14,7 +14,7 @@ class Curve(creatorsBase.CreatorsBase):
         spans = kwargs.pop('spans', 4)
         rebuild_type = kwargs.pop('rebuildType', 0)
         keep_range = kwargs.pop('keepRange', 2)
-        curve = dataValidators.as_pymel_nodes(curve)
+        curve = dataValidators.as_pymel_nodes(curve)[0]
 
         if curve.form() == 'periodic':
             if spans >= 3:
@@ -39,7 +39,7 @@ class Curve(creatorsBase.CreatorsBase):
         degree = kwargs.pop('degree', 3)
         points = [dataValidators.as_2d_vector(each_point) for each_point in points]
         if surface:
-            surface = dataValidators.as_pymel_nodes(surface)
+            surface = dataValidators.as_pymel_nodes(surface)[0]
             if not periodic:
                 curve = pm.curveOnSurface(surface, degree=degree, positionUV=points,
                                           name=self.name_convention.set_name_in_format(

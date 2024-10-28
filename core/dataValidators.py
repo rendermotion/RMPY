@@ -9,17 +9,11 @@ def as_pymel_nodes(*nodes):
             return_list.append(each)
         else:
             try:
-                return_list += pm.ls(each)
+                return_list.extend(pm.ls(each))
             except:
                 print("Error, can't convert %s to PyNode" % each)
                 raise AttributeError
-    if len(return_list) == 1:
-        return return_list[0]
-    elif len(return_list) > 1:
-        return tuple(return_list)
-    else:
-        return None
-
+    return return_list
 
 def as_vector_position(input_data):
     if input_data.__class__ == pm.general.MeshVertex:

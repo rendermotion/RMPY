@@ -12,7 +12,7 @@ class SpaceLocator(creatorsBase.CreatorsBase):
         super(SpaceLocator, self).__init__(*args, **kwargs)
 
     def node_base(self, *transforms_list, **kwargs):
-        transforms_list = dataValidators.as_pymel_nodes(transforms_list)
+        transforms_list = dataValidators.as_pymel_nodes(*transforms_list)
         rotation = kwargs.pop('rotation', True)
         name = kwargs.pop('name', None)
         locator_list = []
@@ -48,7 +48,7 @@ class SpaceLocator(creatorsBase.CreatorsBase):
 
     def point_base(self, *points, **kwargs):
         name = kwargs.pop('name', None)
-        points = dataValidators.as_pymel_nodes(points)
+        points = dataValidators.as_pymel_nodes(*points)
         points_list = []
         for each in points:
             if each.__class__ == pm.general.MeshVertex:
@@ -72,8 +72,8 @@ class SpaceLocator(creatorsBase.CreatorsBase):
         :align: The object that will all the objects be aligned to.
                    Valid Values in align are FirstObj, SecondObject, and World"""
 
-        obj01 = dataValidators.as_pymel_nodes(obj01)
-        obj02 = dataValidators.as_pymel_nodes(obj02)
+        obj01 = dataValidators.as_pymel_nodes(obj01)[0]
+        obj02 = dataValidators.as_pymel_nodes(obj02)[0]
         locator_list = []
         position01, position02 = pm.xform(obj01, q=True, ws=True, rp=True), pm.xform(obj02, q=True, ws=True,
                                                                                      rp=True)

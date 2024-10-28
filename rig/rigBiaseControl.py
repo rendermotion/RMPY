@@ -94,12 +94,12 @@ class BiasedControl(rigBase.RigBase):
             curve_points = [[0, 0, 0], [.25, 0, .25], [.75, 0, .75], [1, 0, 1]]
 
         self.biased_line = self.create.curve.point_base(*curve_points)
-        self.biased_line = dataValidators.as_pymel_nodes(self.biased_line)
+        self.biased_line = dataValidators.as_pymel_nodes(self.biased_line)[0]
         self.name_convention.rename_name_in_format(self.biased_line, name='biasedCurve')
         self.frame_line = self.create.curve.point_base([0, 0, 0], [1, 0, 0],
                                                        [1, 0, 1], [0, 0, 1], [0, 0, 0],
                                                        degree=1)
-        self.frame_line = dataValidators.as_pymel_nodes(self.frame_line)
+        self.frame_line = dataValidators.as_pymel_nodes(self.frame_line)[0]
         self.name_convention.rename_name_in_format(self.frame_line, name='frameCurve')
 
     def connect(self, connection_attribute_list):

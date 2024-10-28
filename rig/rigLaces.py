@@ -82,7 +82,7 @@ class RigLaces(rigBase.RigBase):
     def create_point_base(self, *points, **kwargs):
         super(RigLaces, self).create_point_base(*points)
         self.build_points = points
-        points = self.rm.dataValidators.as_pymel_nodes(points)
+        points = self.rm.dataValidators.as_pymel_nodes(*points)
         controls_number = kwargs.pop('controls_number', 0)
         kwargs['offset_by_points'] = kwargs.pop('offset_by_points', True)
         joint_number = kwargs.pop('joint_number', 10)

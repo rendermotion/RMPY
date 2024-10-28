@@ -38,7 +38,7 @@ class RigBaseSwitch(rigBase.RigBase):
         """
         self.control = kwargs.pop('control', self.control)
         if self.control:
-            self.control = self.rm.as_pymel_nodes(self.control)
+            self.control = self.rm.as_pymel_nodes(self.control)[0]
         self._model.attribute_name = kwargs.pop('attribute_name', self.attribute_name)
         self.reverse = pm.shadingNode('reverse', asUtility=True)
         self.name_convention.rename_name_in_format(self.reverse, name="reverse")

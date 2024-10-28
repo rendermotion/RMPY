@@ -26,7 +26,7 @@ class Hand(rigSingleJoint.RigSingleJoint):
         self._model.fingers = value
 
     def create_point_base(self, *args, **kwargs):
-        args = self.rm.dataValidators.as_pymel_nodes(args)
+        args = self.rm.dataValidators.as_pymel_nodes(*args)
         super(Hand, self).create_point_base(args[0], name='main')
         for each in args[0].getChildren(type='transform'):
             new_finger = finger.Finger()

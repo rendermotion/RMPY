@@ -3,6 +3,7 @@ from maya.api import OpenMayaAnim
 import maya.cmds as cmds
 import re
 
+
 class ApiComponents(object):
     def __init__(self):
         self.components_object = None

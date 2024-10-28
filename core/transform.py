@@ -16,9 +16,10 @@ def align(*args, **kwargs):
     """
     translate = kwargs.pop('translate', True)
     rotate = kwargs.pop('rotate', True)
-    main_object = dataValidators.as_pymel_nodes(args[0])
-    objects_to_align = dataValidators.as_pymel_nodes(args[1:])
-    for each in objects_to_align:
+    align_objects = dataValidators.as_pymel_nodes(*args)
+    main_object = align_objects[0]
+
+    for each in align_objects[1:]:
         if translate:
             obj_position = pm.xform(main_object, q=True, ws=True, rp=True)
             pm.xform(each, ws=True, t=obj_position)
@@ -104,7 +105,7 @@ def average(*args):
 
 
 def aim_vector_based(*args, **kwargs):
-    destination = dataValidators.as_pymel_nodes(args[0])
+    destination = dataValidators.as_pymel_nodes(args[0])[0]
     aim_axis = kwargs.pop('aim_axis', config.axis_order[0])
     up_axis = kwargs.pop('up_axis', config.axis_order[1])
 
@@ -284,5 +285,6 @@ def custom_world_align(*scene_objects):
 
 if __name__ == '__main__':
     selection = pm.ls(selection=True)
-    selection.insert(0, selection[0])
-    aim_point_based(*selection)
+    # selection.insert(0, selection[0])
+    # aim_point_based(*selection)
+    align(selection)

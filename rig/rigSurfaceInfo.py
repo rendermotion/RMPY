@@ -18,7 +18,7 @@ class SurfaceInfo(rigBase.RigBase):
         kwargs['model'] = kwargs.pop('model', SurfaceInfoModel())
         super(SurfaceInfo, self).__init__(*args, **kwargs)
         follow_v = kwargs.pop('follow_v', False)
-        surface = dataValidators.as_pymel_nodes(args[0])
+        surface = dataValidators.as_pymel_nodes(args[0])[0]
 
         if pm.objectType(surface) != 'nurbsSurface':
             if pm.objectType(surface.getShapes()[0]) == 'nurbsSurface':

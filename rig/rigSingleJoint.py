@@ -30,9 +30,10 @@ class RigSingleJoint(rigBase.RigBase):
 
         for each in locator_list:
             reset_joint = pm.group(empty=True, name='resetJoint')
-            self.rm.align(each, reset_joint)
+
+            pm.matchTransform(reset_joint, each)
             joint = pm.joint(name='joint')
-            self.rm.align(joint, reset_joint)
+            pm.matchTransform(reset_joint, joint)
 
             self.joints.append(joint)
             self.reset_joints.append(reset_joint)

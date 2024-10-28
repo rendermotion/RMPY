@@ -31,10 +31,10 @@ class RigUVPin(rigBase.RigBase):
     def create_point_base(self, scene_node, **kwargs):
         super(RigUVPin, self).create_point_base(scene_node, **kwargs)
         geometry = kwargs.pop('geometry', None)
-        scene_node = dataValidators.as_pymel_nodes(scene_node)
+        scene_node = dataValidators.as_pymel_nodes(scene_node)[0]
 
         if geometry:
-            geometry = dataValidators.as_pymel_nodes(geometry)
+            geometry = dataValidators.as_pymel_nodes(geometry)[0]
 
             all_shapes_list = geometry.getShapes()
             attach_shape = None

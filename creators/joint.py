@@ -26,7 +26,7 @@ class Joint(creatorsBase.CreatorsBase):
         up_axis = kwargs.pop('up_axis', config.axis_order[1])
         orient_type = kwargs.pop('orient_type', 'bend_orient')
         joint_type = kwargs.pop('joint_type', 'joint')
-        point_array = dataValidators.as_pymel_nodes(point_array)
+        point_array = dataValidators.as_pymel_nodes(*point_array)
         joint_array = []
 
         for index, point in enumerate(point_array):
@@ -60,7 +60,7 @@ class Joint(creatorsBase.CreatorsBase):
         joint_type = kwargs.pop('joint_type', 'joint')
         z_axis_orientation = config.axis_order[1]
 
-        point_array = dataValidators.as_pymel_nodes(point_array)
+        point_array = dataValidators.as_pymel_nodes(*point_array)
         joint_array = []
 
         Obj1Position = pm.xform(point_array[0], q=True, rp=True, ws=True)

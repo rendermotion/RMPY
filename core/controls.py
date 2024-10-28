@@ -2,7 +2,7 @@ import pymel.core as pm
 from RMPY import nameConvention
 
 
-def color_code_controls(controls, force=None):
+def color_code_controls(*controls, force=None):
     name_convention = nameConvention.NameConvention()
     for each in controls:
         if not force:
@@ -37,15 +37,9 @@ def color_code_controls(controls, force=None):
             each.overrideColor.set(14)
 
 
-def color_now_all_ctrls(*args, **kwargs):
-    if not args:
-        selection = kwargs.pop('selection', True)
-        if selection:
-            controls = pm.ls(selection=True)
-    controls = args
-    if not controls:
-        controls = pm.ls('*_ctr')
-    color_code_controls(controls, force=False)
+def color_now_all_ctrls():
+    controls = pm.ls('*_ctr')
+    color_code_controls(*controls, force=False)
 
 
 def transfer_curve(source, destination, world_space=True):
@@ -161,12 +155,12 @@ def add_nurbs_curve_shape(scene_object):
 if __name__ == '__main__':
     selection = pm.ls(selection=True)
     # mirror_selection()
-    # color_now_all_ctrls(*selection)
+    color_now_all_ctrls()
     # mirror_controls(*selection)
     # get_same_number_of_shapes(*selection)
     # print selection[0].getShapes()
     # shapes = object_valid_shapes(selection[0])
     # match_number_of_shapes(selection[0], selection[1])
-    transfer_curve_by_selection(world_space=True)
+    # transfer_curve_by_selection(world_space=True)
     # mirror_selection()
     # mirror_shape(*selection, scale_vector=[-1, 1, 1])

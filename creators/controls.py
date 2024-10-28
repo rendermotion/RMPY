@@ -95,7 +95,7 @@ class Controls(creatorsBase.CreatorsBase):
         curve = pm.curve(d=1, p=point_array, name=default_name)
         return curve
 
-    def create_box_ctrl(self, Obj, **kwargs):
+    def create_box_ctrl(self, reference_point, **kwargs):
 
         x_ratio = kwargs.pop('x_ratio', 1)
         y_ratio = kwargs.pop('y_ratio', 1)
@@ -105,13 +105,13 @@ class Controls(creatorsBase.CreatorsBase):
         name = kwargs.pop('name', '')
         centered = kwargs.pop('centered', False)
 
-        Obj = dataValidators.as_pymel_nodes(Obj)
+        reference_point = dataValidators.as_pymel_nodes(reference_point)[0]
         if name == "":
             default_name = "BoxControl"
         else:
             default_name = name
 
-        Parents = pm.listRelatives(Obj, parent=True)
+        Parents = pm.listRelatives(reference_point, parent=True)
 
         if Parents and len(Parents) != 0 and parent_base_size == True:
             joint_length = transform.joint_length(Parents[0])
@@ -122,8 +122,8 @@ class Controls(creatorsBase.CreatorsBase):
             if custom_size != 0:
                 joint_length = custom_size
 
-            elif pm.objectType(Obj) == "joint":
-                joint_length = transform.joint_length(Obj)
+            elif pm.objectType(reference_point) == "joint":
+                joint_length = transform.joint_length(reference_point)
 
             else:
                 joint_length = 1
@@ -139,18 +139,18 @@ class Controls(creatorsBase.CreatorsBase):
         self.name_convention.rename_name_in_format(control, objectType='control')
         # self.name_convention.rename_set_from_name(control, "control", "objectType")
 
-        transform.align(Obj, control)
+        transform.align(reference_point, control)
 
         reset_group = self.rigTools.RMCreateGroupOnObj(control)
         self.scale_controls(reset_group)
         return reset_group, control
 
-    def create_circular_control(self, Obj, **kwargs):
+    def create_circular_control(self, reference_point, **kwargs):
         radius = kwargs.pop('radius', 1)
         axis = kwargs.pop('axis', config.axis_order.upper()[0])
         name = kwargs.pop('name', 'circle')
 
-        Obj = dataValidators.as_pymel_nodes(Obj)
+        reference_point = dataValidators.as_pymel_nodes(reference_point)[0]
         if name == '':
             default_name = "circularControl"
         else:
@@ -163,13 +163,13 @@ class Controls(creatorsBase.CreatorsBase):
             control, shape = pm.circle(normal=[1, 0, 0], radius=radius, name=default_name)
 
         if name == 'circularControl':
-            if self.name_convention.is_name_in_format(Obj):
-                self.name_convention.rename_based_on_base_name(Obj, control)
+            if self.name_convention.is_name_in_format(reference_point):
+                self.name_convention.rename_based_on_base_name(reference_point, control)
             else:
                 self.name_convention.rename_name_in_format(control, name=name, objectType='control')
         else:
             self.name_convention.rename_name_in_format(control, name=name, objectType='control')
-        transform.align(Obj, control)
+        transform.align(reference_point, control)
 
         reset_group = self.rigTools.RMCreateGroupOnObj(control)
         self.scale_controls(reset_group)
@@ -180,7 +180,7 @@ class Controls(creatorsBase.CreatorsBase):
         name = kwargs.pop('name', None)
         control_type = kwargs.pop('control_type', 'Move')
 
-        scene_object = dataValidators.as_pymel_nodes(scene_object)
+        scene_object = dataValidators.as_pymel_nodes(scene_object)[0]
         MoversTypeDic = {
             "move": {"filename": "ControlMover.mb", "object": "MoverControl"},
             "v": {"filename": "ControlV.mb", "object": "VControl"},

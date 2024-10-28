@@ -12,10 +12,10 @@ class RigClustersOnCurve(rigBase.RigBase):
 
     def create_curve_base(self, *curve):
         if type(curve) in [list, tuple]:
-            master_curve = self.rm.dataValidators.as_pymel_nodes(curve[0])
+            master_curve = self.rm.dataValidators.as_pymel_nodes(curve[0])[0]
             mode = "multi"
         else:
-            master_curve = self.rm.dataValidators.as_pymel_nodes(curve)
+            master_curve = self.rm.dataValidators.as_pymel_nodes(curve)[0]
             mode = "single"
         degree = pm.getAttr('%s.degree' % master_curve)
         spans = pm.getAttr('%s.spans' % master_curve)

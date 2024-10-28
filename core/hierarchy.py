@@ -3,8 +3,8 @@ import pymel.core as pm
 
 
 def insert_in_hierarchy(base_object, insert_object, insert_type="parent"):
-    base_object = dataValidators.as_pymel_nodes(base_object)
-    insert_object = dataValidators.as_pymel_nodes(insert_object)
+    base_object = dataValidators.as_pymel_nodes(base_object)[0]
+    insert_object = dataValidators.as_pymel_nodes(insert_object)[0]
     if insert_type == "parent":
         parent = base_object.getParent()
         if parent:

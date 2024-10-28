@@ -9,7 +9,7 @@ class Connect(creatorsBase.CreatorsBase):
 
     @staticmethod
     def _validate_connection(attribute, input_attribute):
-        input_attribute = dataValidators.as_pymel_nodes(input_attribute)
+        input_attribute = dataValidators.as_pymel_nodes(input_attribute)[0]
         if issubclass(attribute.__class__, pm.general.Attribute):
             attribute >> input_attribute
         else:
@@ -103,8 +103,8 @@ class Connect(creatorsBase.CreatorsBase):
         :param pre_infinity_type:
         :return:
         """
-        attribute_x = dataValidators.as_pymel_nodes(attribute_x)
-        attrribute_y = dataValidators.as_pymel_nodes(attrribute_y)
+        attribute_x = dataValidators.as_pymel_nodes(attribute_x)[0]
+        attrribute_y = dataValidators.as_pymel_nodes(attrribute_y)[0]
         value = pm.listConnections(attrribute_y, destination=False, plugs=True, skipConversionNodes=False)
         plus_minus = None
         if value:
