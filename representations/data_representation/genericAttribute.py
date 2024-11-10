@@ -10,7 +10,7 @@ class GenericAttribute(object):
         It works un two ways if data is provided as a kwarg on creation, the generic attribute will automatically fill
         get the data of the attribute it is provided the attribute should be provided as a string, and it will be saved
         recursively in case where the data is a compound, a multi attribute. In case the data is provided it will load
-         the data on the node, on creation.
+        the data on the node, on creation.
         :param attribute(string): the attribute starting with the node, provided as a string.
 
         :param kwargs:
@@ -166,5 +166,4 @@ if __name__ == '__main__':
             print '{}.{}'.format(scene_node, each_attribute)
             general_attribute = GenericAttribute('{}.{}'.format(scene_node, each_attribute))
             print general_attribute.get_data_dict()'''
-
     general_attribute = GenericAttribute('blendShape1.inputTarget[0].sculptTargetTweaks')

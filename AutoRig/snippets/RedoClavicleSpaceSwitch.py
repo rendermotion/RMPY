@@ -16,7 +16,7 @@ def clavicleSpaceSwitch():
 
 	NameConv = nameConvention.NameConvention()
 
-	moverWorld = cmds.group( empty = True, name ="moverWorld")
+	moverWorld = cmds.group(empty = True, name ="moverWorld")
 	cmds.parent(moverWorld, kinematics)
 	cmds.parentConstraint( Mover01 , moverWorld )
 
