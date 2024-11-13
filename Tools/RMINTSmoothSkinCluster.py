@@ -12,7 +12,7 @@ from RMPY.rig import rigBase
 from RMPY.Tools.QT6.ui import FormSmoothSurfaces
 from RMPY.core import smooth_skin
 import json
-
+importlib.reload(smooth_skin)
 importlib.reload(FormSmoothSurfaces)
 
 
@@ -69,7 +69,6 @@ class Main(MayaQWidgetDockableMixin, QDialog):
     def joint_list(self, joint_list):
         self._joint_list = joint_list
         self.rm.setup_name_convention_node_base(joint_list[0])
-
         if len(str(joint_list)) > 20:
             self.ui.joint_list_btn.setText(str(f'{str(joint_list)[0:20]}...'))
         else:
@@ -116,6 +115,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
                    rotation=0,
                    scale=1,
                    reverseSurfaceIfPathReversed=1)[0]
+        extrude = pm.reverseSurface(extrude,  d = 3 , ch = 1, rpo = 1)[0]
         extrude.setParent(self.smooth_surfaces)
         self.rm.name_convention.rename_name_in_format(extrude, name='smoothSurface')
         self.nurbs_surface = extrude
@@ -140,21 +140,10 @@ class Main(MayaQWidgetDockableMixin, QDialog):
 
     def radius_value_change(self):
         surface_button = pm.ls(self.ui.set_selected_surface_btn.text())
-        create_curve = self.get_create_curve(surface_button)
-        if create_curve:
-            create_curve.radius.set(self.ui.radius_SpinBox.value())
-
-    def get_create_curve(self, surface_button):
-        create_curve = None
         if surface_button:
-            extrude = pm.listConnections(surface_button[0].getShapes()[0].create)
-            if extrude:
-                profile_curve = pm.listConnections(extrude[0].profile)
-                if profile_curve:
-                    create_curve = pm.listConnections(profile_curve[0].create)
-                    if create_curve:
-                        create_curve = create_curve[0]
-        return create_curve
+            create_curve = pm.listHistory(surface_button[0], type='makeNurbCircle')
+            if create_curve:
+                create_curve.radius.set(self.ui.radius_SpinBox.value())
 
 
     def add_metadata_to_surface(self):
