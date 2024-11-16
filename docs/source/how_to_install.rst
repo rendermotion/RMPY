@@ -1,6 +1,7 @@
 How to install
 ==============
-You can clone directly the repository from the git hub page and clone it to your user/maya/scripts folder
+You can clone directly the repository from the git hub page and clone it to your user/maya/scripts folder.
+In theory you could clone it to any PYTHON_PATH folder.
 
 
 .. code-block:: bash
@@ -9,4 +10,5 @@ You can clone directly the repository from the git hub page and clone it to your
 
    git clone https://github.com/rendermotion/RMPY.git
 
-you can also download the `github desktop application <https://desktop.github.com/>`_ and clone from there.
+You can also download the `github desktop application <https://desktop.github.com/>`_ and clone from there.
+

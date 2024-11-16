@@ -29,7 +29,7 @@ Getting started
     do you want to understand how the architecture is structured and the different parts that conform a rig.
     :doc:`/creators/index`
 
-
+    Go directly to create some rigs.
 
 
 License

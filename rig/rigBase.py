@@ -212,6 +212,9 @@ class RigBase(object):
             self._control_creation_kwargs['type'] = control_type
 
     def update_name_convention(self):
+        """
+        Updates the name convention on all the creators, and rig_system objects
+        """
         self.rig_system.name_convention = self.name_convention
         for each in self.create.creators_list:
             each.name_convention = self.name_convention
@@ -224,9 +227,10 @@ class RigBase(object):
 
     def set_parent(self, rig_object, **kwargs):
         """
-        This is the default function to parent modules, when you set parent an object it will look for the
-        root on the dictionary attachments. If this has not being asigned the default value will be the first element
-        of the list rig_reset_controls. So you can asign what ever point you want to be the driver of all the rig
+        This is the standardize function to parent modules, when you call set_parent the rig object attribute can be a
+        rig(that inherits at some point from rigBase), or a transform. If it is a rig, the function will look for the
+        root on the dictionary attachments. If this has not being assigned the default value will be the first element
+        of the list rig_reset_controls. So you can assign what ever point you want to be the driver of all the rig
         or let the rig find it by itself.
         :param rig_object: object or rig that you expect to be the parent of the module.
         :return:
