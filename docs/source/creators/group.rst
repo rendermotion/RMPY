@@ -9,8 +9,8 @@ The group creator allow you to create empty transform nodes. You can provide mul
 The only way to create it is using the point_base function.
 Inside a rig class you can create a group based on a point.
 the main keyword argument is type, valid types are : 'inserted', 'parent', 'child', 'sibbling'.
-    inserted: creates a new group as parent of the provided transform but parented to the original parent of the transform,
-              therefore is inserted in the hierarchy between the parent and its child
+
+inserted: creates a new group as parent of the provided transform but parented to the original parent of the transform, therefore is inserted in the hierarchy between the parent and its child
 
 
 

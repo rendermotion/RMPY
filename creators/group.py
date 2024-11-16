@@ -26,7 +26,11 @@ class Group(creatorsBase.CreatorsBase):
                 A parameter to define how the new group is going to be
                 in the hierarchy, valid values are
                 "world","child","parent","inserted","sibling".
-                Default value is inserted, meaning that the new group will be inserted on the hierarchy as parent of the nodes provided.
+
+                inserted: creates a new group as parent of the provided transform but parented to the original parent of
+                the transform, therefore is inserted in the hierarchy between the parent and its child. This is the
+                Default value for this keyword argument.
+
         """
         super(Group, self).point_base(*scene_nodes, **kwargs)
         group_type = kwargs.pop('type', "inserted")
