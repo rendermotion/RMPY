@@ -11,16 +11,13 @@ You can use your custom code to create the maya nodes, but using the creators ca
 These are some of the creators that I have done,  many more can be created, but so far this are the ones that I have needed or use more commonly.
 
 Here you can find a list of creators with their documentation and some examples of how to use them.
+
+
 .. toctree::
-
     :maxdepth: 1
-
     :doc: `/creators/group`
-
     :doc: `/creators/skinCluster`
-
     :doc: `/group`
-
     :doc: `/skinCluster`
 
 
