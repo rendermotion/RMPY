@@ -12,13 +12,10 @@ These are some of the creators that I have done,  many more can be created, but 
 
 Here you can find a list of creators with their documentation and some examples of how to use them.
 
+    :doc:`/creators/group`
 
-.. toctree::
-    :maxdepth: 1
-    :doc: `/creators/group`
-    :doc: `/creators/skinCluster`
-    :doc: `/group`
-    :doc: `/skinCluster`
+    :doc:`/creators/skinCluster`
+
 
 
 

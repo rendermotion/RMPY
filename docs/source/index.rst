@@ -1,5 +1,5 @@
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 4
     :hidden:
     :caption: Getting started
 
@@ -34,6 +34,7 @@ Getting started
 
 
     Learn how the architecture works.
+
     :doc:`/architecture`
 
 
