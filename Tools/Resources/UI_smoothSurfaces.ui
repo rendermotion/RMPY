@@ -94,7 +94,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QDoubleSpinBox" name="doubleSpinBox">
+           <widget class="QDoubleSpinBox" name="radius_spinbox">
             <property name="singleStep">
              <double>0.001000000000000</double>
             </property>
