@@ -33,6 +33,10 @@ Getting started
     Go directly to create some rigs.
 
 
+    Learn how the architecture works.
+    :doc:`/architecture`
+
+
 License
 ~~~~~~~
 
