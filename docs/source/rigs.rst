@@ -1,14 +1,25 @@
 ====
 Rigs
 ====
-The rigs module has a base class called RigBase
-This class is the main layout to all the rigs.
+The rig module has a base class called RigBase
+This class is the main class where all the rigs inherit.
 The idea behind the rigBase class is that all rigs can work as a brick that assembles with other rigs,
-with similar creation functions, a standard way of connecting, a standard hierarchy, and a set of tools to aid in rig creation.
+with a standardized way of connecting, a standard hierarchy, standard creation functions and a set of tools to aid in rig creation,
+all of this under a simplified name convention.
 
-The creation functions.
-Any rig has something that is used a s a base to create the rig, most common thing are transforms in space, or space locators.
-The function that acomplishes this is the create_point_base function.
+Standard creation functions.
+Any rig has something that is used as base to create the rig, most common thing are space locators(points in space),
+but you can find rigs that are created based on a curve or geometry.
+The standard functions for  rig creation are
+    create_point_base
+    create_curve_base
+    create_geometry_base
+While creating rigs with this function you are inheriting some procedures that are in place to name every part of your rig.
+In general when you are creating something inside the rig you dont have to worry about the system that it belongs to or
+which side of the rig is found, you just provide a simple name without '_' for every object, and the system will take care
+of what is the correct full name for your object.
+You can find object that takes care of the name convention under self.name_convention.
+
 
 .. currentmodule:: rig.rigBase
 .. autoclass:: RigBase

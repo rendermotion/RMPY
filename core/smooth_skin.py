@@ -142,51 +142,47 @@ class SmoothSkin(object):
         return OpenMaya.MFnTransform(surface_path.node())
 
     def smooth(self, joints_list):
-        points_sets_list = self.get_index_of_points_affected_by_multiple_influences(*joints_list)
-        fullset = set()
+        affected_vertex_lists = self.get_index_of_points_affected_by_multiple_influences(*joints_list)
 
         influence_values = []
         for each_joint in joints_list:
             influence_values.append(self.get_skinning(each_joint))
 
-        weight_value = []
-        for set_list in points_sets_list:
-            fullset = fullset.union(set_list)
+        # create a set with all the indices of the vertex that contain skinning in this joints.
+        fullset = set()
+        for set_list in affected_vertex_lists:
+            fullset = fullset.union(set(set_list))
 
-        fullset = list(fullset)
+        full_index_list = list(fullset)
         max_value_weight = OpenMaya.MDoubleArray()
-        max_value_weight.setLength(len(influence_values[0]))
+        max_value_weight.setLength(len(full_index_list))
+
         print(f'{max_value_weight=}')
-        print(f'{points_sets_list=}')
+        print(f'{affected_vertex_lists=}')
         print(f'{influence_values=}')
-        reset=True
-        for vtx_index_list, values_list in zip(points_sets_list,  influence_values):
-            print(vtx_index_list, values_list)
+
+        for index_vertex in full_index_list:
+            max_value_weight[index_vertex] = 0
+
+        for vtx_index_list, values_list in zip(affected_vertex_lists,  influence_values):
             for each_vtx_index in vtx_index_list:
-                if reset:
-                    max_value_weight[each_vtx_index] = 0
                 max_value_weight[each_vtx_index] += values_list[each_vtx_index]
-            reset = False
+
         print(f'{max_value_weight=}')
         joint_weights = {}
-        for closest_point_uv in joints_list:
-            joint_weights[closest_point_uv] = OpenMaya.MDoubleArray()
-            joint_weights[closest_point_uv].setLength(len(influence_values[0]))
+        # creating a list per joint the lengt of the influence values
+        for each_joint in joints_list:
+            joint_weights[each_joint] = OpenMaya.MDoubleArray()
+            joint_weights[each_joint].setLength(len(influence_values[0]))
         # from pprint import pprint as pp
         # pp(joint_weights)
-        uv_values = self.closest_point_to_surface(fullset)
-        for closest_point_uv, vertex_index in zip(uv_values, fullset):
-            # if vertex_index == 0:
-            #     print('******************')
-            #     print(closest_point_uv, vertex_index)
-            #     print(closest_point_uv[1], joints_list)
-            #     print(self.remap_value(closest_point_uv[1], joints_list, print_value=True))
+        uv_values = self.closest_point_to_surface(full_index_list)
+        for closest_point_uv, vertex_index in zip(uv_values, full_index_list):
             for each_joint in joints_list:
-                joint_weights[each_joint][vertex_index] = 0
+                joint_weights[each_joint][full_index_list.index(vertex_index)] = 0
             for skin_value, joint in zip(*self.remap_value(closest_point_uv[1], joints_list)):
-                    # if vertex_index == 0:
-                    #     print(f'adding {skin_value}, to joint {joint}')
-                    joint_weights[joint][vertex_index] = joint_weights[joint][vertex_index] + skin_value/6
+                    joint_weights[joint][full_index_list.index(vertex_index)] = joint_weights[joint][full_index_list.index(vertex_index)] + skin_value/6
+            joint_weights[joint][full_index_list.index(vertex_index)] = joint_weights[joint][full_index_list.index(vertex_index)] * max_value_weight[full_index_list.index(vertex_index)]
         # pp(joint_weights)
         # print(list(joint_weights.keys()))
         for each_joint in joint_weights:
@@ -217,7 +213,7 @@ class SmoothSkin(object):
                 scene_object, vertices = selection_list.getComponent(0)
                 fn_vertices = OpenMaya.MFnSingleIndexedComponent(vertices)
                 influence_list.extend(fn_vertices.getElements())
-            vertex_index.append(set(influence_list))
+            vertex_index.append(influence_list)
 
         return vertex_index
 
