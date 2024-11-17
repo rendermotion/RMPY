@@ -1,6 +1,6 @@
-====
-Rigs
-====
+==============
+Rig Main class
+==============
 The rig module has a base class called RigBase
 This class is the main class where all the rigs inherit.
 The idea behind the rigBase class is that all rigs can work as a brick that assembles with other rigs,

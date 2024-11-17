@@ -1,3 +1,14 @@
+.. toctree::
+    :maxdepth: 4
+    :hidden:
+    :caption: Getting started
+
+    Name convention <name_convention>
+    /creators/index
+    System structure </system_structure>
+
+
+============
 Architecture
 ============
 
@@ -11,8 +22,14 @@ Many tools that didn't fell under this categories are written under core, most o
 Including all the configuration of the rig builds which are found on the
 config file found in core.
 
+    :doc:`Name convention </name_convention>`
+
     :doc:`\creators\index`
-    :doc:`\system_structure`
+
+    :doc:`System structure </system_structure>`
+
+
+
 
 
 

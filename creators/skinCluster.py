@@ -17,6 +17,14 @@ class SkinCluster(creatorsBase.CreatorsBase):
 
     @classmethod
     def by_name(cls, skin_node_name):
+        """
+        A base Classmethod that returns an instance of the SkinCluster class that contains as the main node (self.node)
+        an skincluster with the name provided
+        Args:
+            skin_node_name(str): A string that contains the name of a skinCluster in the scene.
+        Returns:
+            SkinCluster: An instance of this SkinCluster class that has the skin_node_name assigned to the (self.node).
+        """
         new_class_object = cls()
         if pm.objExists(skin_node_name):
             node_name = pm.ls(skin_node_name)[0]
@@ -189,7 +197,8 @@ class SkinCluster(creatorsBase.CreatorsBase):
 
     def switch_skin(self, geometry, joint_switch_dictionary):
         """
-        switches the joints in skinning
+        Switches the joints in an existing skinning
+
         :param joint_switch_dictionary:
         :param geometry: geometry where the skin wants to be changed.
         :return:
@@ -235,9 +244,9 @@ class SkinCluster(creatorsBase.CreatorsBase):
         """
         Copy's the skinning between different meshes
         only by providing the meshes.\n
-        :args[0] the source mehs, this geo \n
-        :args[1:] the destination  mehs where the skin will be copied\n
-        :return a list with all the skin clusters that where created during execution
+        args[0]: the source mesh, this geo \n
+        args[1:]: the destination  meshes where the skin will be copied\n
+        return: A list with all the skin clusters that where created during execution
         """
         source = args[0]
         destination = args[1:]
