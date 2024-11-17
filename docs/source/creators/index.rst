@@ -1,3 +1,8 @@
+.. toctree::
+    :maxdepth: 1
+    :hidden:
+    :caption: Understanding creators
+
 ========
 Creators
 ========
@@ -11,11 +16,14 @@ These are some of the creators that I have done,  many more can be created, but 
 
 Here you can find a list of creators with their documentation and some examples of how to use them.
 
-    :doc: `source/creators/group`
+    :doc:`/creators/group`
 
-    :doc: `/source/creators/group`
+    :doc:`/creators/spaceLocator`
 
-    :doc: `creators/skinCluster`
+    :doc:`/creators/skinCluster`
+
+
+
 
 
 
