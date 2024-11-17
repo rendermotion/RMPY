@@ -1,10 +1,9 @@
 .. toctree::
-    :maxdepth: 4
+    :maxdepth: 2
     :hidden:
     :caption: Getting started
 
     /how_to_install
-    /creators/index
     Understanding the architecture <architecture>
     Name convention <name_convention>
     /rigs
@@ -32,7 +31,8 @@ Getting started
 
     Go directly to create some rigs.
 
-    Want to see what are the provided tools to create rigs?
+    Want to see what are the provided tools with interface to create rigs?
+
     :doc:`/tools`
 
 

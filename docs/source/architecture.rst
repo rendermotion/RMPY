@@ -24,7 +24,7 @@ config file found in core.
 
     :doc:`Name convention </name_convention>`
 
-    :doc:`\creators\index`
+    :doc:`/creators/index`
 
     :doc:`System structure </system_structure>`
 
