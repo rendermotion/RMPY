@@ -3,8 +3,6 @@ from RMPY.rig import rigSingleJoint
 import pymel.core as pm
 from RMPY.rig import rigPointOnSurface
 from RMPY.rig import rigUVPin
-import importlib
-importlib.reload(rigLaces)
 
 
 class LaceRingModel(rigSingleJoint.ModelSingleJoint):
@@ -22,7 +20,7 @@ class LaceRing(rigSingleJoint.RigSingleJoint):
         super(LaceRing, self).__init__(*args, **kwargs)
 
     def create_point_base(self, *args, **kwargs):
-        link_type = kwargs.pop('link_type', 'regular')
+        # link_type = kwargs.pop('link_type', 'regular')
         r_l_order_change = kwargs.pop('r_l_order_change', False)
         create_path_surface = kwargs.pop('create_path_surface', False)
         self._model.surface = kwargs.pop('surface', None)
