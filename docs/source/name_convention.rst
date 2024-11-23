@@ -29,7 +29,9 @@ overwritten by any value on the valid list.
 
 
 .. note::
-    Main functions to
+    You can always import the name_convention module to start playing with the name convention, still an instance of this object, exists inside every rig.
+
+
 
 
 

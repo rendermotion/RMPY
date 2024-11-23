@@ -1,4 +1,6 @@
 Tools
 =====
 
-The tools module is the interface created for most of the modules in RMPY
+The tools module contains the interface for all the tools.
+At the moment all tools have been ported to Pyside6 and should be working with maya 2025.
+

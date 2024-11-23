@@ -4,13 +4,11 @@
     :caption: Getting started
 
     /how_to_install
-    /creators/index
+    Understanding the architecture <architecture>
     Name convention <name_convention>
-    Groups </creators/group>
-    /representations
     /rigs
     /tools
-    system structure </system_structure>
+
 
 
 
@@ -28,9 +26,16 @@ Getting started
 
     Do you want to understand how the architecture is structured and the different parts that conform a rig.
 
-    :doc:`/creators/index`
+    :doc:`/architecture`
+
 
     Go directly to create some rigs.
+
+    Want to see what are the provided tools with interface to create rigs?
+
+    :doc:`/tools`
+
+
 
 
 License

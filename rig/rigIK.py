@@ -207,7 +207,7 @@ class IKRig(RMPY.rig.rigBase.RigBase):
         if not self.joints:
             self.joints = self.identify_joints(ik_handle)
 
-        locator = self.create.space_locator.pole_vector(*self.joints)
+        locator = self.create.space_locator.pole_vector(self.joints[0],self.joints[int(len(self.joints)/2)] ,self.joints[-1])
         distance = self.rm.point_distance(locator, self.joints[1])
 
         reset_controls_pole_vector, controls_pole_vector = \

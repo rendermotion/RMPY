@@ -1,3 +1,8 @@
+.. toctree::
+    :maxdepth: 1
+    :hidden:
+    :caption: Understanding creators
+
 ========
 Creators
 ========
@@ -20,11 +25,14 @@ but so far this are the more common that I have needed through my rig creation p
 
 Here you can find a list of creators with their documentation and some examples of how to use them.
 
-    :doc: `source/creators/group`
+    :doc:`/creators/group`
 
-    :doc: `/source/creators/group`
+    :doc:`/creators/spaceLocator`
 
-    :doc: `creators/skinCluster`
+    :doc:`/creators/skinCluster`
+
+
+
 
 
 
