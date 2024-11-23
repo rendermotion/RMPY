@@ -77,7 +77,7 @@ class Curve(creatorsBase.CreatorsBase):
         if offset_curve:
             space_locator = spaceLocator.SpaceLocator()
             new_points = space_locator.node_base(*list_of_points)
-            move_axis = str(f'move{offset_axis}')
+            move_axis = str('move{}'.format(offset_axis))
             move_kwargs = dict()
             move_kwargs[move_axis] = True
             move_kwargs['objectSpace'] = True

@@ -232,7 +232,7 @@ def test_print_nurbs_function():
 
 def apply_skinning(self, vertex_indices, weight_values):
     vertex_list = OpenMaya.MSelectionList()
-    vertex_list.add(f'pPlaneShape1.vtx[*]')
+    vertex_list.add('pPlaneShape1.vtx[*]')
     vertex_dag_path, vertex_object = vertex_list.getComponent(0)
     influence_indices = OpenMaya.MIntArray()
     influence_indices.append(2)

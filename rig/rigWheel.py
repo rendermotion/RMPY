@@ -29,23 +29,23 @@ class RigWheel(rigBase.RigBase):
         pm.addAttr(self.rig_system.settings, longName='startFrame', k=True, min=0)
         pm.addAttr(self.rig_system.settings, longName='radius', proxy=circle_creator.radius)
 
-        expression_text = f'vector $current_position = `xform -q -t -ws {self.circle}`;\n'
-        expression_text +=f'vector $prev_position = `xform -q -t -ws {previous_position}`;\n'
-        expression_text +=f'if ((`currentTime -q`) <= ({self.rig_system.settings}.startFrame))\n'
+        expression_text = 'vector $current_position = `xform -q -t -ws {}`;\n'.format(self.circle)
+        expression_text +='vector $prev_position = `xform -q -t -ws {}`;\n'.format(previous_position)
+        expression_text +='if ((`currentTime -q`) <= ({}.startFrame))\n'.format(self.rig_system.settings)
         expression_text +='{\n'
-        expression_text +=f'    {self.circle}.rotateZ = 0;\n'
+        expression_text +='    {}.rotateZ = 0;\n'.format(self.circle)
         expression_text +='}\n'
         expression_text += 'else'
         expression_text += '{\n'
-        expression_text += f'vector $reference_front_vector = `xform -q -t -ws {forward_vector}`;\n'
-        expression_text += f'vector $delta_distance =  $current_position - $prev_position;\n'
-        expression_text += f'vector $forward_direction = $reference_front_vector - $current_position;\n'
-        expression_text += f'float $direction_multiplier = dotProduct($forward_direction, $delta_distance, 1);\n'
-        expression_text += f'{self.circle}.rotateZ = {self.circle}.rotateZ - (rad_to_deg(mag($delta_distance)/' \
-                           f'{self.rig_system.settings}.radius)* $direction_multiplier);\n'
+        expression_text += 'vector $reference_front_vector = `xform -q -t -ws {}`;\n'.format(forward_vector)
+        expression_text += 'vector $delta_distance =  $current_position - $prev_position;\n'
+        expression_text += 'vector $forward_direction = $reference_front_vector - $current_position;\n'
+        expression_text += 'float $direction_multiplier = dotProduct($forward_direction, $delta_distance, 1);\n'
+        expression_text += '{}.rotateZ = {}.rotateZ - (rad_to_deg(mag($delta_distance)/'.format(self.circle, self.circle)+ \
+                           '{}.radius)* $direction_multiplier);\n'.format(self.rig_system.settings)
         expression_text += '}\n'
-        expression_text += f' xform -translation ($current_position.x) ($current_position.y) ($current_position.z) ' \
-                           f'-worldSpace  {previous_position};\n'
+        expression_text += ' xform -translation ($current_position.x) ($current_position.y) ($current_position.z) ' \
+                           '-worldSpace  {};\n'.format(previous_position)
         pm.expression(string=expression_text)
 
 

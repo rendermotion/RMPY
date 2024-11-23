@@ -152,7 +152,7 @@ class NameConvention(object):
                 elif eachName == 'system':
                     self.default_names[eachName] = 'rig'
                 else:
-                    raise f'error must provide a default value for each token not token found {eachName}'
+                    raise 'error must provide a default value for each token not token found {}'.format(eachName)
 
     def token_validation(self, Token, TokenName):
         if TokenName in self.validation:
