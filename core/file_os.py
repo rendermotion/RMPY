@@ -1,6 +1,5 @@
 import os
 import pymel.core as pm
-from pathlib import Path
 
 def get_file_path():
     """
@@ -19,10 +18,8 @@ def get_file_path():
 
 
 def validate_path(path_file_name):
-    path_file_name = Path(path_file_name)
-    if not path_file_name.exists():
-        path_file_name.mkdir(parents=True, exist_ok=True)
-    '''incremental_list_path = []
+    path_file_name = path_file_name
+    incremental_list_path = []
     original_tokens = path_file_name.split('/')
     for index, each_token in enumerate(path_file_name.split('/')[:-1]):
         if each_token != '' and index > 4:
@@ -33,7 +30,7 @@ def validate_path(path_file_name):
                 print ('in {} \n the path {} was created'.format(file_path_joined, each_token))
         else:
             incremental_list_path.append(each_token)
-    '''
+
 
 if __name__ == '__main__':
     pass
