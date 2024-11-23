@@ -16,7 +16,7 @@ class Outputs(object):
             print('setting output to C:/RMPYData/')
             return 'C:/RMPYData/'
         else:
-            print(f'setting output to {file_path}')
+            print('setting output to {}'.format(file_path))
             return file_path
 
 output = Outputs()

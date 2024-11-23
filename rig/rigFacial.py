@@ -21,7 +21,7 @@ class RigFacial(rigBase.RigBase):
                                         'type': self.rig_definition[each_definition]['type'],
                                         'order': self.rig_definition[each_definition]['order']}
                     for each_key in self.rig_definition[each_definition]['blendShapes'].keys():
-                        right_definition['blendShapes'][f'R{each_key[1:]}'] = self.rig_definition[each_definition]['blendShapes'][each_key]
+                        right_definition['blendShapes']['R{}'.format(each_key[1:])] = self.rig_definition[each_definition]['blendShapes'][each_key]
                     SingleDefinition(right_definition, **kwargs)
 
 
@@ -56,7 +56,7 @@ class SingleDefinition(rigBase.RigBase):
             self.blend_shape_node = blend_shapes_list[blend_shape_node_index]
 
         else:
-            print(f'no blendshape node found on {self.base_mesh}')
+            print('no blendshape node found on {}'.format(self.base_mesh))
             self.blend_shape_node = pm.blendShape(self.base_mesh)[0]
         # self.attributes = definition['attributes']
         self.order = definition['order']

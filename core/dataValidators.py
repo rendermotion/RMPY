@@ -57,7 +57,7 @@ def as_point(input_data):
         new_space_locator = pm.spaceLocator()
         new_space_locator.offsetParentMatrix.set(list([*x_vector, 0, *z_vector, 0, *y_vector, 0, *position, 1]))
     else:
-        print(f'not valid Data {input_data.__class__}')
+        print('not valid Data {}'.format(input_data.__class__))
 
 
 if __name__ == '__main__':
@@ -75,7 +75,7 @@ def remove_prefix(prefix):
         prefix (str): The prefix to be removed.
     """
 
-    for obj in cmds.ls(f'{prefix}*'):
+    for obj in cmds.ls('{}*'.format(prefix)):
         new_name = obj[len(prefix):]
         cmds.rename(obj, new_name)
 

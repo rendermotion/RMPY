@@ -23,14 +23,14 @@ class RigSinFunction(rigBase.RigBase):
 
         count = 0
         for each_object in args:
-            script += f'if ({offset * count} > {self.rig_system.settings}.decay_limit/10 * {math.pi})\n'
-            script += f'    {each_object}.translate{axis} =  {self.rig_system.settings}.amplitud * ' \
-                      f'sin({self.rig_system.settings}.phase + {offset} * {count} * {self.rig_system.settings}.wave_length);\n'
+            script += 'if ({} > {}.decay_limit/10 * {})\n'.format(offset * count, self.rig_system.settings, math.pi )
+            script += '    {}.translate{} =  {}.amplitud * '.format(each_object,axis, self.rig_system.settings ) + \
+              'sin({}.phase + {} * {} * {}.wave_length);\n'.format(self.rig_system.settings,offset, count, self.rig_system.settings)
             # script =  script + '    %s.translateX = %s.amplitud;\n'%(eachObject, control)
             script += 'else \n'
-            script += f'     {each_object}.translate{axis} =   (1 - {self.rig_system.settings}.decay / 10 * ((cos( {offset} * {count}  ' \
-                      f'/ ({self.rig_system.settings}.decay_limit / 10) ) + 1)/2) ) * {self.rig_system.settings}.amplitud * ' \
-                      f'sin({self.rig_system.settings}.phase + {offset} * {count} * {self.rig_system.settings}.wave_length);\n'
+            script += '     {}.translate{} =   (1 - {}.decay / 10 * ((cos( {} * {}  '.format(each_object,axis, self.rig_system.settings, offset, count )+\
+                      '/ ({}.decay_limit / 10) ) + 1)/2) ) * {}.amplitud * '.format(self.rig_system.settings, self.rig_system.settings ) + \
+                      'sin({}.phase + {} * {} * {}.wave_length);\n'.print(self.rig_system.settings,offset, count, self.rig_system.settings)
             count += 1
         expression = pm.expression(name='sinFunction', string=script)
         self.name_convention.rename_name_in_format(expression, useName=True)

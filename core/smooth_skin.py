@@ -157,10 +157,6 @@ class SmoothSkin(object):
         max_value_weight = OpenMaya.MDoubleArray()
         max_value_weight.setLength(len(full_index_list))
 
-        print(f'{max_value_weight=}')
-        print(f'{affected_vertex_lists=}')
-        print(f'{influence_values=}')
-
         for index_vertex in full_index_list:
             max_value_weight[index_vertex] = 0
 
@@ -168,7 +164,6 @@ class SmoothSkin(object):
             for each_vtx_index in vtx_index_list:
                 max_value_weight[each_vtx_index] += values_list[each_vtx_index]
 
-        print(f'{max_value_weight=}')
         joint_weights = {}
         # creating a list per joint the lengt of the influence values
         for each_joint in joints_list:
@@ -285,7 +280,6 @@ class SmoothSkin(object):
                     if print_value:
                         print(t_value)
                     return self.nurbs_interpolation(t_value), output_list[index-1:index+3]
-        print(f'value not in range = {value} , {u_knots_values}')
         raise
 
     def nurbs_interpolation(self, t_value):

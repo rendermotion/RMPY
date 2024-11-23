@@ -116,7 +116,7 @@ def mirror_shape(*shapes, **kwargs):
 
 def mirror_controls(*controls):
     for each in controls:
-        print(f'doing {each}')
+        print('doing {}'.format(each))
         source_shape = pm.ls(each)[0]
         oposite_side = get_oposite_side(each)
         print(oposite_side)

@@ -143,7 +143,7 @@ class GenericAttribute(object):
         elif data_list[0].__class__ == pm.datatypes.Matrix:
             list_of_values = data_list
         else:
-            print(f'class_inside a list not_supported {data_list[0].__class__}')
+            print('class_inside a list not_supported {}'.format(data_list[0].__class__))
 
         return list_of_values
 

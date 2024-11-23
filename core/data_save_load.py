@@ -30,8 +30,8 @@ def save_curve(*args):
                 print("the curve {} doesn't exists".format(each))
         except:
             non_saved_curves_list.append(each)
-    print (f'following curves where saved: {saved_curves_list}')
-    print(f'not saved: {non_saved_curves_list} ')
+    print ('following curves where saved: {}'.format(saved_curves_list))
+    print('not saved: {}'.format(non_saved_curves_list))
 
 
 def load_curves(*args):
@@ -51,9 +51,9 @@ def load_curves(*args):
                 curve_node.load()
                 curve_node.set_repr_dict()
             else:
-                print(f"the curve {each} doesn't exists")
+                print("the curve {} doesn't exists".format(each))
         except :
-            RuntimeWarning(f'{each} not loaded')
+            RuntimeWarning('{} not loaded'.format(each))
             pass
 
 
