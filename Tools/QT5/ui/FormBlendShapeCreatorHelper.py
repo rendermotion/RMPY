@@ -3,11 +3,11 @@
 # Form implementation generated from reading ui file 'UI_BlendShapeCreatorHelper.ui'
 #
 # Created: Tue Jul 26 20:23:11 2022
-#      by: PySide6-uic  running on PySide6 2.0.0~alpha0
+#      by: PySide2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
 
-from PySide6 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_Form(object):
     def setupUi(self, Form):

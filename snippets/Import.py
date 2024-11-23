@@ -24,15 +24,15 @@ except:
         try:
             import xml.etree.ElementTree as xml
             from cStringIO import StringIO
-            import shiboken6 as shiboken
-            import PySide6uic as pysideuic
-            from PySide6.QtGui     import * 
-            from PySide6.QtCore    import *
-            from PySide6.QtWidgets import *
-            from PySide6 import QtGui
-            default = "PySide6"
-            logging.Logger.manager.loggerDict["PySide6uic.uiparser"].setLevel(logging.CRITICAL)
-            logging.Logger.manager.loggerDict["PySide6uic.properties"].setLevel(logging.CRITICAL)
+            import shiboken2 as shiboken
+            import PySide2uic as pysideuic
+            from PySide2.QtGui     import * 
+            from PySide2.QtCore    import *
+            from PySide2.QtWidgets import *
+            from PySide2 import QtGui
+            default = "PySide2"
+            logging.Logger.manager.loggerDict["PySide2uic.uiparser"].setLevel(logging.CRITICAL)
+            logging.Logger.manager.loggerDict["PySide2uic.properties"].setLevel(logging.CRITICAL)
         except:
             print ("PySide(2) and PyQt4 not found")
 

@@ -3,11 +3,11 @@
 # Form implementation generated from reading ui file 'aim_to_point.ui'
 #
 # Created: Sun Nov 10 21:37:08 2019
-#      by: PySide6-uic  running on PySide6 2.0.0~alpha0
+#      by: PySide2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
 
-from PySide6 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_aim_to_point(object):
     def setupUi(self, aim_to_point):

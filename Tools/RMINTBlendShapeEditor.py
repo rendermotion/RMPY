@@ -3,11 +3,11 @@ import maya.cmds as cmds
 import maya.OpenMayaUI as mui
 from maya.app.general.mayaMixin import MayaQWidgetDockableMixin
 
-from PySide6.QtCore import *
-from PySide6.QtGui import *
-from PySide6.QtWidgets import *
-from PySide6 import __version__
-from shiboken6 import wrapInstance
+from PySide2.QtCore import *
+from PySide2.QtGui import *
+from PySide2.QtWidgets import *
+from PySide2 import __version__
+from shiboken2 import wrapInstance
 from RMPY.Tools.QT5.ui import FormBlendShapeEditor
 
 import maya.mel as mel

@@ -124,7 +124,7 @@ global proc shelf_rendermotion () {
         -backgroundColor 0 0 0 
         -highlightColor 0.321569 0.521569 0.65098 
         -align "center" 
-        -label "import maya.cmds as cmds\nfrom PySide6.QtGui import QClipboard\nse..."
+        -label "import maya.cmds as cmds\nfrom PySide2.QtGui import QClipboard\nse..."
         -labelOffset 0
         -rotation 0
         -flipX 0
@@ -139,7 +139,7 @@ global proc shelf_rendermotion () {
         -style "iconOnly" 
         -marginWidth 0
         -marginHeight 1
-        -command "import maya.cmds as cmds\nfrom PySide6.QtGui import QClipboard\nselection = cmds.ls(selection=True)\nclip_board = QClipboard()\nclip_board.setText(str(selection))\nprint(selection)\n"
+        -command "import maya.cmds as cmds\nfrom PySide2.QtGui import QClipboard\nselection = cmds.ls(selection=True)\nclip_board = QClipboard()\nclip_board.setText(str(selection))\nprint(selection)\n"
         -sourceType "python" 
         -commandRepeatable 1
         -flat 1
