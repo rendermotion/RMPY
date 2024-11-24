@@ -4,7 +4,6 @@ import os
 from RMPY.core import config
 from RMPY.core import transform
 from RMPY.core import dataValidators
-from pathlib import Path
 from RMPY.creators import creatorsBase
 
 
@@ -190,7 +189,7 @@ class Controls(creatorsBase.CreatorsBase):
         }
         path = Path(RMRigTools.__file__)
         RMPYPATH = os.path.split(path)
-        FinalPath = Path(Path(RMPYPATH[0]), Path("AutoRig/RigShapes"), MoversTypeDic[control_type]["filename"])
+        FinalPath = '{}/{}/{}'.format(RMPYPATH[0], "AutoRig/RigShapes", MoversTypeDic[control_type]["filename"])
         if os.path.isfile(FinalPath):
             pm.importFile(FinalPath, i=True, type="mayaBinary", ignoreVersion=True, mergeNamespacesOnClash=False,
                                     rpr="ControlMover", pr=False)
