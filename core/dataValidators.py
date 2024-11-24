@@ -55,7 +55,10 @@ def as_point(input_data):
         y_vector = up_vector.cross(x_vector)
         z_vector = x_vector.cross(y_vector)
         new_space_locator = pm.spaceLocator()
-        new_space_locator.offsetParentMatrix.set(list([*x_vector, 0, *z_vector, 0, *y_vector, 0, *position, 1]))
+        new_space_locator.offsetParentMatrix.set(list([x_vector[0], x_vector[1], x_vector[2], 0,
+                                                       y_vector[0],y_vector[1], y_vector[2], 0,
+                                                       z_vector[0],z_vector[1], z_vector[2], 0,
+                                                       position[0],position[1], position[2], 1]))
     else:
         print('not valid Data {}'.format(input_data.__class__))
 

@@ -70,7 +70,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self._joint_list = joint_list
         self.rm.setup_name_convention_node_base(joint_list[0])
         if len(str(joint_list)) > 20:
-            self.ui.joint_list_btn.setText(str(f'{str(joint_list)[0:20]}...'))
+            self.ui.joint_list_btn.setText(str('{}...'.format(str(joint_list)[0:20])))
         else:
             self.ui.joint_list_btn.setText(str(joint_list).replace("',", "',\n"))
         self.ui.joint_list_btn.setToolTip(str(joint_list).replace("',", "',\n"))
