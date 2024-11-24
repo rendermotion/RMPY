@@ -2,7 +2,7 @@ import pymel.core as pm
 from RMPY import RMRigTools
 from RMPY.creators import creatorsBase
 import importlib
-importlib.reload(creatorsBase)
+reload(creatorsBase)
 
 class Lattice(creatorsBase.CreatorsBase):
     def __init__(self, *args, **kwargs):

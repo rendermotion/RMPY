@@ -19,7 +19,7 @@ from RMPY.rig.biped.rig import rigEyesSpaceSwitch
 from RMPY.rig import rigSingleJoint
 from RMPY.rig import rigOutput
 import importlib
-importlib.reload(rigOutput)
+reload(rigOutput)
 
 
 class RigBypedModel(rigBase.BaseModel):

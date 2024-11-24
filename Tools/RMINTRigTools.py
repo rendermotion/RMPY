@@ -29,8 +29,8 @@ from RMPY.Tools.QT5.ui import FormRigTools
 from RMPY.core import controls
 from RMPY.core import rig_core
 import importlib
-importlib.reload(controls)
-importlib.reload(FormRigTools)
+reload(controls)
+reload(FormRigTools)
 
 
 
