@@ -1,8 +1,7 @@
 import pymel.core as pm
 from RMPY import nameConvention
 
-
-def color_code_controls(*controls, force=None):
+def color_code_controls(*controls, force=False):
     name_convention = nameConvention.NameConvention()
     for each in controls:
         if not force:
