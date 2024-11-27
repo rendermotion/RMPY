@@ -9,7 +9,7 @@ def rename_selection():
 	selection = pm.ls(selection=True)
 	fix_shapes(*selection)
 	for index, each in enumerate(selection):
-		side = 'C'
+		side = 'L'
 		system_name = 'reference'
 		name = 'IKRope'
 		# name_conv.rename_name_in_format(each, side=side, system=system_name, name='shoe{}'.format(chr(65+index)))

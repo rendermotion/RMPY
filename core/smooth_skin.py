@@ -3,7 +3,7 @@ from maya.api import OpenMayaAnim
 import maya.cmds as cmds
 import re
 import pymel.core as pm
-
+from math import isclose
 class ApiComponents(object):
     def __init__(self):
         self.components_object = None
@@ -103,6 +103,23 @@ class SmoothSkin(object):
             return e
         m_object = sel.getDependNode(0)
         return m_object
+
+    def MDoubleArray(self, length=0, value=0):
+        """
+        Returns an MDouble Array initialized.
+        keyword arguments
+        _________________
+        length: the number of elements on the array.
+        value: the value at what all the elements on the array will be initialized.
+        Returns
+        _______
+        return: The initialized MDoubleArray
+        """
+        double_array = OpenMaya.MDoubleArray()
+        double_array.setLength(length)
+        for each in range(length):
+            double_array[each] = value
+        return double_array
     def get_skincluster_from_mesh(self):
         for closest_point_uv in cmds.listHistory(self.mesh.name(), pruneDagObjects=True):
             if cmds.objectType(closest_point_uv) == 'skinCluster':
@@ -141,89 +158,105 @@ class SmoothSkin(object):
         surface_path = self.getDagPath(name)
         return OpenMaya.MFnTransform(surface_path.node())
 
-    def smooth(self, joints_list):
-        affected_vertex_lists = self.get_index_of_points_affected_by_multiple_influences(*joints_list)
+    def get_max_weight_skinning(self, joints_list):
+        full_index_list = self.get_index_of_points_affected_by_multiple_influences(*joints_list)
+        max_weight_value = self.MDoubleArray(length=len(full_index_list))
 
-        influence_values = []
         for each_joint in joints_list:
-            influence_values.append(self.get_skinning(each_joint))
+            vertex_indices, skin_weights = self.get_index_of_points_affected_by_influence(each_joint)
+            for index, each_vertex_index in enumerate(vertex_indices):
+                max_weight_value[full_index_list.index(each_vertex_index)] = max_weight_value[full_index_list.index(
+                    each_vertex_index)] + skin_weights[index]
+        return full_index_list, max_weight_value
 
-        # create a set with all the indices of the vertex that contain skinning in this joints.
-        fullset = set()
-        for set_list in affected_vertex_lists:
-            fullset = fullset.union(set(set_list))
+    def unify_skinning(self, joints_list):
+        """
+        Moves the skin weights of a joints list provided to the first joint of the list.
+        Arguments:
+            joints_list:list
+        """
+        full_index_list, max_weight_value = self.get_max_weight_skinning(joints_list)
 
-        full_index_list = list(fullset)
-        max_value_weight = OpenMaya.MDoubleArray()
-        max_value_weight.setLength(len(full_index_list))
+        # self.apply_skinning(full_index_list, max_value_weight, joints_list[0])
+        for index, each_joint in enumerate(joints_list):
+            if index == 0:
+                self.apply_skinning(full_index_list, max_weight_value, each_joint)
+            else:
+                zero_values_weight = self.MDoubleArray(length=len(full_index_list))
+                self.apply_skinning(full_index_list, zero_values_weight, each_joint)
 
-        print(f'{max_value_weight=}')
-        print(f'{affected_vertex_lists=}')
-        print(f'{influence_values=}')
+                # self.skin_cluster.setWeights(self.mesh.dagPath(),  kobject_components, influence_indices, weights, normalize=False, returnOldWeights=False)
+    def joints_to_indices(self, joint_list):
+        if not type(joint_list) == list:
+            joint_list = [joint_list]
+        influence_indices = OpenMaya.MIntArray()
+        for influence in joint_list:
+            index_influence = self.skin_cluster.indexForInfluenceObject(self.getDagPath(influence))
+            influence_indices.append(index_influence)
+        return influence_indices
 
-        for index_vertex in full_index_list:
-            max_value_weight[index_vertex] = 0
+    def smooth(self, joints_list):
+        full_index_list, max_weight_value = self.get_max_weight_skinning(joints_list)
 
-        for vtx_index_list, values_list in zip(affected_vertex_lists,  influence_values):
-            for each_vtx_index in vtx_index_list:
-                max_value_weight[each_vtx_index] += values_list[each_vtx_index]
-
-        print(f'{max_value_weight=}')
         joint_weights = {}
         # creating a list per joint the lengt of the influence values
         for each_joint in joints_list:
-            joint_weights[each_joint] = OpenMaya.MDoubleArray()
-            joint_weights[each_joint].setLength(len(influence_values[0]))
-        # from pprint import pprint as pp
-        # pp(joint_weights)
+            joint_weights[each_joint] = self.MDoubleArray(length=len(full_index_list))
+
         uv_values = self.closest_point_to_surface(full_index_list)
         for closest_point_uv, vertex_index in zip(uv_values, full_index_list):
-            for each_joint in joints_list:
-                joint_weights[each_joint][full_index_list.index(vertex_index)] = 0
+            # print(vertex_index, closest_point_uv[1])
             for skin_value, joint in zip(*self.remap_value(closest_point_uv[1], joints_list)):
-                    joint_weights[joint][full_index_list.index(vertex_index)] = joint_weights[joint][full_index_list.index(vertex_index)] + skin_value/6
-            joint_weights[joint][full_index_list.index(vertex_index)] = joint_weights[joint][full_index_list.index(vertex_index)] * max_value_weight[full_index_list.index(vertex_index)]
-        # pp(joint_weights)
-        # print(list(joint_weights.keys()))
+                #print(skin_value, joint)
+                joint_weights[joint][full_index_list.index(vertex_index)] = \
+                    joint_weights[joint][full_index_list.index(vertex_index)] + \
+                    skin_value * max_weight_value[full_index_list.index(vertex_index)] / 6
+
+        cmds.setAttr(f"{self.skin_cluster.name()}.normalizeWeights", 0)
         for each_joint in joint_weights:
-            self.apply_skinning(range(len(joint_weights[each_joint])),
+            self.apply_skinning(full_index_list,
                                 joint_weights[each_joint],
                                 each_joint)
+        cmds.setAttr(f"{self.skin_cluster.name()}.normalizeWeights", 1)
         #for index, uv_value in zip(fullset, uv_values):
         #     print(f'{index} , {uv_value[-2]:.2f}, {uv_value[-1]:.2f}')
 
     def get_index_of_points_affected_by_multiple_influences(self, *influences):
         """
-        return: a list of sets containing closest_point_uv one of the vertices affected by closest_point_uv influence.
-        for example this is a list returned by requesting 3 joints vertex influence.
-            [
-            {32, 33, 34, 35, 4, 5, 6, 7, 36, 37, 38, 39, 28, 29, 30, 31},
-            {0, 1, 2, 3, 22, 23, 24, 25, 26, 27},
-            {0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21}
-             ]
-
+        return: a list containing  vertices indices affected by all joint influences.
         """
         self.joint_list = influences
         vertex_index = []
-        for closest_point_uv_influence in self.joint_list:
-            selection_list, weights = self.skin_cluster.getPointsAffectedByInfluence(closest_point_uv_influence)
-            # index_of_influence = self.skin_cluster.indexForInfluenceObject(closest_point_uv_influence)
+        for each_joint in self.joint_list:
+            selection_list, weights = self.skin_cluster.getPointsAffectedByInfluence(each_joint)
+            # index_of_influence = self.skin_cluster.indexForInfluenceObject(each_joint)
             influence_list = []
             if not selection_list.isEmpty():
                 scene_object, vertices = selection_list.getComponent(0)
                 fn_vertices = OpenMaya.MFnSingleIndexedComponent(vertices)
                 influence_list.extend(fn_vertices.getElements())
             vertex_index.append(influence_list)
-
-        return vertex_index
+        fullset = set()  # To save the full list of affected indices
+        for set_list in vertex_index:
+            fullset = fullset.union(set(set_list))
+        full_index_list = list(fullset)
+        full_index_list.sort()
+        return full_index_list
 
     def get_index_of_points_affected_by_influence(self, influence):
         """
         Returns an index of points that are affected by a specific influence.
         this influence can be just a string with the name of the joint.
+        It will return 2 lists, one containing the vertex indices, and another one containing the weights per vertex.
         """
         self.joint_list = [influence]
-        return self.skin_cluster.getPointsAffectedByInfluence(self.joint_list[0])
+        selection_list, weights = self.skin_cluster.getPointsAffectedByInfluence(self.joint_list[0])
+        influence_list = []
+        if not selection_list.isEmpty():
+            scene_object, vertices = selection_list.getComponent(0)
+            fn_vertices = OpenMaya.MFnSingleIndexedComponent(vertices)
+            influence_list.extend(fn_vertices.getElements())
+        return influence_list, weights
 
     def closest_point_to_surface(self, index_list):
         # Returns a list of uv points of an specific index list of vertex.
@@ -237,17 +270,7 @@ class SmoothSkin(object):
         return return_list
 
     def apply_skinning(self, vertex_indices, weight_values, influences):
-        influence_indices = OpenMaya.MIntArray()
-        if influences.__class__ == str:
-            index_influence = self.skin_cluster.indexForInfluenceObject(self.getDagPath(influences))
-            influence_indices.append(index_influence)
-        elif influences.__class__ == list:
-            for each_influence in influences:
-                influence_indices.append(self.skin_cluster.indexForInfluenceObject(self.getDagPath(each_influence)))
-        else:
-            index_influence = influences
-
-            influence_indices.append(index_influence)
+        influence_indices = self.joints_to_indices(influences)
 
         component_list = OpenMaya.MFnSingleIndexedComponent()
         kobject_components = component_list.create(OpenMaya.MFn.kMeshVertComponent)
@@ -276,8 +299,12 @@ class SmoothSkin(object):
         u_knots_values = self.surface.knotsInU()
         for index, (min_value, max_value) in enumerate(zip(u_knots_values[:-1], u_knots_values[1:])):
             if min_value != max_value:
-                if min_value <= value <= max_value:
+                if min_value <= value <= max_value or isclose(value, min_value) or isclose(value, max_value):
                     t_value = (value - min_value) / (max_value - min_value)
+                    if t_value < 0:
+                        t_value = 0
+                    elif t_value > 1:
+                        t_value = 1
                     output_list = [joint_list[0], joint_list[0]]
                     output_list.extend(joint_list)
                     output_list.append(joint_list[-1])
@@ -298,9 +325,15 @@ class SmoothSkin(object):
 if __name__ == '__main__':
     selection = pm.ls(selection=True)[0]
     smooth_skin = SmoothSkin().by_geometry(str(selection))
-    index_list = smooth_skin.get_index_of_points_affected_by_multiple_influences('joint2', 'joint1')
+    # index_list = smooth_skin.get_index_of_points_affected_by_multiple_influences('joint2', 'joint1')
     # print(index_list)
-    smooth_skin.surface = 'nurbsCylinder1'
+    smooth_skin.surface = 'C_smoothSurface00_Spine_nrb'
+
+    # points_affected = smooth_skin.get_index_of_points_affected_by_influence('C_main02_Spine_sknjnt')
+    # print(points_affected)
+
+    smooth_skin.smooth(['C_main00_Spine_sknjnt', 'C_main01_Spine_sknjnt', 'C_main02_Spine_sknjnt', 'C_main03_Spine_sknjnt', 'C_main04_Spine_sknjnt'])
+
     # print(smooth_skin.surface)
     # print(smooth_skin.closest_point_to_surface(index_list[0]))
     # print(smooth_skin.mesh.numVertices)
@@ -312,7 +345,9 @@ if __name__ == '__main__':
     # print(selection_points_list)
     # print(values)
     # print(selection_points_list.length())
-    smooth_skin.smooth(['joint1', 'joint2', 'joint3'])
+    # smooth_skin.smooth(['joint1', 'joint2', 'joint3'])
+
+    'C_main02_Spine_sknjnt'
     '''num_points = 50
     step= 1/50
     space_locators_groups = []

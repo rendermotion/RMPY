@@ -49,6 +49,19 @@
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QPushButton" name="unify_skinning_btn">
+          <property name="toolTip">
+           <string>Moves the weights from all the joints on the list, to the first joint</string>
+          </property>
+          <property name="locale">
+           <locale language="English" country="UnitedStates"/>
+          </property>
+          <property name="text">
+           <string>Unify Skinning</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
      </item>

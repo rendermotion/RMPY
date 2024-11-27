@@ -2,6 +2,25 @@ import pymel.core as pm
 
 
 def type_in_hierarchy(scene_object, mesh_list=None, object_type='joint'):
+    """
+    Returns the objects of type object_type that you can find in the hierarchy of scene_object.
+    Parameters
+    __________
+    Arguments
+    +++++++++
+    scene_object : pymel_transform
+        The object where the function it is going to start searching in the hierarchy.
+
+    Keyword Arguments
+    +++++++++++++++++
+    mesh_list : list
+        This is a recursive function, that uses this mesh list, to keep track of the returned value, on each call.
+        So there is no need to provide anything on the mesh_list.
+    object_type : str
+         The maya object type that  it is going to be searched on the hierarchy
+    return: list
+        A list containing all the objects found.
+    """
     if mesh_list is None:
         mesh_list = []
     if pm.objectType(scene_object) == object_type:
@@ -12,6 +31,24 @@ def type_in_hierarchy(scene_object, mesh_list=None, object_type='joint'):
 
 
 def shape_type_in_hierarchy(scene_object, mesh_list=None, object_type='mesh'):
+    """
+    Returns the transforms of objects that have a specific mesh type.
+    __________
+    Arguments
+    +++++++++
+    scene_object : pymel_transform
+        The object where the function it is going to start searching in the hierarchy.
+
+    Keyword Arguments
+    +++++++++++++++++
+    mesh_list : list
+        This is a recursive function, that uses this mesh list, to keep track of the returned value, on each call.
+        So there is no need to provide anything on the mesh_list.
+    object_type : str
+         The maya object type that  it is going to be searched on the hierarchy
+    return: list
+        A list containing all the objects found.
+    """
     if mesh_list is None:
         mesh_list = []
     if scene_object.getShape():
@@ -90,5 +127,6 @@ if __name__ == '__main__':
     # select_by_function(shape_type_in_hierarchy,mesh_list=None, object_type='mesh')
     # shape_type_in_hierarchy(scene_object)
     # select_by_function(none_skinned_mesh_in_hierarchy)
-    select_by_function(skinned_mesh_in_hierarchy)
+    # select_by_function(skinned_mesh_in_hierarchy)
     # print none_skinned_mesh_in_hierarchy(pm.ls('C_frontRopes_0001_GRP')[0])
+    pm.select(type_in_hierarchy(scene_object))

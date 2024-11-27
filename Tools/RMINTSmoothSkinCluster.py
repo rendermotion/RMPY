@@ -34,8 +34,10 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.ui.select_joints_btn.clicked.connect(self.select_joints_pressed)
         self.ui.set_selected_surface_btn.clicked.connect(self.set_selected_surface_btn_pressed)
         self.ui.create_surface_btn.clicked.connect(self.create_surface_btn_pressed)
-        self.ui.radius_SpinBox.valueChanged.connect(self.radius_value_change)
+        self.ui.radius_spinbox.valueChanged.connect(self.radius_value_change)
         self.ui.smooth_btn.clicked.connect(self.smooth_skin_btn_pressed)
+        self.ui.unify_skinning_btn.clicked.connect(self.unify_skinning_btn_pressed)
+
 
 
     @property
@@ -101,7 +103,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
                                                      periodic=self.ui.periodic_curve_chk.isChecked(),
                                                      ep=True)
         path_curve.setParent(self.creation_history)
-        loft_circle, make_circle = pm.circle(radius = self.ui.radius_SpinBox.value())
+        loft_circle, make_circle = pm.circle(radius = self.ui.radius_spinbox.value())
         self.rm.name_convention.rename_name_in_format(loft_circle, make_circle, name='circle')
         loft_circle.setParent(self.creation_history)
 
@@ -109,7 +111,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
                    polygon=0,  # output is nurbs surface
                    extrudeType=2,
                    constructionHistory=True,
-                   useComponentPivot=0,
+                   useComponentPivot=True,
                    fixedPath=1,
                    useProfileNormal=1,
                    rotation=0,
@@ -130,6 +132,12 @@ class Main(MayaQWidgetDockableMixin, QDialog):
             return json.loads(nurbs_surface.notes.get())
         return None
 
+    def unify_skinning_btn_pressed(self):
+        selection = pm.ls(selection=True)
+        for each in selection:
+            skin_cluster = smooth_skin.SmoothSkin().by_geometry(str(each))
+            # skin_cluster.surface = str(self.nurbs_surface)
+            skin_cluster.unify_skinning([str(each) for each in self.joint_list])
 
     def smooth_skin_btn_pressed(self):
         selection = pm.ls(selection=True)
@@ -143,7 +151,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         if surface_button:
             create_curve = pm.listHistory(surface_button[0], type='makeNurbCircle')
             if create_curve:
-                create_curve.radius.set(self.ui.radius_SpinBox.value())
+                create_curve[0].radius.set(self.ui.radius_spinbox.value())
 
 
     def add_metadata_to_surface(self):

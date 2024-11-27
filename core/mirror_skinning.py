@@ -40,7 +40,7 @@ def get_oposite(scene_object):
             splitName = str(each_object)
 
         token_list = splitName.split('_')
-        if token_list[1] in ['FR', 'MR', 'BR', 'FL','ML', 'BL', 'C', 'R','L']:
+        if token_list[1] in ['FR', 'MR', 'BR', 'FL', 'ML', 'BL', 'C', 'R', 'L']:
             if 'L' in token_list[1]:
                 token_list[1] = token_list[1].replace('L', 'R')
             else:
