@@ -25,10 +25,12 @@ from RMPY.core import transform
 from RMPY.core import hierarchy
 import importlib
 from RMPY.core import mirror_skinning
-from RMPY.Tools.QT5.ui import FormRigTools
+from RMPY.Tools.QT6.ui import FormRigTools
 from RMPY.core import controls
 from RMPY.core import rig_core
+from RMPY.rig import rigBase
 import importlib
+from RMPY.Tools import RMINTRenameTool
 importlib.reload(controls)
 importlib.reload(FormRigTools)
 
@@ -45,13 +47,11 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.rigTools = RMRigTools.RMRigTools()
         self.ui = FormRigTools.Ui_Form()
         self.ui.setupUi(self)
+        self.rig_base = rigBase.RigBase()
         self.setWindowTitle('RM Maya Rig Tools')
         self.ui.RenameTool.clicked.connect(self.RenameToolBtnPressed)
-        # self.ui.IKOnSelection.clicked.connect(self.IKOnSelectionBtnPressed)
-        # self.ui.FKOnSelection.clicked.connect(self.FKOnSelectionBtnPressed)
-        self.ui.CreateChildGroup.clicked.connect(self.CreateChildGroupBtnPressed)
         self.ui.CreateParentGroup.clicked.connect(self.CreateParentBtnPressed)
-        # self.ui.JointsOnPoints.clicked.connect(self.JointsOnPointsBtnPressed)
+
         self.ui.AlignRotation.clicked.connect(self.AlignRotationBtnPressed)
         self.ui.AlignPosition.clicked.connect(self.AlignPositionBtnPressed)
         self.ui.AlignAll.clicked.connect(self.AlignAllBtnPressed)
@@ -60,7 +60,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.ui.SCCombineButton.clicked.connect(self.SCCombineButtonPressed)
         self.ui.AttributeTransferBtn.clicked.connect(self.transfer_attributes)
         self.ui.ExtractGeoBtn.clicked.connect(self.extract_geometry)
-        # self.ui.GenericJointChainRigBtn.clicked.connect(self.GenericJointChainRigBtnPressed)
+
         self.ui.mirror_selection_btn.clicked.connect(self.mirror_selection)
         self.ui.orient_parents_btn.clicked.connect(self.orient_parents)
         self.ui.locator_at_average_btn.clicked.connect(self.locator_at_average)
@@ -139,25 +139,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
                                            self.ui.NumberOfPointsSpnBx.value(), selection[0], selection[1])
 
     def RenameToolBtnPressed(self):
-        mel.eval('source RMINTRenameTool.mel;')
-
-    def IKOnSelectionBtnPressed(self):
-        mel.eval('source RMRigIK.mel;')
-        mel.eval('RMIKCreateonSelected();')
-
-    def FKOnSelectionBtnPressed(self):
-        # mel.eval('source RMRigFK.mel;')
-        # mel.eval('RMFKCreateonSelected();')
-        FKM = RMRigFK.RMRigFK()
-        FKM.createOnSelection()
-
-    def CreateChildGroupBtnPressed(self):
-        # mel.eval('''source RMRigTools.mel;
-        # string $temp[]=`ls -sl`;
-        # RMCreateGrouponObj $temp[0] 2;''')
-        selection = cmds.ls(selection=True)
-        for eachObject in selection:
-            RMRigTools.RMCreateGroupOnObj(eachObject, Type='child')
+        RMINTRenameTool.Main().show()
 
     def GenericJointChainRigBtnPressed(self):
         selection = cmds.ls(selection=True)
@@ -170,17 +152,16 @@ class Main(MayaQWidgetDockableMixin, QDialog):
 
     def CreateParentBtnPressed(self):
         selection = cmds.ls(selection=True)
-        paretnType = ''
-        if selection:
-            if self.ui.parentRadio.isChecked() == True:
-                paretnType = 'parent'
-            if self.ui.worldRadio.isChecked() == True:
-                paretnType = 'world'
-            if self.ui.insertedRadio.isChecked() == True:
-                paretnType = 'inserted'
+        if self.ui.parentRadio.isChecked() == True:
+            parent_type = 'parent'
+        elif self.ui.worldRadio.isChecked() == True:
+            parent_type = 'world'
+        elif self.ui.insertedRadio.isChecked() == True:
+            parent_type = 'inserted'
 
-        for eachObject in selection:
-            RMRigTools.RMCreateGroupOnObj(eachObject, Type=paretnType)
+        elif self.ui.childRadio.isChecked() == True:
+            parent_type = 'child'
+        self.rig_base.create.group.point_base(*selection, type=parent_type)
 
     def ProgressiveConstraintButtonPressed(self):
         selection = cmds.ls(selection=True)

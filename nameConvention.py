@@ -75,7 +75,7 @@ class NameConvention(object):
         for index, each in enumerate(tokens):
             self.name_convention[each] = index
 
-        self.validation = {'side': ['L', 'R', 'C'],
+        self.validation = {'side': ['C', 'L', 'R'],
                            'objectType': ['jnt', 'sknjnt', 'nub', 'skn', 'UDF', 'shp', 'msh', 'rmsh', 'grp', 'pnc',
                                           'orc', 'prc', 'scc', 'pvc', 'ctr', 'pnt', 'ikh', 'ikf', 'rvs', 'mult', 'cnd',
                                           'blt', 'cui', 'dbtw', 'cls', 'clsh', 'pma', 'b2a', 'mph', 'ffd', 'bs', 'aim',

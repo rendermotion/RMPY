@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>589</width>
-    <height>447</height>
+    <width>521</width>
+    <height>446</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -37,7 +37,7 @@
               <item>
                <widget class="QPushButton" name="RenameTool">
                 <property name="enabled">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </property>
                 <property name="text">
                  <string>Rename Tool</string>
@@ -45,26 +45,23 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="ExtractGeoBtn">
+               <widget class="QPushButton" name="orient_parents_btn">
                 <property name="text">
-                 <string>ExtractGeometry</string>
+                 <string>Orient Parents</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="ParentConstraintBtn">
+               <widget class="QPushButton" name="hierarchy_switch_btn">
                 <property name="text">
-                 <string>Parent Constraint</string>
+                 <string>hierarchy switch</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="AttributeTransferBtn">
-                <property name="toolTip">
-                 <string extracomment="Select the object with the Attributes you want to transfer First, then the destination object."/>
-                </property>
+               <widget class="QPushButton" name="mirror_selection_btn">
                 <property name="text">
-                 <string>Move Attributes</string>
+                 <string>Mirror selection</string>
                 </property>
                </widget>
               </item>
@@ -259,87 +256,98 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_6">
            <item>
-            <widget class="QGroupBox" name="GroupsGroupBox">
-             <property name="title">
-              <string>Group Creation</string>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout">
-              <item>
-               <widget class="QPushButton" name="CreateChildGroup">
-                <property name="text">
-                 <string>Create Child Group</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QGroupBox" name="groupBox_2">
-                <property name="title">
-                 <string>Parent Group</string>
-                </property>
-                <layout class="QVBoxLayout" name="verticalLayout_7">
-                 <item>
-                  <layout class="QHBoxLayout" name="horizontalLayout_8">
-                   <item>
-                    <widget class="QRadioButton" name="worldRadio">
-                     <property name="text">
-                      <string>world</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QRadioButton" name="parentRadio">
-                     <property name="text">
-                      <string>parent</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QRadioButton" name="insertedRadio">
-                     <property name="text">
-                      <string>inserted</string>
-                     </property>
-                     <property name="checked">
-                      <bool>true</bool>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="CreateParentGroup">
-                   <property name="text">
-                    <string>Create Parent Group</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
             <layout class="QVBoxLayout" name="verticalLayout_5">
              <item>
-              <widget class="QPushButton" name="mirror_selection_btn">
+              <widget class="QGroupBox" name="groupBox_2">
+               <property name="title">
+                <string>Create group</string>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_7">
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_4">
+                  <item>
+                   <widget class="QRadioButton" name="insertedRadio">
+                    <property name="text">
+                     <string>inserted</string>
+                    </property>
+                    <property name="checked">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QRadioButton" name="childRadio">
+                    <property name="text">
+                     <string>chidren</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_5">
+                  <item>
+                   <widget class="QRadioButton" name="parentRadio">
+                    <property name="text">
+                     <string>parent</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QRadioButton" name="worldRadio">
+                    <property name="text">
+                     <string>world</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="CreateParentGroup">
+                  <property name="text">
+                   <string>Create group at selection</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="ExtractGeoBtn">
                <property name="text">
-                <string>Mirror selection</string>
+                <string>ExtractGeometry</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="orient_parents_btn">
+              <widget class="QPushButton" name="ParentConstraintBtn">
                <property name="text">
-                <string>Orient Parents</string>
+                <string>Parent Constraint</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="hierarchy_switch_btn">
+              <widget class="QPushButton" name="AttributeTransferBtn">
+               <property name="toolTip">
+                <string extracomment="Select the object with the Attributes you want to transfer First, then the destination object."/>
+               </property>
                <property name="text">
-                <string>hierarchy switch</string>
+                <string>Move Attributes</string>
                </property>
               </widget>
+             </item>
+             <item>
+              <spacer name="verticalSpacer_3">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
              </item>
             </layout>
            </item>

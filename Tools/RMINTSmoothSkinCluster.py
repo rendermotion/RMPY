@@ -22,7 +22,7 @@ def getMayaWindow():
 
 
 class Main(MayaQWidgetDockableMixin, QDialog):
-    def __init__(self, NameConv=None, parent=None):
+    def __init__(self, parent=None):
         self.rm = rigBase.RigBase()
         super(Main, self).__init__(parent=getMayaWindow())
         self._joint_list = []
