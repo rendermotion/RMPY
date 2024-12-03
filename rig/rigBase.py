@@ -263,8 +263,11 @@ class RigBase(object):
                 self.name_convention.rename_based_on_base_name(each, new_joint, name='main', objectType='skinjoint')
                 rig_joints.append(new_joint)
                 if index == 0:
-                    if rig_object.outputs:
-                        new_joint.setParent(rig_object.outputs[-1], noInvScale=True, relative=True)
+                    if RigBase in type(rig_object).__mro__:
+                        if rig_object.outputs:
+                            new_joint.setParent(rig_object.outputs[-1], noInvScale=True, relative=True)
+                        else:
+                            new_joint.setParent(output_joint_rig.outputs[-1], noInvScale=True, relative=True)
                     else:
                         new_joint.setParent(output_joint_rig.outputs[-1], noInvScale=True, relative=True)
                 else:
