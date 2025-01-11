@@ -35,7 +35,7 @@ class RigBypedModel(rigBase.BaseModel):
         self.spine = rigForwardBackwardFKSpine.RigForwardBackwardFKSpine()
         self.hip = rigFK.RigFK()
         self.cog = rigProp.RigProp()
-        self.jaw = rig_jaw.Jaw()
+        self.jaw = rig_jaw.RigJaw()
         self.rig_world = rigWorld.RigWorld()
         self.l_arm_space_switch = armSpaceSwitch.ArmSpaceSwitch()
         self.r_arm_space_switch = armSpaceSwitch.ArmSpaceSwitch()

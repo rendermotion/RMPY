@@ -64,7 +64,7 @@ class Mesh(creatorsBase.CreatorsBase):
 
     def match_vertex_index_by_position(self, source_mesh, comparision_mesh, **kwargs):
         self.load_geo_points(source_mesh)
-        tolerance = kwargs.pop('tolerance', 0.0001)
+        tolerance = kwargs.pop('tolerance', 0.001)
         mesh_destination = Mesh()
         # split the model in L and right to get better performance while searching.
         mesh_destination.load_geo_points(comparision_mesh)

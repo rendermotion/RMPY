@@ -45,10 +45,10 @@ class StaticLayer(rigBase.RigBase):
             new_geo.setParent(parent_group)
             if self.name_convention.is_name_in_format(each_geo):
                 tokens = each_geo.split('_')
-                self.name_convention.rename_name_in_format(new_geo, side=tokens[1], name=tokens[2])
+                self.name_convention.rename_name_in_format(new_geo, side=tokens[0], name=tokens[1])
             else:
                 tokens = each_geo.split('_')
-                self.name_convention.rename_name_in_format(new_geo, name=tokens[0])
+                self.name_convention.rename_name_in_format(new_geo, name=''.join(tokens))
             self.static_geometries.append(new_geo)
         self._model.blend_shape_rig = rigStaticBlendShapes.StaticBlendShapes(zip(self.static_geometries,
                                                                                  self.geometries))
