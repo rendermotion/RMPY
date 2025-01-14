@@ -45,7 +45,6 @@ class Controls(creatorsBase.CreatorsBase):
                 controls_list.append(self.file_control(each, ** kwargs))
 
         if len(points) == 1:
-
             return controls_list[0]
 
         return controls_list
