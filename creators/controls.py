@@ -195,7 +195,7 @@ class Controls(creatorsBase.CreatorsBase):
             pm.importFile(FinalPath, i=True, type="mayaBinary", ignoreVersion=True, mergeNamespacesOnClash=False,
                                     rpr="ControlMover", pr=False)
         else:
-            print ("archivo no encontrado %s , %s, %s "% (path, RMPYPATH, FinalPath))
+            print ("file not found %s , %s, %s "% (path, RMPYPATH, FinalPath))
             return None
 
         control = pm.ls(MoversTypeDic[control_type]["object"])[0]
@@ -210,7 +210,7 @@ class Controls(creatorsBase.CreatorsBase):
 
             self.name_convention.rename_name_in_format(control, objectType='control')
 
-            transform.align(scene_object, control)
+            pm.matchTransform(control, scene_object)
 
             reset_group = self.rigTools.RMCreateGroupOnObj(control)
             self.scale_controls(reset_group)
