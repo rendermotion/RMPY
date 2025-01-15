@@ -57,6 +57,7 @@ class RigObjectsOnCurve(rigBase.RigBase):
         number_of_nodes = kwargs.pop('number_of_nodes', 10)
         object_type = kwargs.pop('object_type', 'spaceLocator')
         up_vector_array = kwargs.pop('up_vector_array', None)
+        connect_world_scale = kwargs.pop('connect_world_scale', None)
 
         self._model.up_vector_array = up_vector_array
 
@@ -74,6 +75,7 @@ class RigObjectsOnCurve(rigBase.RigBase):
                 new_joint = new_joints_list[0]
                 self.outputs.append(reset_joint)
                 self.joints.append(new_joint)
+                self.reset_joints.append(reset_joint)
                 reset_joint.setParent(self.rig_system.joints)
 
             elif object_type == 'group':
@@ -86,10 +88,10 @@ class RigObjectsOnCurve(rigBase.RigBase):
                 self.outputs.append(new_joint)
 
             # self.name_convention.rename_name_in_format(new_joint, useName=True)
-
-            self.rig_system.settings.worldScale >> new_joint.scaleX
-            self.rig_system.settings.worldScale >> new_joint.scaleY
-            self.rig_system.settings.worldScale >> new_joint.scaleZ
+            if connect_world_scale:
+                self.rig_system.settings.worldScale >> new_joint.scaleX
+                self.rig_system.settings.worldScale >> new_joint.scaleY
+                self.rig_system.settings.worldScale >> new_joint.scaleZ
 
         self._model._motion_paths = self.create.motion_path.node_base(*self.outputs, curve=self.curve,
                                                                       UpVectorType=up_vector_type,
