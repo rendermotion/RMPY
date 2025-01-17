@@ -62,7 +62,7 @@ class Arm(rigBase.RigBase):
 
 
 if __name__ == '__main__':
-    arm_points = pm.ls('L_clavicle01_reference_pnt', 'L_shoulder01_reference_pnt', 'L_elbow01_reference_pnt',
+    arm_points = pm.ls('L_clavicle01_reference_pnt', 'L_arm01_reference_pnt', 'L_elbow01_reference_pnt',
                        'L_wrist01_reference_pnt')
     new_arm = Arm()
     new_arm.create_point_base(*arm_points)

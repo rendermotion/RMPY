@@ -110,16 +110,16 @@ class ConstraintSwitch(rigBase.RigBase):
                         output = self.create.space_locator.point_base(constraint_a, name='intermediate')
                         output.setParent(root_group)
                     else:
-                        if not self.joints:
-                            reset, output = self.create.joint.point_base(constraint_a, name='intermediate')
-                            reset.setParent(root_group)
-                            self.reset_joints.append(reset)
-                            self.joints.append(output[0])
-                        else:
-                            reset, output = self.create.joint.point_base(constraint_a, name='intermediate')
-                            output[0].setParent(self.joints[-1])
-                            self.joints.append(output[0])
-                            pm.delete(reset)
+                        # if not self.joints:
+                        reset, output = self.create.joint.point_base(constraint_a, name='intermediate')
+                        reset.setParent(root_group)
+                        self.reset_joints.append(reset)
+                        self.joints.append(output[0])
+                        # else:
+                        #     reset, output = self.create.joint.point_base(constraint_a, name='intermediate')
+                        #     output[0].setParent(self.joints[-1])
+                        #    self.joints.append(output[0])
+                        #     pm.delete(reset)
                         self.joints[-1].segmentScaleCompensate.set(0)
                 else:
                     output = destination[index]
@@ -131,6 +131,10 @@ class ConstraintSwitch(rigBase.RigBase):
                 constraints = self.create.constraint.node_base(constraint_b, output, parent=parent, scale=scale,
                                                                point=point, orient=orient)
                 # self.constraint_func[constraint_type](constraint_b, output)
+                for each in constraints:
+                    if pm.objectType(each) == 'scaleConstraint':
+                        pm.disconnectAttr(each.constraintParentInverseMatrix)
+
                 self.constraints.extend(constraints)
 
         else:
