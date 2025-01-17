@@ -10,7 +10,7 @@ class RigBlendShapeControls(rigBase.RigBase):
 
         if self.root:
             self.setup_name_convention_node_base(self.root)
-            self.points = pm.ls(self.root)[0].getChildren()
+            self.points = pm.ls(self.root)[0].getChildren(type='transform')
             self.rig_system._create_controls()
         else:
             if self.points:
