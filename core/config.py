@@ -13,10 +13,10 @@ class Outputs(object):
         file_os.validate_path(file_path)
         # file_path = file_os.get_file_path()
         if not file_path:
-            print('setting output to C:/RMPYData/')
+            # print('setting output to C:/RMPYData/')
             return 'C:/RMPYData/'
         else:
-            print(f'setting output to {file_path}')
+            # print(f'setting output to {file_path}')
             return file_path
 
 output = Outputs()
