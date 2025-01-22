@@ -1,6 +1,7 @@
 import pymel.core as pm
 
 from RMPY.rig import rigBase
+from RMPY.rig import rigSegmentScaleCompensate
 
 
 class RigFKModel(rigBase.BaseModel):
@@ -15,6 +16,8 @@ class RigFK(rigBase.RigBase):
         self.joints = []
 
     def create_point_base(self, *args, **kwargs):
+        kwargs['name'] = kwargs.pop('name', 'fk')
+        segment_compensate = kwargs.pop('segment_compensate', True)
         super(RigFK, self).create_point_base(*args, **kwargs)
         reset_joints, joint_list = self.create.joint.point_base(*args, **kwargs)
         self.reset_joints.append(reset_joints)
@@ -29,12 +32,16 @@ class RigFK(rigBase.RigBase):
                 reset_group.setParent(self.rig_system.controls)
             else:
                 pm.parent(reset_group, self.controls[index-1])
+                if segment_compensate:
+                    rig_segment_compensate = rigSegmentScaleCompensate.RigSegmentScaleCompensate(rig_system=self.rig_system)
+                    rig_segment_compensate.create_node_base(reset_group)
 
             # self.create.constraint.define_constraints(point=False, scale=True, parent=True, orient=False)
-            self.create.constraint.node_base(control, eachJoint, mo=True)
-            eachJoint.segmentScaleCompensate.set(0)
-            pm.disconnectAttr(eachJoint.inverseScale)
-        joint_list[-1].segmentScaleCompensate.set(0)
+            # self.create.constraint.node_base(control, eachJoint, mo=True)
+            self.create.constraint.matrix_node_base(control, eachJoint, mo=True)# , mo=True
+            # eachJoint.segmentScaleCompensate.set(0)
+            # pm.disconnectAttr(eachJoint.inverseScale)
+        # joint_list[-1].segmentScaleCompensate.set(0)
 
 
 if __name__ == '__main__':

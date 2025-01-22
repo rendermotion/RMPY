@@ -2,6 +2,8 @@ import pymel.core as pm
 import maya.api.OpenMaya as om
 from RMPY.rig import rigBase
 from RMPY import RMRigTools
+from RMPY.rig import rigDistanceBetween
+from RMPY.rig import rigMatrixParentConstraint
 
 
 class TwistJointsModel(rigBase.BaseModel):
@@ -10,6 +12,7 @@ class TwistJointsModel(rigBase.BaseModel):
         self.twist_origin = None
         self.twist_end = None
         self.control_parent = None
+        self.rig_distance_between = None
 
 
 class TwistJoints(rigBase.RigBase):
@@ -19,16 +22,17 @@ class TwistJoints(rigBase.RigBase):
 
     def create_point_base(self, *args, **kwargs):
         super(TwistJoints, self).create_point_base(*args, **kwargs)
+
         self._model.control_parent = pm.ls(args[0])[0]
         self._model.twist_origin = pm.ls(args[1])[0]
         self._model.twist_end = pm.ls(args[2])[0]
+
         number_of_joints = kwargs.pop('number_of_joints', 2)
-        look_at_axis = kwargs.pop('look_at_axis', "Y")
+        look_at_axis = kwargs.pop('look_at_axis', "Z")
+
         self.create_twist(self.control_parent, self.twist_origin, self.twist_end,
                           number_of_twist_bones=number_of_joints,
                           look_at_axis=look_at_axis)
-
-        self.stretchy_twist_joints()
 
     @property
     def control_parent(self):
@@ -42,57 +46,73 @@ class TwistJoints(rigBase.RigBase):
     def twist_end(self):
         return self._model.twist_end
 
-    def create_twist(self, control_parent, twist_joint, look_at_object, number_of_twist_bones=3, look_at_axis="Y"):
+    def create_twist(self, control_parent, twist_joint, twist_end_object, number_of_twist_bones=3, look_at_axis="Z"):
         # LookAtObject = pm.listRelatives( TwistJoint,type = "transform",children=True)[]
+        twist_joint = pm.ls(twist_joint)[0]
+        twist_end_object = pm.ls(twist_end_object)[0]
+        control_parent = pm.ls(control_parent)[0]
 
-        position_a = pm.xform(twist_joint, q=True, ws=True, rp=True)
-        position_b = pm.xform(look_at_object, q=True, ws=True, rp=True)
+        self.create_bones_between_points(twist_joint, twist_end_object, number_of_twist_bones, align_object=twist_joint)
+        self.stretchy_twist_joints()
+        rig_distance = self.rig_distance_between.distance.get()
 
-        vector_a = om.MVector(position_a)
-        vector_b = om.MVector(position_b)
+        # pm.parentConstraint(twist_joint, self.reset_joints[0])
+        # twist_joint.scale >> self.reset_joints[0].scale
 
-        self.create_bones_between_points(vector_a, vector_b, number_of_twist_bones, align_object=twist_joint)
+        # self.create.constraint.node_base(twist_joint, self.reset_joints, mo=True)
+        # self.create.constraint.matrix_node_base(twist_joint, self.reset_joints[0], mo=True)
+        constraint = rigMatrixParentConstraint.RigParentConstraint()
+        constraint.create_point_base(twist_joint, self.reset_joints[0], mo=False)
 
-        Distance = RMRigTools.RMPointDistance(twist_joint, look_at_object)
+        # reset_point, control = RMRigShapeControls.RMCreateBoxCtrl(self.joints[0], Xratio=.1, Yratio=.1, Zratio=.1,
+        # customSize=Distance / 5, name="TwistOrigin")
 
-        # pm.parentConstraint(twist_joint, self.reset_joints)
-        print ('doing constraints \n')
-        print (self.create.constraint.constraint_type)
-        self.create.constraint.node_base(twist_joint, self.reset_joints, mo=True)
+        # Creating an up vector control for the root of the twist
+        reset_control, control = self.create.controls.point_base(self.joints[0], centered=True,
+                                                                 size=rig_distance/5 * .1, name="twistOrigin")
+        self.reset_controls.append(reset_control)
 
-        # reset_point, control = RMRigShapeControls.RMCreateBoxCtrl(self.joints[0], Xratio=.1, Yratio=.1, Zratio=.1, customSize=Distance / 5, name="TwistOrigin")
-        reset_point, control = self.create.controls.point_base(self.joints[0], centered=True,
-                                                               size=Distance/5 * .1, name="twistOrigin")
-        sign = 1
-        move_distance = Distance / 5
-        if "-" in look_at_axis:
-            sign = -1
-        if "Z" in look_at_axis or "z" in look_at_axis:
-            move_list = [0, 0, move_distance * sign]
-            wuv = [0, 0, sign]
-        elif "Y" in look_at_axis or "y" in look_at_axis:
-            move_list = [0, move_distance * sign, 0]
-            wuv = [0, sign, 0]
+        move_vector = self.vector_from_axis(look_at_axis, length=rig_distance / 5)
 
-        pm.xform(reset_point, os=True, relative=True, t=move_list)
-
-        pm.aimConstraint(look_at_object, self.joints[0], aim=[1, 0, 0], worldUpVector=[0, 0, 1],
+        pm.xform(reset_control, os=True, relative=True, translation=move_vector)
+        pm.aimConstraint(twist_end_object, self.joints[0],
+                         aim=[1, 0, 0], worldUpVector=[0, 0, 1],
                          worldUpType="object", worldUpObject=control)
+        pm.parent(self.reset_controls, self.rig_system.controls)
+        self.controls.append(control)
+        self.create.constraint.matrix_node_base(control_parent, self.reset_controls[0], mo=True)
 
-        twist_joint_divide = pm.shadingNode("multiplyDivide", asUtility=True)
-        self.name_convention.rename_name_in_format(twist_joint_divide, name="TwistJoint")
+        # creating a point aligned with the look at object that keeps track of the rotation
+        aim_offset_sum = pm.createNode('sum', name='aimOffset')
+        aim_offset_sum.input[0].set(rig_distance / 5)
+        self.rig_distance_between.distance >> aim_offset_sum.input[1]
 
-        twist_addition = pm.shadingNode("plusMinusAverage", asUtility=True)
-        self.name_convention.rename_name_in_format(twist_addition,name="TwistJointAdd")
-        negative_look_at_rotation = pm.shadingNode("multiplyDivide", asUtility=True)
-        self.name_convention.rename_name_in_format(negative_look_at_rotation, name="negativeLookAtRotation")
+        end_look_at = self.create.space_locator.point_base(twist_end_object, name='endLookAt')
+        end_look_at.setParent(self.reset_joints)
+        pm.matchTransform(end_look_at, self.reset_joints, rotation=True, position=False, scale=False)
+        end_aim_object = pm.duplicate(end_look_at)[0]
+        self.name_convention.rename_name_in_format(end_aim_object, name='endAim')
+        # pm.move(end_aim_object, rig_distance / 5, moveX=True, localSpace=True, relative=True)
 
-        pm.connectAttr(look_at_object + ".rotateX", negative_look_at_rotation + ".input1X")
-        pm.setAttr("%s.input2X" % negative_look_at_rotation, -1)
-        pm.setAttr("%s.operation" % negative_look_at_rotation, 1)
-        pm.connectAttr("%s.rotateX" % self.joints[0], "%s.input1D[0]" % twist_addition)
-        pm.connectAttr("%s.outputX" % negative_look_at_rotation, "%s.input1D[1]" % twist_addition)
-        pm.connectAttr("%s.output1D" % twist_addition, "%s.input1X" % twist_joint_divide)
+        self.rig_distance_between.distance >> end_look_at.translateX
+        aim_offset_sum.output >> end_aim_object.translateX
+
+        pm.aimConstraint(end_aim_object, end_look_at,
+                         aim=[1, 0, 0], worldUpVector=[0, 0, 1],
+                         worldUpType="objectrotation", worldUpObject=twist_end_object)
+
+        twist_joint_divide = pm.shadingNode("multiplyDivide", asUtility=True, name="TwistJointDiv")
+        twist_addition = pm.shadingNode("plusMinusAverage", asUtility=True, name="TwistJointAdd")
+        negative_look_at_rotation = pm.shadingNode("multiplyDivide", asUtility=True, name="negativeLookAtRotation")
+        self.name_convention.rename_name_in_format(twist_addition, twist_joint_divide, negative_look_at_rotation,
+                                                   useName=True)
+
+        pm.connectAttr(f"{end_look_at}.rotateX", f"{negative_look_at_rotation}.input1X")
+        pm.setAttr(f"{negative_look_at_rotation}.input2X", -1)
+        pm.setAttr(f"{negative_look_at_rotation}.operation", 1)
+        pm.connectAttr(f"{self.joints[0]}.rotateX", f"{twist_addition}.input1D[0]")
+        pm.connectAttr(f"{negative_look_at_rotation}.outputX", f"{twist_addition}.input1D[1]")
+        pm.connectAttr(f"{twist_addition}.output1D", f"{twist_joint_divide}.input1X")
 
         # pm.connectAttr("%s.rotateX" % self.joints[0], "%s.input1X" % twist_joint_divide)
         # pm.connectAttr(self.joints[0]+".rotateX", TwistJointDivide + ".input1X")
@@ -102,60 +122,41 @@ class TwistJoints(rigBase.RigBase):
         pm.setAttr("%s.operation" % twist_joint_divide, 2)
 
         for eachJoint in self.joints[1:]:
-            pm.connectAttr("%s.outputX" % twist_joint_divide, "%s.rotateX" % eachJoint)
+            pm.connectAttr(f"{twist_joint_divide}.outputX", f"{eachJoint}.rotateX")
 
-        self.reset_controls.append(reset_point)
-        pm.parent(self.reset_controls, self.rig_system.controls)
-        self.controls.append(control)
-        self.create.constraint.node_base(control_parent, self.reset_controls[0], mo=True)
 
-    def distance_between_points_measure(self, point_01, point_02):
-        transform_start_point = "startPoint"
-        transform_end_point = "endPoint"
 
-        transform_start_point = pm.spaceLocator(name=transform_start_point)
-        self.name_convention.rename_name_in_format(transform_start_point, useName=True)
-        transform_end_point = pm.spaceLocator(name=transform_end_point)
-        self.name_convention.rename_name_in_format(transform_end_point, useName=True)
-
-        start_point_constraint = pm.pointConstraint(point_01, transform_start_point)
-        end_point_constraint = pm.pointConstraint(point_02, transform_end_point)
-
-        distance_node = pm.shadingNode("distanceBetween", asUtility=True, name="DistanceNode")
-        self.name_convention.rename_based_on_base_name(point_01, distance_node, name=distance_node)
-
-        pm.connectAttr("%s.worldPosition[0]" % transform_start_point, "%s.point1" % distance_node, f=True)
-        pm.connectAttr("%s.worldPosition[0]" % transform_end_point, "%s.point2" % distance_node, f=True)
-
-        return [transform_start_point, transform_end_point], distance_node
+        # self.create.constraint.node_base(control_parent, self.reset_controls[0], mo=True)
 
     def stretchy_twist_joints(self):
-        locators, distance_node = self.distance_between_points_measure(self.twist_origin, self.twist_end)
-        stretchy_reference_group = pm.group(empty=True)
-        self.name_convention.rename_based_on_base_name(self.twist_origin,
-                                                       stretchy_reference_group,
-                                                       name="stretchyReferencePoints")
-        stretchy_reference_group.setParent(self.rig_system.kinematics)
-        pm.parent(locators, stretchy_reference_group)
-
+        self._model.rig_distance_between = rigDistanceBetween.RigDistanceBetween(rig_system=self.rig_system)
+        self.rig_distance_between.create_point_base(self.twist_origin, self.twist_end)
         twist_joint_divide = pm.shadingNode("multiplyDivide", asUtility=True)
         scale_compensation = pm.shadingNode("multiplyDivide", asUtility=True,
                                             name="StretchScaleCompensation")
         self.name_convention.rename_name_in_format(twist_joint_divide, name="StretchyTwistJoint")
 
-        pm.connectAttr("%s.distance" % distance_node, "{}.input1X".format(twist_joint_divide))
-        pm.setAttr("%s.input2X" % twist_joint_divide, (len(self.joints) - 1))
+        pm.connectAttr(self.rig_distance_between.distance, f"{twist_joint_divide}.input1X")
+        pm.setAttr(f"{twist_joint_divide}.input2X", (len(self.joints) - 1))
 
-        pm.connectAttr("{}.outputX".format(twist_joint_divide), "{}.input1X".format(scale_compensation))
-        pm.connectAttr("{}.scaleX".format(self.reset_joints[0]), "{}.input2X".format(scale_compensation))
+        pm.connectAttr(f"{twist_joint_divide}.outputX", f"{scale_compensation}.input1X")
+        pm.connectAttr(f"{self.reset_joints[0]}.scaleX", f"{scale_compensation}.input2X")
         #                                 twist_origin
         pm.setAttr("{}.operation".format(twist_joint_divide), 2)
         pm.setAttr("{}.operation".format(scale_compensation), 2)
 
-        # for eachJoint in self.joints[1:]:
-        #     pm.connectAttr("{}.outputX".format(scale_compensation), "{}.translateX".format(eachJoint))
+        for eachJoint in self.joints[1:]:
+            pm.connectAttr("{}.outputX".format(scale_compensation), "{}.translateX".format(eachJoint))
 
-    def create_bones_between_points(self, initial_point, final_point, number_of_bones, align_object=None):
+    def create_bones_between_points(self, initial_object, final_object, number_of_bones, align_object=None):
+        """
+         Creates a number_of_bones between the initial and final point, which are positions in space
+        """
+        position_a = pm.xform(initial_object, q=True, ws=True, rp=True)
+        position_b = pm.xform(final_object, q=True, ws=True, rp=True)
+        initial_point = om.MVector(position_a)
+        final_point = om.MVector(position_b)
+
         direction_vector = final_point - initial_point
         total_length = direction_vector.length()
         step = total_length / number_of_bones
@@ -163,14 +164,17 @@ class TwistJoints(rigBase.RigBase):
         locators_list = []
 
         for count in range(0, number_of_bones + 1):
-            Locator = pm.spaceLocator()
+            space_locator = pm.spaceLocator()
+            locators_list.append(space_locator)
             if align_object:
                 if self.name_convention.is_name_in_format(align_object):
-                    self.name_convention.rename_based_on_base_name(align_object, Locator,
-                                                                   name='TwistJoint')
-            locators_list.append(Locator)
-            pm.xform(Locator, translation=list(initial_point + (step_vector * count)), worldSpace=True)
-            pm.matchTransform(Locator, align_object, position=False, rotation=True, scale=False)
+                    self.name_convention.rename_based_on_base_name(align_object, space_locator, name='TwistJoint')
+                pm.xform(space_locator, translation=list(initial_point + (step_vector * count)), worldSpace=True)
+                pm.matchTransform(space_locator, align_object, position=False, rotation=True, scale=False)
+            else:
+                self.name_convention.rename_name_in_format(space_locator, name='TwistJoint')
+                self.transform.aim_point_based(space_locator, initial_object, final_object, use_destination_up_axis=True)
+                pm.xform(space_locator, translation=list(initial_point + (step_vector * count)), worldSpace=True)
 
         reset_joints, joints = self.create.joint.point_base(*locators_list, name='twist', orient_type='point_orient')
         self.reset_joints.append(reset_joints)
@@ -179,10 +183,23 @@ class TwistJoints(rigBase.RigBase):
         pm.delete(locators_list)
         return self.reset_joints, self.joints
 
+    def vector_from_axis(self, axis, length=1):
+        sign = 1
+        if "-" in axis:
+            sign = -1
+        if "Z" in axis or "z" in axis:
+            result_vector = [0, 0, length * sign]
+        elif "Y" in axis or "y" in axis:
+            result_vector = [0, length * sign, 0]
+        else:
+            result_vector = [length * sign, 0, 0]
+        return result_vector
+
 
 if __name__ == '__main__':
     TJ = TwistJoints()
-    TJ.create_point_base('L_clavicle00_clavicle_jnt', "L_intermediate00_shoulder_jnt", "L_intermediate01_shoulder_jnt")
+    # TJ.create_bones_between_points('C_fk00_neck_jnt', 'C_fk00_head_jnt', 3)
+    TJ.create_point_base('C_joints00_neck_grp', 'C_fk00_neck_jnt', 'C_fk00_head_jnt')
 
 
 

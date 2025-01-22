@@ -1,5 +1,7 @@
 from RMPY.rig.biped.rig import rigRibon
 from RMPY.rig.biped.rig import rigTwistJoints
+import importlib
+from RMPY.rig import rigMatrixParentConstraint
 
 
 class RibbonTwistJointModel(rigRibon.RibonModel):
@@ -22,7 +24,10 @@ class RibbonTwistJoint(rigRibon.Ribon):
     def create_point_base(self, *args, **kwargs):
         self.rig_twist_joints.create_point_base(*args, **kwargs)
         super(RibbonTwistJoint, self).create_point_base(*args[1:], **kwargs)
-        self.create.constraint.node_list_base(self.rig_twist_joints.joints, self.reset_controls, mo=True)
+        for joints, reset_controls in zip(self.rig_twist_joints.joints, self.reset_controls):
+            parent_constraint = rigMatrixParentConstraint.RigParentConstraint()
+            parent_constraint.create_point_base(joints, reset_controls)
+        # self.create.constraint.node_list_base(self.rig_twist_joints.joints, self.reset_controls, mo=True)
 
 
 if __name__ == '__main__':

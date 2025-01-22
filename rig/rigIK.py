@@ -111,7 +111,8 @@ class IKRig(RMPY.rig.rigBase.RigBase):
         return new_ik_instance
 
     def build_joints(self):
-        self.root_joints, self.joints = self.create.joint.point_base(self.guides, orient_type='point_orient')
+        self.root_joints, self.joints = self.create.joint.point_base(self.guides, name='ik', orient_type='point_orient')
+        # orient_type='point_orient'
 
     @staticmethod
     def bone_chain_lenght(bone_chain):
@@ -207,7 +208,7 @@ class IKRig(RMPY.rig.rigBase.RigBase):
         if not self.joints:
             self.joints = self.identify_joints(ik_handle)
 
-        locator = self.create.space_locator.pole_vector(self.joints[0],self.joints[int(len(self.joints)/2)] ,self.joints[-1])
+        locator = self.create.space_locator.pole_vector(self.joints[0], self.joints[int(len(self.joints)/2)] ,self.joints[-1])
         distance = self.rm.point_distance(locator, self.joints[1])
 
         reset_controls_pole_vector, controls_pole_vector = \
@@ -313,7 +314,7 @@ class IKRig(RMPY.rig.rigBase.RigBase):
 
 
 if __name__ == '__main__':
-    root_arm = pm.ls('L_shoulder01_reference_pnt')[0]
+    root_arm = pm.ls('R_arm01_reference_pnt')[0]
     arm_points = rm.descendents_list(root_arm)
     ik_rig = IKRig()
     ik_rig.create_point_base(*arm_points[:3])

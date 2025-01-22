@@ -36,7 +36,7 @@ class StretchyIK(rigSimpleIk.SimpleIK):
 
 if __name__ == '__main__':
     simple_ik = StretchyIK()
-    simple_ik.create_point_base(u'L_shoulder01_reference_pnt', u'L_elbow01_reference_pnt', u'L_wrist01_reference_pnt')
-    # simple_ik.make_stretchy()
-    # simple_ik.create_pole_vector()
-    # simple_ik.create_controls()
+    simple_ik.create_point_base(u'L_arm01_reference_pnt', u'L_elbow01_reference_pnt', u'L_wrist01_reference_pnt')
+    simple_ik.make_stretchy()
+    simple_ik.create_pole_vector()
+    simple_ik.create_controls()

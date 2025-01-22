@@ -116,13 +116,10 @@ class Constraint(creatorsBase.CreatorsBase):
                 self._constraint(drivers[int(constraint_weight_value) + 1], each, w=constraint_value, **kwargs)
 
     def matrix_node_base(self, driver, driven, mo=False):
-
         matrix_mult = pm.createNode('multMatrix')
         self.name_convention.rename_name_in_format(matrix_mult, name=self.name_convention.get_a_short_name(driven))
 
         if mo:
-            print(driven.worldMatrix[0].get())
-            print(driver.worldInverseMatrix[1].get())
             matrix_mult.matrixIn[0].set(driven.worldMatrix[0].get() * driver.worldInverseMatrix[0].get())
 
         driven.translate.set(0, 0, 0)
@@ -133,12 +130,49 @@ class Constraint(creatorsBase.CreatorsBase):
         matrix_mult.matrixSum >> driven.offsetParentMatrix
         if driven.getParent():
             driven.getParent().worldInverseMatrix[0] >> matrix_mult.matrixIn[2]
+        if pm.objectType(driven) == 'joint':
+            driven.jointOrient.set(0, 0, 0)
+        return matrix_mult
 
+    def driver_matrix_node_base(self, *nodes, mo=False):
+        #  set the drivers node list all nodes from the beginning of the list till the one before
+        #  the last one are drivers the last object is going to be the driven.
+        drivers = nodes[:-1]
+        driven = nodes[-1]
+        matrix_mult = pm.createNode('multMatrix')
+        blend_matrix = pm.createNode('blendMatrix')
+        self.name_convention.rename_name_in_format(matrix_mult, blend_matrix, name=self.name_convention.get_a_short_name(driven))
+        offsets_blend_matrix = None
+        if mo:
+            offsets_blend_matrix = pm.createNode('blendMatrix')
+            offsets_blend_matrix.outputMatrix >> matrix_mult.matrixInp[0]
+            for index, driver in enumerate(drivers):
+                offsets_blend_matrix.target[index].targetMatrix.set(driven.worldMatrix[0].get() * driver.worldInverseMatrix[0].get())
+                blend_matrix.target[index].weight >> offsets_blend_matrix.target[index].weight
+        driven.translate.set(0, 0, 0)
+        driven.rotate.set(0, 0, 0)
+        driven.scale.set(1, 1, 1)
+
+        for index, driver in enumerate(drivers):
+            driver.worldMatrix[0] >> blend_matrix.target[index].targetMatrix
+            if mo:
+                blend_matrix.target[index].weight >> offsets_blend_matrix.target[index].weight
+
+            # driver.worldMatrix[0] >> matrix_mult.matrixIn[1]
+        blend_matrix.outputMatrix >> matrix_mult.matrixIn[1]
+        matrix_mult.matrixSum >> driven.offsetParentMatrix
+        if driven.getParent():
+            driven.getParent().worldInverseMatrix[0] >> matrix_mult.matrixIn[2]
+
+        if pm.objectType(driven) == 'joint':
+            driven.jointOrient.set(0, 0, 0)
 
 
 if __name__ == '__main__':
     locators = pm.ls('locator1', type='transform')
     nurbs_curves = pm.ls('joint1')
     constraint = Constraint()
-    print(locators, nurbs_curves)
-    constraint.matrix_node_base(locators[0], nurbs_curves[0], mo=True)
+    # print(locators, nurbs_curves)
+    # constraint.matrix_node_base(locators[0], nurbs_curves[0], mo=True)
+    object_list = pm.ls('L_ik01_arm_jnt', 'L_fk01_arm_jnt', 'L_intermediate01_arm_jnt')
+    constraint.driver_matrix_node_base(*object_list)

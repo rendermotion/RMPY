@@ -198,11 +198,16 @@ def aim_point_based(*args, **kwargs):
     aim_axis = kwargs.pop('aim_axis', config.axis_order[0])
     up_axis = kwargs.pop('up_axis', config.axis_order[1])
     edit_translate = kwargs.pop('edit_translate', True)
+    use_destination_up_axis = kwargs.pop('use_destination_up_axis', False)
+    use_vector_as_up_axis = kwargs.pop('use_vector_as_up_axis', (0.0, 1.0, 0.0))
 
     if len(args) == 3:
         position_source01 = dataValidators.as_vector_position(args[1])
         position_source02 = dataValidators.as_vector_position(args[2])
-        up_vector = pm.datatypes.Vector(0.0, 1.0, 0.0)
+        if use_destination_up_axis:
+            up_vector = pm.datatypes.Vector(getattr(Transform(args[1]).axis, up_axis))
+        else:
+            up_vector = pm.datatypes.Vector(use_vector_as_up_axis)
 
     elif len(args) == 4:
         position_source01 = dataValidators.as_vector_position(args[1])
@@ -285,6 +290,6 @@ def custom_world_align(*scene_objects):
 
 if __name__ == '__main__':
     selection = pm.ls(selection=True)
-    # selection.insert(0, selection[0])
-    # aim_point_based(*selection)
-    align(selection)
+    selection.insert(0, selection[0])
+    aim_point_based(*selection, use_destination_up_axis=True)
+    # align(selection)

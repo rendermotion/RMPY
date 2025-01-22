@@ -28,7 +28,9 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         super(Main, self).__init__(parent=getMayaWindow())
         self.ui = FormNameConvention.Ui_Form()
         self.system_backlog = config.default_reference_system_name
+        self.name_backlog = 'default'
         self.ui.setupUi(self)
+        self.ui.name_lineEdit.setText(self.name_backlog)
         self.setWindowTitle('Rename Tool')
         self.ui.rename_button.clicked.connect(self.main_rename)
         self.ui.side_comboBox.addItems(self.name_convention.validation['side'])
@@ -38,7 +40,9 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         object_type_list.extend(self.name_convention.validation['objectType'])
         self.ui.objectType_comboBox.addItems(object_type_list)
         self.ui.default_system_chkBox.stateChanged.connect(self.system_state_checkbox_changed)
-        self.ui.side_push_button
+        # self.ui.side_push_button
+        self.ui.use_name_chkBox.stateChanged.connect(self.name_state_checkbox_changed)
+
 
     def main_rename(self):
         selection = pm.ls(selection=True)
@@ -49,10 +53,13 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         objectType = self.ui.objectType_comboBox.currentText()
 
         if objectType == 'auto':
-            self.name_convention.rename_name_in_format(*selection, side=side, system=system_name, name=name)
+            self.name_convention.rename_name_in_format(*selection, side=side, system=system_name, name=name,
+                                                       useName=self.ui.default_system_chkBox.isChecked())
 
         else:
-            self.name_convention.rename_name_in_format(*selection, side=side, system=system_name, name=name, objectType=objectType)
+            self.name_convention.rename_name_in_format(*selection, side=side, system=system_name, name=name,
+                                                       useName=self.ui.default_system_chkBox.isChecked(),
+                                                       objectType=objectType)
             print('second')
 
         # name_conv.rename_name_in_format(each, side=side, system=system_name, name='shoe{}'.format(chr(65+index)))
@@ -66,6 +73,15 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         else:
             self.ui.system_lineEdit.setText(self.system_backlog)
             self.ui.system_lineEdit.setDisabled(False)
+
+    def name_state_checkbox_changed(self):
+        if self.ui.use_name_chkBox.isChecked():
+            self.name_backlog = self.ui.name_lineEdit.text()
+            self.ui.name_lineEdit.setText('--using current name of object--')
+            self.ui.name_lineEdit.setDisabled(True)
+        else:
+            self.ui.name_lineEdit.setText(self.name_backlog)
+            self.ui.name_lineEdit.setDisabled(False)
 
 
 if __name__ == '__main__':

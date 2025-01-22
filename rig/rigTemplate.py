@@ -1,18 +1,18 @@
 from RMPY.rig import rigBase
 
 
-class TemplateModel(rigBase.BaseModel):
+class RigTemplateModel(rigBase.BaseModel):
     def __init__(self):
-        super(TemplateModel, self).__init__()
-        self.geometry='pCube1'
+        super(RigTemplateModel, self).__init__()
+        self.geometry = 'pCube1'
 
 
-class TemplateRig(rigBase.RigBase):
+class RigTemplate(rigBase.RigBase):
     def __init__(self, *args, **kwargs):
-        kwargs['model'] = kwargs.pop('model', TemplateModel())
-        super(TemplateRig, self).__init__(*args, **kwargs)
+        kwargs['model'] = kwargs.pop('model', RigTemplateModel())
+        super(RigTemplate, self).__init__(*args, **kwargs)
 
 
-if __name__=='__main__':
-    my_rig = TemplateRig()
+if __name__ == '__main__':
+    my_rig = RigTemplate()
     print(my_rig.geometry)

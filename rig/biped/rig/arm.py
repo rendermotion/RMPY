@@ -3,6 +3,7 @@ from RMPY.rig import rigIKFK
 import RMPY.rig.rigFK
 import pymel.core as pm
 from RMPY.rig.biped.rig import rigRibonTwistJoint
+import maya.api.OpenMaya as om
 
 
 class ArmModel(rigBase.BaseModel):
@@ -40,6 +41,23 @@ class Arm(rigBase.RigBase):
         return self._model.twist_forearm
 
     def create_point_base(self, *args, **kwargs):
+        super(Arm, self).create_point_base(*args, **kwargs)
+        align_args = []
+        for each in args:
+            align_args.append(self.create.space_locator.node_base(each)[0])
+            self.name_convention.rename_name_in_format(align_args[-1], name=self.name_convention.get_a_short_name(each),
+                                                       system='reference')
+        arm_position_vector = om.MVector(pm.xform(align_args[1], q=True, ws=True, rp=True))
+        elbow_position_vector = om.MVector(pm.xform(align_args[2], q=True, ws=True, rp=True))
+        wrist_position_vector = om.MVector(pm.xform(align_args[3], q=True, ws=True, rp=True))
+        args = align_args
+        up_vector = (arm_position_vector - elbow_position_vector) ^ (arm_position_vector - wrist_position_vector)*-1
+        for index, each in enumerate(args[1:-1]):
+            self.transform.aim_point_based(each, each, args[index + 2],
+                                           use_vector_as_up_axis=(up_vector.x, up_vector.y, up_vector.z),
+                                           up_axis='z')
+        pm.matchTransform(args[-1], args[-2], rotation=True, position=False, scale=False)
+
         self.setup_name_convention_node_base(args[1], name='arm', system='arm')
         self.update_name_convention()
         self.rig_system.create()
@@ -59,15 +77,14 @@ class Arm(rigBase.RigBase):
         self.reset_controls = self.rig_clavicle.reset_controls + self.rig_arm.reset_controls
         self.controls = self.rig_clavicle.controls + self.rig_arm.controls
         self.attach_points['tip'] = self.rig_arm.tip
+        pm.delete(align_args)
 
 
 if __name__ == '__main__':
-    arm_points = pm.ls('L_clavicle01_reference_pnt', 'L_arm01_reference_pnt', 'L_elbow01_reference_pnt',
-                       'L_wrist01_reference_pnt')
+    arm_points = pm.ls([each.format('R') for each in ['{}_clavicle01_reference_pnt', '{}_arm01_reference_pnt', '{}_elbow01_reference_pnt',
+                       '{}_wrist01_reference_pnt']])
     new_arm = Arm()
     new_arm.create_point_base(*arm_points)
-    print ('reset = {}'.format(new_arm.reset_joints))
-    print ('Joints = {}'.format(new_arm.joints))
 
 
 

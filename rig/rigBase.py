@@ -241,11 +241,14 @@ class RigBase(object):
         # self.create.constraint.define_constraints(point=False, scale=True, parent=True, orient=False)
 
         if RigBase in type(rig_object).__mro__:
-            print('{} in constraining {} {}'.format(self.create.constraint.constraint_type, rig_object.tip, self.root))
-            self.create.constraint.node_base(rig_object.tip, self.root, **kwargs)
+            # self.create.constraint.constraint_type
+            print('{} in constraining {} {}'.format('matrix', rig_object.tip, self.root))
+            self.create.constraint.matrix_node_base(rig_object.tip, self.root, **kwargs)
+            # self.create.constraint.node_base(rig_object.tip, self.root, **kwargs)
         else:
             try:
-                self.create.constraint.node_base(rig_object, self.root, **kwargs)
+                self.create.constraint.matrix_node_base(rig_object, self.root, **kwargs)
+                # self.create.constraint.node_base(rig_object, self.root, **kwargs)
             except AttributeError:
                 raise AttributeError('not valid object to parent')
         assert not hasattr(super(RigBase, self), 'set_parent')
@@ -260,7 +263,8 @@ class RigBase(object):
             rig_joints = []
             for index, each in enumerate(self.joints):
                 new_joint = pm.joint()
-                self.name_convention.rename_based_on_base_name(each, new_joint, name='main', objectType='skinjoint')
+                self.name_convention.rename_based_on_base_name(each, new_joint, name='main')
+                self._tag_joint(new_joint)
                 rig_joints.append(new_joint)
                 if index == 0:
                     if RigBase in type(rig_object).__mro__:
@@ -275,7 +279,15 @@ class RigBase(object):
                 self.create.constraint.matrix_node_base(each, new_joint)
                 self.outputs.append(new_joint)
 
-    def rename_as_skinned_joints(self, nub=True, create_outputs=False):
+    def _tag_joint(self, each_joint):
+            self.name_convention.rename_set_from_name(each_joint, 'skinjoint', 'objectType')
+            side = self.name_convention.get_from_name(each_joint, 'side')
+            each_joint.side.set(['C', 'L', 'R'].index(side))
+            pm.setAttr('{}.type'.format(each_joint), 18)
+            each_joint.otherType.set('{}{}'.format(self.name_convention.get_from_name(each_joint, 'name'),
+                                                   self.name_convention.get_from_name(each_joint, 'system')))
+
+    def rename_as_skinned_joints(self, nub=False, create_outputs=False):
         if nub:
             rename_joints = self.joints[:-1]
         else:

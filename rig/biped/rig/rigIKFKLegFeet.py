@@ -2,6 +2,8 @@ from RMPY.rig import rigIKFK
 from RMPY.rig.biped.rig import rigIkFkFeet
 from RMPY.rig import rigBase
 from RMPY.rig.biped.rig import rigRibonTwistJoint
+import pymel.core as pm
+import maya.api.OpenMaya as om
 
 
 class RigIKKFLegFeetModel(rigBase.BaseModel):
@@ -32,19 +34,36 @@ class RigIKKFLegFeet(rigBase.RigBase):
     def twist_foreleg(self):
         return self._model.twist_foreleg
 
-    def create_point_base(self, *points, **kwargs):
+    def create_point_base(self, *args, **kwargs):
         """
         :param points: the points to create the leg, should be 5 points
         :param kwargs: no kwargs expected
         :return:
         """
+        super(RigIKKFLegFeet, self).create_point_base(*args, **kwargs)
+        align_args = []
+        for each in args:
+            align_args.append(self.create.space_locator.node_base(each)[0])
+            self.name_convention.rename_name_in_format(align_args[-1], name=self.name_convention.get_a_short_name(each),
+                                                       system='reference')
+
+        arm_position_vector = om.MVector(pm.xform(align_args[0], q=True, ws=True, rp=True))
+        elbow_position_vector = om.MVector(pm.xform(align_args[1], q=True, ws=True, rp=True))
+        wrist_position_vector = om.MVector(pm.xform(align_args[2], q=True, ws=True, rp=True))
+        args = align_args
+        up_vector = (arm_position_vector - elbow_position_vector) ^ (arm_position_vector - wrist_position_vector) * -1
+        for index, each in enumerate(args[0:3]):
+            self.transform.aim_point_based(each, each, args[index + 1],
+                                           use_vector_as_up_axis=(up_vector.x, up_vector.y, up_vector.z), up_axis='z')
+        pm.matchTransform(args[2], args[1], rotation=True, position=False, scale=False)
+
         self._model.leg = rigIKFK.RigIkFk(rig_system=self.rig_system)
         self._model.feet = rigIkFkFeet.IkFkFeet(rig_system=self.rig_system)
         self._model.twist_leg = rigRibonTwistJoint.RibbonTwistJoint(rig_system=self.rig_system)
         self._model.twist_foreleg = rigRibonTwistJoint.RibbonTwistJoint(rig_system=self.rig_system)
 
-        self.leg.create_point_base(*points[:3])
-        self.feet.create_point_base(*points[3:], control=self.leg.switch_control_rig.controls[0])
+        self.leg.create_point_base(*args[:3])
+        self.feet.create_point_base(*args[3:], control=self.leg.switch_control_rig.controls[0])
 
         l_point_constraint = self.create.constraint.point(self.feet.ik_feet.up_ik.joints[-1],
                                                           self.leg.ik_rig.ik_handle, mo=True)
@@ -72,6 +91,7 @@ class RigIKKFLegFeet(rigBase.RigBase):
         self.joints.extend(self.twist_leg.joints)
         self.joints.extend(self.twist_foreleg.joints)
         self.joints.extend(self.feet.joints)
+        pm.delete(align_args)
 
 
 if __name__ == '__main__':
@@ -80,8 +100,8 @@ if __name__ == '__main__':
     feet_root = [u'{}_ankleFeet01_reference_pnt', u'{}_ball01_reference_pnt', u'{}_toe01_reference_pnt',
                  u'{}_footLimitBack01_reference_pnt', u'{}_footLimitOuter01_reference_pnt',
                  u'{}_footLimitInner01_reference_pnt']
-    root_points = [each.format('L') for each in leg_root]
-    root_points.extend([each.format('L') for each in feet_root])
+    root_points = [each.format('R') for each in leg_root]
+    root_points.extend([each.format('R') for each in feet_root])
 
     rig_leg_ik_fk = RigIKKFLegFeet()
     rig_leg_ik_fk.create_point_base(*root_points)

@@ -33,8 +33,10 @@ class RigForwardBackwardFKSpine(rigBase.RigBase):
     def create_point_base(self, *args, **kwargs):
         super(RigForwardBackwardFKSpine, self).create_point_base(*args, **kwargs)
 
-        self.rig_forward_fk.create_point_base(*args, name='forwardFK', orient_type='point_orient')
-        self.rig_backward_fk.create_point_base(*reversed(args), orient_type='point_orient')
+        self.rig_forward_fk.create_point_base(*args, name='forwardFK', orient_type='point_orient',
+                                              segment_compensate=False)
+        self.rig_backward_fk.create_point_base(*reversed(args), orient_type='point_orient',
+                                               segment_compensate=False)
 
         self.rig_backward_fk.reset_controls[0].setParent(self.rig_forward_fk.controls[-1])
 
@@ -55,7 +57,7 @@ if __name__ == '__main__':
     spine_root = pm.ls('*Spine*', type='transform')
     fk_spine = RigForwardBackwardFKSpine()
     fk_spine.create_point_base(*spine_root)
-    fk_spine.rename_as_skinned_joints(nub=False)
+    # fk_spine.rename_as_skinned_joints(nub=False)
 
 
 

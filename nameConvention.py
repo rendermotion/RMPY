@@ -80,7 +80,7 @@ class NameConvention(object):
                                           'orc', 'prc', 'scc', 'pvc', 'ctr', 'pnt', 'ikh', 'ikf', 'rvs', 'mult', 'cnd',
                                           'blt', 'cui', 'dbtw', 'cls', 'clsh', 'pma', 'b2a', 'mph', 'ffd', 'bs', 'aim',
                                           'cfme', 'lft', 'psfi', 'guide', 'unc', 'skn', 'dmx', 'mmx', 'nrb', 'ffm',
-                                          'vcp', 'auu']}
+                                          'vcp', 'auu', 'bmtx', 'nrm', 'multDiv', 'clmfmtx','sum']}
         self.translator = {'objectType': {
             "joint": "jnt",
             "skinjoint": "sknjnt",
@@ -105,7 +105,7 @@ class NameConvention(object):
             "ikHandle": "ikh",
             "ikEffector": "ikf",
             "reverse": "rvs",
-            "multiplyDivide": "mult",
+            "multiplyDivide": "multDiv",
             "condition": "cnd",
             "baseLattice": "blt",
             "curveInfo": "cui",
@@ -125,7 +125,12 @@ class NameConvention(object):
             "skinCluster": 'skn',
             'fourByFourMatrix': 'ffm',
             'vectorProduct': 'vcp',
-            'nurbsSurface': 'nrb'
+            'nurbsSurface': 'nrb',
+            'blendMatrix': 'bmtx',
+            'columnFromMatrix': 'clmfmtx',
+            'multiply': 'mult',
+            'normalize': 'nrm',
+            'sum':'sum'
         },
             'side': {'left': 'L', 'right': 'R', 'center': 'C'}
         }

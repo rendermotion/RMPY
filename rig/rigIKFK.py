@@ -4,7 +4,6 @@ from RMPY.rig import rigFK
 from RMPY.rig import rigBase
 from RMPY.rig import rigSingleJoint
 from RMPY.rig import constraintSwitch
-import RMPY.core.rig_core as rm
 
 
 class RigIkFkModel(rigBase.BaseModel):
@@ -57,10 +56,10 @@ class RigIkFk(rigBase.RigBase):
         self.ik_rig.create_point_base(*creation_points, control_orientation='world', last_joint_follows_control=False)
         self.ik_rig.make_stretchy()
 
-        self.fk_rig.create_point_base(*creation_points, orient_type='point_orient')
+        self.fk_rig.create_point_base(*creation_points, orient_type='point_orient') # orient_type='point_orient')
 
         self.switch_control_rig.create_point_base(creation_points[0], name='root', type='box')
-        self.attach_points['root'] = self.switch_control_rig.root
+        self.root = self.switch_control_rig.root
 
         self.switch_control_rig.custom_world_align(self.switch_control_rig.reset_controls[0])
 
@@ -69,7 +68,9 @@ class RigIkFk(rigBase.RigBase):
         self.ik_fk_switch.build(self.ik_rig.joints[-1:], self.fk_rig.joints[-1:], point=True, parent=False, control=self.switch_control_rig.controls[0],
                                 attribute_name='IkFkSwitch')
         # pm.listConnections(self.ik_fk_switch.outputs[-1])
+        # self.create.constraint.matrix_node_base(self.fk_rig.root, self.switch_control_rig.tip)
         self.fk_rig.set_parent(self.switch_control_rig)
+        # self.create.constraint.matrix_node_base(self.ik_rig.root, self.switch_control_rig.tip)
         self.ik_rig.set_parent(self.switch_control_rig)
 
         self.attach_points['tip'] = self.ik_fk_switch.outputs[-1]
@@ -79,7 +80,7 @@ class RigIkFk(rigBase.RigBase):
 
         for each_control in self.fk_rig.controls:
             self.ik_fk_switch.attribute_output_b >> each_control.visibility
-        # pm.parentConst'raint(self.fk_limb.controls[0], self.ik_limb.reset_controls['poleVector'], mo=True)
+        # pm.parentConstraint(self.fk_limb.controls[0], self.ik_limb.reset_controls['poleVector'], mo=True)
         # pm.parentConstraint(self.fk_limb.controls[0], self.ik_limb.reset_controls['ikHandleSecondary'], mo=True)
         # pm.parentConstraint(self.fk_rig.controls[0], self.ik_rig.root_joints, mo=True)
 
@@ -92,7 +93,13 @@ if __name__ == '__main__':
     # arm_root_points = rm.descendents_list(root_arm)[:3]
     # arm_rig = RigIkFk()
     # arm_rig.create_point_base(*arm_root_points)
-    leg_root_points = ['R_leg01_reference_pnt', 'R_Knee01_reference_pnt', 'R_ankle01_reference_pnt']
+    leg_root_points = ['R_arm01_reference_pnt', 'R_elbow01_reference_pnt',
+                       'R_wrist01_reference_pnt']
+    leg_rig = RigIkFk()
+    leg_rig.create_point_base(*leg_root_points)
+
+    leg_root_points = ['L_arm01_reference_pnt', 'L_elbow01_reference_pnt',
+                       'L_wrist01_reference_pnt']
     leg_rig = RigIkFk()
     leg_rig.create_point_base(*leg_root_points)
 

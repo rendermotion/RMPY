@@ -1,5 +1,6 @@
 import pymel.core as pm
 from RMPY.rig import rigBase
+from RMPY.rig import rigBlendMatrix
 
 
 class ConstraintSwitchModel(rigBase.BaseModel):
@@ -9,6 +10,7 @@ class ConstraintSwitchModel(rigBase.BaseModel):
         self.list_a = []
         self.list_b = []
         self.constraints = []
+        self.rigs_blend_matrices = []
         self.attribute_output_a = None
         self.attribute_output_b = None
 
@@ -83,7 +85,8 @@ class ConstraintSwitch(rigBase.RigBase):
         self.create_list_base(list_a, list_b, **kwargs)
         if control:
             self.create_attribute_control(control, **kwargs)
-            self.link_attribute_to_constraints()
+            # self.link_attribute_to_constraints()
+            self.link_attribute_to_blends()
             self.controls.append(control)
 
     def create_list_base(self, list_a, list_b, **kwargs):
@@ -116,26 +119,30 @@ class ConstraintSwitch(rigBase.RigBase):
                         self.reset_joints.append(reset)
                         self.joints.append(output[0])
                         # else:
-                        #     reset, output = self.create.joint.point_base(constraint_a, name='intermediate')
-                        #     output[0].setParent(self.joints[-1])
-                        #    self.joints.append(output[0])
-                        #     pm.delete(reset)
-                        self.joints[-1].segmentScaleCompensate.set(0)
+                        """ reset, output = self.create.joint.point_base(constraint_a, name='intermediate')
+                            output[0].setParent(self.joints[-1])
+                            self.joints.append(output[0])
+                            pm.delete(reset)
+                        """
+                        # self.joints[-1].segmentScaleCompensate.set(0)
                 else:
                     output = destination[index]
 
                 self.outputs.append(output[0])
                 # self.create.constraint.define_constraints(parent=parent, scale=scale, point=point, orient=orient)
-                self.create.constraint.node_base(constraint_a, output, parent=parent, scale=scale,
-                                                 point=point, orient=orient)
-                constraints = self.create.constraint.node_base(constraint_b, output, parent=parent, scale=scale,
-                                                               point=point, orient=orient)
+                # self.create.constraint.node_base(constraint_a, output, parent=parent, scale=scale, point=point, orient=orient)
+                # constraints = self.create.constraint.node_base(constraint_b, output, parent=parent, scale=scale, point=point, orient=orient)
+                new_blend = rigBlendMatrix.RigBlendMatrix()
+
+                self.rigs_blend_matrices.append(new_blend)
+                print(constraint_a, constraint_b, output[0])
+                new_blend.create_node_base(constraint_a, constraint_b, output[0], mo=False)
                 # self.constraint_func[constraint_type](constraint_b, output)
-                for each in constraints:
+                '''for each in constraints:
                     if pm.objectType(each) == 'scaleConstraint':
                         pm.disconnectAttr(each.constraintParentInverseMatrix)
-
-                self.constraints.extend(constraints)
+                '''
+                # self.constraints.extend(constraints)
 
         else:
             print('list_a and list_b should be the same size')
@@ -148,8 +155,8 @@ class ConstraintSwitch(rigBase.RigBase):
 
         reverse = pm.shadingNode('reverse', asUtility=True, name="reverse")
         multiply = pm.createNode('unitConversion', name="multiplier")
-        self.name_convention.rename_name_in_format(reverse)
-        self.name_convention.rename_name_in_format(multiply)
+        self.name_convention.rename_name_in_format(reverse, useName=True)
+        self.name_convention.rename_name_in_format(multiply, useName=True)
 
         pm.connectAttr('{}.{}'.format(self.controls[0], attribute_name), "{}.input".format(multiply))
         pm.setAttr("{}.conversionFactor".format(multiply), 0.1)
@@ -162,6 +169,12 @@ class ConstraintSwitch(rigBase.RigBase):
             for attribute_control, weight_alias in zip([self.attribute_output_a, self.attribute_output_b],
                                                        each_constraint.getWeightAliasList()):
                 attribute_control >> weight_alias
+    def link_attribute_to_blends(self):
+        for each_blend_rig in self.rigs_blend_matrices:
+            print(each_blend_rig)
+            print(self.attribute_output_b)
+            print(each_blend_rig.blend_matrix.target[1].weight)
+            self.attribute_output_b >> each_blend_rig.blend_matrix.target[1].weight
 
 
 if __name__ == '__main__':

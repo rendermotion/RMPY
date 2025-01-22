@@ -63,6 +63,19 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
+      <widget class="QCheckBox" name="use_name_chkBox">
+       <property name="toolTip">
+        <string>this will disabled the name line edit, and use the current name of the object.</string>
+       </property>
+       <property name="locale">
+        <locale language="English" country="UnitedStates"/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QLabel" name="name_label">
        <property name="text">
         <string> name :</string>
@@ -97,6 +110,9 @@
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QCheckBox" name="default_system_chkBox">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disables the system and uses the &lt;/p&gt;&lt;p&gt;default system name for reference points.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="text">
         <string/>
        </property>

@@ -71,10 +71,13 @@ class Ribon(rigBase.RigBase):
         skin_joints.setParent(self.rig_system.joints)
 
         for each_follicle in self.follicules:
+            pm.select(skin_joints)
             self.joints.append(pm.joint(name="ribbonJoints"))
             self.name_convention.rename_name_in_format(self.joints[-1], useName=True)
-            self.create.constraint.node_base(each_follicle, self.joints[-1])
-            self.joints[-1].segmentScaleCompensate.set(0)
+            self.create.constraint.matrix_node_base(each_follicle, self.joints[-1])
+            # self.create.constraint.node_base(each_follicle, self.joints[-1])
+
+            # self.joints[-1].segmentScaleCompensate.set(0)
 
         locator_controls_list = []
         locator_look_at_list = []
@@ -164,6 +167,6 @@ class Ribon(rigBase.RigBase):
 
 if __name__ == '__main__':
     rig_ribbon = Ribon()
-    rig_ribbon.create_point_base("R_intermediate01_shoulder_jnt",
-                                 "R_intermediate02_shoulder_jnt", folicule_number=5)
+    rig_ribbon.create_point_base("L_intermediate01_arm_jnt",
+                                 "L_intermediate02_arm_jnt", folicule_number=5)
     # rig_ribon.set_parent("L_intermediate00_shoulder_sknjnt", "L_intermediate01_shoulder_sknjnt")
