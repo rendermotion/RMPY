@@ -18,7 +18,7 @@ class RigParentConstraint(rigBase.RigBase):
         kwargs['model'] = kwargs.pop('model', RigParentConstraintModel())
         super(RigParentConstraint, self).__init__(*args, **kwargs)
 
-    def create_point_base(self,parent_node, child_node, **kwargs):
+    def create_point_base(self, parent_node, child_node, **kwargs):
         super(RigParentConstraint, self).create_node_base(child_node, **kwargs)
         self._model.four_by_four_normalized_matrix = pm.createNode('fourByFourMatrix')
         self._model.four_by_four_translation_matrix = pm.createNode('fourByFourMatrix')
@@ -64,7 +64,9 @@ class RigParentConstraint(rigBase.RigBase):
                     f'in{index}{axis_index}')
                 self.column_from_matrix[index].attr(f'output{axis}') >> self.normalize[axis_index].attr(
                     f'input{secondary_axis}')
-
+        child_node.translate.set(0, 0, 0)
+        child_node.rotate.set(0, 0, 0)
+        child_node.scale.set(1, 1, 1)
         self.multMatrix_output.matrixSum >> child_node.offsetParentMatrix
 
 
