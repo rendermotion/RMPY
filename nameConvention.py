@@ -295,22 +295,13 @@ class NameConvention(object):
         string_name_list = validate_input_nodes(current_name)
         new_name_array = ()
         for each_object in string_name_list:
-            # name_tokens = each_object.split("|")
-            # new_name = ""
-            # for eachToken in name_tokens:
-            #     new_name += eachToken
             if useName:
-                # print ' ****** remove ns Use name'
-                # print self.remove_namespace(each_object)
-                # print self.get_a_short_name(self.remove_namespace(each_object))
                 wanted_name_dictionary['name'] = self.get_a_short_name(self.remove_namespace(each_object))
-
             if 'objectType' not in wanted_name_dictionary:
                 wanted_name_dictionary['objectType'] = self.guess_object_type(each_object)
 
             wanted_name_dictionary['objectType'] = self.token_validation(wanted_name_dictionary['objectType'],
                                                                          'objectType')
-
             new_name = self.set_name_in_format(**wanted_name_dictionary)
             cmds.rename(each_object, new_name)
             new_name_array += tuple([new_name])
@@ -340,22 +331,21 @@ class NameConvention(object):
 
     def guess_object_type(self, scene_object):
         scene_object = validate_input_nodes(scene_object)
-        ObjType = cmds.objectType(scene_object)
-        ObjType = self.token_validation(ObjType, 'objectType')
-
+        object_type = cmds.objectType(scene_object)
+        object_type = self.token_validation(object_type, 'objectType')
         if cmds.objectType(scene_object) == "transform":
             children = cmds.listRelatives(scene_object, shapes=True)
             if children:
-                ShapeType = cmds.objectType(children[0])
+                ShapeType = cmds.objectType(f'{scene_object}|{children[0]}')
                 if ShapeType in self.ShapeDictionary:
-                    ObjType = self.translator['objectType'][ShapeType]
+                    object_type = self.translator['objectType'][ShapeType]
                 else:
-                    ObjType = self.translator['objectType']["transform"]
+                    object_type = self.translator['objectType']["transform"]
             else:
-                return ObjType
-        if ObjType == self.translator['objectType']['undefined']:
-            print('Type not identified:', cmds.objectType(scene_object))
-        return ObjType
+                return object_type
+        if object_type == self.translator['objectType']['undefined']:
+            print('Warning Type not identified:', cmds.objectType(scene_object))
+        return object_type
 
     def rename_guess_type_in_name(self, current_name):
         """
