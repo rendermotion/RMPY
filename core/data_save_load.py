@@ -50,8 +50,8 @@ def load_curves(*args):
                 curve_node = curve.Curve.by_name(each)
                 curve_node.load()
                 curve_node.set_repr_dict()
-            else:
-                print(f"the curve {each} doesn't exists")
+            # else:
+            #     print(f"the curve {each} doesn't exists")
         except :
             RuntimeWarning(f'{each} not loaded')
             pass
@@ -70,8 +70,8 @@ def save_skin_cluster(*args):
             if skin_cluster01:
                 skin_cluster01.save('{}'.format(each_node))
                 saved_skin_cluster_list.append(each_node)
-            else:
-                print ("object {} does'nt have a skincluster".format(each_node))
+            # else:
+            #     print ("object {} does'nt have a skincluster".format(each_node))
         except RuntimeWarning('{} not saved'.format(each_node)):
             pass
     print('following skin in nodes where saved: {}'.format(saved_skin_cluster_list))
