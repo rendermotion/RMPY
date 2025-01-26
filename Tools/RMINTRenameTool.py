@@ -51,14 +51,14 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         system_name = self.ui.system_lineEdit.text()
         name = self.ui.name_lineEdit.text()
         objectType = self.ui.objectType_comboBox.currentText()
-
+        # each.full_name for each in selection[]
         if objectType == 'auto':
             self.name_convention.rename_name_in_format(*selection, side=side, system=system_name, name=name,
-                                                       useName=self.ui.default_system_chkBox.isChecked())
+                                                       useName=self.ui.use_name_chkBox.isChecked())
 
         else:
             self.name_convention.rename_name_in_format(*selection, side=side, system=system_name, name=name,
-                                                       useName=self.ui.default_system_chkBox.isChecked(),
+                                                       useName=self.ui.use_name_chkBox.isChecked(),
                                                        objectType=objectType)
             print('second')
 
