@@ -65,6 +65,10 @@ class MotionPath(creatorsBase.CreatorsBase):
                     motion_path_node = pm.pathAnimation(each_node, c=self.curve, follow=True,
                                                         worldUpObject=UpVectorArray[node_count],
                                                         worldUpType="object", **kwargs)
+                elif UpVectorType == 'arrayRotation':
+                    motion_path_node = pm.pathAnimation(each_node, c=self.curve, follow=True,
+                                                        worldUpObject=UpVectorArray[node_count],
+                                                        worldUpType="objectrotation", **kwargs)
                 else:
                     motion_path_node = pm.pathAnimation(each_node, c=self.curve, follow=True, worldUpType="scene",
                                                         **kwargs)

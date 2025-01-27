@@ -63,10 +63,12 @@ class RigBase(object):
         :return:
         """
         if not self._model.zero_joint:
+            pm.select(clear=True)
             reset_joint, joint_list = self.create.joint.point_base(self.rig_system.joints)
+            pm.parent(reset_joint, self.rig_system.joints)
             self._model.zero_joint = joint_list[0]
             self.name_convention.rename_name_in_format(self._model.zero_joint, name='zeroJoint', objectType='sknjnt')
-            pm.parent(reset_joint, self.rig_system.joints)
+
         return self._model.zero_joint
 
     @property
@@ -313,7 +315,6 @@ class RigBase(object):
 
     def __getattr__(self, item):
         return getattr(self._model, item)
-
 
 
 if __name__ == '__main__':
