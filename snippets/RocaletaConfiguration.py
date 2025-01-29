@@ -39,7 +39,7 @@ class BSManager(object):
 			cmds.addAttr(Object,at="float", ln=keys,     hnv=1, hxv=1, h = 0, k = 1, smn = 0, smx = 10)
 
 	def ConnectBlendShapesAttr (Object, AttributesDefinition, BSNode):
-		blendShapeTargetDic = RMblendShapesTools.RMblendShapeTargetDic(BSNode)
+		blendShapeTargetDic = RMblendShapesTools.blend_shape_target_dictionary(BSNode)
 		print blendShapeTargetDic
 		#for eachAttr in AttributesDefinition:
 Manager = BSManager()

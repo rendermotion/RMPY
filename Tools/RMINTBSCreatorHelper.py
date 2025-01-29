@@ -1,18 +1,14 @@
-import sys
 import maya.cmds as cmds
 import maya.OpenMayaUI as mui
 from maya.app.general.mayaMixin import MayaQWidgetDockableMixin
-
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from PySide6 import __version__
 from shiboken6 import wrapInstance
 from RMPY.Tools.QT5.ui import FormBlendShapeCreatorHelper
-
-import maya.mel as mel
-import os
+from RMPY.creators import blendShape
 from RMPY import RMblendShapesTools
+
 
 
 def getMayaWindow():
@@ -40,20 +36,22 @@ class Main(MayaQWidgetDockableMixin, QDialog):
 
     def loadObjectBtnPressed(self):
         selection = cmds.ls(selection=True)
-        BSNodeArray = mel.eval('''source RMDeformers.mel;\nstring $BSNode[]=GetDeformer("'''+selection[0]+'''","blendShape");''')
-        if len(BSNodeArray) > 0:
-            self.ui.blend_shape_name_lbl.setText(BSNodeArray[0])
-            self.BSdictionary = RMblendShapesTools.RMblendShapeTargetDic(BSNodeArray[0])
-            self.ui.listWidget.clear()
-            self.ui.listWidget.addItem('Base weights')
+        # BSNodeArray = mel.eval('''source RMDeformers.mel;\nstring $BSNode[]=GetDeformer("'''+selection[0]+'''","blendShape");''')
+        if selection:
+            bs_node_list = blendShape.BlendShape().get_blend_shape_list(selection[0])
+            if len(bs_node_list) > 0:
+                self.ui.blend_shape_name_lbl.setText(str(bs_node_list[0]))
+                self.BSdictionary = RMblendShapesTools.blend_shape_target_dictionary(bs_node_list[0])
+                self.ui.listWidget.clear()
+                self.ui.listWidget.addItem('Base weights')
 
-            for keys in sorted(self.BSdictionary):
-                self.ui.listWidget.addItem(keys)
+                for keys in sorted(self.BSdictionary):
+                    self.ui.listWidget.addItem(keys)
 
-            if len(self.BSdictionary.keys()) >= 1:
-                self.ui.listWidget.setCurrentRow(0)
-        else:
-            print ("No Blendshape Node found")
+                if len(self.BSdictionary.keys()) >= 1:
+                    self.ui.listWidget.setCurrentRow(0)
+            else:
+                print ("No blend shape node found on object history")
 
     def FlipWeightsBtnPressed(self):
         blend_shape_node = self.ui.blend_shape_name_lbl.text()
@@ -62,7 +60,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         if blend_shape_node != "":
             index_list = self.get_selected_items_index(blend_shape_node)
             for each_index in index_list:
-                RMblendShapesTools.invertCurrentPaintTargetWeights(blend_shape_node, each_index)
+                RMblendShapesTools.invert_current_paint_target_weights(blend_shape_node, each_index)
 
     def copy_weghts_btn_pressed(self):
         blend_shape_node = self.ui.blend_shape_name_lbl.text()
@@ -97,7 +95,6 @@ class Main(MayaQWidgetDockableMixin, QDialog):
             selected_items_index = self.get_selected_items_index(blend_shape_node)
             source_index = selected_items_index[0]
             self.memory = RMblendShapesTools.copy_paint_to_dictionary(blend_shape_node, source_index)
-
         self.ui.paste_from_memory_btn.setEnabled(True)
 
 

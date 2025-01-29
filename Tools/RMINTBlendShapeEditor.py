@@ -80,7 +80,7 @@ class Main(QDialog):
             '''source RMDeformers.mel;\nstring $BSNode[]=GetDeformer("''' + selection[0] + '''","blendShape");''')
         self.currentBS = {}
         self.ui.BlendShapeNodeNamelbl.setText(BSNode[0])
-        self.BlendShapeDic[BSNode[0]] = RMbst.RMblendShapeTargetDic(BSNode[0])
+        self.BlendShapeDic[BSNode[0]] = RMbst.blend_shape_target_dictionary(BSNode[0])
         self.ui.BlendShapeNodeTbl.clear()
         self.ui.BlendShapeNodeTbl.addItem(BSNode[0])
 

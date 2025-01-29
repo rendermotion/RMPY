@@ -3,8 +3,7 @@ from RMPY.rig import rigPiston
 from RMPY.rig import rigPlane
 from RMPY.rig import rigUVPin
 import pymel.core as pm
-import importlib
-importlib.reload(rigPlane)
+
 
 
 class RigPistonLaceModel(rigPiston.RigPistonModel):

@@ -1,6 +1,5 @@
 from RMPY.rig.biped.rig import rigRibon
 from RMPY.rig.biped.rig import rigTwistJoints
-import importlib
 from RMPY.rig import rigMatrixParentConstraint
 
 

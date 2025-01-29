@@ -12,9 +12,6 @@ from RMPY.Tools.QT6.ui import FormSmoothSurfaces
 from RMPY import nameConvention
 from RMPY import RMRigTools
 from RMPY.snippets import locator_at_average
-import importlib
-importlib.reload(FormNameConvention)
-importlib.reload(nameConvention)
 
 
 def getMayaWindow():

@@ -1,5 +1,3 @@
-import importlib
-
 import maya.cmds as cmds
 from maya.app.general.mayaMixin import MayaQWidgetDockableMixin
 import maya.OpenMayaUI as mui

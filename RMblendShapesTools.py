@@ -2,21 +2,19 @@ import maya.cmds as cmds
 import pprint as pp
 from RMPY import nameConvention
 from RMPY import RMRigTools
-import maya.mel as mel
 import pymel.core as pm
+from RMPY.creators import blendShape
 
-
-def RMblendShapeTargetDic(BSNode):
-    #AliasNames=cmds.listAttr((BSNode +".weight"),m=True);
-    InputTargetGroup=cmds.getAttr ((BSNode+".inputTarget[0].inputTargetGroup"),mi=True);
-    BlendShapeDic = {}
-    for eachTarget in InputTargetGroup:
-        AliasName = cmds.listAttr((BSNode +".weight["+str(eachTarget)+"]"), m=True);
-        BlendShapeDic[str(AliasName[0])] = {}
-        BlendShapeDic[str(AliasName[0])]["TargetGroup"] = eachTarget
-        Items = cmds.getAttr((BSNode+".inputTarget[0].inputTargetGroup["+str(eachTarget)+"].inputTargetItem"), mi=True);
-        BlendShapeDic[str(AliasName[0])]["Items"] = Items
-    return BlendShapeDic
+def blend_shape_target_dictionary(BSNode):
+    input_target_group = cmds.getAttr(f"{BSNode}.inputTarget[0].inputTargetGroup", mi=True)
+    blend_shape_dic = {}
+    for eachTarget in input_target_group:
+        alias_name = cmds.listAttr((f"{BSNode}.weight["+str(eachTarget)+"]"), m=True)
+        blend_shape_dic[str(alias_name[0])] = {}
+        blend_shape_dic[str(alias_name[0])]["TargetGroup"] = eachTarget
+        items = cmds.getAttr(f"{BSNode}.inputTarget[0].inputTargetGroup[{str(eachTarget)}].inputTargetItem", mi=True)
+        blend_shape_dic[str(alias_name[0])]["Items"] = items
+    return blend_shape_dic
 
 '''
 def invertCurrentPaintTargetWeights(ObjectName,index):
@@ -44,58 +42,62 @@ pp.pprint (RMblendShapeTargetDic('blendShape20'))
 invertCurrentPaintTargetWeights('blendShape20',3)
 '''
 
-def invertCurrentPaintTargetWeights(ObjectName, index):
+
+def invert_current_paint_target_weights(blendshape_node, index):
 
     if index != -1:
-        weight_map_target = 'inputTargetGroup[%s].targetWeights' % index
+        weight_map_target = f'inputTarget[{index}].targetWeights'
     else:
-        weight_map_target = 'baseWeights'
+        weight_map_target = 'weightList[0].weights'
 
-    weights = cmds.getAttr("%s.inputTarget[0].%s[*]" % (ObjectName, weight_map_target))
-    weight_index = cmds.getAttr("%s.inputTarget[0].%s" % (ObjectName, weight_map_target), multiIndices=True)
-    destination_geo = cmds.listConnections('{}.outputGeometry'.format(ObjectName), source=False)[0]
+    weights = cmds.getAttr(f"{blendshape_node}.{weight_map_target}")[0]
+    weight_index = cmds.getAttr(f"{blendshape_node}.{weight_map_target}", multiIndices=True)
+    destination_geo = cmds.listConnections(f'{blendshape_node}.outputGeometry', source=False)[0]
     vertex_number = cmds.polyEvaluate(destination_geo, vertex=True)
-
+    print(weights)
+    print(weight_index)
     for index_vertex in range(vertex_number):
         if index_vertex in weight_index:
             value = weights[weight_index.index(index_vertex)]
         else:
             value = 1
-        cmds.setAttr("%s.inputTarget[0].%s[%s]" % (ObjectName,weight_map_target, index_vertex), float(1.0) - value)
+        print(value)
+        cmds.setAttr(f"{blendshape_node}.{weight_map_target}[{index_vertex}]", float(1.0) - value)
 
 
-def copyCurrentPaintTargetWeights(ObjectName, index_source, index_destination):
+def copyCurrentPaintTargetWeights(blend_shape_node, index_source, index_destination):
 
     if index_source != -1:
-        weight_map_source = 'inputTargetGroup[%s].targetWeights' % index_source
+        weight_map_source = f'inputTarget[{index_source}].targetWeights'
     else:
-        weight_map_source = 'baseWeights'
+        weight_map_source = 'weightList[0].weights'
 
     if index_destination != -1:
-        weight_map_destination = 'inputTargetGroup[%s].targetWeights' % index_destination
+        weight_map_destination = 'inputTarget[%s].targetWeights' % index_destination
     else:
-        weight_map_destination = 'baseWeights'
+        weight_map_destination = 'weightList[0].weights'
 
-    weights = cmds.getAttr("%s.inputTarget[0].%s[*]" % (ObjectName, weight_map_source))
-    weight_index = cmds.getAttr("%s.inputTarget[0].%s" % (ObjectName, weight_map_source), multiIndices=True)
-
-    destination_weight_index = cmds.getAttr("%s.inputTarget[0].%s" % (ObjectName, weight_map_destination),
-                                            multiIndices=True)
+    weights = cmds.getAttr(f"{blend_shape_node}.{weight_map_source}[*]")
+    weight_index = cmds.getAttr(f"{blend_shape_node}.{weight_map_source}", multiIndices=True)
+    try:
+        destination_weight_index = cmds.getAttr(f"{blend_shape_node}.{weight_map_destination}", multiIndices=True)
+    except:
+        destination_weight_index = []
     for vertex_index in set(weight_index + destination_weight_index):
         if vertex_index in weight_index:
             set_value = weights[weight_index.index(vertex_index)]
         else:
             set_value = 1.0
-        cmds.setAttr("%s.inputTarget[0].%s[%s]" % (ObjectName, weight_map_destination, vertex_index), set_value)
+        cmds.setAttr(f"{blend_shape_node}.{weight_map_destination}[{vertex_index}]", set_value)
 
 def copy_paint_to_dictionary(ObjectName, indexSource):
     if indexSource != -1:
-        source_weights_token = 'inputTargetGroup[{}].targetWeights'.format(indexSource)
+        source_weights_token = 'inputTarget[{}].targetWeights'.format(indexSource)
     else:
-        source_weights_token = 'baseWeights'
+        source_weights_token = 'weightList[0].weights'
 
-    weights = cmds.getAttr("{}.inputTarget[0].{}[*]".format(ObjectName, source_weights_token))
-    weights_list = cmds.getAttr("{}.inputTarget[0].{}".format(ObjectName, source_weights_token),
+    weights = cmds.getAttr("{}.{}[*]".format(ObjectName, source_weights_token))
+    weights_list = cmds.getAttr("{}.{}".format(ObjectName, source_weights_token),
                                 multiIndices=True)
     return {'weights': weights, 'weights_list': weights_list}
 
@@ -104,11 +106,11 @@ def paste_paint_from_dictionary(ObjectName, indexDestination, weights_dictionary
     weights_list = weights_dictionary['weights_list']
     weights = weights_dictionary['weights']
     if indexDestination != -1:
-        destination_weights_token = 'inputTargetGroup[%s].targetWeights' % indexDestination
+        destination_weights_token = 'inputTarget[%s].targetWeights' % indexDestination
     else:
-        destination_weights_token = 'baseWeights'
+        destination_weights_token = 'weightList[0].weights'
 
-    current_weight_list = cmds.getAttr("%s.inputTarget[0].%s" %
+    current_weight_list = cmds.getAttr("%s.%s" %
                                        (ObjectName, destination_weights_token), multiIndices=True)
     if current_weight_list:
         total_weight_list = set(weights_list + current_weight_list)
@@ -119,7 +121,7 @@ def paste_paint_from_dictionary(ObjectName, indexDestination, weights_dictionary
             value = weights[weights_list.index(each_index)]
         else:
             value = 1
-        cmds.setAttr("%s.inputTarget[0].%s[%s]" % (ObjectName, destination_weights_token, each_index), value)
+        cmds.setAttr(f"{ObjectName}.{destination_weights_token}[{each_index}]", value)
 
 
 def get_blend_shape(geometry):
@@ -292,8 +294,8 @@ class BSManager(object):
             print ("blendShapeNode%s"%blendShapeNode)
             if blendShapeNode == None :
 
-                BSNodeArray = mel.eval('''source RMDeformers.mel;\nstring $BSNode[]=GetDeformer("'''+ objectPrefix + BSDefinition[BSGroups]['baseMesh']+'''","blendShape");''')
-                if len(BSNodeArray) == 0:
+                bs_node_list = blendShape.BlendShape().get_blend_shape_list(selection[0])
+                if len(bs_node_list) == 0:
                     print ("No blendshape Found on %s" % BSDefinition[BSGroups]['baseMesh'])
                     BSName = BSGroups + objectPrefix + "BS"
                     #blendShapeOriginalGeo = cmds.duplicate(prefix + BSDefinition[BSGroups]['baseMesh'], name = self.NameConv.RMGetAShortName(BSDefinition[BSGroups]['baseMesh']) + BSGroups)
@@ -303,7 +305,7 @@ class BSManager(object):
                     cmds.blendShape(BSDefinition[BSGroups]['baseMesh'], name = BSName)
                     BSName = self.NameConv.rename_name_in_format(BSName, {'system': "faceRig", 'side': Side})
                 else:
-                    BSName = BSNodeArray[0]
+                    BSName = bs_node_list[0]
             else :
                 BSName = blendShapeNode
             for eachControl in BSDefinition [BSGroups]['order']:
@@ -322,14 +324,14 @@ class BSManager(object):
 
     def RMblendShapeTargetDic (self, BSNode):
         #AliasNames=cmds.listAttr((BSNode +".weight"),m=True);
-        InputTargetGroup = cmds.getAttr ((BSNode+".inputTarget[0].inputTargetGroup"), mi=True);
+        InputTargetGroup = cmds.getAttr ((BSNode+".inputTargetGroup"), mi=True);
         BlendShapeDic={}
         if InputTargetGroup:
             for eachTarget in InputTargetGroup:
                 AliasName=cmds.listAttr((BSNode + ".weight[" + str(eachTarget) + "]"), m=True)
                 BlendShapeDic[str(AliasName[0])] = {}
                 BlendShapeDic[str(AliasName[0])]["TargetGroup"] = eachTarget
-                Items = cmds.getAttr ((BSNode+".inputTarget[0].inputTargetGroup["+str(eachTarget)+"].inputTargetItem"), mi = True)
+                Items = cmds.getAttr ((BSNode+".inputTargetGroup["+str(eachTarget)+"].inputTargetItem"), mi = True)
                 BlendShapeDic[str(AliasName[0])]["Items"] = Items
         return BlendShapeDic
 

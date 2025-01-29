@@ -23,17 +23,12 @@ from RMPY.snippets import locator_at_average
 from RMPY.AutoRig import RMRigFK
 from RMPY.core import transform
 from RMPY.core import hierarchy
-import importlib
 from RMPY.core import mirror_skinning
 from RMPY.Tools.QT6.ui import FormRigTools
 from RMPY.core import controls
 from RMPY.core import rig_core
 from RMPY.rig import rigBase
-import importlib
 from RMPY.Tools import RMINTRenameTool
-importlib.reload(controls)
-importlib.reload(FormRigTools)
-
 
 
 def getMayaWindow():

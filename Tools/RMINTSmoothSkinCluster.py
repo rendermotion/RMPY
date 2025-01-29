@@ -1,4 +1,3 @@
-import importlib
 import maya.cmds as cmds
 from maya.app.general.mayaMixin import MayaQWidgetDockableMixin
 import maya.OpenMayaUI as mui
@@ -12,8 +11,6 @@ from RMPY.rig import rigBase
 from RMPY.Tools.QT6.ui import FormSmoothSurfaces
 from RMPY.core import smooth_skin
 import json
-importlib.reload(smooth_skin)
-importlib.reload(FormSmoothSurfaces)
 
 
 def getMayaWindow():

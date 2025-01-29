@@ -2,8 +2,7 @@
 from RMPY.rig import rigBase
 from RMPY.rig import rigObjectsOnCurve
 import pymel.core as pm
-import importlib
-importlib.reload(rigObjectsOnCurve)
+
 
 class FaceSquashStretchModel(rigBase.BaseModel):
     def __init__(self):
