@@ -72,8 +72,9 @@ def save_skin_cluster(*args):
                 saved_skin_cluster_list.append(each_node)
             # else:
             #     print ("object {} does'nt have a skincluster".format(each_node))
-        except RuntimeWarning('{} not saved'.format(each_node)):
-            pass
+        except:
+            print(f'{each_node} not saved')
+
     print('following skin in nodes where saved: {}'.format(saved_skin_cluster_list))
 
 
@@ -88,8 +89,10 @@ def load_skin_cluster(*args):
             skin_cluster01 = skinCluster.SkinCluster()
             skin_cluster01.load('{}'.format(each_node))
             skin_cluster01.apply_weights_dictionary(geometry=pm.ls(each_node)[0])
-        except RuntimeWarning('{} not loaded'.format(each_node)):
-            pass
+
+        except:
+            print(f'{each_node} not loaded')
+
 
 
 def export_maya_file(**kwargs):
