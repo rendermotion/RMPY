@@ -19,19 +19,21 @@ class Leg(rigBase.RigBase):
         super(Leg, self).create_point_base(*args, **kwargs)
 
         align_args = []
-        for each in args:
-            align_args.append(self.create.space_locator.node_base(each)[0])
-            self.name_convention.rename_name_in_format(align_args[-1], name=self.name_convention.get_a_short_name(each),
-                                                       system='reference')
-        arm_position_vector = om.MVector(pm.xform(align_args[0], q=True, ws=True, rp=True))
-        elbow_position_vector = om.MVector(pm.xform(align_args[1], q=True, ws=True, rp=True))
-        wrist_position_vector = om.MVector(pm.xform(align_args[2], q=True, ws=True, rp=True))
-        args = align_args
-        up_vector = (arm_position_vector - elbow_position_vector) ^ (arm_position_vector - wrist_position_vector)
-        for index, each in enumerate(args[1:-2]):
-            self.transform.aim_point_based(each, each, args[index + 2],
-                                           use_vector_as_up_axis=(up_vector.x, up_vector.y, up_vector.z))
-        pm.matchTransform(args[-2], args[-3], rotation=True, position=False, scale=False)
+        best_guess_point_orientation = kwargs.pop('best_guess_point_orientation', True)
+        if best_guess_point_orientation:
+            for each in args:
+                align_args.append(self.create.space_locator.node_base(each)[0])
+                self.name_convention.rename_name_in_format(align_args[-1], name=self.name_convention.get_a_short_name(each),
+                                                           system='reference')
+            arm_position_vector = om.MVector(pm.xform(align_args[0], q=True, ws=True, rp=True))
+            elbow_position_vector = om.MVector(pm.xform(align_args[1], q=True, ws=True, rp=True))
+            wrist_position_vector = om.MVector(pm.xform(align_args[2], q=True, ws=True, rp=True))
+            args = align_args
+            up_vector = (arm_position_vector - elbow_position_vector) ^ (arm_position_vector - wrist_position_vector)
+            for index, each in enumerate(args[1:-2]):
+                self.transform.aim_point_based(each, each, args[index + 2],
+                                               use_vector_as_up_axis=(up_vector.x, up_vector.y, up_vector.z))
+            pm.matchTransform(args[-2], args[-3], rotation=True, position=False, scale=False)
 
         self.ik_rig = rigIK.IKRig(rig_system=self.rig_system)
         self.ik_rig.create_point_base(*args[:-1], control_orientation='world',

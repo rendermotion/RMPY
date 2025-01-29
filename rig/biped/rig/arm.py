@@ -43,20 +43,22 @@ class Arm(rigBase.RigBase):
     def create_point_base(self, *args, **kwargs):
         super(Arm, self).create_point_base(*args, **kwargs)
         align_args = []
-        for each in args:
-            align_args.append(self.create.space_locator.node_base(each)[0])
-            self.name_convention.rename_name_in_format(align_args[-1], name=self.name_convention.get_a_short_name(each),
-                                                       system='reference')
-        arm_position_vector = om.MVector(pm.xform(align_args[1], q=True, ws=True, rp=True))
-        elbow_position_vector = om.MVector(pm.xform(align_args[2], q=True, ws=True, rp=True))
-        wrist_position_vector = om.MVector(pm.xform(align_args[3], q=True, ws=True, rp=True))
-        args = align_args
-        up_vector = (arm_position_vector - elbow_position_vector) ^ (arm_position_vector - wrist_position_vector)*-1
-        for index, each in enumerate(args[1:-1]):
-            self.transform.aim_point_based(each, each, args[index + 2],
-                                           use_vector_as_up_axis=(up_vector.x, up_vector.y, up_vector.z),
-                                           up_axis='z')
-        pm.matchTransform(args[-1], args[-2], rotation=True, position=False, scale=False)
+        best_guess_point_orientation = kwargs.pop('best_guess_point_orientation', True)
+        if best_guess_point_orientation:
+            for each in args:
+                align_args.append(self.create.space_locator.node_base(each)[0])
+                self.name_convention.rename_name_in_format(align_args[-1], name=self.name_convention.get_a_short_name(each),
+                                                           system='reference')
+            arm_position_vector = om.MVector(pm.xform(align_args[1], q=True, ws=True, rp=True))
+            elbow_position_vector = om.MVector(pm.xform(align_args[2], q=True, ws=True, rp=True))
+            wrist_position_vector = om.MVector(pm.xform(align_args[3], q=True, ws=True, rp=True))
+            args = align_args
+            up_vector = (arm_position_vector - elbow_position_vector) ^ (arm_position_vector - wrist_position_vector)*-1
+            for index, each in enumerate(args[1:-1]):
+                self.transform.aim_point_based(each, each, args[index + 2],
+                                               use_vector_as_up_axis=(up_vector.x, up_vector.y, up_vector.z),
+                                               up_axis='z')
+            pm.matchTransform(args[-1], args[-2], rotation=True, position=False, scale=False)
 
         self.setup_name_convention_node_base(args[1], name='arm', system='arm')
         self.update_name_convention()
