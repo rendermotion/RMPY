@@ -49,6 +49,54 @@ global proc shelf_rendermotion () {
         -manage 1
         -visible 1
         -preventOverride 0
+        -annotation "pycharm disconnect" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "from RMPY import pycharm\npycharm.disconnect()" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "disconnect" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "pythonFamily.png" 
+        -image1 "pythonFamily.png" 
+        -style "iconOnly" 
+        -marginWidth 0
+        -marginHeight 1
+        -command "from RMPY import pycharm\npycharm.disconnect()" 
+        -sourceType "python" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    separator
+        -enable 1
+        -width 12
+        -height 35
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -style "shelf" 
+        -horizontal 0
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
         -annotation "Rig tools" 
         -enableBackground 0
         -backgroundColor 0 0 0 
@@ -69,7 +117,7 @@ global proc shelf_rendermotion () {
         -style "iconOnly" 
         -marginWidth 0
         -marginHeight 1
-        -command "from RMPY.Tools import RMINTRigTools\nRMINTRigTools.Main().show()" 
+        -command "from RMPY.Tools import RMINTRigTools\nimport importlib\nimportlib.reload(RMINTRigTools)\nRMINTRigTools.Main().show()" 
         -sourceType "python" 
         -commandRepeatable 1
         -flat 1
@@ -84,19 +132,19 @@ global proc shelf_rendermotion () {
         -manage 1
         -visible 1
         -preventOverride 0
-        -annotation "Save Position" 
+        -annotation "smoooth skin cluster" 
         -enableBackground 0
         -backgroundColor 0 0 0 
         -highlightColor 0.321569 0.521569 0.65098 
         -align "center" 
-        -label "from RMPY.Tools import RMINTcopyPosition\n\nRMINTcopyPosition.Main..." 
+        -label "from RMPY.Tools import RMINTSmoothSkinCluster\nRMINTSmoothSkinClu..." 
         -labelOffset 0
         -rotation 0
         -flipX 0
         -flipY 0
         -useAlpha 1
         -font "plainLabelFont" 
-        -imageOverlayLabel "SavePosition " 
+        -imageOverlayLabel "smooth skinCluster" 
         -overlayLabelColor 0.8 0.8 0.8 
         -overlayLabelBackColor 0 0 0 0.5 
         -image "pythonFamily.png" 
@@ -104,7 +152,265 @@ global proc shelf_rendermotion () {
         -style "iconOnly" 
         -marginWidth 0
         -marginHeight 1
-        -command "from RMPY.Tools import RMINTcopyPosition\n\nRMINTcopyPosition.Main().show()" 
+        -command "from RMPY.Tools import RMINTSmoothSkinCluster\nRMINTSmoothSkinCluster.Main().show()" 
+        -sourceType "python" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Blendshape creator tool" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "from RMPY.Tools import RMINTBSCreatorHelper\nRMINTBSCreatorHelper..." 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "BSSplit" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "pythonFamily.png" 
+        -image1 "pythonFamily.png" 
+        -style "iconOnly" 
+        -marginWidth 0
+        -marginHeight 1
+        -command "from RMPY.Tools import RMINTBSCreatorHelper\nRMINTBSCreatorHelper.Main().show()\n" 
+        -sourceType "python" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    separator
+        -enable 1
+        -width 12
+        -height 35
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -style "shelf" 
+        -horizontal 0
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "select joints in hierarchy" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "from RMPY.core import search_hierarchy\nimport pymel.core as pm\nr..." 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "Joints" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "pythonFamily.png" 
+        -image1 "pythonFamily.png" 
+        -style "iconOnly" 
+        -marginWidth 0
+        -marginHeight 1
+        -command "from RMPY.core import search_hierarchy\nimport pymel.core as pm\nroot = pm.ls(selection=True)\nif root:\n    pm.select(search_hierarchy.type_in_hierarchy(root[0]), r=True)\n\t" 
+        -sourceType "python" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "select shapes in selection hierarchy" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "from RMPY.core import search_hierarchy\nsearch_hierarchy.select_b..." 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "shapes" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "pythonFamily.png" 
+        -image1 "pythonFamily.png" 
+        -style "iconOnly" 
+        -marginWidth 0
+        -marginHeight 1
+        -command "from RMPY.core import search_hierarchy\nsearch_hierarchy.select_by_function(search_hierarchy.shape_type_in_hierarchy, object_type='nurbsCurve')" 
+        -sourceType "python" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "controls on hierarchy" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "from RMPY.core import search_hierarchy\nsearch_hierarchy.select_b..." 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "controls" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "pythonFamily.png" 
+        -image1 "pythonFamily.png" 
+        -style "iconOnly" 
+        -marginWidth 0
+        -marginHeight 1
+        -command "from RMPY.core import search_hierarchy\nsearch_hierarchy.select_by_function(search_hierarchy.by_token_in_name,token='_ctr')" 
+        -sourceType "python" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "select geometry in hierarchy" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "from RMPY.core import search_hierarchy\nsearch_hierarchy.select_b..." 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "MSH" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "pythonFamily.png" 
+        -image1 "pythonFamily.png" 
+        -style "iconOnly" 
+        -marginWidth 0
+        -marginHeight 1
+        -command "from RMPY.core import search_hierarchy\nsearch_hierarchy.select_by_function(search_hierarchy.shape_type_in_hierarchy, object_type='mesh')" 
+        -sourceType "python" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "select skinned mesh in hierarchy" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "from RMPY.core import search_hierarchy\nsearch_hierarchy.select_b..." 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "SKNMSH" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "pythonFamily.png" 
+        -image1 "pythonFamily.png" 
+        -style "iconOnly" 
+        -marginWidth 0
+        -marginHeight 1
+        -command "from RMPY.core import search_hierarchy\nsearch_hierarchy.select_by_function(search_hierarchy.skinned_mesh_in_hierarchy)" 
+        -sourceType "python" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "select non skinned mesh in hierarchy" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "from RMPY.core import search_hierarchy\nsearch_hierarchy.select_b..." 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "NONSKN" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "pythonFamily.png" 
+        -image1 "pythonFamily.png" 
+        -style "iconOnly" 
+        -marginWidth 0
+        -marginHeight 1
+        -command "from RMPY.core import search_hierarchy\nsearch_hierarchy.select_by_function(search_hierarchy.none_skinned_mesh_in_hierarchy)" 
         -sourceType "python" 
         -commandRepeatable 1
         -flat 1
@@ -124,7 +430,7 @@ global proc shelf_rendermotion () {
         -backgroundColor 0 0 0 
         -highlightColor 0.321569 0.521569 0.65098 
         -align "center" 
-        -label "import maya.cmds as cmds\nfrom PySide6.QtGui import QClipboard\nse..."
+        -label "import maya.cmds as cmds\nfrom PySide6.QtGui import QClipboard\nse..." 
         -labelOffset 0
         -rotation 0
         -flipX 0
@@ -139,7 +445,90 @@ global proc shelf_rendermotion () {
         -style "iconOnly" 
         -marginWidth 0
         -marginHeight 1
-        -command "import maya.cmds as cmds\nfrom PySide6.QtGui import QClipboard\nselection = cmds.ls(selection=True)\nclip_board = QClipboard()\nclip_board.setText(str(selection))\nprint(selection)\n"
+        -command "import maya.cmds as cmds\nfrom PySide6.QtGui import QClipboard\nselection = cmds.ls(selection=True)\nclip_board = QClipboard()\nclip_board.setText(str(selection))\nprint(selection)\n" 
+        -sourceType "python" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    separator
+        -enable 1
+        -width 12
+        -height 35
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -style "shelf" 
+        -horizontal 0
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Builder" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "from builder.pipeline.tools import build_tool\nbuild_tool.Main()...." 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "Builder" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "pythonFamily.png" 
+        -image1 "pythonFamily.png" 
+        -style "iconOnly" 
+        -marginWidth 0
+        -marginHeight 1
+        -command "from builder.pipeline.tools import build_tool\nbuild_tool.Main().show()" 
+        -sourceType "python" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "blendshape creation" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "import pymel.core as pm\nfrom builder.pipeline.tools import facia..." 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "BSCreate" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "pythonFamily.png" 
+        -image1 "pythonFamily.png" 
+        -style "iconOnly" 
+        -marginWidth 0
+        -marginHeight 1
+        -command "import pymel.core as pm\nfrom builder.pipeline.tools import facial_rig_tool\nfacial_rig_tool.Main().show()" 
         -sourceType "python" 
         -commandRepeatable 1
         -flat 1

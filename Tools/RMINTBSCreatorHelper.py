@@ -8,7 +8,8 @@ from shiboken6 import wrapInstance
 from RMPY.Tools.QT5.ui import FormBlendShapeCreatorHelper
 from RMPY.creators import blendShape
 from RMPY import RMblendShapesTools
-
+import importlib
+importlib.reload(RMblendShapesTools)
 
 
 def getMayaWindow():

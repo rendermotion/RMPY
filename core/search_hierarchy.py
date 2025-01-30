@@ -102,7 +102,7 @@ def select_by_function(select_function, **kwargs):
     replace = kwargs.pop('replace', True)
     selection = pm.ls(selection=True)
     if not selection:
-        selection = pm.ls('geo_GRP')
+        selection = pm.ls('geo_GRP', 'geo')
     if replace:
         pm.select(clear=True)
     for each in selection:

@@ -44,36 +44,39 @@ invertCurrentPaintTargetWeights('blendShape20',3)
 
 
 def invert_current_paint_target_weights(blendshape_node, index):
-
     if index != -1:
-        weight_map_target = f'inputTarget[{index}].targetWeights'
+        weight_map_target = f'inputTarget[0].inputTargetGroup[{index}].targetWeights'
     else:
         weight_map_target = 'weightList[0].weights'
 
     weights = cmds.getAttr(f"{blendshape_node}.{weight_map_target}")[0]
     weight_index = cmds.getAttr(f"{blendshape_node}.{weight_map_target}", multiIndices=True)
-    destination_geo = cmds.listConnections(f'{blendshape_node}.outputGeometry', source=False)[0]
+    destination_geo = mesh_in_blendshape(blendshape_node)[0]
     vertex_number = cmds.polyEvaluate(destination_geo, vertex=True)
-    print(weights)
-    print(weight_index)
     for index_vertex in range(vertex_number):
         if index_vertex in weight_index:
             value = weights[weight_index.index(index_vertex)]
         else:
             value = 1
-        print(value)
         cmds.setAttr(f"{blendshape_node}.{weight_map_target}[{index_vertex}]", float(1.0) - value)
+
+def mesh_in_blendshape(blendshape_node):
+    mesh_list=[]
+    for each in cmds.listHistory(blendshape_node):
+        if cmds.objectType(each) == 'mesh':
+            mesh_list.append(each)
+    return mesh_list
 
 
 def copyCurrentPaintTargetWeights(blend_shape_node, index_source, index_destination):
 
     if index_source != -1:
-        weight_map_source = f'inputTarget[{index_source}].targetWeights'
+        weight_map_source = f'inputTarget[0].inputTargetGroup[{index_source}].targetWeights'
     else:
         weight_map_source = 'weightList[0].weights'
 
     if index_destination != -1:
-        weight_map_destination = 'inputTarget[%s].targetWeights' % index_destination
+        weight_map_destination = f'inputTarget[0].inputTargetGroup[{index_destination}].targetWeights'
     else:
         weight_map_destination = 'weightList[0].weights'
 
@@ -81,8 +84,12 @@ def copyCurrentPaintTargetWeights(blend_shape_node, index_source, index_destinat
     weight_index = cmds.getAttr(f"{blend_shape_node}.{weight_map_source}", multiIndices=True)
     try:
         destination_weight_index = cmds.getAttr(f"{blend_shape_node}.{weight_map_destination}", multiIndices=True)
+        if destination_weight_index is None:
+            destination_weight_index = []
     except:
         destination_weight_index = []
+    print(weight_index)
+    print(destination_weight_index)
     for vertex_index in set(weight_index + destination_weight_index):
         if vertex_index in weight_index:
             set_value = weights[weight_index.index(vertex_index)]
@@ -92,7 +99,7 @@ def copyCurrentPaintTargetWeights(blend_shape_node, index_source, index_destinat
 
 def copy_paint_to_dictionary(ObjectName, indexSource):
     if indexSource != -1:
-        source_weights_token = 'inputTarget[{}].targetWeights'.format(indexSource)
+        source_weights_token = f'inputTarget[0].inputTargetGroup[{indexSource}].targetWeights'
     else:
         source_weights_token = 'weightList[0].weights'
 
@@ -106,7 +113,7 @@ def paste_paint_from_dictionary(ObjectName, indexDestination, weights_dictionary
     weights_list = weights_dictionary['weights_list']
     weights = weights_dictionary['weights']
     if indexDestination != -1:
-        destination_weights_token = 'inputTarget[%s].targetWeights' % indexDestination
+        destination_weights_token = f'inputTarget[0].inputTargetGroup[{indexDestination}].targetWeights' % indexDestination
     else:
         destination_weights_token = 'weightList[0].weights'
 
