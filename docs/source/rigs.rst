@@ -23,16 +23,3 @@ You can find object that takes care of the name convention under self.name_conve
 
 
     :doc:`/rigsDoc/rigBase`
-
-.. currentmodule:: rig.rigBase
-.. autoclass:: RigBase
-    :members: create_point_base create_curve_base
-
-
-.. autoclass:: BaseModel
-    :members:
-    :undoc-members:
-
-.. autoclass:: RigBase
-    :members:
-    :undoc-members:
