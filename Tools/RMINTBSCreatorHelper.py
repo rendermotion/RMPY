@@ -26,7 +26,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.ui.LoadObjectBtn.clicked.connect(self.loadObjectBtnPressed)
         self.ui.FlipWeightsBtn.clicked.connect(self.FlipWeightsBtnPressed)
         self.BSdictionary = None
-        self.ui.copy_weights_btn.clicked.connect(self.copy_weghts_btn_pressed)
+        self.ui.copy_weights_btn.clicked.connect(self.copy_weights_btn_pressed)
         self.ui.paste_from_memory_btn.clicked.connect(self.paste_from_memory_btn_pressed)
         self.ui.save_to_memory_btn.clicked.connect(self.save_to_memory_btn_pressed)
         self.ui.paste_from_memory_btn.setEnabled(False)
@@ -63,7 +63,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
             for each_index in index_list:
                 RMblendShapesTools.invert_current_paint_target_weights(blend_shape_node, each_index)
 
-    def copy_weghts_btn_pressed(self):
+    def copy_weights_btn_pressed(self):
         blend_shape_node = self.ui.blend_shape_name_lbl.text()
         if blend_shape_node != "":
             selected_items_index = self.get_selected_items_index(blend_shape_node)
