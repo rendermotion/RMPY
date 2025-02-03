@@ -247,70 +247,100 @@ class IKRig(RMPY.rig.rigBase.RigBase):
             self.joints = self.identify_joints(ik_handle)
 
         total_distance = self.bone_chain_lenght(self.joints)
-        transformStartPoint = pm.spaceLocator(name="StretchyIkHandleStartPoint")
-        self.name_convention.rename_name_in_format(transformStartPoint, useName=True)
-        transformEndPoint = pm.spaceLocator(name="StretchyIkHandleEndPoint")
-        self.name_convention.rename_name_in_format(transformEndPoint, useName=True)
+        transform_start_point = pm.spaceLocator(name="StretchyIkHandleStartPoint")
+        self.name_convention.rename_name_in_format(transform_start_point, useName=True)
+        transform_end_point = pm.spaceLocator(name="StretchyIkHandleEndPoint")
+        self.name_convention.rename_name_in_format(transform_end_point, useName=True)
 
         if self.root_joints:
-            pm.parent(transformStartPoint, self.root_joints)
-            pm.parent(transformEndPoint, self.root_joints)
+            pm.parent(transform_start_point, self.root_joints)
+            pm.parent(transform_end_point, self.root_joints)
 
-        StartPointConstraint = pm.pointConstraint(self.joints[0], transformStartPoint)
-        EndPointConstraint = pm.pointConstraint(self.controls[0], transformEndPoint)
+        pm.pointConstraint(self.joints[0], transform_start_point)
+        pm.pointConstraint(self.controls[0], transform_end_point)
 
-        distance_node = pm.shadingNode("distanceBetween", asUtility=True,
-                                       name="IKBaseDistanceNode" + self.name_convention.get_a_short_name(self.joints[2]))
-        self.name_convention.rename_name_in_format(distance_node, name='DistanceNode')
+        distance_node = pm.shadingNode("distanceBetween", asUtility=True, name="IKBaseDistanceNode")
 
-        pm.connectAttr(transformStartPoint + ".worldPosition[0]", distance_node + ".point1", f=True)
-        pm.connectAttr(transformEndPoint + ".worldPosition[0]", distance_node + ".point2", f=True)
+        pm.connectAttr(transform_start_point.worldPosition[0], distance_node.point1, f=True)
+        pm.connectAttr(transform_end_point.worldPosition[0], distance_node.point2, f=True)
 
-        conditionNode = pm.shadingNode("condition", asUtility=True,
-                                       name="IkCondition" + self.name_convention.get_a_short_name(self.joints[2]))
-        self.name_convention.rename_name_in_format(conditionNode, name= 'conditionNode')
-        pm.connectAttr(distance_node + ".distance", conditionNode + ".colorIfFalseR", f=True)
-        pm.connectAttr(distance_node + ".distance", conditionNode + ".secondTerm", f=True)
-        pm.setAttr(conditionNode + ".operation", 3)
+        condition_node = pm.shadingNode("condition", asUtility=True, name="IkCondition")
 
-        multiplyDivide = pm.shadingNode("multiplyDivide", asUtility=True,
-                                        name="IKStretchMultiply" + self.name_convention.get_a_short_name(
-                                        self.joints[2]))
+        pm.connectAttr(distance_node + ".distance", condition_node + ".colorIfFalseR", f=True)
+        pm.connectAttr(distance_node + ".distance", condition_node + ".secondTerm", f=True)
+        pm.setAttr(condition_node + ".operation", 3)
 
-        scale_factor = pm.shadingNode("multiplyDivide", asUtility=True,
-                                       name="scaleFactor" + self.name_convention.get_a_short_name(
-                                            self.joints[2]))
+        multiply_divide = pm.shadingNode("multiplyDivide", asUtility=True, name="IKStretchMultiply")
+        scale_factor = pm.shadingNode("multiplyDivide", asUtility=True, name="scaleFactor")
 
-        scale_factor.input1X.set(total_distance)
+        pm.addAttr(self.rig_system.settings, ln="scaleA", min=0, k=True,defaultValue = 1)
+        pm.addAttr(self.rig_system.settings, ln="scaleB", min=0, k=True, defaultValue = 1)
+
+        multiply_a = pm.createNode('multiply', name='scaleSegmentA')
+        multiply_b = pm.createNode('multiply', name='scaleSegmentB')
+        constant_a = pm.createNode('floatConstant', name='scaleSegmentA')
+        constant_b = pm.createNode('floatConstant', name='scaleSegmentB')
+
+        full_lenght = pm.createNode('sum', name='segmentLength')
+
+        constant_a.inFloat.set(self.joints[1].translateX.get())
+        constant_b.inFloat.set(self.joints[2].translateX.get())
+        constant_a.outFloat >> multiply_a.input[0]
+        self.rig_system.settings.scaleA >> multiply_a.input[1]
+
+        constant_b.outFloat >> multiply_b.input[0]
+        self.rig_system.settings.scaleB >> multiply_b.input[1]
+
+        multiply_a.output >> full_lenght.input[0]
+        multiply_b.output >> full_lenght.input[1]
+
+        full_lenght.output >> scale_factor.input1X
+
+        # scale_factor.input1X.set(total_distance)
         self.root.scaleX >> scale_factor.input2X
-        pm.connectAttr(scale_factor.outputX, conditionNode.firstTerm)
-        pm.connectAttr(scale_factor.outputX, conditionNode.colorIfTrueR)
-        self.name_convention.rename_name_in_format(multiplyDivide, name='stretchy')
+        pm.connectAttr(scale_factor.outputX, condition_node.firstTerm)
+        pm.connectAttr(scale_factor.outputX, condition_node.colorIfTrueR)
+        self.name_convention.rename_name_in_format(multiply_divide, name='stretchy')
 
-        pm.connectAttr(conditionNode + ".outColorR", multiplyDivide + ".input1X", f=True)
-        pm.connectAttr(scale_factor.outputX, multiplyDivide.input2X)
-        pm.setAttr(multiplyDivide + ".operation", 2)
+        pm.connectAttr(condition_node + ".outColorR", multiply_divide + ".input1X", f=True)
+        pm.connectAttr(scale_factor.outputX, multiply_divide.input2X)
+        pm.setAttr(multiply_divide + ".operation", 2)
 
         # self.SPSW.AddEnumParameters(["off","on"], self.ikControl, Name = "StretchyIK")
-        self.rig_space_switch.AddNumericParameter(self.controls_dict['ikHandle'], Name="StretchyIK")
-        IKSwitchDivide = pm.shadingNode("multiplyDivide", asUtility=True,
-                                        name="IkSwitchDivide" + self.name_convention.get_a_short_name(self.joints[2]))
-        self.name_convention.rename_name_in_format(IKSwitchDivide, name='IKSwitchDivide')
-        pm.connectAttr("%s.StretchyIK" % self.controls_dict['ikHandle'], IKSwitchDivide + ".input1X")
-        pm.setAttr(IKSwitchDivide + ".input2X", 10)
-        pm.setAttr(IKSwitchDivide + ".operation", 2)
+        # self.rig_space_switch.AddNumericParameter(self.controls_dict['ikHandle'], Name="StretchyIK")
+        pm.addAttr(self.rig_system.settings,  ln="StretchyIK", min=0, max=10, k=True)
 
-        IkSwitchblendTwoAttr = pm.shadingNode("blendTwoAttr", asUtility=True,
-                                              name="IkSwitchBlendTwoAttr" + self.name_convention.get_a_short_name(
-                                                  self.joints[2]))
-        self.name_convention.rename_name_in_format(IkSwitchblendTwoAttr, name='IkSwitchblendTwoAttr')
+        ik_switch_divide = pm.shadingNode("multiplyDivide", asUtility=True,
+                                          name="IkSwitchDivide")
+        pm.connectAttr(self.rig_system.settings.StretchyIK, ik_switch_divide.input1X)
+        pm.setAttr(ik_switch_divide + ".input2X", 10)
+        pm.setAttr(ik_switch_divide + ".operation", 2)
 
-        pm.connectAttr(multiplyDivide.outputX, IkSwitchblendTwoAttr.input[1], force=True)
-        IkSwitchblendTwoAttr.input[0].set(1)
-        pm.connectAttr(IKSwitchDivide + ".outputX", IkSwitchblendTwoAttr + ".attributesBlender", force=True)
+        ik_switchblend_two_attr = pm.shadingNode("blendTwoAttr", asUtility=True,
+                                                 name="ikSwitchBlendTwoAttr")
 
-        for joints in self.joints[:-1]:
-            pm.connectAttr(IkSwitchblendTwoAttr + ".output", joints + ".scaleX")
+        self.name_convention.rename_name_in_format(ik_switch_divide,ik_switchblend_two_attr, scale_factor,
+                                                   multiply_divide, condition_node, distance_node, useName=True)
+        pm.connectAttr(multiply_divide.outputX, ik_switchblend_two_attr.input[1], force=True)
+        ik_switchblend_two_attr.input[0].set(1)
+        pm.connectAttr(ik_switch_divide + ".outputX", ik_switchblend_two_attr + ".attributesBlender", force=True)
+
+        multiply_out_a = pm.createNode('multiply', name='scaleOutSegmentA')
+        multiply_out_b = pm.createNode('multiply', name='scaleOutSegmentB')
+
+        ik_switchblend_two_attr.output >> multiply_out_a.input[0]
+        self.rig_system.settings.scaleA >> multiply_out_a.input[1]
+        ik_switchblend_two_attr.output >> multiply_out_b.input[0]
+        self.rig_system.settings.scaleB >> multiply_out_b.input[1]
+
+        multiply_out_a.output >> self.joints[0].scaleX
+        multiply_out_b.output >> self.joints[1].scaleX
+        # for joints in self.joints[:-1]:
+        #     pm.connectAttr(ik_switchblend_two_attr.output, joints.scaleX)
+
+        pm.addAttr(self.controls_dict['ikHandle'], ln="StretchyIK", proxy=self.rig_system.settings.StretchyIK)
+        pm.addAttr(self.controls_dict['ikHandle'], ln="scaleA", proxy=self.rig_system.settings.scaleA)
+        pm.addAttr(self.controls_dict['ikHandle'], ln="scaleB", proxy=self.rig_system.settings.scaleB)
 
 
 if __name__ == '__main__':

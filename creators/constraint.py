@@ -135,8 +135,12 @@ class Constraint(creatorsBase.CreatorsBase):
         return matrix_mult
 
     def driver_matrix_node_base(self, *nodes, mo=False):
-        #  set the drivers node list all nodes from the beginning of the list till the one before
-        #  the last one are drivers the last object is going to be the driven.
+        """
+        All nodes from the beginning of the list till the one before
+        the last one are drivers,  the last object is going to be the driven.
+        It will create a blend Matrix node that controls the weighting between the drivers.
+        returns: blendMatrix The blend matrix Node created.
+        """
         drivers = nodes[:-1]
         driven = nodes[-1]
         matrix_mult = pm.createNode('multMatrix')
@@ -166,6 +170,7 @@ class Constraint(creatorsBase.CreatorsBase):
 
         if pm.objectType(driven) == 'joint':
             driven.jointOrient.set(0, 0, 0)
+        return blend_matrix
 
 
 if __name__ == '__main__':

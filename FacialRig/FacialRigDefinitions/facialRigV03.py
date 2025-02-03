@@ -30,10 +30,10 @@ FacialRig = {'incisibus':{'Type'        : "blendShapeDefinition",
                         "baseMesh"    : "Character",
                         'control'     : 'R_eyeCls00_RIG_CTRL',
                         'blendShapes' :{
-                                        'EyeCls'      :{"connection": "translateY"    ,"value": 10},
-                                        'Eye3QrtCls'  :{"connection": "translateY"    ,"value": 7.5},
-                                        'EyeHalfCls'  :{"connection": "translateY"    ,"value": 5},
-                                        'EyeQrtCls'   :{"connection": "translateY"    ,"value": 2.5}
+                                        'EyeCls'      :{"connection": "translateY" ,"value": 10},
+                                        'Eye3QrtCls'  :{"connection": "translateY" ,"value": 7.5},
+                                        'EyeHalfCls'  :{"connection": "translateY" ,"value": 5},
+                                        'EyeQrtCls'   :{"connection": "translateY" ,"value": 2.5}
                                        },
                         'attributes' : {'translateY':{"type": "float", "min": 0, "max": 10}},
                         'order':['translateY']},
