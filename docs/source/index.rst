@@ -5,7 +5,6 @@
 
     /how_to_install
     Understanding the architecture <architecture>
-    Name convention <name_convention>
     /rigs
     /tools
 
