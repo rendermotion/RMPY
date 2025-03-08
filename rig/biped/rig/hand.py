@@ -57,6 +57,7 @@ class Hand(rigSingleJoint.RigSingleJoint):
         if arm.Arm in type(rig_object).__mro__:
             # print '{} in constraining {} {}'.format(self.create.constraint.constraint_type, rig_object.tip, self.root)
             self.create.constraint.point(rig_object.tip, self.root, mo=True, **kwargs)
+            self.create.constraint.scale(rig_object.tip, self.root, mo=True, **kwargs)
             # self.create.constraint.define_constraints(point=False, scale=False, parent=False, orient=True)
             if self.name_convention.get_from_name(self.controls[0], 'side') == 'R' and config.mirror_controls:
                 self.create.connect.times_factor(self.controls[0].rotateX, rig_object.tip.rotateX, -1)

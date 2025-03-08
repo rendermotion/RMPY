@@ -21,11 +21,12 @@ class RibbonTwistJoint(rigRibon.Ribon):
         return self._model.rig_twist_joints
         
     def create_point_base(self, *args, **kwargs):
+        self.root = kwargs.pop('root_transform', None)
         self.rig_twist_joints.create_point_base(*args, **kwargs)
         super(RibbonTwistJoint, self).create_point_base(*args[1:], **kwargs)
         for joints, reset_controls in zip(self.rig_twist_joints.joints, self.reset_controls):
             parent_constraint = rigMatrixParentConstraint.RigParentConstraint()
-            parent_constraint.create_point_base(joints, reset_controls)
+            parent_constraint.create_point_base(joints, reset_controls, root_transform=self.root)
         # self.create.constraint.node_list_base(self.rig_twist_joints.joints, self.reset_controls, mo=True)
 
 

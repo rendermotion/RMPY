@@ -73,10 +73,44 @@ class RigBase(object):
 
     @property
     def root(self):
+        """
+        The root of a rig is a property that stores the transform group that whenever you want to create a parent for
+        the rig you can move scale, or rotate this rig and all in the rig will follow.
+        You can assign the root to what ever transform you want, but in the case you have not done this the property
+         will return the first value stored on the reset_controls list.
+        """
         if self.attach_points['root']:
             return self.attach_points['root']
         else:
-            return self.reset_controls[0]
+            if self.reset_controls:
+                return self.reset_controls[0]
+            else:
+                return None
+
+    @property
+    def world_scale_matrix(self):
+        """
+        This attribute returns an output of a maya node that contains the matrix correspondent to the world scale value of the rig.
+        Notice that it is an attribute not a node, so should be treated as this.
+        """
+        if self.root:
+            connections_list = pm.listConnections(self.root.scale, type='decomposeMatrix',
+                                                  source=True)
+            if connections_list:
+                compose_matrix = pm.listConnections(connections_list[0].outputScale, type='composeMatrix',
+                                                    source=True)
+                return compose_matrix[0].outputMatrix
+
+            else:
+                decompose_matrix = pm.createNode('decomposeMatrix', name='worldScaleDecomposeMatrix')
+                compose_matrix = pm.createNode('composeMatrix', name='worldScaleMatrix')
+                self.name_convention.rename_name_in_format(compose_matrix, decompose_matrix, useName=True)
+                self.root.worldMatrix[0] >> decompose_matrix.inputMatrix
+                decompose_matrix.outputScale >> compose_matrix.inputScale
+                return compose_matrix.outputMatrix
+        else:
+            raise AttributeError('The current rig does not have defined a root node')
+
 
     @root.setter
     def root(self, value):
@@ -91,6 +125,9 @@ class RigBase(object):
 
     @tip.setter
     def tip(self, value):
+        """
+        The tip of a rig is a property that stores a transform where any other rig should attach to.
+        """
         self.attach_points['tip'] = value
 
     @property
@@ -162,6 +199,16 @@ class RigBase(object):
         self.setup_name_convention_node_base(*args, **kwargs)
 
     def setup_name_convention_node_base(self, *args, **kwargs):
+        """
+        This function is used to set the name convention of all the tools on the class to match a specific transform.
+        args only the first arg will be used to inherit the name, system and side of the name.
+        If the name is in the name convention the tokens of the name will be used, in case it is not, the name will be
+        made a shortName(strip all _) and will be used as the system  name.
+        Notice that there is a special system name, defined on the config, (by default is reference) which if the point
+         belogs to this system, means that is meant to be used to create a rig and the name of the locator will be used
+         as the system.
+
+        """
         pop_name = kwargs.pop('name', None)
         system_name = self.name_convention.get_from_name(args[0], 'system')
         if system_name == config.default_reference_system_name:
@@ -229,12 +276,19 @@ class RigBase(object):
 
     def set_parent(self, rig_object, **kwargs):
         """
-        This is the standardize function to parent modules, when you call set_parent the rig object attribute can be a
+        This is the standardize function to parent modules, This works in union with the properties root and tip.
+        When you call set_parent the rig object attribute can be a
         rig(that inherits at some point from rigBase), or a transform. If it is a rig, the function will look for the
-        root on the dictionary attachments. If this has not being assigned the default value will be the first element
+        tip on the dictionary attachments. If this has not being assigned the default value will be the first element
         of the list rig_reset_controls. So you can assign what ever point you want to be the driver of all the rig
         or let the rig find it by itself.
+
         :param rig_object: object or rig that you expect to be the parent of the module.
+        :kwargs:
+            output_joint_rig: The output joint rig is a specific rig to create a hierarchy of joints
+            create_hierarchy_joints:
+
+
         :return:
         """
         kwargs['mo'] = kwargs.pop('mo', True)
@@ -304,6 +358,10 @@ class RigBase(object):
                                                    self.name_convention.get_from_name(each_joint, 'system')))
 
     def custom_world_align(self, *scene_objects):
+        """
+        This function can be used to align any object with the world paradigm which by default is x aiming front,
+        This also takes in consideration if the object is on the right side, since controls are mirrored on Z axis.
+        """
         for each in scene_objects:
             scale_z = 1
             if self.name_convention.is_name_in_format(each):

@@ -9,6 +9,23 @@ class ModelSingleJoint(rigBase.BaseModel):
 
 
 class RigSingleJoint(rigBase.RigBase):
+    """
+    The  single joint rig is the simplest rig you can create, it creates a control and a joint per each
+    provided source locator. The control will drive the joint position.
+    Every rig contains some lists inside to store the output joints, the controls and the reset groups of each one of those
+    Whenever you create a control the best you can do is append this control and the reset control, to this lists.
+    This lists are found on the base level of the class, so you can access them by self.joints, self.reset_joints,
+    self.controls and self.resetControls
+
+    .. code-block:: bash
+       :caption: Creating a single joint based on selected locators.
+       :emphasize-lines: 6
+
+            from RMPY.rigs import rigSingleJoint
+            selection = pm.ls(selection=True)
+            rig_joint = rigSingleJoint.RigSingleJoint()
+            rig_joint.create_point_base(*selection)
+    """
     def __init__(self, *args, **kwargs):
         kwargs['model'] = kwargs.pop('model', ModelSingleJoint())
         super(RigSingleJoint, self).__init__(*args, ** kwargs)
@@ -24,11 +41,20 @@ class RigSingleJoint(rigBase.RigBase):
         return self._model.root_node
 
     def create_point_base(self, *locator_list, **kwargs):
+        """
+        This is the only function enabled to create a single joint rig.
+        locator_list: type:spaceLocator the list of points where you want to create a single joint passed as arguments,
+            the name of the points is very important since it will define the name of the output rigs.
+            The naming is recalculated on each point created, so you can create multiple rigs with different
+            names at the same time.
+
+        """
         super(RigSingleJoint, self).create_point_base(*locator_list, **kwargs)
         static = kwargs.pop('static', False)
         scaleXZ = kwargs.pop('scaleXZ', False)
 
         for each in locator_list:
+            self.setup_name_convention_node_base(each)
             reset_joint = pm.group(empty=True, name='resetJoint')
 
             pm.matchTransform(reset_joint, each)
