@@ -1,7 +1,7 @@
 .. toctree::
-    :maxdepth: 4
+    :maxdepth: 2
     :hidden:
-    :caption: Getting started
+    :caption: Architecture
 
     Name convention <name_convention>
     /creators/index
