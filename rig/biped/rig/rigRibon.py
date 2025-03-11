@@ -147,7 +147,7 @@ class Ribon(rigBase.RigBase):
                          worldUpObject=locator_look_at_list[2])
 
         # self.create.constraint.define_constraints(parent=False, scale=True)
-        self.create.constraint.node_list_base(self.controls, self.follicules,scale=True, mo=False)
+        self.create.constraint.node_list_base(self.controls, self.follicules, scale=True, mo=False)
         # self.create.constraint.define_constraints(parent=True, scale=True)
         pm.parent(group_joints, main_skeleton)
         pm.parent(plane, hair_group)

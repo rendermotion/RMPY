@@ -20,17 +20,22 @@ class RigParentConstraint(rigBase.RigBase):
 
     def create_point_base(self, parent_node, child_node, **kwargs):
         super(RigParentConstraint, self).create_node_base(child_node, **kwargs)
+        root_transform = kwargs.pop('root_transform', None)
+        self.root = root_transform
         self._model.four_by_four_normalized_matrix = pm.createNode('fourByFourMatrix')
         self._model.four_by_four_translation_matrix = pm.createNode('fourByFourMatrix')
         self._model.multMatrix_output = pm.createNode('multMatrix')
         self._model.rotation_offset = pm.createNode('holdMatrix')
 
-        self.four_by_four_translation_matrix.output >> self.multMatrix_output.matrixIn[1]
         self.rotation_offset.outMatrix >> self.multMatrix_output.matrixIn[0]
-        self.four_by_four_normalized_matrix.output >> self.multMatrix_output.matrixIn[2]
+        self.four_by_four_translation_matrix.output >> self.multMatrix_output.matrixIn[1]
+        if self.root:
+            self.world_scale_matrix >> self.multMatrix_output.matrixIn[2]
+
+        self.four_by_four_normalized_matrix.output >> self.multMatrix_output.matrixIn[3]
         biological_parent = child_node.getParent()
         if biological_parent:
-            biological_parent.worldInverseMatrix[0] >> self.multMatrix_output.matrixIn[3]
+            biological_parent.worldInverseMatrix[0] >> self.multMatrix_output.matrixIn[4]
 
         offset_matrix = child_node.worldMatrix[0].get() * parent_node.worldInverseMatrix[0].get()
         translation_offset_vector = [offset_matrix.a30, offset_matrix.a31, offset_matrix.a32]

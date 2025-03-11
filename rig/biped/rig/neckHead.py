@@ -56,15 +56,18 @@ class NeckHead(rigBase.RigBase):
         self.head.create_point_base(*args[-2:], **kwargs)
 
         pm.parent(self.head.reset_controls[0], self.neck.controls[0])
-        rig_scale_compensate = rigSegmentScaleCompensate.RigSegmentScaleCompensate()
-        rig_scale_compensate.create_node_base(self.head.reset_controls[0])
 
         self.reset_controls.extend(self.neck.reset_controls)
         self.reset_controls.extend(self.head.reset_controls)
         self.controls.extend(self.neck.controls)
         self.controls.extend(self.head.controls)
+
+        rig_scale_compensate = rigSegmentScaleCompensate.RigSegmentScaleCompensate()
+        rig_scale_compensate.create_node_base(self.head.reset_controls[0], root_transform=self.root)
+
         self._model.twist_neck = rigRibonTwistJoint.RibbonTwistJoint(rig_system=self.rig_system)
-        self.twist_neck.create_point_base(self.root, self.neck.joints[0], self.head.joints[0], folicule_number=5)
+        self.twist_neck.create_point_base(self.root, self.neck.joints[0], self.head.joints[0],
+                                          folicule_number=5, root_transform = self.root)
 
         # pm.parent(self.head.joints[0], self.neck.joints[0])
         # pm.delete(self.neck.joints[1], self.head.reset_joints[0])

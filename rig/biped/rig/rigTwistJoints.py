@@ -62,7 +62,7 @@ class TwistJoints(rigBase.RigBase):
         # self.create.constraint.node_base(twist_joint, self.reset_joints, mo=True)
         # self.create.constraint.matrix_node_base(twist_joint, self.reset_joints[0], mo=True)
         constraint = rigMatrixParentConstraint.RigParentConstraint()
-        constraint.create_point_base(twist_joint, self.reset_joints[0], mo=False)
+        constraint.create_point_base(twist_joint, self.reset_joints[0], mo=False, )
 
         # reset_point, control = RMRigShapeControls.RMCreateBoxCtrl(self.joints[0], Xratio=.1, Yratio=.1, Zratio=.1,
         # customSize=Distance / 5, name="TwistOrigin")

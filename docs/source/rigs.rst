@@ -1,3 +1,14 @@
+.. toctree::
+    :maxdepth: 1
+    :hidden:
+    :caption: rigs
+
+    /rigsDoc/rigBase
+    Understanding the architecture <architecture>
+    Name convention <name_convention>
+    /rigs
+    /tools
+
 ==============
 Rigs
 ==============

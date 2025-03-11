@@ -87,9 +87,9 @@ class RigIKKFLegFeet(rigBase.RigBase):
         # self.create.constraint.define_constraints(point=False, scale=True, parent=True, orient=False)
 
         self.twist_leg.create_point_base(self.root, self.leg.joints[0], self.leg.joints[1],
-                                         folicule_number=5)
+                                         folicule_number=5, root_transform = self.root)
         self.twist_foreleg.create_point_base(self.leg.joints[1], self.leg.joints[1], self.leg.joints[2],
-                                             folicule_number=5)
+                                             folicule_number=5, root_transform=self.root)
         # self.joints.extend(self.leg.joints)
         self.joints.extend(self.twist_leg.joints)
         self.joints.extend(self.twist_foreleg.joints)

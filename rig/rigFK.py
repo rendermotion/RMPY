@@ -34,7 +34,8 @@ class RigFK(rigBase.RigBase):
                 pm.parent(reset_group, self.controls[index-1])
                 if segment_compensate:
                     rig_segment_compensate = rigSegmentScaleCompensate.RigSegmentScaleCompensate(rig_system=self.rig_system)
-                    rig_segment_compensate.create_node_base(reset_group)
+
+                    rig_segment_compensate.create_node_base(reset_group, root_transform=self.root)
 
             # self.create.constraint.define_constraints(point=False, scale=True, parent=True, orient=False)
             # self.create.constraint.node_base(control, eachJoint, mo=True)
@@ -49,6 +50,6 @@ if __name__ == '__main__':
     # rig_fk.create_point_base(u'C_Hip01_reference_pnt', u'C_tail01_reference_pnt', u'C_tail02_reference_pnt',
     #                          u'C_tail03_reference_pnt', u'C_tail04_reference_pnt', u'C_tail05_reference_pnt',
     #                          orient_type='point_orient')
-    rig_fk.create_point_base(u'C_Hip00_reference_pnt', u'C_Hip01_reference_pnt')
+    rig_fk.create_point_base('L_arm01_reference_pnt', 'L_elbow01_reference_pnt', 'L_wrist01_reference_pnt')
 
 

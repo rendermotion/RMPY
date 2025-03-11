@@ -66,18 +66,19 @@ class Arm(rigBase.RigBase):
         self.rig_clavicle.create_point_base(*args[:2], name='clavicle')
         self.rig_arm.create_point_base(*args[1:], name='arm')
         self.rig_arm.set_parent(self.rig_clavicle)
+        self.reset_controls = self.rig_clavicle.reset_controls + self.rig_arm.reset_controls
+        self.controls = self.rig_clavicle.controls + self.rig_arm.controls
 
         self.twist_arm.create_point_base(self.rig_clavicle.joints[0], self.rig_arm.joints[0], self.rig_arm.joints[1],
-                                         folicule_number=5, system='upperArm')
+                                         folicule_number=5, system='upperArm', root_transform = self.root)
         self.twist_forearm.create_point_base(self.rig_arm.joints[1], self.rig_arm.joints[1], self.rig_arm.joints[2],
-                                             folicule_number=5, system='forearm')
+                                             folicule_number=5, system='forearm', root_transform = self.root)
 
         self.reset_joints = [self.rig_clavicle.reset_joints[0]] + self.twist_arm.reset_joints + self.twist_forearm.reset_joints
         self.joints.extend([self.rig_clavicle.joints[0]])
         self.joints.extend(self.twist_arm.joints)
         self.joints.extend(self.twist_forearm.joints)
-        self.reset_controls = self.rig_clavicle.reset_controls + self.rig_arm.reset_controls
-        self.controls = self.rig_clavicle.controls + self.rig_arm.controls
+
         self.attach_points['tip'] = self.rig_arm.tip
         pm.delete(align_args)
 
