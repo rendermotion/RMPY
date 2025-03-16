@@ -42,6 +42,7 @@ class RigParentConstraint(rigBase.RigBase):
         offset_matrix.a30 = 0
         offset_matrix.a31 = 0
         offset_matrix.a32 = 0
+
         self.rotation_offset.inMatrix.set(offset_matrix)
 
         for index, axis in zip(range(3), 'xyz'):
