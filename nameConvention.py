@@ -80,7 +80,7 @@ class NameConvention(object):
                                           'orc', 'prc', 'scc', 'pvc', 'ctr', 'pnt', 'ikh', 'ikf', 'rvs', 'mult', 'cnd',
                                           'blt', 'cui', 'dbtw', 'cls', 'clsh', 'pma', 'b2a', 'mph', 'ffd', 'bs', 'aim',
                                           'cfme', 'lft', 'psfi', 'guide', 'unc', 'skn', 'dmx', 'mmx', 'nrb', 'ffm',
-                                          'vcp', 'auu', 'bmtx', 'nrm', 'multDiv', 'clmfmtx','sum']}
+                                          'vcp', 'auu', 'bmtx', 'nrm', 'multDiv', 'clmfmtx','sum', 'csp']}
         self.translator = {'objectType': {
             "joint": "jnt",
             "skinjoint": "sknjnt",
@@ -130,7 +130,8 @@ class NameConvention(object):
             'columnFromMatrix': 'clmfmtx',
             'multiply': 'mult',
             'normalize': 'nrm',
-            'sum':'sum'
+            'sum': 'sum',
+            'crossProduct': 'csp',
         },
             'side': {'left': 'L', 'right': 'R', 'center': 'C'}
         }

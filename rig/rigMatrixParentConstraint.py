@@ -22,10 +22,15 @@ class RigParentConstraint(rigBase.RigBase):
         super(RigParentConstraint, self).create_node_base(child_node, **kwargs)
         root_transform = kwargs.pop('root_transform', None)
         self.root = root_transform
-        self._model.four_by_four_normalized_matrix = pm.createNode('fourByFourMatrix')
-        self._model.four_by_four_translation_matrix = pm.createNode('fourByFourMatrix')
-        self._model.multMatrix_output = pm.createNode('multMatrix')
-        self._model.rotation_offset = pm.createNode('holdMatrix')
+        self._model.four_by_four_normalized_matrix = pm.createNode('fourByFourMatrix', name='normalized')
+        self._model.four_by_four_translation_matrix = pm.createNode('fourByFourMatrix', name='translation')
+        self._model.multMatrix_output = pm.createNode('multMatrix', name='output')
+        self._model.rotation_offset = pm.createNode('holdMatrix', name='rotationOffset')
+        self.name_convention.rename_name_in_format(self.four_by_four_normalized_matrix,
+                                                   self.four_by_four_translation_matrix,
+                                                   self.multMatrix_output,
+                                                   self.rotation_offset,
+                                                   useName=True)
 
         self.rotation_offset.outMatrix >> self.multMatrix_output.matrixIn[0]
         self.four_by_four_translation_matrix.output >> self.multMatrix_output.matrixIn[1]

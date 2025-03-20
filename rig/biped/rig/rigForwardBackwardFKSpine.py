@@ -40,11 +40,17 @@ class RigForwardBackwardFKSpine(rigBase.RigBase):
 
         self.rig_backward_fk.reset_controls[0].setParent(self.rig_forward_fk.controls[-1])
 
-        for forward_driver, backward_driven in zip(reversed(self.rig_forward_fk.joints[0:-1]),
-                                                   self.rig_backward_fk.reset_controls[1:] +
-                                                   [self.rig_backward_fk.joints[-1]]):
+        for forward_control, forward_driver, backward_driven in zip(
+                reversed(self.rig_forward_fk.controls[1:]),
+                reversed(self.rig_forward_fk.joints[:-2]),
+                self.rig_backward_fk.reset_controls[1:]):
+
             self_follow_position = rigFollowPosition.FollowPosition()
-            self_follow_position.build(backward_driven, forward_driver.getChildren(type='joint')[0], forward_driver)
+            self_follow_position.build(backward_driven,
+                                       forward_driver.getChildren(type='joint')[0],
+                                       forward_driver,
+                                       forward_control
+                                       )
 
         self.joints.extend(reversed(self.rig_backward_fk.joints))
 

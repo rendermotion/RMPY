@@ -106,7 +106,10 @@ class RigBase(object):
                 compose_matrix = pm.createNode('composeMatrix', name='worldScaleMatrix')
                 self.name_convention.rename_name_in_format(compose_matrix, decompose_matrix, useName=True)
                 self.root.worldMatrix[0] >> decompose_matrix.inputMatrix
-                decompose_matrix.outputScale >> compose_matrix.inputScale
+                for axis in 'XYZ':
+                    absolute = pm.createNode('absolute')
+                    decompose_matrix.attr(f'outputScale{axis}') >> absolute.input
+                    absolute.output >> compose_matrix.attr(f'inputScale{axis}')
                 return compose_matrix.outputMatrix
         else:
             raise AttributeError('The current rig does not have defined a root node')

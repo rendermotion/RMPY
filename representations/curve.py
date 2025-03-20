@@ -71,6 +71,7 @@ class Curve(object):
                 if self.repr_dict['type'] == 'curve':
                     # if not self.node:
                     #     self.node = pm.ls(self.repr_dict)
+                    self.set_number_of_shapes(len(self.repr_dict['data']['shapes'].keys()))
                     for each_shape_name, shape_node in zip(self.repr_dict['data']['shapes'], self.node.getShapes()):
                         if str(shape_node) in self.repr_dict['data']['shapes'].keys():
                             current_key = str(shape_node)
@@ -78,7 +79,7 @@ class Curve(object):
                             current_key = each_shape_name
                         connections = pm.listConnections('{}.create'.format(self.node), source=True, destination=False)
                         if connections:
-                            print ('forcing curve: {} the following node was deleted: {}'.format(self.node, connections))
+                            print('forcing curve: {} the following node was deleted: {}'.format(self.node, connections))
                             pm.delete(connections)
                         pm.setAttr('{}.cc'.format(shape_node),
                                    self.repr_dict['data']['shapes'][current_key]['degree'],
@@ -99,6 +100,15 @@ class Curve(object):
                        'dictionary load, check source {}'.format(self.repr_dict))
         else:
             print ('no representation dictionary for {}'.format(self.node))
+
+    def set_number_of_shapes(self, count):
+        shapes = self.node.getShapes()
+        if len(shapes) > count:
+            for each in shapes[count:]:
+                pm.delete(each)
+        else:
+            for each in range(count)[len(shapes):]:
+                pm.createNode('nurbsCurve', name=f'{self.node}{each}Shape', parent=self.node)
 
 
 if __name__ == '__main__':

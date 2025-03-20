@@ -2,7 +2,8 @@ import pymel.core as pm
 
 from RMPY.rig import rigBase
 from RMPY.rig import rigSegmentScaleCompensate
-
+import importlib
+importlib.reload(rigSegmentScaleCompensate)
 
 class RigFKModel(rigBase.BaseModel):
     def __init__(self, *args, **kwargs):
@@ -50,6 +51,6 @@ if __name__ == '__main__':
     # rig_fk.create_point_base(u'C_Hip01_reference_pnt', u'C_tail01_reference_pnt', u'C_tail02_reference_pnt',
     #                          u'C_tail03_reference_pnt', u'C_tail04_reference_pnt', u'C_tail05_reference_pnt',
     #                          orient_type='point_orient')
-    rig_fk.create_point_base('L_arm01_reference_pnt', 'L_elbow01_reference_pnt', 'L_wrist01_reference_pnt')
+    rig_fk.create_point_base('R_finger00_reference_pnt', 'R_finger01_reference_pnt', 'R_finger02_reference_pnt', 'R_finger03_reference_pnt', 'R_finger04_reference_pnt')
 
 

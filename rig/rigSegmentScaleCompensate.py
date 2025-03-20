@@ -1,12 +1,14 @@
 from RMPY.rig import rigBase
 import pymel.core as pm
 
+
 class RigSegmentScaleCompensateModel(rigBase.BaseModel):
     def __init__(self):
         super(RigSegmentScaleCompensateModel, self).__init__()
         self.column_from_matrix = []
         self.multiply = []
         self.normalize = []
+        self.z_normal = None
         self.multMatrix_output = None
         self.four_by_four_normalized_matrix = None
         self.four_by_four_translation_matrix = None
@@ -42,28 +44,55 @@ class RigSegmentScaleCompensate(rigBase.RigBase):
         parent_node.worldInverseMatrix[0] >> self.multMatrix_output.matrixIn[3]
 
         for index, axis in zip(range(3), 'xyz'):
-            self.multiply.append(pm.createNode('multiply'))
-            self.column_from_matrix.append(pm.createNode('columnFromMatrix'))
+            self.multiply.append(pm.createNode(f'multiply',
+                                               name=f'multiply{axis.upper()}'))
+            self.column_from_matrix.append(pm.createNode(f'columnFromMatrix',
+                                                         name=f'columnFromMatrix{axis.upper()}'))
             parent_node.worldMatrix[0] >> self.column_from_matrix[-1].matrix
             self.column_from_matrix[-1].input.set(index)
-            self.normalize.append(pm.createNode('normalize'))
-            self.translate_constants.append(pm.createNode('floatConstant'))
+
+            self.translate_constants.append(pm.createNode(f'floatConstant', name=f'originalTranslation{axis.upper()}'))
+            self.name_convention.rename_name_in_format(self.multiply[-1],
+                                                       self.column_from_matrix[-1],
+                                                       useName=True)
             self.translate_constants[-1].inFloat.set(output_node.attr(f'translate{axis.upper()}').get())
             output_node.attr(f'translate{axis.upper()}').set(0)
             self.translate_constants[-1].outFloat >> self.multiply[index].input[0]
             self.column_from_matrix[-1].outputW >> self.four_by_four_normalized_matrix.attr(f'in3{index}')
             parent_node.attr(f'scale{axis.upper()}') >> self.multiply[index].input[1]
             self.multiply[-1].output >> self.four_by_four_translation_matrix.attr(f'in3{index}')
-            self.name_convention.rename_name_in_format(self.multiply[-1],
-                                                       self.column_from_matrix[-1],
-                                                       self.normalize[-1], name=axis)
+            if axis == 'z':
+                self._model.z_normal = pm.createNode('crossProduct', name='axisZ')
+                self.normalize[0].output >> self.z_normal.input1
+                self.normalize[1].output >> self.z_normal.input2
+                self.normalize.append(self.z_normal)
+
+            else:
+                self.normalize.append(pm.createNode(f'normalize', name=f'normalize{axis.upper()}'))
+                self.name_convention.rename_name_in_format(self.normalize[-1], useName=True)
+
             parent_node.worldMatrix[0] >> self.column_from_matrix[-1].matrix
 
         for axis_index, axis in enumerate('XYZ'):
             for index, secondary_axis in enumerate('XYZ'):
-                self.normalize[index].attr(f'output{axis}') >> self.four_by_four_normalized_matrix.attr(f'in{index}{axis_index}')
-                self.column_from_matrix[index].attr(f'output{axis}') >> self.normalize[axis_index].attr(f'input{secondary_axis}')
+                self.normalize[index].attr(f'output{axis}') >> self.four_by_four_normalized_matrix.attr(
+                    f'in{index}{axis_index}')
+                if axis_index <= 1:
+                    self.column_from_matrix[index].attr(f'output{axis}') >> self.normalize[axis_index].attr(
+                        f'input{secondary_axis}')
+                '''if axis_index <= 1:
+                    self.normalize[index].attr(f'output{axis}') >> self.four_by_four_normalized_matrix.attr(f'in{index}{axis_index}')
+                    self.column_from_matrix[index].attr(f'output{axis}') >> self.normalize[axis_index].attr(
+                        f'input{secondary_axis}')
+                    print(self.normalize)
+                    print(index, axis_index)
+                    print(f"connecting {self.column_from_matrix[index].attr(f'output{axis}')}")
+                    print(f"to ... {self.normalize[axis_index].attr(f'input{secondary_axis}')}")
 
+                    
+                else:
+                    self.z_normal.attr(f'output{axis}') >> self.four_by_four_normalized_matrix.attr(f'in{index}{axis_index}')
+                '''
         self.multMatrix_output.matrixSum >> output_node.offsetParentMatrix
 
 

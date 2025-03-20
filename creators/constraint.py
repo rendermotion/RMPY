@@ -141,8 +141,8 @@ class Constraint(creatorsBase.CreatorsBase):
         It will create a blend Matrix node that controls the weighting between the drivers.
         returns: blendMatrix The blend matrix Node created.
         """
-        drivers = nodes[:-1]
-        driven = nodes[-1]
+        drivers = pm.ls(nodes[:-1])
+        driven = pm.ls(nodes[-1])[0]
         matrix_mult = pm.createNode('multMatrix')
         blend_matrix = pm.createNode('blendMatrix')
         self.name_convention.rename_name_in_format(matrix_mult, blend_matrix, name=self.name_convention.get_a_short_name(driven))
