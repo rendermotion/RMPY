@@ -1,0 +1,78 @@
+global proc shelf_animation_tools () {
+    global string $gBuffStr;
+    global string $gBuffStr0;
+    global string $gBuffStr1;
+
+
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "IkFkSwitch" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "import pymel.core as pm\nfrom RMPY.core import rig_core\n\n\ndef fk_..." 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "IkFkSwitch" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "pythonFamily.png" 
+        -image1 "pythonFamily.png" 
+        -style "iconOnly" 
+        -marginWidth 0
+        -marginHeight 1
+        -command "import pymel.core as pm\nfrom RMPY.core import rig_core\n\n\ndef fk_to_ik(namespace, side, system, set_key=False, switch=True):\n    fk_arm = ['{}:{}_fk00_{}_ctr'.format(namespace, side, system), '{}:{}_fk01_{}_ctr'.format(namespace, side, system)]\n    ik_joints_arm = ['{}:{}_ik01_{}_jnt'.format(namespace, side, system), '{}:{}_ik02_{}_jnt'.format(namespace, side, system)]\n    ik_pole_vector = '{}:{}_ikPoleVectorIK00_{}_ctr'.format(namespace, side, system)\n\n    for destination, source in zip(fk_arm, ik_joints_arm):\n        rig_core.aim_point_based(destination, destination, source, ik_pole_vector)\n        pm.setAttr(f'{destination}.scale', [1, 1, 1])\n        # rig_core.align(destination.format(namespace, side, system), source.format(namespace, side, system), rotate=True, translate=False)\n        # pm.matchTransform(destination.format(namespace, side, system), source.format(namespace, side, system), rotation=True)\n    if switch:\n        pm.setAttr(f'{namespace}:{side}_root00_{system}_ctr.IkFkSwitch', 0)\n    if set_key:\n        pm.setKeyframe(fk_arm[0])\n        pm.setKeyframe(fk_arm[1])\n        pm.setKeyframe(f'{namespace}:{side}_root00_{system}_ctr.IkFkSwitch')\n\n\ndef ik_to_fk(namespace, side, system, set_key=False,  switch=True):\n    fk_joints = ['{}:{}_fk00_{}_jnt', '{}:{}_fk01_{}_jnt', '{}:{}_fk02_{}_jnt']\n    fk_tip = '{}:{}_fk02_{}_jnt'\n    ik_controls = ['{}:{}_ikIK00_{}_ctr', '{}:{}_ikPoleVectorIK00_{}_ctr']\n    side_joints = []\n    for each in fk_joints:\n        side_joints.append(each.format(namespace, side, system))\n    pole_vector = rig_core.space_locator.pole_vector(*side_joints)\n    pm.matchTransform(ik_controls[0].format(namespace, side, system), fk_tip.format(namespace, side, system),\n                      position=True)\n    pm.matchTransform(ik_controls[1].format(namespace, side, system), pole_vector, position=True)\n    pm.delete(pole_vector)\n    if switch:\n        pm.setAttr(f'{namespace}:{side}_root00_{system}_ctr.IkFkSwitch', 10)\n    if set_key:\n        pm.setKeyframe(ik_controls[0].format(namespace, side, system))\n        pm.setKeyframe(ik_controls[1].format(namespace, side, system))\n        pm.setKeyframe(f'{namespace}:{side}_root00_{system}_ctr.IkFkSwitch')\n\n\ndef ik_fk_switch_animation():\n    namespace, side, system = identify_limb()\n    start_time = pm.playbackOptions(q=True, minTime=True)\n    end_time = pm.playbackOptions(q=True, maxTime=True)\n    original_time = pm.currentTime(q=True)\n    if pm.getAttr('{}:{}_root00_{}_ctr.IkFkSwitch'.format(namespace, side, system)) > 5:\n        for each in range(int(start_time), int(end_time + 1)):\n            pm.currentTime(each, e=True)\n            fk_to_ik(namespace, side, system, set_key=True, switch=True)\n    else:\n        for each in range(int(start_time), int(end_time + 1)):\n            pm.currentTime(each, e=True)\n            ik_to_fk(namespace, side, system, set_key=True, switch=True)\n    pm.currentTime(original_time, e=True)\n\n\ndef ik_fk_switch():\n    namespace, side, system = identify_limb()\n\n    if pm.getAttr(f'{namespace}:{side}_root00_{system}_ctr.IkFkSwitch') > 5:\n        fk_to_ik(namespace, side, system)\n    else:\n        ik_to_fk(namespace, side, system)\n\n\ndef identify_limb():\n    selection = pm.ls(selection=True)[0]\n    namespace_split = selection.split(':')\n    if len(namespace_split) > 1:\n        namespace = namespace_split[0]\n        object_name = namespace_split[-1]\n    else:\n        namespace = ''\n        object_name = namespace_split[0]\n\n    object_split = object_name.split('_')\n    side = object_split[0]\n    system = object_split[2]\n    return namespace, side, system\n\nik_fk_switch()\n\n\n\n\n" 
+        -sourceType "python" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "IkFkAnimation Switch" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "import pymel.core as pm\nfrom RMPY.core import rig_core\n\n\ndef fk_..." 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "IkFkAnim" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "pythonFamily.png" 
+        -image1 "pythonFamily.png" 
+        -style "iconOnly" 
+        -marginWidth 0
+        -marginHeight 1
+        -command "import pymel.core as pm\nfrom RMPY.core import rig_core\n\n\ndef fk_to_ik(namespace, side, system, set_key=False, switch=True):\n    fk_arm = ['{}:{}_fk00_{}_ctr'.format(namespace, side, system), '{}:{}_fk01_{}_ctr'.format(namespace, side, system)]\n    ik_joints_arm = ['{}:{}_ik01_{}_jnt'.format(namespace, side, system), '{}:{}_ik02_{}_jnt'.format(namespace, side, system)]\n    ik_pole_vector = '{}:{}_ikPoleVectorIK00_{}_ctr'.format(namespace, side, system)\n\n    for destination, source in zip(fk_arm, ik_joints_arm):\n        rig_core.aim_point_based(destination, destination, source, ik_pole_vector)\n        pm.setAttr(f'{destination}.scale', [1, 1, 1])\n        # rig_core.align(destination.format(namespace, side, system), source.format(namespace, side, system), rotate=True, translate=False)\n        # pm.matchTransform(destination.format(namespace, side, system), source.format(namespace, side, system), rotation=True)\n    if switch:\n        pm.setAttr(f'{namespace}:{side}_root00_{system}_ctr.IkFkSwitch', 0)\n    if set_key:\n        pm.setKeyframe(fk_arm[0])\n        pm.setKeyframe(fk_arm[1])\n        pm.setKeyframe(f'{namespace}:{side}_root00_{system}_ctr.IkFkSwitch')\n\n\ndef ik_to_fk(namespace, side, system, set_key=False,  switch=True):\n    fk_joints = ['{}:{}_fk00_{}_jnt', '{}:{}_fk01_{}_jnt', '{}:{}_fk02_{}_jnt']\n    fk_tip = '{}:{}_fk02_{}_jnt'\n    ik_controls = ['{}:{}_ikIK00_{}_ctr', '{}:{}_ikPoleVectorIK00_{}_ctr']\n    side_joints = []\n    for each in fk_joints:\n        side_joints.append(each.format(namespace, side, system))\n    pole_vector = rig_core.space_locator.pole_vector(*side_joints)\n    pm.matchTransform(ik_controls[0].format(namespace, side, system), fk_tip.format(namespace, side, system),\n                      position=True)\n    pm.matchTransform(ik_controls[1].format(namespace, side, system), pole_vector, position=True)\n    pm.delete(pole_vector)\n    if switch:\n        pm.setAttr(f'{namespace}:{side}_root00_{system}_ctr.IkFkSwitch', 10)\n    if set_key:\n        pm.setKeyframe(ik_controls[0].format(namespace, side, system))\n        pm.setKeyframe(ik_controls[1].format(namespace, side, system))\n        pm.setKeyframe(f'{namespace}:{side}_root00_{system}_ctr.IkFkSwitch')\n\n\ndef ik_fk_switch_animation():\n    namespace, side, system = identify_limb()\n    start_time = pm.playbackOptions(q=True, minTime=True)\n    end_time = pm.playbackOptions(q=True, maxTime=True)\n    original_time = pm.currentTime(q=True)\n    if pm.getAttr('{}:{}_root00_{}_ctr.IkFkSwitch'.format(namespace, side, system)) > 5:\n        for each in range(int(start_time), int(end_time + 1)):\n            pm.currentTime(each, e=True)\n            fk_to_ik(namespace, side, system, set_key=True, switch=True)\n    else:\n        for each in range(int(start_time), int(end_time + 1)):\n            pm.currentTime(each, e=True)\n            ik_to_fk(namespace, side, system, set_key=True, switch=True)\n    pm.currentTime(original_time, e=True)\n\n\ndef ik_fk_switch():\n    namespace, side, system = identify_limb()\n\n    if pm.getAttr(f'{namespace}:{side}_root00_{system}_ctr.IkFkSwitch') > 5:\n        fk_to_ik(namespace, side, system)\n    else:\n        ik_to_fk(namespace, side, system)\n\n\ndef identify_limb():\n    selection = pm.ls(selection=True)[0]\n    namespace_split = selection.split(':')\n    if len(namespace_split) > 1:\n        namespace = namespace_split[0]\n        object_name = namespace_split[-1]\n    else:\n        namespace = ''\n        object_name = namespace_split[0]\n\n    object_split = object_name.split('_')\n    side = object_split[0]\n    system = object_split[2]\n    return namespace, side, system\n\n\nik_fk_switch_animation()\n" 
+        -sourceType "python" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+
+} 
