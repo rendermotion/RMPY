@@ -61,7 +61,7 @@ class RigSegmentScaleCompensate(rigBase.RigBase):
             self.column_from_matrix[-1].outputW >> self.four_by_four_normalized_matrix.attr(f'in3{index}')
             parent_node.attr(f'scale{axis.upper()}') >> self.multiply[index].input[1]
             self.multiply[-1].output >> self.four_by_four_translation_matrix.attr(f'in3{index}')
-            if axis == 'z':
+            """if axis == 'z':
                 self._model.z_normal = pm.createNode('crossProduct', name='axisZ')
                 self.normalize[0].output >> self.z_normal.input1
                 self.normalize[1].output >> self.z_normal.input2
@@ -70,16 +70,21 @@ class RigSegmentScaleCompensate(rigBase.RigBase):
             else:
                 self.normalize.append(pm.createNode(f'normalize', name=f'normalize{axis.upper()}'))
                 self.name_convention.rename_name_in_format(self.normalize[-1], useName=True)
-
+            """
+            self.normalize.append(pm.createNode(f'normalize', name=f'normalize{axis.upper()}'))
+            self.name_convention.rename_name_in_format(self.normalize[-1], useName=True)
             parent_node.worldMatrix[0] >> self.column_from_matrix[-1].matrix
 
         for axis_index, axis in enumerate('XYZ'):
             for index, secondary_axis in enumerate('XYZ'):
                 self.normalize[index].attr(f'output{axis}') >> self.four_by_four_normalized_matrix.attr(
                     f'in{index}{axis_index}')
-                if axis_index <= 1:
-                    self.column_from_matrix[index].attr(f'output{axis}') >> self.normalize[axis_index].attr(
-                        f'input{secondary_axis}')
+                # if axis_index <= 1:
+                #     self.column_from_matrix[index].attr(f'output{axis}') >> self.normalize[axis_index].attr(
+                #         f'input{secondary_axis}')
+                self.column_from_matrix[index].attr(f'output{axis}') >> self.normalize[axis_index].attr(
+                    f'input{secondary_axis}')
+
                 '''if axis_index <= 1:
                     self.normalize[index].attr(f'output{axis}') >> self.four_by_four_normalized_matrix.attr(f'in{index}{axis_index}')
                     self.column_from_matrix[index].attr(f'output{axis}') >> self.normalize[axis_index].attr(
