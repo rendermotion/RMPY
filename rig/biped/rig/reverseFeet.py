@@ -138,6 +138,11 @@ class RigReverseFeet(rigBase.RigBase):
         pm.addAttr(self.rig_system.settings, ln='tap', at='double', k=True)
         pm.addAttr(self.rig_system.settings, ln='tip', at='double', k=True)
         pm.addAttr(self.rig_system.settings, ln='tipRotation', at='double', k=True)
+        pm.addAttr(self.rig_system.settings, ln='tipUpDown', at='double', k=True)
+        pm.addAttr(self.rig_system.settings, ln='tipSides', at='double', k=True)
+
+        self.rig_system.settings.tipUpDown >> self.dwn_fk_locators[1].rotateZ
+        self.rig_system.settings.tipSides >> self.dwn_fk_locators[1].rotateY
 
         split_ball = rigAttributeSplit.AttributeSplit(rig_system=self.rig_system)
         split_ball.create_attributes_based(self.rig_system.settings.ball, self.rig_system.settings.toe_break)
@@ -195,6 +200,9 @@ class RigReverseFeet(rigBase.RigBase):
         self.control.addAttr('tip', proxy=str(self.rig_system.settings.tip))
         self.control.addAttr('tipRotation', proxy=str(self.rig_system.settings.tipRotation))
         self.control.addAttr('tap', proxy=str(self.rig_system.settings.tap))
+        self.control.addAttr('tipUpDown', proxy=str(self.rig_system.settings.tipUpDown))
+        self.control.addAttr('tipSides', proxy=str(self.rig_system.settings.tipSides))
+
         self.rm.lock_and_hide_attributes(self.control, bit_string='000111000h')
 
         self.control.rotateX >> self.rig_system.settings.in_out
@@ -214,7 +222,7 @@ if __name__ == '__main__':
     reference_points_quadruped = pm.ls([each.format('L') for each in quad_points])
 
     reverse_feet = RigReverseFeet()
-    reverse_feet.create_point_base(*reference_points_quadruped)
+    reverse_feet.create_point_base(*reference_root)
     '''
     split = AttributeSplit()
     test_node = pm.ls('L_tap00_reference_CTRL')[0]

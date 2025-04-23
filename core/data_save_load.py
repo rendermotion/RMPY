@@ -94,18 +94,19 @@ def load_skin_cluster(*args):
             print(f'{each_node} not loaded')
 
 
-
 def export_maya_file(**kwargs):
     file_name = kwargs.pop('file_name', 'reference_points')
-    full_path = '{}/mayaFiles'.format(config.output.file_path)
+    extra_folder = kwargs.pop('extra_folder', '/mayaFiles')
+    full_path = f'{config.output.file_path}{extra_folder}'
     file_os.validate_path(full_path)
-    pm.exportSelected('{}/{}.mb'.format(full_path, file_name))
+    pm.exportSelected(f'{full_path}/{file_name}.mb')
 
 
-def import_maya_file(file_name):
-    full_path = '{}/mayaFiles'.format(config.output.file_path)
+def import_maya_file(file_name, **kwargs):
+    extra_folder = kwargs.pop('extra_folder', '/mayaFiles')
+    full_path = f'{config.output.file_path}/{extra_folder}'
     file_os.validate_path(full_path)
-    pm.importFile('{}/{}'.format(full_path, file_name))
+    pm.importFile(f'{full_path}/{file_name}')
 
 
 def import_all_available_maya_files():

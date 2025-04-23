@@ -54,4 +54,4 @@ if __name__ == '__main__':
                                        u'L_toe01_reference_pnt', u'L_footLimitBack01_reference_pnt',
                                        u'L_footLimitOuter01_reference_pnt', u'L_footLimitInner01_reference_pnt')
     reverse_feet = IkFkFeet()
-    reverse_feet.create_point_base(*reference_points_quadruped, control='nurbsCircle1')
+    reverse_feet.create_point_base(*reference_root, control='nurbsCircle1')

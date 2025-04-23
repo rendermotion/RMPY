@@ -46,7 +46,7 @@ class SingleDefinition(rigBase.RigBase):
             self.control = pm.ls(definition['control'])[0]
 
         except:
-            print ('{} doesnt exist'.format(definition['control']))
+            print('{} doesnt exist'.format(definition['control']))
             raise RuntimeError
         self.blendShapes = definition['blendShapes']
         self.attributes = definition['attributes']
