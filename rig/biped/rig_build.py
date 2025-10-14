@@ -15,11 +15,6 @@ def build():
     # load_data()
     # finalize()
 
-
-def load_sources():
-    data_save_load.import_all_available_maya_files()
-
-
 def build_rig():
     rig_biped = rigBiped.RigByped()
     rig_biped.build()
@@ -27,7 +22,8 @@ def build_rig():
     visibility_switch()
     # tongue.build()
 
-
+def load_sources():
+    data_save_load.import_all_available_maya_files()
 def hide_rigs():
     settings_rig_sistems = pm.ls('*_settings*_pnt')
     for each in settings_rig_sistems:
