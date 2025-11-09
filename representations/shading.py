@@ -5,7 +5,8 @@ from RMPY.core import dataManager
 This representation is intended to save materials on the scene.
 The materials are saved as a maya scene and the contents of the shading sets as a dictionary. 
 """
-
+import maya.cmds as cmds
+import arnold
 
 class Shading(object):
     def __init__(self):
@@ -20,26 +21,31 @@ class Shading(object):
             file_name = 'shader_definition'
         data_manager = dataManager.DataManager()
         data_manager.file_path = '{}{}'.format(data_manager.file_path, self.extra_path)
-        data_manager.save(file_name, self.get_repr_dict(**kwargs), **kwargs)
+        self.get_repr_dict(**kwargs)
+        data_manager.save(file_name, self.repr_dict, **kwargs)
+        shading_engine = list(self.repr_dict.keys())
         from pprint import pprint as pp
         pp(self.repr_dict)
-        # self.disconnect_shaders_from_geo()
-        # pm.select(self.disconnect_shaders_from_geo())
-        shading_engine=list(self.repr_dict.keys())
-        pm.select(list(self.repr_dict.keys()).remove('initialShadingGroup'), replace=True)
-        print()
+        pm.select(shading_engine, replace=True)
+        cmds.arnoldExportAss(filename=f'{data_manager.file_path}/shaders.ass', mask=16,
+                             selected=True,
+                             exportAllShadingGroups=True)
         # pm.exportSelected(f'{data_manager.file_path}/shaders.mb', shader=True)
         # self.set_repr_dict()
 
     def load(self, *args, **kwargs):
+        file_name = 'shader_definition'
+        data_manager = dataManager.DataManager()
+        data_manager.file_path = f'{data_manager.file_path}{self.extra_path}'
         try:
-            file_name = 'shader_definition'
-            data_manager = dataManager.DataManager()
-            data_manager.file_path = f'{data_manager.file_path}{self.extra_path}'
-            pm.importFile(f'{data_manager.file_path}/shaders.mb')
-            self.repr_dict = data_manager.load(file_name, **kwargs)
+            cmds.arnoldImportAss(f=f'{data_manager.file_path}/shaders.ass', mask=16, importAllShadingGroups=True,
+                                 ignoreColorSpaceFileRules=True)
+            # pm.importFile(f'{data_manager.file_path}/shaders.mb')
         except:
-            pass
+            print('error importing')
+
+        self.repr_dict = data_manager.load(file_name, **kwargs)
+        self.set_repr_dict()
         return self.repr_dict
 
     def disconnect_shaders_from_geo(self):
@@ -68,10 +74,12 @@ class Shading(object):
             set_node = pm.ls(each_set)[0]
             for each_element in self.repr_dict[each_set]:
                 if pm.objExists(each_element):
-                    set_node.addMember(each_element)
-                    # pm.sets(set_node, addElement=each_element)
+                    # set_node.addMember(each_element, forceElement=)
+                    pm.sets(set_node, forceElement=each_element)
+                else:
+                    print(f'couldnt find {each_element}')
 
 
 if __name__ == '__main__':
     shading_representation = Shading()
-    shading_representation.save()
+    shading_representation.load()
