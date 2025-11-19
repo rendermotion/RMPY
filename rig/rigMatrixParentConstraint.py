@@ -1,6 +1,11 @@
 from RMPY.rig import rigBase
 import pymel.core as pm
 
+# This plugin is needed for the float Constant.
+if not pm.pluginInfo('lookdevKit.so', q=True, loaded=True):
+    pm.loadPlugin('lookdevKit.so', quiet=True)
+
+
 class RigParentConstraintModel(rigBase.BaseModel):
     def __init__(self):
         super(RigParentConstraintModel, self).__init__()

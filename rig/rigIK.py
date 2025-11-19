@@ -5,6 +5,10 @@ import RMPY.rig.rigBase
 import RMPY.core.rig_core as rm
 from RMPY.rig import rigLineBetweenPoints
 
+# This plugin is needed for the float Constant.
+if not pm.pluginInfo('lookdevKit.so', q=True, loaded=True):
+    pm.loadPlugin('lookdevKit.so', quiet=True)
+
 
 class IKRigModel(RMPY.rig.rigBase.BaseModel):
     def __init__(self, *args, **kwargs):

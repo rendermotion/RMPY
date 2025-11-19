@@ -2,7 +2,6 @@ from RMPY.core import file_os
 from builder.pipeline import environment
 
 
-
 class Outputs(object):
     def __init__(self):
         pass
@@ -18,6 +17,7 @@ class Outputs(object):
         else:
             # print(f'setting output to {file_path}')
             return file_path
+
 
 output = Outputs()
 

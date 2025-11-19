@@ -1,10 +1,8 @@
-from RMPY.core import config
-import  json
-import pymel.core as pm
 import json
 import os
 from RMPY.core import config
 from RMPY.core import file_os
+import pymel.core as pm
 
 
 class DataManager(object):
@@ -28,7 +26,6 @@ class DataManager(object):
     def save(self, file_name, data):
         with open('{}/{}.json'.format(self.file_path, file_name), 'w') as outfile:
             json.dump(data, outfile)
-
         outfile.close()
 
     def load(self, file_name):
