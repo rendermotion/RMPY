@@ -60,7 +60,11 @@ class RigSpine(rigBase.RigBase):
         self._model.reset_controls = self.reset_controls
         self.create.constraint.scale(self.reset_controls, self.reset_joints)
         self._model.controls = self.controls
-        self.rig_spline_ik.setup_twist(self.controls[0], self.controls[-1])
+        self.rig_spline_ik.controls.append( self.controls[0])
+        self.rig_spline_ik.controls.append(self.controls[-1])
+        # self.rig_spline_ik._create_up_vectors()
+        self.rig_spline_ik._setup_twist()
+        # self.controls[0], self.controls[-1]
 
 
 if __name__ == '__main__':

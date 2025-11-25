@@ -11,6 +11,7 @@ class RigEnumSpaceSwitchModel(rigEnumSwitch.RigEnumSwitchModel):
         self.alias_list = []
         self.space_rigs_dict = {}
         self.spaces = []
+        self.constraints_dictionary = {}
 
 
 class RigEnumSpaceSwitch(rigEnumSwitch.RigEnumSwitch):
@@ -81,6 +82,7 @@ class RigEnumSpaceSwitch(rigEnumSwitch.RigEnumSwitch):
             self.set_switches()
         for each_space_rig in self.space_rigs_dict[scene_transform]:
             constraints = self.create.constraint.node_base(each_space_rig.tip, offset, **kwargs)
+            self.constraints_dictionary[each_space_rig] = constraints
         self.connect_constraint(*constraints)
 
     def connect_constraint(self, *constraint_nodes):
