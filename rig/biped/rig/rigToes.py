@@ -44,6 +44,14 @@ class Toes(rigBase.RigBase):
         for each_rig in self.fingers:
             each_rig.rename_as_skinned_joints(nub=nub)
 
+    def set_parent(self, rig_object, **kwargs):
+        super(Toes, self).set_parent(rig_object, **kwargs)
+        create_hierarchy_joints = kwargs.pop('create_hierarchy_joints', False)
+        output_joint_rig = kwargs.pop('output_joint_rig', None)
+        for each in self.fingers:
+            each._create_output_points(rig_object,
+                                       create_hierarchy_joints=create_hierarchy_joints,
+                                       output_joint_rig=output_joint_rig)
 
 if __name__ == '__main__':
     toes_root_node = pm.ls('L_toes00_reference_pnt')[0]
