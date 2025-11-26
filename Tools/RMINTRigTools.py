@@ -5,6 +5,8 @@ import pymel.core as pm
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
+from PySide6 import QtWidgets
+from PySide6 import QtCore
 from PySide6 import __version__
 from shiboken6 import wrapInstance
 from RMPY.Tools.QT5.ui import FormRigTools_old
@@ -90,6 +92,17 @@ class Main(MayaQWidgetDockableMixin, QDialog):
     def mirror_skinning_multiple_objects(self):
         selection = pm.ls(selection=True)
         mirror_skinning.mirror_skinBinding(selection)
+
+    @QtCore.Slot()
+    def on_three_points_locators_btn_clicked(self):
+        selection = pm.ls(selection=True)
+        if len(selection) > 2:
+            self.rig_base.create.space_locator.pole_vector(*selection)
+        else:
+            pole_vector_error_message = QtWidgets.QMessageBox()
+            pole_vector_error_message.setWindowTitle('Error on required selection')
+            pole_vector_error_message.setText('There is a problem with the number of objects selected, you need to provide 3')
+            pole_vector_error_message.exec()
 
     def copy_cv_position(self):
         controls.transfer_curve_by_selection()
