@@ -44,35 +44,36 @@ class Arm(rigBase.RigBase):
         super(Arm, self).create_point_base(*args, **kwargs)
         align_args = []
         best_guess_point_orientation = kwargs.pop('best_guess_point_orientation', True)
-        if best_guess_point_orientation:
-            for each in args:
-                align_args.append(self.create.space_locator.node_base(each)[0])
-                self.name_convention.rename_name_in_format(align_args[-1], name=self.name_convention.get_a_short_name(each),
-                                                           system='reference')
-            arm_position_vector = om.MVector(pm.xform(align_args[1], q=True, ws=True, rp=True))
-            elbow_position_vector = om.MVector(pm.xform(align_args[2], q=True, ws=True, rp=True))
-            wrist_position_vector = om.MVector(pm.xform(align_args[3], q=True, ws=True, rp=True))
-            args = align_args
-            up_vector = (arm_position_vector - elbow_position_vector) ^ (arm_position_vector - wrist_position_vector)*-1
-            for index, each in enumerate(args[1:-1]):
-                self.transform.aim_point_based(each, each, args[index + 2],
-                                               use_vector_as_up_axis=(up_vector.x, up_vector.y, up_vector.z),
-                                               up_axis='z')
-            pm.matchTransform(args[-1], args[-2], rotation=True, position=False, scale=False)
 
-        self.setup_name_convention_node_base(args[1], name='arm', system='arm')
+        self._model.creation_points = args
+        if best_guess_point_orientation:
+            # Reorients the points to create an arm on the best possible orientation.
+            self.best_guess_point_orientation()
+
+        self.setup_name_convention_node_base(self.creation_points[1], name='arm', system='arm')
         self.update_name_convention()
         self.rig_system.create()
-        self.rig_clavicle.create_point_base(*args[:2], name='clavicle')
-        self.rig_arm.create_point_base(*args[1:], name='arm')
+        self.rig_clavicle.create_point_base(*self.creation_points[:2], name='clavicle')
+        self.rig_arm.create_point_base(*self.creation_points[1:], name='arm')
         self.rig_arm.set_parent(self.rig_clavicle)
         self.reset_controls = self.rig_clavicle.reset_controls + self.rig_arm.reset_controls
         self.controls = self.rig_clavicle.controls + self.rig_arm.controls
-
+        if self.name_convention.default_names['side'] == 'L':
+            end_up_vector = [0, 0, 1]
+        else:
+            end_up_vector = [0, 0, -1]
         self.twist_arm.create_point_base(self.rig_clavicle.joints[0], self.rig_arm.joints[0], self.rig_arm.joints[1],
-                                         folicule_number=5, system='upperArm', root_transform = self.root)
+                                         folicule_number=5, system='upperArm', root_transform=self.root,
+                                         start_up_vector=[0, 0, -1],
+                                         end_up_vector=[0, 0, 1],
+                                         end_world_up_vector=[0, 0, 1]
+                                         )
         self.twist_forearm.create_point_base(self.rig_arm.joints[1], self.rig_arm.joints[1], self.rig_arm.joints[2],
-                                             folicule_number=5, system='forearm', root_transform = self.root)
+                                             folicule_number=5, system='forearm', root_transform = self.root,
+                                             start_up_vector=[0, 0, -1],
+                                             end_up_vector = end_up_vector,
+                                             end_world_up_vector=[0, 1, 0]
+                                            )
 
         self.reset_joints = [self.rig_clavicle.reset_joints[0]] + self.twist_arm.reset_joints + self.twist_forearm.reset_joints
         self.joints.extend([self.rig_clavicle.joints[0]])
@@ -81,6 +82,23 @@ class Arm(rigBase.RigBase):
 
         self.attach_points['tip'] = self.rig_arm.tip
         pm.delete(align_args)
+
+    def best_guess_point_orientation(self):
+        align_args = []
+        for each in self.creation_points:
+            align_args.append(self.create.space_locator.node_base(each)[0])
+            self.name_convention.rename_name_in_format(align_args[-1], name=self.name_convention.get_a_short_name(each),
+                                                       system='reference')
+        arm_position_vector = om.MVector(pm.xform(align_args[1], q=True, ws=True, rp=True))
+        elbow_position_vector = om.MVector(pm.xform(align_args[2], q=True, ws=True, rp=True))
+        wrist_position_vector = om.MVector(pm.xform(align_args[3], q=True, ws=True, rp=True))
+        self._model.creation_points = align_args
+        up_vector = (arm_position_vector - elbow_position_vector) ^ (arm_position_vector - wrist_position_vector) * -1
+        for index, each in enumerate(self.creation_points[1:-1]):
+            self.transform.aim_point_based(each, each, self.creation_points[index + 2],
+                                           use_vector_as_up_axis=(up_vector.x, up_vector.y, up_vector.z),
+                                           up_axis='z')
+        pm.matchTransform(self.creation_points[-1], self.creation_points[-2], rotation=True, position=False, scale=False)
 
 
 if __name__ == '__main__':

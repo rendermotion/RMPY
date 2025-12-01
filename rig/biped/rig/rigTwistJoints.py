@@ -1,7 +1,6 @@
 import pymel.core as pm
 import maya.api.OpenMaya as om
 from RMPY.rig import rigBase
-from RMPY import RMRigTools
 from RMPY.rig import rigDistanceBetween
 from RMPY.rig import rigMatrixParentConstraint
 
@@ -13,6 +12,7 @@ class TwistJointsModel(rigBase.BaseModel):
         self.twist_end = None
         self.control_parent = None
         self.rig_distance_between = None
+        self.end_aim_constraint = None
 
 
 class TwistJoints(rigBase.RigBase):
@@ -29,10 +29,22 @@ class TwistJoints(rigBase.RigBase):
 
         number_of_joints = kwargs.pop('number_of_joints', 2)
         look_at_axis = kwargs.pop('look_at_axis', "Z")
-
+        start_aim = kwargs.pop('start_aim', [1, 0, 0])
+        start_up_vector = kwargs.pop('start_up_vector', [0, 0, -1])
+        start_world_up_vector = kwargs.pop('start_world_up_vector', [0, 1, 0])
+        end_aim = kwargs.pop('end_aim', [1, 0, 0])
+        end_up_vector = kwargs.pop('end_up_vector', [0, 0, -1])
+        end_world_up_vector = kwargs.pop('end_world_up_vector', [0, 1, 0])
         self.create_twist(self.control_parent, self.twist_origin, self.twist_end,
                           number_of_twist_bones=number_of_joints,
-                          look_at_axis=look_at_axis)
+                          look_at_axis=look_at_axis,
+                          start_aim=start_aim,
+                          start_up_vector=start_up_vector,
+                          start_world_up_vector=start_world_up_vector,
+                          end_aim=end_aim,
+                          end_up_vector=end_up_vector,
+                          end_world_up_vector=end_world_up_vector
+        )
 
     @property
     def control_parent(self):
@@ -46,7 +58,14 @@ class TwistJoints(rigBase.RigBase):
     def twist_end(self):
         return self._model.twist_end
 
-    def create_twist(self, control_parent, twist_joint, twist_end_object, number_of_twist_bones=3, look_at_axis="Z"):
+    def create_twist(self, control_parent, twist_joint, twist_end_object, number_of_twist_bones=3, look_at_axis="Z",
+                     start_aim=[1, 0, 0],
+                     start_up_vector=[0, 0, -1],
+                     start_world_up_vector=[0, 1, 0],
+                     end_aim=[1, 0, 0],
+                     end_up_vector=[0, 0, -1],
+                     end_world_up_vector=[0, 1, 0]
+                     ):
         # LookAtObject = pm.listRelatives( TwistJoint,type = "transform",children=True)[]
         twist_joint = pm.ls(twist_joint)[0]
         twist_end_object = pm.ls(twist_end_object)[0]
@@ -56,16 +75,8 @@ class TwistJoints(rigBase.RigBase):
         self.stretchy_twist_joints()
         rig_distance = self.rig_distance_between.distance.get()
 
-        # pm.parentConstraint(twist_joint, self.reset_joints[0])
-        # twist_joint.scale >> self.reset_joints[0].scale
-
-        # self.create.constraint.node_base(twist_joint, self.reset_joints, mo=True)
-        # self.create.constraint.matrix_node_base(twist_joint, self.reset_joints[0], mo=True)
         constraint = rigMatrixParentConstraint.RigParentConstraint()
-        constraint.create_point_base(twist_joint, self.reset_joints[0], mo=False, )
-
-        # reset_point, control = RMRigShapeControls.RMCreateBoxCtrl(self.joints[0], Xratio=.1, Yratio=.1, Zratio=.1,
-        # customSize=Distance / 5, name="TwistOrigin")
+        constraint.create_point_base(twist_joint, self.reset_joints[0], mo=True)
 
         # Creating an up vector control for the root of the twist
         reset_control, control = self.create.controls.point_base(self.joints[0], centered=True,
@@ -76,7 +87,7 @@ class TwistJoints(rigBase.RigBase):
 
         pm.xform(reset_control, os=True, relative=True, translation=move_vector)
         pm.aimConstraint(twist_end_object, self.joints[0],
-                         aim=[1, 0, 0], worldUpVector=[0, 0, 1],
+                         aim=start_aim, upVector=start_up_vector, worldUpVector=start_world_up_vector,
                          worldUpType="object", worldUpObject=control)
         pm.parent(self.reset_controls, self.rig_system.controls)
         self.controls.append(control)
@@ -97,9 +108,9 @@ class TwistJoints(rigBase.RigBase):
         self.rig_distance_between.distance >> end_look_at.translateX
         aim_offset_sum.output >> end_aim_object.translateX
 
-        pm.aimConstraint(end_aim_object, end_look_at,
-                         aim=[1, 0, 0], worldUpVector=[0, 0, 1],
-                         worldUpType="objectrotation", worldUpObject=twist_end_object)
+        self._model.end_aim_constraint = pm.aimConstraint(end_aim_object, end_look_at,
+                             aim=end_aim, upVector=end_up_vector, worldUpVector=end_world_up_vector,
+                             worldUpType="objectrotation", worldUpObject=twist_end_object)
 
         twist_joint_divide = pm.shadingNode("multiplyDivide", asUtility=True, name="TwistJointDiv")
         twist_addition = pm.shadingNode("plusMinusAverage", asUtility=True, name="TwistJointAdd")

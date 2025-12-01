@@ -62,7 +62,7 @@ class RigEnumSpaceSwitch(rigEnumSwitch.RigEnumSwitch):
         self.space_rigs_dict[scene_transform] = []
         for each_space, alias_name in zip(self.spaces, self.alias_list):
             self.space_rigs_dict[scene_transform].append(space.RigSpace(scene_transform, each_space,
-                                                                        rig_system=self.rig_system))
+                                                                        rig_system=self.rig_system, name=alias_name))
 
     def set_switches(self):
         self.add_enum_names(*self.alias_list, attribute_name=self.attribute_name)

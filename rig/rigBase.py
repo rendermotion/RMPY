@@ -177,6 +177,10 @@ class RigBase(object):
     def attach_points(self):
         return self._model.attach_points
 
+    @property
+    def creation_points(self):
+        return self._model.creation_points
+
     def create_point_base(self, *args, **kwargs):
         """
         Base function for rig creation, it validates the args values and turn them in to points.
