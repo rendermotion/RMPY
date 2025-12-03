@@ -13,8 +13,7 @@ class HandSpaceSwitch(rigBase.RigBase):
                                                                   attribute_name='space',
                                                                   control=hand_rig.controls[0],
                                                                   orient=True, rig_system=hand_rig.rig_system)
-        from pprint import pprint as pp
         enum_space_switch.add_object(hand_rig.controls[0])
-        pp(enum_space_switch.constraints_dictionary)
+        enum_space_switch.space_rigs_dict['ik_control'].tip.rotate.set(0, 0, 0)
 
 
