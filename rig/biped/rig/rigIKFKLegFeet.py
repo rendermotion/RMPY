@@ -85,11 +85,23 @@ class RigIKKFLegFeet(rigBase.RigBase):
         self.create.constraint.orient(self.feet.joints[0], self.leg.joints[-1], mo=True)
 
         # self.create.constraint.define_constraints(point=False, scale=True, parent=True, orient=False)
-
+        if self.name_convention.default_names['side'] == 'R':
+            start_up_vector = [0, 0, -1]
+        else:
+            start_up_vector = [0, 0, 1]
+        end_up_vector = [0, 1, 0]
         self.twist_leg.create_point_base(self.root, self.leg.joints[0], self.leg.joints[1],
-                                         folicule_number=5, root_transform = self.root)
+                                         folicule_number=5, root_transform = self.root,
+                                        start_up_vector = start_up_vector,
+                                        end_up_vector = [0, 0, 1],
+                                        end_world_up_vector = [0, 0, 1]
+                                        )
         self.twist_foreleg.create_point_base(self.leg.joints[1], self.leg.joints[1], self.leg.joints[2],
-                                             folicule_number=5, root_transform=self.root)
+                                             folicule_number=5, root_transform=self.root,
+                                             start_up_vector=start_up_vector,
+                                             end_up_vector=end_up_vector,
+                                             end_world_up_vector=[0, 1, 0]
+                                             )
         # self.joints.extend(self.leg.joints)
         self.joints.extend(self.twist_leg.joints)
         self.joints.extend(self.twist_foreleg.joints)

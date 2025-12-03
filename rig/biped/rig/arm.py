@@ -58,19 +58,21 @@ class Arm(rigBase.RigBase):
         self.rig_arm.set_parent(self.rig_clavicle)
         self.reset_controls = self.rig_clavicle.reset_controls + self.rig_arm.reset_controls
         self.controls = self.rig_clavicle.controls + self.rig_arm.controls
-        if self.name_convention.default_names['side'] == 'L':
-            end_up_vector = [0, 0, 1]
-        else:
+        if self.name_convention.default_names['side'] == 'R':
             end_up_vector = [0, 0, -1]
+            start_up_vector = [0, 0, -1]
+        else:
+            end_up_vector = [0, 0, 1]
+            start_up_vector = [0, 0, 1]
         self.twist_arm.create_point_base(self.rig_clavicle.joints[0], self.rig_arm.joints[0], self.rig_arm.joints[1],
                                          folicule_number=5, system='upperArm', root_transform=self.root,
-                                         start_up_vector=[0, 0, -1],
+                                         start_up_vector=start_up_vector,
                                          end_up_vector=[0, 0, 1],
                                          end_world_up_vector=[0, 0, 1]
                                          )
         self.twist_forearm.create_point_base(self.rig_arm.joints[1], self.rig_arm.joints[1], self.rig_arm.joints[2],
                                              folicule_number=5, system='forearm', root_transform = self.root,
-                                             start_up_vector=[0, 0, -1],
+                                             start_up_vector=start_up_vector,
                                              end_up_vector = end_up_vector,
                                              end_world_up_vector=[0, 1, 0]
                                             )

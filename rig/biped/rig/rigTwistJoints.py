@@ -30,10 +30,10 @@ class TwistJoints(rigBase.RigBase):
         number_of_joints = kwargs.pop('number_of_joints', 2)
         look_at_axis = kwargs.pop('look_at_axis', "Z")
         start_aim = kwargs.pop('start_aim', [1, 0, 0])
-        start_up_vector = kwargs.pop('start_up_vector', [0, 0, -1])
+        start_up_vector = kwargs.pop('start_up_vector', [0, 1, 0])
         start_world_up_vector = kwargs.pop('start_world_up_vector', [0, 1, 0])
         end_aim = kwargs.pop('end_aim', [1, 0, 0])
-        end_up_vector = kwargs.pop('end_up_vector', [0, 0, -1])
+        end_up_vector = kwargs.pop('end_up_vector', [0, 1, 0])
         end_world_up_vector = kwargs.pop('end_world_up_vector', [0, 1, 0])
         self.create_twist(self.control_parent, self.twist_origin, self.twist_end,
                           number_of_twist_bones=number_of_joints,
