@@ -20,7 +20,7 @@ class RigFromHierarchy(rigSingleJoint.RigSingleJoint):# rigBase.RigBase
             if each.getChildren(type='transform'):
                 self.rig_children.append(RigFromHierarchy(rig_system = self.rig_system))
                 self.rig_children[-1].create_point_base(*each.getChildren(type='transform'))
-                self.rig_children[-1].set_parent(self)
+                self.rig_children[-1].root.setParent(self.controls[-1])
 
 
 if __name__ == '__main__':
