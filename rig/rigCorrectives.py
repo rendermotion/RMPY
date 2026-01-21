@@ -238,4 +238,6 @@ class CorrectiveBlendShapes(rigBase.RigBase):
 
 
 if __name__ == '__main__':
-    pass
+
+    rig_correctives = rigCorrectives.CorrectiveBlendShapes(definition=correctives_definition)
+    rig_correctives.build()
