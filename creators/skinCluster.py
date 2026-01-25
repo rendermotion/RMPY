@@ -81,11 +81,20 @@ class SkinCluster(creatorsBase.CreatorsBase):
         vertex_index = cmds.getAttr('%s.weightList' % self.node, mi=True)
         weight_dictionary['influences'] = self.influence()
         weight_dictionary['weights'] = {}
-
+        valid_indices = cmds.getAttr(f'{self.node}.matrix', mi=True)
         for each_vertex in vertex_index:
-            joint_list = cmds.getAttr('%s.weightList[%s].weights' % (self.node, each_vertex), mi=True)
-            weight_value = list(cmds.getAttr('%s.weightList[%s].weights' % (self.node, each_vertex))[0])
-            weight_dictionary['weights'][each_vertex] = [joint_list, weight_value]
+            joint_list = cmds.getAttr(f'{self.node}.weightList[{each_vertex}].weights', mi=True)
+            weight_value = list(cmds.getAttr(f'{self.node}.weightList[{each_vertex}].weights')[0])
+            validated_joints = []
+            validated_weights = []
+            invalid_joints = []
+            for index_joint, weight_value in zip(joint_list, weight_value):
+                if index_joint in valid_indices:
+                    validated_joints.append(valid_indices.index(index_joint))
+                    validated_weights.append(weight_value)
+                else:
+                    invalid_joints.append(index_joint)
+            weight_dictionary['weights'][each_vertex] = [validated_joints, validated_weights]
         return weight_dictionary
 
     def apply_weights_dictionary(self, *args, **kwargs):
@@ -298,6 +307,7 @@ class SkinCluster(creatorsBase.CreatorsBase):
 
 if __name__ == '__main__':
     selection = pm.ls(selection=True)
-    for each in selection:
-        skin_cluster01 = SkinCluster.by_node(each)
-        skin_cluster01.shell_skin(each)
+    from pprint import pprint as pp
+    skin_cluster01 = SkinCluster.by_node(selection[0])
+    pp(skin_cluster01.get_weights_dictionary())
+    # skin_cluster01.shell_skin(each)

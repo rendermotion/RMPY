@@ -184,7 +184,6 @@ class SmoothSkin(object):
             else:
                 zero_values_weight = self.MDoubleArray(length=len(full_index_list))
                 self.apply_skinning(full_index_list, zero_values_weight, each_joint)
-
                 # self.skin_cluster.setWeights(self.mesh.dagPath(),  kobject_components, influence_indices, weights, normalize=False, returnOldWeights=False)
     def joints_to_indices(self, joint_list):
         if not type(joint_list) == list:
@@ -192,12 +191,12 @@ class SmoothSkin(object):
         influence_indices = OpenMaya.MIntArray()
         for influence in joint_list:
             index_influence = self.skin_cluster.indexForInfluenceObject(self.getDagPath(influence))
-            influence_indices.append(index_influence)
+            index_list = cmds.getAttr(f'{OpenMaya.MFnDependencyNode(self.skin_cluster.object()).name()}.matrix', mi=True)
+            influence_indices.append(index_list.index(index_influence))
         return influence_indices
 
     def smooth(self, joints_list):
         full_index_list, max_weight_value = self.get_max_weight_skinning(joints_list)
-
         joint_weights = {}
         # creating a list per joint the lengt of the influence values
         for each_joint in joints_list:
@@ -271,7 +270,6 @@ class SmoothSkin(object):
 
     def apply_skinning(self, vertex_indices, weight_values, influences):
         influence_indices = self.joints_to_indices(influences)
-
         component_list = OpenMaya.MFnSingleIndexedComponent()
         kobject_components = component_list.create(OpenMaya.MFn.kMeshVertComponent)
         component_list.addElements(vertex_indices)

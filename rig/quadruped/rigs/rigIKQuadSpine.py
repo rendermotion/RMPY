@@ -4,23 +4,23 @@ from RMPY.rig import rigSplineIK
 from RMPY.rig import rigFK
 
 
-class IKQuadSpineModel(rigBase.BaseModel):
+class IKQuadSpineModel(rigSplineIK.RigSplineIKModel):
     def __init__(self, *args, **kwargs):
         super(IKQuadSpineModel, self).__init__(*args, **kwargs)
-        self.rig_spline_ik = None
+        # self.rig_spline_ik = None
         self.fk_spine = None
 
 
-class RigIKQuadSpine(rigBase.RigBase):
+class RigIKQuadSpine(rigSplineIK.RigSplineIK):
     def __init__(self, *args, **kwargs):
         super(RigIKQuadSpine, self).__init__(*args, **kwargs)
         self._model = IKQuadSpineModel()
-        self._model.rig_spline_ik = rigSplineIK.RigSplineIK(rig_system=self.rig_system)
+        # self._model.rig_spline_ik = rigSplineIK.RigSplineIK(rig_system=self.rig_system)
         self._model.fk_spine = rigFK.RigFK(rig_system=self.rig_system)
 
-    @property
-    def rig_spline_ik(self):
-        return self._model.rig_spline_ik
+    # @property
+    # def rig_spline_ik(self):
+    #    return self._model.rig_spline_ik
 
     @property
     def fk_spine(self):
@@ -32,9 +32,10 @@ class RigIKQuadSpine(rigBase.RigBase):
         kwargs['stretchy_ik'] = kwargs.pop('stretchy_ik', True)
         self.update_name_convention()
         self.rig_system.create()
-        self.rig_spline_ik.create_point_base(*args, **kwargs)
-        # self.rig_spline_ik.curve = self.create.curve.curve_base(self.rig_spline_ik.curve, spans=2)
-        cluster_node_list, cluster_handler_list = self.create.cluster.curve_base(self.rig_spline_ik.curve)
+        super().create_point_base(*args, **kwargs)
+        # self.rig_spline_ik.create_point_base()
+        ## self.rig_spline_ik.curve = self.create.curve.curve_base(self.rig_spline_ik.curve, spans=2)
+        cluster_node_list, cluster_handler_list = self.create.cluster.curve_base(self.curve)
         cluster_group = pm.group(empty=True)
         self.name_convention.rename_name_in_format(cluster_group, name='clusters')
         cluster_group.setParent(self.rig_system.kinematics)
@@ -60,12 +61,12 @@ class RigIKQuadSpine(rigBase.RigBase):
             else:
                 self.create.constraint.node_base(control, cluster_handler_list[index+1], mo=True)
 
-        self._model.joints = self.rig_spline_ik.joints
-        self._model.reset_joints = self.rig_spline_ik.reset_joints
+        # self._model.joints = self.rig_spline_ik.joints
+        # self._model.reset_joints = self.rig_spline_ik.reset_joints
         self._model.reset_controls = self.reset_controls
         self.create.constraint.scale(self.reset_controls, self.reset_joints)
         self._model.controls = self.controls
-        self.rig_spline_ik.setup_twist(self.controls[0], self.controls[-1])
+        self._setup_twist()
 
 
 if __name__ == '__main__':

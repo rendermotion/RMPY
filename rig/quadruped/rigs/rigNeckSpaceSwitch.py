@@ -7,7 +7,6 @@ class NeckHeadSpaceSwitch(rigBase.RigBase):
         super(NeckHeadSpaceSwitch, self).__init__(*args, **kwargs)
 
     def build(self, rig_neck_head, spine_rig, world_rig):
-        print world_rig.tip, rig_neck_head.controls[-2]
         head_enum_space_switch = rigEnumSpaceSwitch.RigEnumSpaceSwitch(world_rig.tip, rig_neck_head.controls[-2],
                                                                        alias_list=['world', 'neck'],
                                                                        attribute_name='headSpace',

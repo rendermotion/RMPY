@@ -13,6 +13,8 @@ from RMPY.rig.quadruped.rigs import rigQuadSpine
 from RMPY.rig.quadruped.rigs import rigTailLace
 from RMPY.rig.quadruped.rigs import rigNeckSpaceSwitch
 from RMPY.rig.quadruped.rigs import rigHipSpaceSwitch
+import importlib
+importlib.reload(rigQuadSpine)
 
 
 class QuadrupedModel(rigBase.BaseModel):

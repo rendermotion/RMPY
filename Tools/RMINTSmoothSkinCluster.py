@@ -11,7 +11,8 @@ from RMPY.rig import rigBase
 from RMPY.Tools.QT6.ui import FormSmoothSurfaces
 from RMPY.core import smooth_skin
 import json
-
+import importlib
+importlib.reload(smooth_skin)
 
 def getMayaWindow():
     ptr = mui.MQtUtil.mainWindow()
