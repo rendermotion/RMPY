@@ -95,10 +95,12 @@ def load_skin_cluster(*args):
 
 
 def export_maya_file(**kwargs):
+    selection = pm.ls(selection=True)
     file_name = kwargs.pop('file_name', 'reference_points')
     extra_folder = kwargs.pop('extra_folder', '/mayaFiles')
     full_path = f'{config.output.file_path}{extra_folder}'
     file_os.validate_path(full_path)
+    pm.select(selection, r=True)
     pm.exportSelected(f'{full_path}/{file_name}.mb')
 
 
