@@ -27,7 +27,8 @@ class RigFacial(rigBase.RigBase):
 
 class SingleDefinition(rigBase.RigBase):
     """
-    class that reads a definition and creates a blendshape connection between the controls and the objects.
+    Class that reads a definition and creates a blendshape connection between the controls and the objects.
+
     """
 
     def __init__(self, definition, **kwargs):
