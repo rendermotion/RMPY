@@ -4,16 +4,17 @@ RMPY
 This is a rigging framework intended to help you create rigs in an easy and fast way.
 Each rig you create has exposed all the properties and maya objects that you define, for easy access, the encapsulation of the rig provides an easy way to assemble multiple rigs, together to increase complexity.
 It has standardized methods for creation and connection of the rigs.
-You can access the [documentation here](https://rmpy.readthedocs.io).
-or check out this [AI generated doc](https://deepwiki.com/rendermotion/RMPY).
+You can access the [documentation here](https://rmpy.readthedocs.io) or check out this [AI generated doc](https://deepwiki.com/rendermotion/RMPY).
 
 
 RMPY by default is linked to other repository which is called [builder](https://github.com/rendermotion/builder).
 This repo provides RMPY of a way to builds rigs fast, and run python scripts in a specific order, and gives pipeline context to RMPY data management functions.
+The only place where builder is used in RMPY is in RMPY.core.config, if you want you can edit this line to remove the environment context, and provide your own pipeline context functions.
+If builder is not found the default output folder will be created, and it will be in C:/RMPYData/ folder. 
 
 To create your first rig you can test the following code.
 
-**default**
+**Creating your first rig**
 ```python
 from RMPY.rig import rigWorld
 rigWorld.RigWorld()
