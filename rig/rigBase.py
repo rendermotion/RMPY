@@ -22,8 +22,7 @@ class BaseModel(object):
 
 
 class RigBase(object):
-    """
-    Base rig is the base class to be used on any rig. it contains an instance of the main classes that
+    """Base rig is the base class to be used on any rig. it contains an instance of the main classes that
     will be used when creating a rig. 
     The members that contains the Base rig are the following.
     name_convention, an instance of the nameConvention class used to rename all elements on the rig.
@@ -33,8 +32,7 @@ class RigBase(object):
     """
 
     def __init__(self, *args, **kwargs):
-        """
-        initializes all the variables on the rig
+        """Initializes all the variables on the rig
         by default looks for inherited properties, like name_conventionention, or system structure, that can be
         passed as kwargs.
         :name_convention:
@@ -57,8 +55,7 @@ class RigBase(object):
 
     @property
     def zero_joint(self):
-        """
-        This property creates a zero joint that will be used for static rigs.
+        """This property creates a zero joint that will be used for static rigs.
         The joint is created automatically if it doesn't exist.
         :return:
         """
@@ -73,11 +70,10 @@ class RigBase(object):
 
     @property
     def root(self):
-        """
-        The root of a rig is a property that stores the transform group that whenever you want to create a parent for
+        """The root of a rig is a property that stores the transform group that whenever you want to create a parent for
         the rig you can move scale, or rotate this rig and all in the rig will follow.
         You can assign the root to what ever transform you want, but in the case you have not done this the property
-         will return the first value stored on the reset_controls list.
+        will return the first value stored on the reset_controls list.
         """
         if self.attach_points['root']:
             return self.attach_points['root']
@@ -89,8 +85,7 @@ class RigBase(object):
 
     @property
     def world_scale_matrix(self):
-        """
-        This attribute returns an output of a maya node that contains the matrix correspondent to the world scale value of the rig.
+        """This attribute returns an output of a maya node that contains the matrix correspondent to the world scale value of the rig.
         Notice that it is an attribute not a node, so should be treated as this.
         """
         if self.root:
@@ -128,8 +123,7 @@ class RigBase(object):
 
     @tip.setter
     def tip(self, value):
-        """
-        The tip of a rig is a property that stores a transform where any other rig should attach to.
+        """The tip of a rig is a property that stores a transform where any other rig should attach to.
         """
         self.attach_points['tip'] = value
 
@@ -182,16 +176,14 @@ class RigBase(object):
         return self._model.creation_points
 
     def create_point_base(self, *args, **kwargs):
-        """
-        Base function for rig creation, it validates the args values and turn them in to points.
+        """Base function for rig creation, it validates the args values and turn them in to points.
         it creates two arrays one of objects, one of points, and one of rotation vectors
         """
         self.setup_name_convention_node_base(*args, **kwargs)
         assert not hasattr(super(RigBase, self), 'create_point_base')
 
     def create_node_base(self, *args, **kwargs):
-        """
-        Base function for node creation, it gets as input any kind of nodes, usually this can be transforms.
+        """Base function for node creation, it gets as input any kind of nodes, usually this can be transforms.
         There is no real difference with create point base, other than create point base validates the input,
         and if no nodes are provided it will create them. Node base,  shoud only be used with maya nodes and it is an
         alternative to create_point_base.
@@ -206,15 +198,13 @@ class RigBase(object):
         self.setup_name_convention_node_base(*args, **kwargs)
 
     def setup_name_convention_node_base(self, *args, **kwargs):
-        """
-        This function is used to set the name convention of all the tools on the class to match a specific transform.
+        """This function is used to set the name convention of all the tools on the class to match a specific transform.
         args only the first arg will be used to inherit the name, system and side of the name.
         If the name is in the name convention the tokens of the name will be used, in case it is not, the name will be
         made a shortName(strip all _) and will be used as the system  name.
         Notice that there is a special system name, defined on the config, (by default is reference) which if the point
-         belogs to this system, means that is meant to be used to create a rig and the name of the locator will be used
-         as the system.
-
+        belogs to this system, means that is meant to be used to create a rig and the name of the locator will be used
+        as the system.
         """
         pop_name = kwargs.pop('name', None)
         system_name = self.name_convention.get_from_name(args[0], 'system')
@@ -282,8 +272,7 @@ class RigBase(object):
         assert not hasattr(super(RigBase, self), 'create_selection_base')
 
     def set_parent(self, rig_object, **kwargs):
-        """
-        This is the standardize function to parent modules, This works in union with the properties root and tip.
+        """This is the standardize function to parent modules, This works in union with the properties root and tip.
         When you call set_parent the rig object attribute can be a
         rig(that inherits at some point from rigBase), or a transform. If it is a rig, the function will look for the
         tip on the dictionary attachments. If this has not being assigned the default value will be the first element
@@ -291,11 +280,9 @@ class RigBase(object):
         or let the rig find it by itself.
 
         :param rig_object: object or rig that you expect to be the parent of the module.
-        :kwargs:
-            output_joint_rig: The output joint rig is a specific rig to create a hierarchy of joints
-            create_hierarchy_joints:
-
-
+        :keyword output_joint_rig: The output joint rig is a specific rig to create a hierarchy of joints
+        :keyword create_hierarchy_joints: Flag to define if the hierarchy joints need to be created.
+        :type create_hierarchy_joints: ``bool``
         :return:
         """
         kwargs['mo'] = kwargs.pop('mo', True)

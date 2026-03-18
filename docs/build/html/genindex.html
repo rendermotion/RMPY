@@ -10,6 +10,8 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
@@ -37,13 +39,22 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul>
-<li class="toctree-l1"><a class="reference internal" href="name_convention.html">Name Convention</a></li>
-<li class="toctree-l1"><a class="reference internal" href="creators.html">Creators</a></li>
+              <p class="caption" role="heading"><span class="caption-text">RMPY</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="how_to_install.html">How to install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rigs/rigBase.html">Rig Base Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rigs/rigFacial.html">Rig Facial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rigs/index.html">Rigs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools/smoothskinTool.html">The smooth skin tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools/index.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="creators/group.html">Group</a></li>
+<li class="toctree-l1"><a class="reference internal" href="creators/spaceLocator.html">Space Locator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="creators/skinCluster.html">skinCluster</a></li>
+<li class="toctree-l1"><a class="reference internal" href="creators/index.html">Creators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/name_convention.html">Name Convention</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/system_structure.html">System structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/index.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="representations.html">Representations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="rigs.html">Rigs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tools.html">Tools</a></li>
-<li class="toctree-l1"><a class="reference internal" href="system%20structure.html">System structure</a></li>
 </ul>
 
         </div>
@@ -81,19 +92,25 @@
  | <a href="#I"><strong>I</strong></a>
  | <a href="#J"><strong>J</strong></a>
  | <a href="#K"><strong>K</strong></a>
+ | <a href="#N"><strong>N</strong></a>
  | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
  | <a href="#U"><strong>U</strong></a>
+ | <a href="#W"><strong>W</strong></a>
  | <a href="#Z"><strong>Z</strong></a>
  
 </div>
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="rigs.html#rig.rigBase.RigBase.attach_points">attach_points (rig.rigBase.RigBase property)</a>
+      <li><a href="creators/spaceLocator.html#creators.spaceLocator.SpaceLocator.aim_base">aim_base() (creators.spaceLocator.SpaceLocator method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="rigs/rigBase.html#rig.rigBase.RigBase.attach_points">attach_points (rig.rigBase.RigBase property)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -101,7 +118,11 @@
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="rigs.html#rig.rigBase.BaseModel">BaseModel (class in rig.rigBase)</a>
+      <li><a href="rigs/rigBase.html#rig.rigBase.BaseModel">BaseModel (class in rig.rigBase)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="creators/skinCluster.html#creators.skinCluster.SkinCluster.by_name">by_name() (creators.skinCluster.SkinCluster class method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -109,33 +130,37 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="rigs.html#rig.rigBase.RigBase.control_creation_kwargs">control_creation_kwargs (rig.rigBase.RigBase property)</a>
+      <li><a href="rigs/rigBase.html#rig.rigBase.RigBase.control_creation_kwargs">control_creation_kwargs (rig.rigBase.RigBase property)</a>
 </li>
-      <li><a href="rigs.html#rig.rigBase.RigBase.controls">controls (rig.rigBase.RigBase property)</a>
+      <li><a href="rigs/rigBase.html#rig.rigBase.RigBase.controls">controls (rig.rigBase.RigBase property)</a>
 
       <ul>
-        <li><a href="system%20structure.html#rig.SystemStructure.SystemStructure.controls">(rig.SystemStructure.SystemStructure property)</a>
+        <li><a href="architecture/system_structure.html#rig.SystemStructure.SystemStructure.controls">(rig.SystemStructure.SystemStructure property)</a>
 </li>
       </ul></li>
-      <li><a href="creators.html#creators.skinCluster.SkinCluster.copy_by_definition">copy_by_definition() (creators.skinCluster.SkinCluster method)</a>
+      <li><a href="creators/skinCluster.html#creators.skinCluster.SkinCluster.copy_by_definition">copy_by_definition() (creators.skinCluster.SkinCluster method)</a>
 </li>
-      <li><a href="creators.html#creators.skinCluster.SkinCluster.copy_skin">copy_skin() (creators.skinCluster.SkinCluster method)</a>
+      <li><a href="creators/skinCluster.html#creators.skinCluster.SkinCluster.copy_skin">copy_skin() (creators.skinCluster.SkinCluster method)</a>
 </li>
-      <li><a href="system%20structure.html#rig.SystemStructure.SystemStructure.create">create() (rig.SystemStructure.SystemStructure method)</a>
+      <li><a href="architecture/system_structure.html#rig.SystemStructure.SystemStructure.create">create() (rig.SystemStructure.SystemStructure method)</a>
+</li>
+      <li><a href="rigs/rigBase.html#rig.rigBase.RigBase.create_curve_base">create_curve_base() (rig.rigBase.RigBase method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="rigs.html#rig.rigBase.RigBase.create_curve_base">create_curve_base() (rig.rigBase.RigBase method)</a>
+      <li><a href="rigs/rigBase.html#rig.rigBase.RigBase.create_node_base">create_node_base() (rig.rigBase.RigBase method)</a>
 </li>
-      <li><a href="rigs.html#rig.rigBase.RigBase.create_node_base">create_node_base() (rig.rigBase.RigBase method)</a>
+      <li><a href="rigs/rigBase.html#rig.rigBase.RigBase.create_point_base">create_point_base() (rig.rigBase.RigBase method)</a>
 </li>
-      <li><a href="rigs.html#rig.rigBase.RigBase.create_point_base">create_point_base() (rig.rigBase.RigBase method)</a>
+      <li><a href="rigs/rigBase.html#rig.rigBase.RigBase.create_selection_base">create_selection_base() (rig.rigBase.RigBase method)</a>
 </li>
-      <li><a href="rigs.html#rig.rigBase.RigBase.create_selection_base">create_selection_base() (rig.rigBase.RigBase method)</a>
+      <li><a href="rigs/rigBase.html#rig.rigBase.RigBase.create_shape_base">create_shape_base() (rig.rigBase.RigBase method)</a>
 </li>
-      <li><a href="rigs.html#rig.rigBase.RigBase.create_shape_base">create_shape_base() (rig.rigBase.RigBase method)</a>
+      <li><a href="rigs/rigBase.html#rig.rigBase.RigBase.creation_points">creation_points (rig.rigBase.RigBase property)</a>
 </li>
-      <li><a href="rigs.html#rig.rigBase.RigBase.custom_world_align">custom_world_align() (rig.rigBase.RigBase method)</a>
+      <li><a href="creators/spaceLocator.html#creators.spaceLocator.SpaceLocator.curve_base">curve_base() (creators.spaceLocator.SpaceLocator method)</a>
+</li>
+      <li><a href="rigs/rigBase.html#rig.rigBase.RigBase.custom_world_align">custom_world_align() (rig.rigBase.RigBase method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -143,7 +168,7 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="system%20structure.html#rig.SystemStructure.SystemStructure.display">display (rig.SystemStructure.SystemStructure property)</a>
+      <li><a href="architecture/system_structure.html#rig.SystemStructure.SystemStructure.display">display (rig.SystemStructure.SystemStructure property)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -151,7 +176,7 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="creators.html#creators.group.Group">Group (class in creators.group)</a>
+      <li><a href="creators/group.html#creators.group.Group">Group (class in creators.group)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -159,7 +184,11 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="rigs.html#rig.rigBase.RigBase.inputs">inputs (rig.rigBase.RigBase property)</a>
+      <li><a href="creators/spaceLocator.html#creators.spaceLocator.SpaceLocator.in_between_points">in_between_points() (creators.spaceLocator.SpaceLocator method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="rigs/rigBase.html#rig.rigBase.RigBase.inputs">inputs (rig.rigBase.RigBase property)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -167,14 +196,14 @@
 <h2 id="J">J</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="rigs.html#rig.rigBase.RigBase.joint_creation_kwargs">joint_creation_kwargs (rig.rigBase.RigBase property)</a>
+      <li><a href="rigs/rigBase.html#rig.rigBase.RigBase.joint_creation_kwargs">joint_creation_kwargs (rig.rigBase.RigBase property)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="rigs.html#rig.rigBase.RigBase.joints">joints (rig.rigBase.RigBase property)</a>
+      <li><a href="rigs/rigBase.html#rig.rigBase.RigBase.joints">joints (rig.rigBase.RigBase property)</a>
 
       <ul>
-        <li><a href="system%20structure.html#rig.SystemStructure.SystemStructure.joints">(rig.SystemStructure.SystemStructure property)</a>
+        <li><a href="architecture/system_structure.html#rig.SystemStructure.SystemStructure.joints">(rig.SystemStructure.SystemStructure property)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -183,7 +212,15 @@
 <h2 id="K">K</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="system%20structure.html#rig.SystemStructure.SystemStructure.kinematics">kinematics (rig.SystemStructure.SystemStructure property)</a>
+      <li><a href="architecture/system_structure.html#rig.SystemStructure.SystemStructure.kinematics">kinematics (rig.SystemStructure.SystemStructure property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="creators/spaceLocator.html#creators.spaceLocator.SpaceLocator.node_base">node_base() (creators.spaceLocator.SpaceLocator method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -191,7 +228,7 @@
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="rigs.html#rig.rigBase.RigBase.outputs">outputs (rig.rigBase.RigBase property)</a>
+      <li><a href="rigs/rigBase.html#rig.rigBase.RigBase.outputs">outputs (rig.rigBase.RigBase property)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -199,7 +236,17 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="creators.html#creators.group.Group.point_base">point_base() (creators.group.Group method)</a>
+      <li><a href="creators/group.html#creators.group.Group.point_base">point_base() (creators.group.Group method)</a>
+
+      <ul>
+        <li><a href="creators/spaceLocator.html#creators.spaceLocator.SpaceLocator.point_base">(creators.spaceLocator.SpaceLocator method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="creators/spaceLocator.html#creators.spaceLocator.SpaceLocator.pole_vector">pole_vector() (creators.spaceLocator.SpaceLocator method)</a>
+</li>
+      <li><a href="creators/spaceLocator.html#creators.spaceLocator.SpaceLocator.pole_vector_point">pole_vector_point() (creators.spaceLocator.SpaceLocator method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -207,24 +254,24 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="rigs.html#rig.rigBase.RigBase.rename_as_skinned_joints">rename_as_skinned_joints() (rig.rigBase.RigBase method)</a>
+      <li><a href="rigs/rigBase.html#rig.rigBase.RigBase.rename_as_skinned_joints">rename_as_skinned_joints() (rig.rigBase.RigBase method)</a>
 </li>
-      <li><a href="rigs.html#rig.rigBase.RigBase.reset_controls">reset_controls (rig.rigBase.RigBase property)</a>
+      <li><a href="rigs/rigBase.html#rig.rigBase.RigBase.reset_controls">reset_controls (rig.rigBase.RigBase property)</a>
 </li>
-      <li><a href="rigs.html#rig.rigBase.RigBase.reset_joints">reset_joints (rig.rigBase.RigBase property)</a>
+      <li><a href="rigs/rigBase.html#rig.rigBase.RigBase.reset_joints">reset_joints (rig.rigBase.RigBase property)</a>
 </li>
-      <li><a href="system%20structure.html#rig.SystemStructure.SystemStructure.rig_hierarchy">rig_hierarchy (rig.SystemStructure.SystemStructure property)</a>
+      <li><a href="architecture/system_structure.html#rig.SystemStructure.SystemStructure.rig_hierarchy">rig_hierarchy (rig.SystemStructure.SystemStructure property)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="rigs.html#rig.rigBase.RigBase">RigBase (class in rig.rigBase)</a>
+      <li><a href="rigs/rigBase.html#rig.rigBase.RigBase">RigBase (class in rig.rigBase)</a>
 </li>
-      <li><a href="system%20structure.html#rig.SystemStructure.RigStructureModel">RigStructureModel (class in rig.SystemStructure)</a>
+      <li><a href="architecture/system_structure.html#rig.SystemStructure.RigStructureModel">RigStructureModel (class in rig.SystemStructure)</a>
 </li>
-      <li><a href="rigs.html#rig.rigBase.RigBase.root">root (rig.rigBase.RigBase property)</a>
+      <li><a href="rigs/rigBase.html#rig.rigBase.RigBase.root">root (rig.rigBase.RigBase property)</a>
 
       <ul>
-        <li><a href="system%20structure.html#rig.SystemStructure.SystemStructure.root">(rig.SystemStructure.SystemStructure property)</a>
+        <li><a href="architecture/system_structure.html#rig.SystemStructure.SystemStructure.root">(rig.SystemStructure.SystemStructure property)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -233,19 +280,21 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="rigs.html#rig.rigBase.RigBase.set_parent">set_parent() (rig.rigBase.RigBase method)</a>
+      <li><a href="rigs/rigBase.html#rig.rigBase.RigBase.set_parent">set_parent() (rig.rigBase.RigBase method)</a>
 </li>
-      <li><a href="system%20structure.html#rig.SystemStructure.SystemStructure.settings">settings (rig.SystemStructure.SystemStructure property)</a>
+      <li><a href="architecture/system_structure.html#rig.SystemStructure.SystemStructure.settings">settings (rig.SystemStructure.SystemStructure property)</a>
 </li>
-      <li><a href="rigs.html#rig.rigBase.RigBase.setup_name_convention_node_base">setup_name_convention_node_base() (rig.rigBase.RigBase method)</a>
+      <li><a href="rigs/rigBase.html#rig.rigBase.RigBase.setup_name_convention_node_base">setup_name_convention_node_base() (rig.rigBase.RigBase method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="creators.html#creators.skinCluster.SkinCluster">SkinCluster (class in creators.skinCluster)</a>
+      <li><a href="creators/skinCluster.html#creators.skinCluster.SkinCluster">SkinCluster (class in creators.skinCluster)</a>
 </li>
-      <li><a href="creators.html#creators.skinCluster.SkinCluster.switch_skin">switch_skin() (creators.skinCluster.SkinCluster method)</a>
+      <li><a href="creators/spaceLocator.html#creators.spaceLocator.SpaceLocator">SpaceLocator (class in creators.spaceLocator)</a>
 </li>
-      <li><a href="system%20structure.html#rig.SystemStructure.SystemStructure">SystemStructure (class in rig.SystemStructure)</a>
+      <li><a href="creators/skinCluster.html#creators.skinCluster.SkinCluster.switch_skin">switch_skin() (creators.skinCluster.SkinCluster method)</a>
+</li>
+      <li><a href="architecture/system_structure.html#rig.SystemStructure.SystemStructure">SystemStructure (class in rig.SystemStructure)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -253,7 +302,7 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="rigs.html#rig.rigBase.RigBase.tip">tip (rig.rigBase.RigBase property)</a>
+      <li><a href="rigs/rigBase.html#rig.rigBase.RigBase.tip">tip (rig.rigBase.RigBase property)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -261,7 +310,15 @@
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="rigs.html#rig.rigBase.RigBase.update_name_convention">update_name_convention() (rig.rigBase.RigBase method)</a>
+      <li><a href="rigs/rigBase.html#rig.rigBase.RigBase.update_name_convention">update_name_convention() (rig.rigBase.RigBase method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="W">W</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="rigs/rigBase.html#rig.rigBase.RigBase.world_scale_matrix">world_scale_matrix (rig.rigBase.RigBase property)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -269,7 +326,7 @@
 <h2 id="Z">Z</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="rigs.html#rig.rigBase.RigBase.zero_joint">zero_joint (rig.rigBase.RigBase property)</a>
+      <li><a href="rigs/rigBase.html#rig.rigBase.RigBase.zero_joint">zero_joint (rig.rigBase.RigBase property)</a>
 </li>
   </ul></td>
 </tr></table>

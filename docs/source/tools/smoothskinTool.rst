@@ -12,10 +12,9 @@ To launch the tool execute the following code on your script editor.
 
 .. code-block:: python
    :caption: to launch the smooth skin cluster tool excecute the following lines of code.
-   :emphasize-lines: 6
 
-    from RMPY.Tools import RMINTSmoothSkinCluster
-    RMINTSmoothSkinCluster.Main().show()
+   from RMPY.Tools import RMINTSmoothSkinCluster
+   RMINTSmoothSkinCluster.Main().show()
 
 
 .. image::`/toolsDoc/img/smooth_skin_base00.png`

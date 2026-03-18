@@ -1,13 +1,9 @@
 .. toctree::
-    :maxdepth: 1
-    :hidden:
-    :caption: rigs
+    :maxdepth: 0
+    :caption: List of rigs
 
-    /rigsDoc/rigBase
-    Understanding the architecture <architecture>
-    Name convention <name_convention>
-    /rigs
-    /tools
+    /rigs/rigBase
+    /rigs/rigFacial
 
 ==============
 Rigs
@@ -22,10 +18,10 @@ Standard creation functions.
 Any rig has something that is used as base to create the rig, most common thing are points in space (space locators),
 but you can find rigs that are created based on a curve or geometry.
 The standard functions for  rig creation are
-    create_point_base: Need to provide input points to create the rig.
-    create_node_base: Need to provide transform as inputs to create the rig.
-    create_curve_base: A curve is the base of the rig.
-    create_geometry_base: Some geometry will be the base to create the rig.
+create_point_base: Need to provide input points to create the rig.
+create_node_base: Need to provide transform as inputs to create the rig.
+create_curve_base: A curve is the base of the rig.
+create_geometry_base: Some geometry will be the base to create the rig.
 While creating rigs with this function you are inheriting some procedures that are in place to name every part of your rig.
 In general when you are creating something inside the rig you dont have to worry about the system that it belongs to or
 which side of the rig is found, you just provide a simple name without '_' for every object, and the system will take care
@@ -33,4 +29,4 @@ of what is the correct full name for your object.
 You can find object that takes care of the name convention under self.name_convention.
 
 
-    :doc:`/rigsDoc/rigBase`
+    :doc:`/rigs/rigBase`

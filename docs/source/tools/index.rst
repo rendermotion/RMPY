@@ -1,3 +1,10 @@
+.. toctree::
+    :maxdepth: 0
+    :hidden:
+    :caption: Tools
+
+    smoothskinTool
+
 Tools
 =====
 
@@ -6,6 +13,5 @@ At the moment all tools have been ported to Pyside6 and should be working with m
 
 A shelf is provided to install the path you can find it is RMPY/Tools/shelfs and the name of the shelf is rendermotion.
 
-
-    :doc:`toolsDoc/smoothskinTool`
+    :doc:`/tools/smoothskinTool`
 

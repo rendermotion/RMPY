@@ -60,7 +60,7 @@ extensions = [
     'sphinx.ext.autosummary',
     "sphinx.ext.doctest",
     "sphinx.ext.intersphinx",
-    'sphinx.ext.sphinx_rtd_theme'
+    'sphinx_rtd_theme'
 ]
 intersphinx_mapping = {
     "rtd": ("https://docs.readthedocs.io/en/stable/", None),

@@ -1,7 +1,11 @@
 .. toctree::
-    :maxdepth: 1
+    :maxdepth: 0
     :hidden:
     :caption: Understanding creators
+
+    group
+    spaceLocator
+    skinCluster
 
 ========
 Creators

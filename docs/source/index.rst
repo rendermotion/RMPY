@@ -1,12 +1,15 @@
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
     :hidden:
-    :caption: Getting started
+    :caption: RMPY
 
     /how_to_install
-    Understanding the architecture <architecture>
-    /rigs
-    /tools
+    /rigs/index
+    /tools/index
+    /creators/index
+    /architecture/index
+    /representations
+
 
 
 
@@ -25,14 +28,14 @@ Getting started
 
     Do you want to understand how the architecture is structured and the different parts that conform a rig.
 
-    :doc:`/architecture`
+    :doc:`/architecture/index`
 
 
     Go directly to create some rigs.
 
     Want to see what are the provided tools with interface to create rigs?
 
-    :doc:`/tools`
+    :doc:`/tools/index`
 
 
 

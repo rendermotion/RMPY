@@ -17,13 +17,10 @@ class SkinCluster(creatorsBase.CreatorsBase):
 
     @classmethod
     def by_name(cls, skin_node_name):
-        """
-        A base Classmethod that returns an instance of the SkinCluster class that contains as the main node (self.node)
-        an skincluster with the name provided
-        Args:
-            skin_node_name(str): A string that contains the name of a skinCluster in the scene.
-        Returns:
-            SkinCluster: An instance of this SkinCluster class that has the skin_node_name assigned to the (self.node).
+        """A base Classmethod that returns an instance of the SkinCluster class that contains as the main node (
+        self.node) an skincluster with the name provided :param skin_node_name: A string that contains the name of a
+        skinCluster in the scene. :type skin_node_name: ``str`` :returns: An instance of this SkinCluster class that
+        has the skin_node_name assigned to the (self.node).
         """
         new_class_object = cls()
         if pm.objExists(skin_node_name):
@@ -32,10 +29,10 @@ class SkinCluster(creatorsBase.CreatorsBase):
                 new_class_object.node = node_name
                 return new_class_object
             else:
-                print ("error couldn't create skin cluster, node class is :%s" % node_name.__class__)
+                print("error couldn't create skin cluster, node class is :%s" % node_name.__class__)
         else:
             new_class_object.node = skin_node_name
-            print ("WARNING: skinCluster object created, node doesn't exists")
+            print("WARNING: skinCluster object created, node doesn't exists")
             return new_class_object
         return None
 
@@ -205,10 +202,10 @@ class SkinCluster(creatorsBase.CreatorsBase):
             self.weights_dict = self.get_weights_dictionary()
 
     def switch_skin(self, geometry, joint_switch_dictionary):
-        """
-        Switches the joints in an existing skinning
-
-        :param joint_switch_dictionary:
+        """Switches the joints in an existing skinning node. This is useful if you have a rig already done,
+        and want to replace the joints that drive the deformation by new joints coming from a different rig.
+        :param joint_switch_dictionary: a dictionary where keys are the old and the values are the new joints that
+        are going to replace.
         :param geometry: geometry where the skin wants to be changed.
         :return:
         """

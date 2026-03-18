@@ -6,7 +6,6 @@ In theory you could clone it to any PYTHON_PATH folder.
 
 .. code-block:: bash
    :caption: Cloning the repository
-   :emphasize-lines: 6
 
    git clone https://github.com/rendermotion/RMPY.git
 
@@ -17,7 +16,6 @@ Once the module has been installed, you can test the modules by importing RMPY w
 
 .. code-block:: bash
    :caption: Testing that RMPY was correctly installed.
-   :emphasize-lines: 6
 
    import RMPY
 

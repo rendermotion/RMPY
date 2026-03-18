@@ -13,24 +13,20 @@ class Group(creatorsBase.CreatorsBase):
         super(Group, self).__init__(*args, **kwargs)
 
     def point_base(self, *scene_nodes, **kwargs):
-        r"""
-        This function will create a new group per each scene node provided, this new node will be aligned in position and rotation, with the scene node.
+        """ This function will create a new group per each scene node provided,
+        this new node will be aligned in position and rotation, with the scene node.
         And its position on the hierarchy will depend on the "type" kwargs.
-        :param scene_nodes:
-            One or more nodes on the scene. This nodes can be strings or pymel nodes.
+
+        :param scene_nodes: One or more nodes on the scene. This nodes can be strings or pymel nodes.
+
         :type scene_nodes: ``str``
-        :param **kwargs:
-            See below
-        :Keword Arguments:
-            * *type* (``str``)--
-                A parameter to define how the new group is going to be
-                in the hierarchy, valid values are
-                "world","child","parent","inserted","sibling".
 
-                inserted: creates a new group as parent of the provided transform but parented to the original parent of
-                the transform, therefore is inserted in the hierarchy between the parent and its child. This is the
-                Default value for this keyword argument.
+        :keyword type:  A keyword argument to define how the new group is going to be in the hierarchy, valid values are "world" , "child" , "parent" , "inserted" , "sibling".\
+         **Inserted**: Creates a new group as parent of the provided transform but parented to the original parent of the transform, therefore is inserted in the hierarchy between the parent and its child. This is the Default value for this keyword argument.\
+         **Parent**: The new group will be parent of the selected group but will break the hierarchy it will be parent to the root. **Child**: The new group will be child of the selected group. \
+         **Sibling**: The new group will be on the same hierarchy as the base point, therefore it will be its sibling since both will share the same parent.
 
+        :type type: ``str``
         """
         super(Group, self).point_base(*scene_nodes, **kwargs)
         group_type = kwargs.pop('type', "inserted")
