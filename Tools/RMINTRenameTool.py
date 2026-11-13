@@ -12,6 +12,7 @@ from RMPY.Tools.QT6.ui import FormSmoothSurfaces
 from RMPY import nameConvention
 from RMPY import RMRigTools
 from RMPY.snippets import locator_at_average
+from PySide6 import QtCore
 
 
 def getMayaWindow():
@@ -29,19 +30,15 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.ui.setupUi(self)
         self.ui.name_lineEdit.setText(self.name_backlog)
         self.setWindowTitle('Rename Tool')
-        self.ui.rename_button.clicked.connect(self.main_rename)
         self.ui.side_comboBox.addItems(self.name_convention.validation['side'])
         self.ui.system_lineEdit.setText(config.default_reference_system_name)
         self.ui.system_lineEdit.setDisabled(True)
         object_type_list = ['auto']
         object_type_list.extend(self.name_convention.validation['objectType'])
         self.ui.objectType_comboBox.addItems(object_type_list)
-        self.ui.default_system_chkBox.stateChanged.connect(self.system_state_checkbox_changed)
-        # self.ui.side_push_button
-        self.ui.use_name_chkBox.stateChanged.connect(self.name_state_checkbox_changed)
 
-
-    def main_rename(self):
+    @QtCore.Slot()
+    def on_rename_button_clicked(self):
         selection = pm.ls(selection=True)
         # for index, each in enumerate(selection):
         side = self.ui.side_comboBox.currentText()
@@ -62,7 +59,8 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         # name_conv.rename_name_in_format(each, side=side, system=system_name, name='shoe{}'.format(chr(65+index)))
         # name_conv.rename_name_in_format(each, side=side, system=system_name, name='finger{}'.format(chr(65 + index)))
 
-    def system_state_checkbox_changed(self):
+    @QtCore.Slot()
+    def on_default_system_chkBox_stateChanged(self):
         if self.ui.default_system_chkBox.isChecked():
             self.system_backlog = self.ui.system_lineEdit.text()
             self.ui.system_lineEdit.setText(config.default_reference_system_name)
@@ -71,7 +69,8 @@ class Main(MayaQWidgetDockableMixin, QDialog):
             self.ui.system_lineEdit.setText(self.system_backlog)
             self.ui.system_lineEdit.setDisabled(False)
 
-    def name_state_checkbox_changed(self):
+    @QtCore.Slot()
+    def on_use_name_chkBox_stateChanged(self):
         if self.ui.use_name_chkBox.isChecked():
             self.name_backlog = self.ui.name_lineEdit.text()
             self.ui.name_lineEdit.setText('--using current name of object--')
@@ -79,6 +78,28 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         else:
             self.ui.name_lineEdit.setText(self.name_backlog)
             self.ui.name_lineEdit.setDisabled(False)
+
+    @QtCore.Slot()
+    def on_side_push_button_clicked(self):
+        selection = pm.ls(selection=True)
+        side = self.ui.side_comboBox.currentText()
+        for each in selection:
+            self.name_convention.rename_name_in_format(each, side=side,
+                                                       system=self.name_convention.get_from_name(each, 'system'),
+                                                       useName=True)
+        print('pushed')
+
+    @QtCore.Slot()
+    def on_name_button_clicked(self):
+        pass
+
+    @QtCore.Slot()
+    def on_system_button_clicked(self):
+        pass
+
+    @QtCore.Slot()
+    def on_object_type_button_clicked(self):
+        pass
 
 
 if __name__ == '__main__':

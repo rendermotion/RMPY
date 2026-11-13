@@ -3,15 +3,16 @@ from RMPY.rig import rigBase
 
 
 class RigControlsForPoints(rigBase.RigBase):
-    """
-       Simple rig class inherits from RigBase, creates a control on each point and parent
-       constraints the controls to move the input points
-    """
+    """Simple rig class inherits from RigBase, creates a control on each point and parent
+    constraints the controls to move the input points"""
     def __init__(self, *args, **kwargs):
         kwargs['model'] = kwargs.pop('model',  rigBase.BaseModel())
         super(RigControlsForPoints, self).__init__(*args, **kwargs)
 
     def create_point_base(self, *points, **kwargs):
+        """
+        Only implementation of the create funm
+        """
         super(RigControlsForPoints, self).create_point_base(*points, **kwargs)
         world_align = kwargs.pop('world_align', False)
         link_type = kwargs.pop('link_type', 'standard')

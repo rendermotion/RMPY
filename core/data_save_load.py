@@ -1,8 +1,10 @@
 import pathlib
 
 from RMPY.representations import curve
+from RMPY.representations import animCurve
 from RMPY.creators import skinCluster
 import pymel.core as pm
+import maya.cmds as cmds
 from RMPY.core import file_os
 from RMPY.core import config
 import os
@@ -56,6 +58,38 @@ def load_curves(*args):
             RuntimeWarning(f'{each} not loaded')
             pass
 
+
+def load_anim_curves():
+    anim_nodes = cmds.ls(type=['animCurveUL', 'animCurveUU', 'animCurveTU',
+                               'animCurveUA', 'animCurveUT', 'animCurveTT',
+                               'animCurveTA', 'animCurve'])
+    print(load_anim_curves)
+    for each_node in anim_nodes:
+        try:
+            anim_curve_node = animCurve.AnimCurve.by_name(anim_nodes)
+            anim_curve_node.load()
+            anim_curve_node.set_repr_dict()
+        except:
+            print(f'{each_node} not loaded')
+
+
+def save_anim_curves(*args):
+    if args:
+        scene_objects = args
+    else:
+        scene_objects = pm.ls(selection=True)
+    anim_curve_list = []
+    for each_node in scene_objects:
+        try:
+            print(each_node)
+            anim_curve_node = animCurve.AnimCurve.by_name(each_node)
+            if anim_curve_node:
+                anim_curve_node.save('{}'.format(each_node))
+                anim_curve_list.append(each_node)
+        except:
+            print(f'{each_node} not saved')
+
+    print('following animation nodes where saved: {}'.format(anim_curve_list))
 
 def save_skin_cluster(*args):
     if args:
@@ -135,7 +169,8 @@ def load_by_name(data_file):
 
 if __name__ == '__main__':
     # load_by_name('BabyK_body_lvl2')
-    load_skin_cluster()
+    save_anim_curves()
+    # load_anim_curves()
     # save_skin_cluster()
     # load_curves()
 

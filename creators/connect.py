@@ -177,8 +177,8 @@ class Connect(creatorsBase.CreatorsBase):
         return plus_minus, animation_curve_node
 
     def times_factor(self, attr_a, attr_b, factor=1, name='unitConversion'):
-        """
-
+        """This multiplies attr_a times a factor, before pluging in to attr_b, it uses a  unit conversion node to
+        generate this connection.
         """
         unit_conversion = pm.createNode("unitConversion", name=name)
         self.name_convention.rename_name_in_format(unit_conversion, name=name)

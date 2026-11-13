@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>521</width>
-    <height>446</height>
+    <height>504</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -144,6 +144,9 @@
              <layout class="QVBoxLayout" name="verticalLayout_9">
               <item>
                <widget class="QPushButton" name="ConstShapeLblBtn">
+                <property name="locale">
+                 <locale language="English" country="UnitedStates"/>
+                </property>
                 <property name="text">
                  <string>Const Shape Lbl</string>
                 </property>
@@ -157,10 +160,46 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="CopyCvsPosBtn">
-                <property name="text">
-                 <string>Copy Cvs Position</string>
+               <widget class="QGroupBox" name="CopyShapesGroupBox">
+                <property name="title">
+                 <string>CopyShapes</string>
                 </property>
+                <layout class="QVBoxLayout" name="verticalLayout">
+                 <item>
+                  <widget class="QPushButton" name="CopyCvsPosBtn">
+                   <property name="text">
+                    <string>Copy Cvs Position</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_6">
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QRadioButton" name="localSpaceRadio">
+                     <property name="text">
+                      <string>local</string>
+                     </property>
+                     <property name="checked">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QRadioButton" name="worldSpaceRadio">
+                     <property name="text">
+                      <string>world</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                </layout>
                </widget>
               </item>
               <item>
@@ -173,8 +212,8 @@
              </layout>
              <zorder>SCCombineButton</zorder>
              <zorder>ConstShapeLblBtn</zorder>
-             <zorder>CopyCvsPosBtn</zorder>
              <zorder>pushButton_2</zorder>
+             <zorder>CopyShapesGroupBox</zorder>
             </widget>
            </item>
            <item>

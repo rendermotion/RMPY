@@ -2,7 +2,8 @@ from RMPY.core import dataManager
 import pymel.core as pm
 import maya.cmds as cmds
 from RMPY.representations.data_representation import genericAttribute
-
+import importlib
+importlib.reload(genericAttribute)
 
 class GeneralData(object):
     def __init__(self, *args, **kwargs):
@@ -76,5 +77,5 @@ class GeneralData(object):
 
 
 if __name__ == '__main__':
-    attach_ment = GeneralData.by_name('blendShape1')
-    attach_ment.load()
+    attach_ment = GeneralData.by_name('C_object01_rig_UDF')
+    attach_ment.save()

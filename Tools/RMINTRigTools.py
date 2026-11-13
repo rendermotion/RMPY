@@ -105,7 +105,10 @@ class Main(MayaQWidgetDockableMixin, QDialog):
             pole_vector_error_message.exec()
 
     def copy_cv_position(self):
-        controls.transfer_curve_by_selection()
+        if self.ui.localSpaceRadio.isChecked():
+            controls.transfer_curve_by_selection()
+        if self.ui.worldSpaceRadio.isChecked():
+            controls.transfer_curve_by_selection(world_space=True)
 
     def mirror_shapes(self):
         selection = pm.ls(selection=True)

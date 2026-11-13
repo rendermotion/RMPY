@@ -70,20 +70,29 @@ class GenericAttribute(object):
         elif self.data['type'] in ['pointArray']:
             if self.data['value'] is not None and not cmds.getAttr(self.attribute, lock=True) \
                     and not pm.listConnections(self.attribute):
-                cmds.setAttr(self.attribute, len(self.data['value']), *self.data['value'], type='pointArray')
+                try:
+                    cmds.setAttr(self.attribute, len(self.data['value']), *self.data['value'], type='pointArray')
+                except:
+                    f'attribute{self.attribute}, couldnt be set with data :{self.data["value"]}'
 
         elif self.data["type"] in [int, 'unicode', 'long', 'float', 'doubleArray',
-                                   'double', 'enum', 'bool', bool, float]:
+                                   'double', 'doubleLinear', 'enum', 'bool', bool, float]:
             if self.data['value'] is not None \
                     and not cmds.getAttr(self.attribute, lock=True) \
                     and not pm.listConnections(self.attribute):
-                cmds.setAttr(self.attribute, self.data['value'])
+                try:
+                    cmds.setAttr(self.attribute, self.data['value'])
+                except:
+                    f'attribute{self.attribute}, couldnt be set with data :{self.data["value"]}'
         elif self.data["type"] in ['string']:
             if self.verbose:
                 print('setting attribute {} with value {}'.format(self.attribute, self.data['value']))
             if self.data['value'] is not None and not cmds.getAttr(self.attribute, lock=True) \
                     and not pm.listConnections(self.attribute):
-                cmds.setAttr(self.attribute, self.data['value'], type=str(self.data["type"]))
+                try:
+                    cmds.setAttr(self.attribute, self.data['value'], type=str(self.data["type"]))
+                except:
+                    f'attribute{self.attribute}, couldnt be set with data :{self.data["value"]}'
         else:
             if self.verbose:
                 print('attribute not identified {}'.format(self.attribute))
@@ -101,13 +110,13 @@ class GenericAttribute(object):
             if self.isMulti:
 
                 try:
-                    self.data['value']=cmds.getAttr(self.attribute)[0]
-                    self.data['multi_index'] = self.multi_index
-
-                except:
                     for each_index in self.multi_index:
                         self.data["value"][int(each_index)] = GenericAttribute("{}[{}]".format(self.attribute,
                                                                                                each_index)).get_data_dict()
+                    self.data['multi_index'] = self.multi_index
+                except:
+                    self.data['value'] = cmds.getAttr(self.attribute)[0]
+                    self.data['multi_index'] = self.multi_index
             else:
                 for each_attribute_name in self.child_attributes:
                     if self.attribute.split('.')[-1] != each_attribute_name:
@@ -122,7 +131,7 @@ class GenericAttribute(object):
                     self.data["value"] = self.get_list()
 
                 elif self.data["type"] in [int, 'unicode', 'long', 'string', 'float', 'doubleArray',
-                                           'double', 'enum', 'bool', bool, float]:
+                                           'double', 'doubleLinear', 'enum', 'bool', bool, float]:
                     self.data["value"] = data_value
                 else:
                     if self.verbose:
@@ -159,11 +168,14 @@ class GenericAttribute(object):
 
 
 if __name__ == '__main__':
-    scene_node = cmds.ls('blendShape1')[0]
-    attributes = cmds.listAttr(scene_node)
+    # scene_node = cmds.ls('blendShape1')[0]
+    # attributes = cmds.listAttr(scene_node)
     '''for each_attribute in attributes:
         if len(each_attribute.split('.')) <=1:
             print '{}.{}'.format(scene_node, each_attribute)
             general_attribute = GenericAttribute('{}.{}'.format(scene_node, each_attribute))
             print general_attribute.get_data_dict()'''
-    general_attribute = GenericAttribute('blendShape1.inputTarget[0].sculptTargetTweaks')
+    # general_attribute = GenericAttribute('blendShape1.inputTarget[0].sculptTargetTweaks')
+    general_attribute = GenericAttribute('C_object01_rig_UDF.keyTanInX')
+    print(general_attribute.data)
+
