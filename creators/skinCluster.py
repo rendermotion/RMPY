@@ -1,74 +1,17 @@
 import maya.cmds as cmds
 import pymel.core as pm
-from RMPY.creators import creatorsBase
-from RMPY.core import dataManager
+from RMPY.creators import deformerBase
 from RMPY.core import polygon_tools
 
 
-class SkinCluster(creatorsBase.CreatorsBase):
+class SkinCluster(deformerBase.DeformerBase):
     """
     The main creator of skin clusters
     """
-    def __init__(self, *args, **kwargs):
-        super(SkinCluster, self).__init__(*args, **kwargs)
-        self.node = None
-        self.weights_dict = {}
-        self.extra_path = '/skinClusters'
-
-    @classmethod
-    def by_name(cls, skin_node_name):
-        """A base Classmethod that returns an instance of the SkinCluster class that contains as the main node (
-        self.node) an skincluster with the name provided :param skin_node_name: A string that contains the name of a
-        skinCluster in the scene. :type skin_node_name: ``str`` :returns: An instance of this SkinCluster class that
-        has the skin_node_name assigned to the (self.node).
-        """
-        new_class_object = cls()
-        if pm.objExists(skin_node_name):
-            node_name = pm.ls(skin_node_name)[0]
-            if node_name.__class__ == pm.nodetypes.SkinCluster:
-                new_class_object.node = node_name
-                return new_class_object
-            else:
-                print("error couldn't create skin cluster, node class is :%s" % node_name.__class__)
-        else:
-            new_class_object.node = skin_node_name
-            print("WARNING: skinCluster object created, node doesn't exists")
-            return new_class_object
-        return None
-
-    @classmethod
-    def by_node(cls, node_name):
-        if node_name.__class__ == pm.nodetypes.SkinCluster:
-            skin_cluster = node_name
-        else:
-            skin_cluster = cls.get_skinCluster(node_name)
-        if skin_cluster:
-            new_class_object = cls()
-            new_class_object.node = skin_cluster
-            return new_class_object
-        else:
-            print ("error couldn't create skin cluster no skinCluster on history of object %s" % node_name)
-        return None
-
-    def save(self, *args, **kwargs):
-        if len(args) >= 1:
-            file_name = args[0]
-        else:
-            file_name = '{}'.format(self.node)
-        data_manager = dataManager.DataManager()
-        data_manager.file_path = '{}{}'.format(data_manager.file_path, self.extra_path)
-        data_manager.save(file_name, self.get_weights_dictionary(), **kwargs)
-
-    def load(self, *args, **kwargs):
-        if len(args) >= 1:
-            file_name = args[0]
-        else:
-            file_name = '{}'.format(self.node)
-        data_manager = dataManager.DataManager()
-        data_manager.file_path = '{}{}'.format(data_manager.file_path, self.extra_path)
-        print('path to search = {}'.format(data_manager.file_path))
-        self.weights_dict = data_manager.load(file_name, **kwargs)
-        return self.weights_dict
+    node_type = 'skinCluster'
+    extra_path = '/skinClusters'
+    # load only reads the file, call apply_weights_dictionary to apply it
+    apply_on_load = False
 
     def influence(self):
         return cmds.skinCluster('%s' % self.node, influence=True, query=True)
@@ -143,10 +86,7 @@ class SkinCluster(creatorsBase.CreatorsBase):
 
     @staticmethod
     def get_skinCluster(skined_geometry):
-        for each in pm.listHistory(skined_geometry, interestLevel=2, pruneDagObjects=True):
-            if each.__class__ == pm.nodetypes.SkinCluster:
-                return each
-        return None
+        return SkinCluster.get_deformer(skined_geometry)
 
     def copy_joint_to_joint(self, source_joint, destination_joint):
         if source_joint in self.weights_dict['influences'] and destination_joint in self.weights_dict['influences']:
@@ -272,13 +212,7 @@ class SkinCluster(creatorsBase.CreatorsBase):
 
     @staticmethod
     def get_skin_cluster(skined_geometry):
-        for each in pm.listHistory(skined_geometry, interestLevel=2, pruneDagObjects=True):
-            if each.__class__ == pm.nodetypes.SkinCluster:
-                return each
-        return None
-
-    def _representation(self):
-        return self.get_weights_dictionary()
+        return SkinCluster.get_deformer(skined_geometry)
 
     def shell_skin(self, geometry):
         shells_list = polygon_tools.shells(geometry)

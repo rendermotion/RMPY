@@ -81,7 +81,7 @@ class NameConvention(object):
                                           'blt', 'cui', 'dbtw', 'cls', 'clsh', 'pma', 'b2a', 'mph', 'ffd', 'bs', 'aim',
                                           'cfme', 'lft', 'psfi', 'guide', 'unc', 'skn', 'dmx', 'mmx', 'nrb', 'ffm',
                                           'vcp', 'auu', 'bmtx', 'nrm', 'multDiv', 'clmfmtx','sum', 'csp', 'aul', 'atu',
-                                          'aua', 'aut', 'att', 'ata', 'ac']}
+                                          'aua', 'aut', 'att', 'ata', 'ac', 'shw']}
         self.translator = {'objectType': dict(joint="jnt", skinjoint="sknjnt", guide='guide', nub="nub", skin="skn",
                                               decomposeMatrix='dmx', undefined="UDF", nurbsCurve="shp",
                                               animCurveUU='auu', multMatrix='mmx', mesh="msh", renderMesh="rmsh",
@@ -91,7 +91,7 @@ class NameConvention(object):
                                               reverse="rvs", multiplyDivide="multDiv", condition="cnd",
                                               baseLattice="blt", curveInfo="cui", distanceBetween="dbtw",
                                               unitConversion='unc', cluster="cls", clusterHandle='clsh',
-                                              plusMinusAverage="pma", blendTwoAttr="b2a", motionPath="mph", ffd="ffd",
+                                              plusMinusAverage="pma", blendTwoAttr="b2a", motionPath="mph", ffd="ffd", shrinkWrap="shw",
                                               blendShape="bs", aimConstraint="aim", curveFromMeshEdge="cfme",
                                               loft="lft", pointOnSurfaceInfo="psfi", skinCluster='skn',
                                               fourByFourMatrix='ffm', vectorProduct='vcp', nurbsSurface='nrb',

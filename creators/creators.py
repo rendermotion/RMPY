@@ -12,6 +12,7 @@ from RMPY.creators import cluster as clusterCreator
 from RMPY.creators import follicle as follicleCreator
 from RMPY.creators import motionPath as motionPathCreator
 from RMPY.creators import loft as loftCreator
+from RMPY.creators import shrinkWrap as shrinkWrapCreator
 
 constraint = constraintCreator.Constraint()
 controls = controlsCreator.Controls()
@@ -26,8 +27,9 @@ connect = connectCreator.Connect()
 motion_path = motionPathCreator.MotionPath()
 follicle = follicleCreator.Follicle()
 lattice = latticeCreator.Lattice()
+shrink_wrap = shrinkWrapCreator.ShrinkWrap()
 creators_list = [follicle, constraint, cluster, curve, space_locator, skin_cluster,
-                 group, joint, connect, controls, motion_path, loft, lattice]
+                 group, joint, connect, controls, motion_path, loft, lattice, shrink_wrap]
 
 
 
