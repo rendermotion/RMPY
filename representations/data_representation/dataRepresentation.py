@@ -77,5 +77,5 @@ class GeneralData(object):
 
 
 if __name__ == '__main__':
-    attach_ment = GeneralData.by_name('C_object01_rig_UDF')
-    attach_ment.save()
+    attach_ment = GeneralData.by_name('ffd1')
+    attach_ment.load()

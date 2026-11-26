@@ -65,7 +65,10 @@ class GenericAttribute(object):
                 if self.data['multi_index']:
                     cmds.setAttr(self.attribute, size=self.data['multi_index'][-1])
                     for each_index, each_value in zip(self.data['multi_index'], self.data['value']):
-                        cmds.setAttr('{}[{}]'.format(self.attribute, each_index), each_value)
+                        try:
+                            cmds.setAttr('{}[{}]'.format(self.attribute, each_index), each_value)
+                        except RuntimeError:
+                            print(f'error on attribute {self.attribute}[{each_index}]')
 
         elif self.data['type'] in ['pointArray']:
             if self.data['value'] is not None and not cmds.getAttr(self.attribute, lock=True) \
